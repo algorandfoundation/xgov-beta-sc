@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    target-branch: "chore/dependabot/pip"
+    rebase-strategy: "disabled"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    target-branch: "chore/dependabot/gh-actions"
+    rebase-strategy: "disabled"
