@@ -1,0 +1,15 @@
+#pragma version 10
+
+smart_contracts.proposal.contract.Proposal.clear_state_program:
+    // smart_contracts/proposal/contract.py:7-15
+    // class Proposal(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    int 1
+    return
