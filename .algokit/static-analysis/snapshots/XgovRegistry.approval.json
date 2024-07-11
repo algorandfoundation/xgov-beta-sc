@@ -1,0 +1,462 @@
+{
+  "success": false,
+  "error": null,
+  "result": [
+    {
+      "type": "ExecutionPaths",
+      "count": 1,
+      "description": "\nCheck: \"unprotected-deletable\", Impact: High, Confidence: High\nDescription: Unprotected Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-deletable-application\n",
+      "check": "unprotected-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid deletable applications.\n- Add access controls to the vulnerable method.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 1,
+      "description": "\nCheck: \"unprotected-updatable\", Impact: High, Confidence: High\nDescription: Unprotected Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-updatable-application\n",
+      "check": "unprotected-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid upgradable applications.\n- Add access controls to the vulnerable method.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-account\", Impact: High, Confidence: High\nDescription: Missing CloseRemainderTo field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-closeremainderto-field-validation\n",
+      "check": "can-close-account",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `CloseRemainderTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-asset\", Impact: High, Confidence: High\nDescription: Missing AssetCloseTo Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-assetcloseto-field-validation\n",
+      "check": "can-close-asset",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `AssetCloseTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 1,
+      "description": "\nCheck: \"is-deletable\", Impact: High, Confidence: High\nDescription: Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#deletable-application\n",
+      "check": "is-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `DeleteApplication` type application calls.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 1,
+      "description": "\nCheck: \"is-updatable\", Impact: High, Confidence: High\nDescription: Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#upgradable-application\n",
+      "check": "is-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `UpdateApplication` type application calls.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 2,
+      "description": "\nCheck: \"missing-fee-check\", Impact: High, Confidence: High\nDescription: Missing Fee Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-fee-field-validation\n",
+      "check": "missing-fee-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `Fee` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 6",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "50: main_bare_routing@5:",
+              "61: txn OnCompletion",
+              "62: !",
+              "63: assert",
+              "64: txn ApplicationID",
+              "65: !",
+              "66: assert",
+              "67: int 1",
+              "68: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"group-size-check\", Impact: High, Confidence: High\nDescription: Usage of absolute indexes without validating GroupSize\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-groupsize-validation\n",
+      "check": "group-size-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid using absolute indexes. Validate GroupSize if used.\n- Favor using ARC-4 ABI and relative indexes for group transactions.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 2,
+      "description": "\nCheck: \"rekey-to\", Impact: High, Confidence: High\nDescription: Rekeyable Logic Signatures\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#rekeyable-logicsig\n",
+      "check": "rekey-to",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `RekeyTo` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "16: method hello(string)string",
+              "17: txna ApplicationArgs 0",
+              "18: match main_hello_route@2"
+            ],
+            [
+              "21: main_hello_route@2:",
+              "24: txn OnCompletion",
+              "25: !",
+              "26: assert",
+              "27: txn ApplicationID",
+              "28: assert",
+              "39: txna ApplicationArgs 1",
+              "42: callsub hello"
+            ],
+            [
+              "72: hello:",
+              "76: proto 1 1",
+              "79: frame_dig -1",
+              "80: extract 2 0",
+              "81: byte 0x48656c6c6f2c20",
+              "82: swap",
+              "83: concat",
+              "84: dup",
+              "85: len",
+              "86: itob",
+              "87: extract 6 2",
+              "88: swap",
+              "89: concat",
+              "90: retsub"
+            ],
+            [
+              "43: byte 0x151f7c75",
+              "44: swap",
+              "45: concat",
+              "46: log",
+              "47: int 1",
+              "48: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 6",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:",
+              "14: txn NumAppArgs",
+              "15: bz main_bare_routing@5"
+            ],
+            [
+              "50: main_bare_routing@5:",
+              "61: txn OnCompletion",
+              "62: !",
+              "63: assert",
+              "64: txn ApplicationID",
+              "65: !",
+              "66: assert",
+              "67: int 1",
+              "68: return"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}
