@@ -1284,12 +1284,12 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "puyapy"
-version = "2.1.1"
+version = "2.1.2"
 description = "An optimising compiler for Algorand Python"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "puyapy-2.1.1-py3-none-any.whl", hash = "sha256:7c8b3afd787bb3a8155054bd1034c9fd253aa19606eeca0f26924f72c803f98b"},
+    {file = "puyapy-2.1.2-py3-none-any.whl", hash = "sha256:33ea55aebf66cae8f3600ae8a48ec4449549ef8aa185581c6bbed13303f04a96"},
 ]
 
 [package.dependencies]
@@ -1972,4 +1972,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "b526cb5e1b87b17eac66224f0f392b67dd24184effa1ca8b165fc3df4d5a8643"
+content-hash = "aa456fd3de6311cfa2360619fca83b9cc565543bf7a77d99735e5fa6e2a62e19"
