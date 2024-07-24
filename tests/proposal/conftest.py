@@ -1,16 +1,44 @@
-import algokit_utils
 import pytest
-from algokit_utils import get_localnet_default_account
+from algokit_utils import (
+    EnsureBalanceParameters,
+    ensure_funded,
+    get_localnet_default_account,
+)
+from algokit_utils.beta.account_manager import AddressAndSigner
+from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.config import config
 from algosdk.v2client.algod import AlgodClient
 from algosdk.v2client.indexer import IndexerClient
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 
+INITIAL_FUNDS = 100_000_000
+
+
+@pytest.fixture(scope="session")
+def algorand_client() -> AlgorandClient:
+    client = AlgorandClient.default_local_net()
+    client.set_suggested_params_timeout(0)
+    return client
+
+
+@pytest.fixture(scope="session")
+def proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
 
 @pytest.fixture(scope="session")
 def proposal_client(
-    algod_client: AlgodClient, indexer_client: IndexerClient
+    algod_client: AlgodClient, indexer_client: IndexerClient, proposer: AddressAndSigner
 ) -> ProposalClient:
     config.configure(
         debug=True,
@@ -23,8 +51,7 @@ def proposal_client(
         indexer_client=indexer_client,
     )
 
-    client.deploy(
-        on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
-        on_update=algokit_utils.OnUpdate.AppendApp,
+    client.create_create(
+        proposer=proposer.address,
     )
     return client

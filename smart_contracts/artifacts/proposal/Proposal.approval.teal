@@ -1,7 +1,12 @@
 #pragma version 10
 
 smart_contracts.proposal.contract.Proposal.approval_program:
-    // smart_contracts/proposal/contract.py:7-15
+    txn ApplicationID
+    bnz main_entrypoint@2
+    callsub __init__
+
+main_entrypoint@2:
+    // smart_contracts/proposal/contract.py:21-29
     // class Proposal(
     //     ARC4Contract,
     //     state_totals=StateTotals(
@@ -11,22 +16,21 @@ smart_contracts.proposal.contract.Proposal.approval_program:
     //         local_uints=cfg.LOCAL_UINTS,
     //     ),
     // ):
-    txn NumAppArgs
-    bz main_bare_routing@5
-    method "hello(string)string"
+    method "create(address)void"
     txna ApplicationArgs 0
-    match main_hello_route@2
+    match main_create_route@3
     err // reject transaction
 
-main_hello_route@2:
-    // smart_contracts/proposal/contract.py:16
-    // @arc4.abimethod()
+main_create_route@3:
+    // smart_contracts/proposal/contract.py:66
+    // @arc4.abimethod(create="require")
     txn OnCompletion
     !
     assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // is not creating
-    // smart_contracts/proposal/contract.py:7-15
+    !
+    assert // is creating
+    // smart_contracts/proposal/contract.py:21-29
     // class Proposal(
     //     ARC4Contract,
     //     state_totals=StateTotals(
@@ -37,54 +41,167 @@ main_hello_route@2:
     //     ),
     // ):
     txna ApplicationArgs 1
-    // smart_contracts/proposal/contract.py:16
-    // @arc4.abimethod()
-    callsub hello
-    byte 0x151f7c75
-    swap
-    concat
-    log
-    int 1
-    return
-
-main_bare_routing@5:
-    // smart_contracts/proposal/contract.py:7-15
-    // class Proposal(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=cfg.GLOBAL_BYTES,
-    //         global_uints=cfg.GLOBAL_UINTS,
-    //         local_bytes=cfg.LOCAL_BYTES,
-    //         local_uints=cfg.LOCAL_UINTS,
-    //     ),
-    // ):
-    txn OnCompletion
-    !
-    assert // reject transaction
-    txn ApplicationID
-    !
-    assert // is creating
+    // smart_contracts/proposal/contract.py:66
+    // @arc4.abimethod(create="require")
+    callsub create
     int 1
     return
 
 
-// smart_contracts.proposal.contract.Proposal.hello(name: bytes) -> bytes:
-hello:
-    // smart_contracts/proposal/contract.py:16-17
-    // @arc4.abimethod()
-    // def hello(self, name: arc4.String) -> arc4.String:
-    proto 1 1
-    // smart_contracts/proposal/contract.py:18
-    // return "Hello, " + name
+// smart_contracts.proposal.contract.Proposal.create(proposer: bytes) -> void:
+create:
+    // smart_contracts/proposal/contract.py:66-67
+    // @arc4.abimethod(create="require")
+    // def create(self, proposer: arc4.Address) -> None:
+    proto 1 0
+    // smart_contracts/proposal/contract.py:37
+    // self.proposer = arc4.Address()
+    byte "proposer"
+    // smart_contracts/proposal/contract.py:68
+    // self.proposer = proposer
     frame_dig -1
-    extract 2 0
-    byte 0x48656c6c6f2c20
-    swap
-    concat
-    dup
-    len
-    itob
-    extract 6 2
-    swap
-    concat
+    app_global_put
+    retsub
+
+
+// smart_contracts.proposal.contract.Proposal.__init__() -> void:
+__init__:
+    // smart_contracts/proposal/contract.py:30
+    // def __init__(self) -> None:
+    proto 0 0
+    // smart_contracts/proposal/contract.py:31-32
+    // # Preconditions
+    // assert Txn.global_num_byte_slice == cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
+    txn GlobalNumByteSlice
+    int 4
+    ==
+    assert // Wrong Global Bytes allocation
+    // smart_contracts/proposal/contract.py:33
+    // assert Txn.global_num_uint == cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
+    txn GlobalNumUint
+    int 12
+    ==
+    assert // Wrong Global UInts allocation
+    // smart_contracts/proposal/contract.py:34
+    // assert Txn.local_num_byte_slice == cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
+    txn LocalNumByteSlice
+    !
+    assert // Wrong Local Bytes allocation
+    // smart_contracts/proposal/contract.py:35
+    // assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
+    txn LocalNumUint
+    !
+    assert // Wrong Local UInts allocation
+    // smart_contracts/proposal/contract.py:37
+    // self.proposer = arc4.Address()
+    byte "proposer"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/proposal/contract.py:38
+    // self.title = String()  # UTF-8 encoded, max 123 bytes
+    byte "title"
+    byte ""
+    app_global_put
+    // smart_contracts/proposal/contract.py:39
+    // self.cid = typ.Cid.from_bytes(
+    byte "cid"
+    // smart_contracts/proposal/contract.py:40
+    // b""
+    byte 0x
+    // smart_contracts/proposal/contract.py:39-41
+    // self.cid = typ.Cid.from_bytes(
+    //     b""
+    // )  # IPFS V1 CID, updated on each update of the Draft
+    app_global_put
+    // smart_contracts/proposal/contract.py:42
+    // self.submission_ts = UInt64()  # Proposal finalization timestamp
+    byte "submission_ts"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:43
+    // self.finalization_ts = UInt64()  # Proposal finalization timestamp
+    byte "finalization_ts"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:44
+    // self.status = UInt64(enm.STATUS_EMPTY)  # Enumerated status
+    byte "status"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:45
+    // self.category = UInt64(
+    byte "category"
+    // smart_contracts/proposal/contract.py:45-47
+    // self.category = UInt64(
+    //     enm.CATEGORY_NULL
+    // )  # Proposal category (small, medium, large)
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:48
+    // self.funding_type = UInt64(
+    byte "funding_type"
+    // smart_contracts/proposal/contract.py:48-50
+    // self.funding_type = UInt64(
+    //     enm.FUNDING_NULL
+    // )  # Funding type (Proactive / Retroactive)
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:51
+    // self.requested_amount = UInt64()  # Requested amount in microAlgos
+    byte "requested_amount"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:52
+    // self.locked_amount = (
+    byte "locked_amount"
+    // smart_contracts/proposal/contract.py:53
+    // UInt64()
+    int 0
+    // smart_contracts/proposal/contract.py:52-54
+    // self.locked_amount = (
+    //     UInt64()
+    // )  # Locked amount in microAlgos, 1% of requested amount
+    app_global_put
+    // smart_contracts/proposal/contract.py:55
+    // self.committee_id = typ.CommitteeId.from_bytes(b"")  # xGov Voting Committee ID
+    byte "committee_id"
+    byte 0x
+    app_global_put
+    // smart_contracts/proposal/contract.py:56
+    // self.committee_members = UInt64()  # xGov Voting Committee size
+    byte "committee_members"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:57
+    // self.committee_votes = UInt64()  # xGov Voting Committee total voting power
+    byte "committee_votes"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:58
+    // self.voted_members = UInt64()  # xGov Voting Committee members who voted
+    byte "voted_members"
+    int 0
+    app_global_put
+    // smart_contracts/proposal/contract.py:59
+    // self.approvals = (
+    byte "approvals"
+    // smart_contracts/proposal/contract.py:60
+    // UInt64()
+    int 0
+    // smart_contracts/proposal/contract.py:59-61
+    // self.approvals = (
+    //     UInt64()
+    // )  # Approval votes received by xGov Voting Committee members
+    app_global_put
+    // smart_contracts/proposal/contract.py:62
+    // self.rejections = (
+    byte "rejections"
+    // smart_contracts/proposal/contract.py:63
+    // UInt64()
+    int 0
+    // smart_contracts/proposal/contract.py:62-64
+    // self.rejections = (
+    //     UInt64()
+    // )  # Rejection votes received by xGov Voting Committee members
+    app_global_put
     retsub
