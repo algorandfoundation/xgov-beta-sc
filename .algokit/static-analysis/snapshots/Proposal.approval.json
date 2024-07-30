@@ -4,129 +4,23 @@
   "result": [
     {
       "type": "ExecutionPaths",
-      "count": 1,
+      "count": 0,
       "description": "\nCheck: \"unprotected-deletable\", Impact: High, Confidence: High\nDescription: Unprotected Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-deletable-application\n",
       "check": "unprotected-deletable",
       "impact": "High",
       "confidence": "High",
       "help": "- Avoid deletable applications.\n- Add access controls to the vulnerable method.",
-      "paths": [
-        {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
-            ],
-            [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
-            ],
-            [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
-            ],
-            [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
-            ],
-            [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
-              "47: int 1",
-              "48: return"
-            ]
-          ]
-        }
-      ]
+      "paths": []
     },
     {
       "type": "ExecutionPaths",
-      "count": 1,
+      "count": 0,
       "description": "\nCheck: \"unprotected-updatable\", Impact: High, Confidence: High\nDescription: Unprotected Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-updatable-application\n",
       "check": "unprotected-updatable",
       "impact": "High",
       "confidence": "High",
       "help": "- Avoid upgradable applications.\n- Add access controls to the vulnerable method.",
-      "paths": [
-        {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
-            ],
-            [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
-            ],
-            [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
-            ],
-            [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
-            ],
-            [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
-              "47: int 1",
-              "48: return"
-            ]
-          ]
-        }
-      ]
+      "paths": []
     },
     {
       "type": "ExecutionPaths",
@@ -150,129 +44,23 @@
     },
     {
       "type": "ExecutionPaths",
-      "count": 1,
+      "count": 0,
       "description": "\nCheck: \"is-deletable\", Impact: High, Confidence: High\nDescription: Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#deletable-application\n",
       "check": "is-deletable",
       "impact": "High",
       "confidence": "High",
       "help": "Do not approve `DeleteApplication` type application calls.",
-      "paths": [
-        {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
-            ],
-            [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
-            ],
-            [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
-            ],
-            [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
-            ],
-            [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
-              "47: int 1",
-              "48: return"
-            ]
-          ]
-        }
-      ]
+      "paths": []
     },
     {
       "type": "ExecutionPaths",
-      "count": 1,
+      "count": 0,
       "description": "\nCheck: \"is-updatable\", Impact: High, Confidence: High\nDescription: Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#upgradable-application\n",
       "check": "is-updatable",
       "impact": "High",
       "confidence": "High",
       "help": "Do not approve `UpdateApplication` type application calls.",
-      "paths": [
-        {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
-            ],
-            [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
-            ],
-            [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
-            ],
-            [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
-            ],
-            [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
-              "47: int 1",
-              "48: return"
-            ]
-          ]
-        }
-      ]
+      "paths": []
     },
     {
       "type": "ExecutionPaths",
@@ -284,78 +72,156 @@
       "help": "Validate `Fee` field in the LogicSig.",
       "paths": [
         {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "short": "0 -> 1 -> 2 -> 8 -> 3 -> 5 -> 7 -> 6",
           "blocks": [
             [
               "1: #pragma version 10"
             ],
             [
               "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
             ],
             [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
+              "6: callsub __init__"
             ],
             [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
+              "68: __init__:",
+              "71: proto 0 0",
+              "75: txn GlobalNumByteSlice",
+              "76: int 4",
+              "77: ==",
+              "78: assert",
+              "81: txn GlobalNumUint",
+              "82: int 12",
+              "83: ==",
+              "84: assert",
+              "87: txn LocalNumByteSlice",
+              "88: !",
+              "89: assert",
+              "92: txn LocalNumUint",
+              "93: !",
+              "94: assert",
+              "97: byte \"proposer\"",
+              "98: global ZeroAddress",
+              "99: app_global_put",
+              "102: byte \"title\"",
+              "103: byte \"\"",
+              "104: app_global_put",
+              "107: byte \"cid\"",
+              "110: byte 0x",
+              "115: app_global_put",
+              "118: byte \"submission_ts\"",
+              "119: int 0",
+              "120: app_global_put",
+              "123: byte \"finalization_ts\"",
+              "124: int 0",
+              "125: app_global_put",
+              "128: byte \"status\"",
+              "129: int 0",
+              "130: app_global_put",
+              "133: byte \"category\"",
+              "138: int 0",
+              "139: app_global_put",
+              "142: byte \"funding_type\"",
+              "147: int 0",
+              "148: app_global_put",
+              "151: byte \"requested_amount\"",
+              "152: int 0",
+              "153: app_global_put",
+              "156: byte \"locked_amount\"",
+              "159: int 0",
+              "164: app_global_put",
+              "167: byte \"committee_id\"",
+              "168: byte 0x",
+              "169: app_global_put",
+              "172: byte \"committee_members\"",
+              "173: int 0",
+              "174: app_global_put",
+              "177: byte \"committee_votes\"",
+              "178: int 0",
+              "179: app_global_put",
+              "182: byte \"voted_members\"",
+              "183: int 0",
+              "184: app_global_put",
+              "187: byte \"approvals\"",
+              "190: int 0",
+              "195: app_global_put",
+              "198: byte \"rejections\"",
+              "201: int 0",
+              "206: app_global_put",
+              "207: retsub"
             ],
             [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
+              "8: main_entrypoint@2:",
+              "19: method create(address)void",
+              "20: txna ApplicationArgs 0",
+              "21: match main_create_route@3"
             ],
             [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
+              "24: main_create_route@3:",
+              "27: txn OnCompletion",
+              "28: !",
+              "29: assert",
+              "30: txn ApplicationID",
+              "31: !",
+              "32: assert",
+              "43: txna ApplicationArgs 1",
+              "46: callsub create"
+            ],
+            [
+              "52: create:",
+              "56: proto 1 0",
+              "59: byte \"proposer\"",
+              "62: frame_dig -1",
+              "63: app_global_put",
+              "64: retsub"
+            ],
+            [
               "47: int 1",
               "48: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 6",
+          "short": "0 -> 1 -> 3 -> 5 -> 7 -> 6",
           "blocks": [
             [
               "1: #pragma version 10"
             ],
             [
               "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
             ],
             [
-              "50: main_bare_routing@5:",
-              "61: txn OnCompletion",
-              "62: !",
-              "63: assert",
-              "64: txn ApplicationID",
-              "65: !",
-              "66: assert",
-              "67: int 1",
-              "68: return"
+              "8: main_entrypoint@2:",
+              "19: method create(address)void",
+              "20: txna ApplicationArgs 0",
+              "21: match main_create_route@3"
+            ],
+            [
+              "24: main_create_route@3:",
+              "27: txn OnCompletion",
+              "28: !",
+              "29: assert",
+              "30: txn ApplicationID",
+              "31: !",
+              "32: assert",
+              "43: txna ApplicationArgs 1",
+              "46: callsub create"
+            ],
+            [
+              "52: create:",
+              "56: proto 1 0",
+              "59: byte \"proposer\"",
+              "62: frame_dig -1",
+              "63: app_global_put",
+              "64: retsub"
+            ],
+            [
+              "47: int 1",
+              "48: return"
             ]
           ]
         }
@@ -381,78 +247,156 @@
       "help": "Validate `RekeyTo` field in the LogicSig.",
       "paths": [
         {
-          "short": "0 -> 1 -> 2 -> 4 -> 7 -> 5",
+          "short": "0 -> 1 -> 2 -> 8 -> 3 -> 5 -> 7 -> 6",
           "blocks": [
             [
               "1: #pragma version 10"
             ],
             [
               "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
             ],
             [
-              "16: method hello(string)string",
-              "17: txna ApplicationArgs 0",
-              "18: match main_hello_route@2"
+              "6: callsub __init__"
             ],
             [
-              "21: main_hello_route@2:",
-              "24: txn OnCompletion",
-              "25: !",
-              "26: assert",
-              "27: txn ApplicationID",
-              "28: assert",
-              "39: txna ApplicationArgs 1",
-              "42: callsub hello"
+              "68: __init__:",
+              "71: proto 0 0",
+              "75: txn GlobalNumByteSlice",
+              "76: int 4",
+              "77: ==",
+              "78: assert",
+              "81: txn GlobalNumUint",
+              "82: int 12",
+              "83: ==",
+              "84: assert",
+              "87: txn LocalNumByteSlice",
+              "88: !",
+              "89: assert",
+              "92: txn LocalNumUint",
+              "93: !",
+              "94: assert",
+              "97: byte \"proposer\"",
+              "98: global ZeroAddress",
+              "99: app_global_put",
+              "102: byte \"title\"",
+              "103: byte \"\"",
+              "104: app_global_put",
+              "107: byte \"cid\"",
+              "110: byte 0x",
+              "115: app_global_put",
+              "118: byte \"submission_ts\"",
+              "119: int 0",
+              "120: app_global_put",
+              "123: byte \"finalization_ts\"",
+              "124: int 0",
+              "125: app_global_put",
+              "128: byte \"status\"",
+              "129: int 0",
+              "130: app_global_put",
+              "133: byte \"category\"",
+              "138: int 0",
+              "139: app_global_put",
+              "142: byte \"funding_type\"",
+              "147: int 0",
+              "148: app_global_put",
+              "151: byte \"requested_amount\"",
+              "152: int 0",
+              "153: app_global_put",
+              "156: byte \"locked_amount\"",
+              "159: int 0",
+              "164: app_global_put",
+              "167: byte \"committee_id\"",
+              "168: byte 0x",
+              "169: app_global_put",
+              "172: byte \"committee_members\"",
+              "173: int 0",
+              "174: app_global_put",
+              "177: byte \"committee_votes\"",
+              "178: int 0",
+              "179: app_global_put",
+              "182: byte \"voted_members\"",
+              "183: int 0",
+              "184: app_global_put",
+              "187: byte \"approvals\"",
+              "190: int 0",
+              "195: app_global_put",
+              "198: byte \"rejections\"",
+              "201: int 0",
+              "206: app_global_put",
+              "207: retsub"
             ],
             [
-              "72: hello:",
-              "76: proto 1 1",
-              "79: frame_dig -1",
-              "80: extract 2 0",
-              "81: byte 0x48656c6c6f2c20",
-              "82: swap",
-              "83: concat",
-              "84: dup",
-              "85: len",
-              "86: itob",
-              "87: extract 6 2",
-              "88: swap",
-              "89: concat",
-              "90: retsub"
+              "8: main_entrypoint@2:",
+              "19: method create(address)void",
+              "20: txna ApplicationArgs 0",
+              "21: match main_create_route@3"
             ],
             [
-              "43: byte 0x151f7c75",
-              "44: swap",
-              "45: concat",
-              "46: log",
+              "24: main_create_route@3:",
+              "27: txn OnCompletion",
+              "28: !",
+              "29: assert",
+              "30: txn ApplicationID",
+              "31: !",
+              "32: assert",
+              "43: txna ApplicationArgs 1",
+              "46: callsub create"
+            ],
+            [
+              "52: create:",
+              "56: proto 1 0",
+              "59: byte \"proposer\"",
+              "62: frame_dig -1",
+              "63: app_global_put",
+              "64: retsub"
+            ],
+            [
               "47: int 1",
               "48: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 6",
+          "short": "0 -> 1 -> 3 -> 5 -> 7 -> 6",
           "blocks": [
             [
               "1: #pragma version 10"
             ],
             [
               "3: smart_contracts.proposal.contract.Proposal.approval_program:",
-              "14: txn NumAppArgs",
-              "15: bz main_bare_routing@5"
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
             ],
             [
-              "50: main_bare_routing@5:",
-              "61: txn OnCompletion",
-              "62: !",
-              "63: assert",
-              "64: txn ApplicationID",
-              "65: !",
-              "66: assert",
-              "67: int 1",
-              "68: return"
+              "8: main_entrypoint@2:",
+              "19: method create(address)void",
+              "20: txna ApplicationArgs 0",
+              "21: match main_create_route@3"
+            ],
+            [
+              "24: main_create_route@3:",
+              "27: txn OnCompletion",
+              "28: !",
+              "29: assert",
+              "30: txn ApplicationID",
+              "31: !",
+              "32: assert",
+              "43: txna ApplicationArgs 1",
+              "46: callsub create"
+            ],
+            [
+              "52: create:",
+              "56: proto 1 0",
+              "59: byte \"proposer\"",
+              "62: frame_dig -1",
+              "63: app_global_put",
+              "64: retsub"
+            ],
+            [
+              "47: int 1",
+              "48: return"
             ]
           ]
         }

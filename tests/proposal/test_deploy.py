@@ -1,19 +1,31 @@
-from algosdk.v2client.algod import AlgodClient
+from algokit_utils.beta.account_manager import AddressAndSigner
+from algosdk.encoding import encode_address
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 
 
-def test_says_hello(proposal_client: ProposalClient) -> None:
-    result = proposal_client.hello(name="World")
-
-    assert result.return_value == "Hello, World"
-
-
-def test_simulate_says_hello_with_correct_budget_consumed(
-    proposal_client: ProposalClient, algod_client: AlgodClient
+def test_empty_proposal(
+    proposal_client: ProposalClient, proposer: AddressAndSigner
 ) -> None:
-    result = proposal_client.compose().hello(name="World").hello(name="Jane").simulate()
+    global_state = proposal_client.get_global_state()
 
-    assert result.abi_results[0].return_value == "Hello, World"  # type: ignore[misc]
-    assert result.abi_results[1].return_value == "Hello, Jane"  # type: ignore[misc]
-    assert result.simulate_response["txn-groups"][0]["app-budget-consumed"] < 100  # type: ignore[misc]
+    assert (
+        encode_address(global_state.proposer.as_bytes)  # type: ignore
+        == proposer.address
+    )
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == 0
+    assert global_state.category == 0
+    assert global_state.funding_type == 0
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0

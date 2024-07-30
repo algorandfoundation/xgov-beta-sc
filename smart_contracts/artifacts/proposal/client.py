@@ -23,20 +23,20 @@ from algosdk.atomic_transaction_composer import (
 
 _APP_SPEC_JSON = r"""{
     "hints": {
-        "hello(string)string": {
+        "create(address)void": {
             "call_config": {
-                "no_op": "CALL"
+                "no_op": "CREATE"
             }
         }
     },
     "source": {
-        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMucHJvcG9zYWwuY29udHJhY3QuUHJvcG9zYWwuYXBwcm92YWxfcHJvZ3JhbToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo3LTE1CiAgICAvLyBjbGFzcyBQcm9wb3NhbCgKICAgIC8vICAgICBBUkM0Q29udHJhY3QsCiAgICAvLyAgICAgc3RhdGVfdG90YWxzPVN0YXRlVG90YWxzKAogICAgLy8gICAgICAgICBnbG9iYWxfYnl0ZXM9Y2ZnLkdMT0JBTF9CWVRFUywKICAgIC8vICAgICAgICAgZ2xvYmFsX3VpbnRzPWNmZy5HTE9CQUxfVUlOVFMsCiAgICAvLyAgICAgICAgIGxvY2FsX2J5dGVzPWNmZy5MT0NBTF9CWVRFUywKICAgIC8vICAgICAgICAgbG9jYWxfdWludHM9Y2ZnLkxPQ0FMX1VJTlRTLAogICAgLy8gICAgICksCiAgICAvLyApOgogICAgdHhuIE51bUFwcEFyZ3MKICAgIGJ6IG1haW5fYmFyZV9yb3V0aW5nQDUKICAgIG1ldGhvZCAiaGVsbG8oc3RyaW5nKXN0cmluZyIKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDAKICAgIG1hdGNoIG1haW5faGVsbG9fcm91dGVAMgogICAgZXJyIC8vIHJlamVjdCB0cmFuc2FjdGlvbgoKbWFpbl9oZWxsb19yb3V0ZUAyOgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjE2CiAgICAvLyBAYXJjNC5hYmltZXRob2QoKQogICAgdHhuIE9uQ29tcGxldGlvbgogICAgIQogICAgYXNzZXJ0IC8vIE9uQ29tcGxldGlvbiBpcyBOb09wCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgYXNzZXJ0IC8vIGlzIG5vdCBjcmVhdGluZwogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjctMTUKICAgIC8vIGNsYXNzIFByb3Bvc2FsKAogICAgLy8gICAgIEFSQzRDb250cmFjdCwKICAgIC8vICAgICBzdGF0ZV90b3RhbHM9U3RhdGVUb3RhbHMoCiAgICAvLyAgICAgICAgIGdsb2JhbF9ieXRlcz1jZmcuR0xPQkFMX0JZVEVTLAogICAgLy8gICAgICAgICBnbG9iYWxfdWludHM9Y2ZnLkdMT0JBTF9VSU5UUywKICAgIC8vICAgICAgICAgbG9jYWxfYnl0ZXM9Y2ZnLkxPQ0FMX0JZVEVTLAogICAgLy8gICAgICAgICBsb2NhbF91aW50cz1jZmcuTE9DQUxfVUlOVFMsCiAgICAvLyAgICAgKSwKICAgIC8vICk6CiAgICB0eG5hIEFwcGxpY2F0aW9uQXJncyAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MTYKICAgIC8vIEBhcmM0LmFiaW1ldGhvZCgpCiAgICBjYWxsc3ViIGhlbGxvCiAgICBieXRlIDB4MTUxZjdjNzUKICAgIHN3YXAKICAgIGNvbmNhdAogICAgbG9nCiAgICBpbnQgMQogICAgcmV0dXJuCgptYWluX2JhcmVfcm91dGluZ0A1OgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjctMTUKICAgIC8vIGNsYXNzIFByb3Bvc2FsKAogICAgLy8gICAgIEFSQzRDb250cmFjdCwKICAgIC8vICAgICBzdGF0ZV90b3RhbHM9U3RhdGVUb3RhbHMoCiAgICAvLyAgICAgICAgIGdsb2JhbF9ieXRlcz1jZmcuR0xPQkFMX0JZVEVTLAogICAgLy8gICAgICAgICBnbG9iYWxfdWludHM9Y2ZnLkdMT0JBTF9VSU5UUywKICAgIC8vICAgICAgICAgbG9jYWxfYnl0ZXM9Y2ZnLkxPQ0FMX0JZVEVTLAogICAgLy8gICAgICAgICBsb2NhbF91aW50cz1jZmcuTE9DQUxfVUlOVFMsCiAgICAvLyAgICAgKSwKICAgIC8vICk6CiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gcmVqZWN0IHRyYW5zYWN0aW9uCiAgICB0eG4gQXBwbGljYXRpb25JRAogICAgIQogICAgYXNzZXJ0IC8vIGlzIGNyZWF0aW5nCiAgICBpbnQgMQogICAgcmV0dXJuCgoKLy8gc21hcnRfY29udHJhY3RzLnByb3Bvc2FsLmNvbnRyYWN0LlByb3Bvc2FsLmhlbGxvKG5hbWU6IGJ5dGVzKSAtPiBieXRlczoKaGVsbG86CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MTYtMTcKICAgIC8vIEBhcmM0LmFiaW1ldGhvZCgpCiAgICAvLyBkZWYgaGVsbG8oc2VsZiwgbmFtZTogYXJjNC5TdHJpbmcpIC0+IGFyYzQuU3RyaW5nOgogICAgcHJvdG8gMSAxCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MTgKICAgIC8vIHJldHVybiAiSGVsbG8sICIgKyBuYW1lCiAgICBmcmFtZV9kaWcgLTEKICAgIGV4dHJhY3QgMiAwCiAgICBieXRlIDB4NDg2NTZjNmM2ZjJjMjAKICAgIHN3YXAKICAgIGNvbmNhdAogICAgZHVwCiAgICBsZW4KICAgIGl0b2IKICAgIGV4dHJhY3QgNiAyCiAgICBzd2FwCiAgICBjb25jYXQKICAgIHJldHN1Ygo=",
-        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMucHJvcG9zYWwuY29udHJhY3QuUHJvcG9zYWwuY2xlYXJfc3RhdGVfcHJvZ3JhbToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo3LTE1CiAgICAvLyBjbGFzcyBQcm9wb3NhbCgKICAgIC8vICAgICBBUkM0Q29udHJhY3QsCiAgICAvLyAgICAgc3RhdGVfdG90YWxzPVN0YXRlVG90YWxzKAogICAgLy8gICAgICAgICBnbG9iYWxfYnl0ZXM9Y2ZnLkdMT0JBTF9CWVRFUywKICAgIC8vICAgICAgICAgZ2xvYmFsX3VpbnRzPWNmZy5HTE9CQUxfVUlOVFMsCiAgICAvLyAgICAgICAgIGxvY2FsX2J5dGVzPWNmZy5MT0NBTF9CWVRFUywKICAgIC8vICAgICAgICAgbG9jYWxfdWludHM9Y2ZnLkxPQ0FMX1VJTlRTLAogICAgLy8gICAgICksCiAgICAvLyApOgogICAgaW50IDEKICAgIHJldHVybgo="
+        "approval": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMucHJvcG9zYWwuY29udHJhY3QuUHJvcG9zYWwuYXBwcm92YWxfcHJvZ3JhbToKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICBibnogbWFpbl9lbnRyeXBvaW50QDIKICAgIGNhbGxzdWIgX19pbml0X18KCm1haW5fZW50cnlwb2ludEAyOgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjIxLTI5CiAgICAvLyBjbGFzcyBQcm9wb3NhbCgKICAgIC8vICAgICBBUkM0Q29udHJhY3QsCiAgICAvLyAgICAgc3RhdGVfdG90YWxzPVN0YXRlVG90YWxzKAogICAgLy8gICAgICAgICBnbG9iYWxfYnl0ZXM9Y2ZnLkdMT0JBTF9CWVRFUywKICAgIC8vICAgICAgICAgZ2xvYmFsX3VpbnRzPWNmZy5HTE9CQUxfVUlOVFMsCiAgICAvLyAgICAgICAgIGxvY2FsX2J5dGVzPWNmZy5MT0NBTF9CWVRFUywKICAgIC8vICAgICAgICAgbG9jYWxfdWludHM9Y2ZnLkxPQ0FMX1VJTlRTLAogICAgLy8gICAgICksCiAgICAvLyApOgogICAgbWV0aG9kICJjcmVhdGUoYWRkcmVzcyl2b2lkIgogICAgdHhuYSBBcHBsaWNhdGlvbkFyZ3MgMAogICAgbWF0Y2ggbWFpbl9jcmVhdGVfcm91dGVAMwogICAgZXJyIC8vIHJlamVjdCB0cmFuc2FjdGlvbgoKbWFpbl9jcmVhdGVfcm91dGVAMzoKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo2NgogICAgLy8gQGFyYzQuYWJpbWV0aG9kKGNyZWF0ZT0icmVxdWlyZSIpCiAgICB0eG4gT25Db21wbGV0aW9uCiAgICAhCiAgICBhc3NlcnQgLy8gT25Db21wbGV0aW9uIGlzIE5vT3AKICAgIHR4biBBcHBsaWNhdGlvbklECiAgICAhCiAgICBhc3NlcnQgLy8gaXMgY3JlYXRpbmcKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weToyMS0yOQogICAgLy8gY2xhc3MgUHJvcG9zYWwoCiAgICAvLyAgICAgQVJDNENvbnRyYWN0LAogICAgLy8gICAgIHN0YXRlX3RvdGFscz1TdGF0ZVRvdGFscygKICAgIC8vICAgICAgICAgZ2xvYmFsX2J5dGVzPWNmZy5HTE9CQUxfQllURVMsCiAgICAvLyAgICAgICAgIGdsb2JhbF91aW50cz1jZmcuR0xPQkFMX1VJTlRTLAogICAgLy8gICAgICAgICBsb2NhbF9ieXRlcz1jZmcuTE9DQUxfQllURVMsCiAgICAvLyAgICAgICAgIGxvY2FsX3VpbnRzPWNmZy5MT0NBTF9VSU5UUywKICAgIC8vICAgICApLAogICAgLy8gKToKICAgIHR4bmEgQXBwbGljYXRpb25BcmdzIDEKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo2NgogICAgLy8gQGFyYzQuYWJpbWV0aG9kKGNyZWF0ZT0icmVxdWlyZSIpCiAgICBjYWxsc3ViIGNyZWF0ZQogICAgaW50IDEKICAgIHJldHVybgoKCi8vIHNtYXJ0X2NvbnRyYWN0cy5wcm9wb3NhbC5jb250cmFjdC5Qcm9wb3NhbC5jcmVhdGUocHJvcG9zZXI6IGJ5dGVzKSAtPiB2b2lkOgpjcmVhdGU6CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NjYtNjcKICAgIC8vIEBhcmM0LmFiaW1ldGhvZChjcmVhdGU9InJlcXVpcmUiKQogICAgLy8gZGVmIGNyZWF0ZShzZWxmLCBwcm9wb3NlcjogYXJjNC5BZGRyZXNzKSAtPiBOb25lOgogICAgcHJvdG8gMSAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzcKICAgIC8vIHNlbGYucHJvcG9zZXIgPSBhcmM0LkFkZHJlc3MoKQogICAgYnl0ZSAicHJvcG9zZXIiCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NjgKICAgIC8vIHNlbGYucHJvcG9zZXIgPSBwcm9wb3NlcgogICAgZnJhbWVfZGlnIC0xCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgcmV0c3ViCgoKLy8gc21hcnRfY29udHJhY3RzLnByb3Bvc2FsLmNvbnRyYWN0LlByb3Bvc2FsLl9faW5pdF9fKCkgLT4gdm9pZDoKX19pbml0X186CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzAKICAgIC8vIGRlZiBfX2luaXRfXyhzZWxmKSAtPiBOb25lOgogICAgcHJvdG8gMCAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzEtMzIKICAgIC8vICMgUHJlY29uZGl0aW9ucwogICAgLy8gYXNzZXJ0IFR4bi5nbG9iYWxfbnVtX2J5dGVfc2xpY2UgPT0gY2ZnLkdMT0JBTF9CWVRFUywgZXJyLldST05HX0dMT0JBTF9CWVRFUwogICAgdHhuIEdsb2JhbE51bUJ5dGVTbGljZQogICAgaW50IDQKICAgID09CiAgICBhc3NlcnQgLy8gV3JvbmcgR2xvYmFsIEJ5dGVzIGFsbG9jYXRpb24KICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTozMwogICAgLy8gYXNzZXJ0IFR4bi5nbG9iYWxfbnVtX3VpbnQgPT0gY2ZnLkdMT0JBTF9VSU5UUywgZXJyLldST05HX0dMT0JBTF9VSU5UUwogICAgdHhuIEdsb2JhbE51bVVpbnQKICAgIGludCAxMgogICAgPT0KICAgIGFzc2VydCAvLyBXcm9uZyBHbG9iYWwgVUludHMgYWxsb2NhdGlvbgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjM0CiAgICAvLyBhc3NlcnQgVHhuLmxvY2FsX251bV9ieXRlX3NsaWNlID09IGNmZy5MT0NBTF9CWVRFUywgZXJyLldST05HX0xPQ0FMX0JZVEVTCiAgICB0eG4gTG9jYWxOdW1CeXRlU2xpY2UKICAgICEKICAgIGFzc2VydCAvLyBXcm9uZyBMb2NhbCBCeXRlcyBhbGxvY2F0aW9uCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzUKICAgIC8vIGFzc2VydCBUeG4ubG9jYWxfbnVtX3VpbnQgPT0gY2ZnLkxPQ0FMX1VJTlRTLCBlcnIuV1JPTkdfTE9DQUxfVUlOVFMKICAgIHR4biBMb2NhbE51bVVpbnQKICAgICEKICAgIGFzc2VydCAvLyBXcm9uZyBMb2NhbCBVSW50cyBhbGxvY2F0aW9uCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzcKICAgIC8vIHNlbGYucHJvcG9zZXIgPSBhcmM0LkFkZHJlc3MoKQogICAgYnl0ZSAicHJvcG9zZXIiCiAgICBnbG9iYWwgWmVyb0FkZHJlc3MKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzgKICAgIC8vIHNlbGYudGl0bGUgPSBTdHJpbmcoKSAgIyBVVEYtOCBlbmNvZGVkLCBtYXggMTIzIGJ5dGVzCiAgICBieXRlICJ0aXRsZSIKICAgIGJ5dGUgIiIKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6MzkKICAgIC8vIHNlbGYuY2lkID0gdHlwLkNpZC5mcm9tX2J5dGVzKAogICAgYnl0ZSAiY2lkIgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjQwCiAgICAvLyBiIiIKICAgIGJ5dGUgMHgKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTozOS00MQogICAgLy8gc2VsZi5jaWQgPSB0eXAuQ2lkLmZyb21fYnl0ZXMoCiAgICAvLyAgICAgYiIiCiAgICAvLyApICAjIElQRlMgVjEgQ0lELCB1cGRhdGVkIG9uIGVhY2ggdXBkYXRlIG9mIHRoZSBEcmFmdAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo0MgogICAgLy8gc2VsZi5zdWJtaXNzaW9uX3RzID0gVUludDY0KCkgICMgUHJvcG9zYWwgZmluYWxpemF0aW9uIHRpbWVzdGFtcAogICAgYnl0ZSAic3VibWlzc2lvbl90cyIKICAgIGludCAwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjQzCiAgICAvLyBzZWxmLmZpbmFsaXphdGlvbl90cyA9IFVJbnQ2NCgpICAjIFByb3Bvc2FsIGZpbmFsaXphdGlvbiB0aW1lc3RhbXAKICAgIGJ5dGUgImZpbmFsaXphdGlvbl90cyIKICAgIGludCAwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjQ0CiAgICAvLyBzZWxmLnN0YXR1cyA9IFVJbnQ2NChlbm0uU1RBVFVTX0VNUFRZKSAgIyBFbnVtZXJhdGVkIHN0YXR1cwogICAgYnl0ZSAic3RhdHVzIgogICAgaW50IDAKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NDUKICAgIC8vIHNlbGYuY2F0ZWdvcnkgPSBVSW50NjQoCiAgICBieXRlICJjYXRlZ29yeSIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo0NS00NwogICAgLy8gc2VsZi5jYXRlZ29yeSA9IFVJbnQ2NCgKICAgIC8vICAgICBlbm0uQ0FURUdPUllfTlVMTAogICAgLy8gKSAgIyBQcm9wb3NhbCBjYXRlZ29yeSAoc21hbGwsIG1lZGl1bSwgbGFyZ2UpCiAgICBpbnQgMAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo0OAogICAgLy8gc2VsZi5mdW5kaW5nX3R5cGUgPSBVSW50NjQoCiAgICBieXRlICJmdW5kaW5nX3R5cGUiCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NDgtNTAKICAgIC8vIHNlbGYuZnVuZGluZ190eXBlID0gVUludDY0KAogICAgLy8gICAgIGVubS5GVU5ESU5HX05VTEwKICAgIC8vICkgICMgRnVuZGluZyB0eXBlIChQcm9hY3RpdmUgLyBSZXRyb2FjdGl2ZSkKICAgIGludCAwCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjUxCiAgICAvLyBzZWxmLnJlcXVlc3RlZF9hbW91bnQgPSBVSW50NjQoKSAgIyBSZXF1ZXN0ZWQgYW1vdW50IGluIG1pY3JvQWxnb3MKICAgIGJ5dGUgInJlcXVlc3RlZF9hbW91bnQiCiAgICBpbnQgMAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo1MgogICAgLy8gc2VsZi5sb2NrZWRfYW1vdW50ID0gKAogICAgYnl0ZSAibG9ja2VkX2Ftb3VudCIKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo1MwogICAgLy8gVUludDY0KCkKICAgIGludCAwCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NTItNTQKICAgIC8vIHNlbGYubG9ja2VkX2Ftb3VudCA9ICgKICAgIC8vICAgICBVSW50NjQoKQogICAgLy8gKSAgIyBMb2NrZWQgYW1vdW50IGluIG1pY3JvQWxnb3MsIDElIG9mIHJlcXVlc3RlZCBhbW91bnQKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NTUKICAgIC8vIHNlbGYuY29tbWl0dGVlX2lkID0gdHlwLkNvbW1pdHRlZUlkLmZyb21fYnl0ZXMoYiIiKSAgIyB4R292IFZvdGluZyBDb21taXR0ZWUgSUQKICAgIGJ5dGUgImNvbW1pdHRlZV9pZCIKICAgIGJ5dGUgMHgKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NTYKICAgIC8vIHNlbGYuY29tbWl0dGVlX21lbWJlcnMgPSBVSW50NjQoKSAgIyB4R292IFZvdGluZyBDb21taXR0ZWUgc2l6ZQogICAgYnl0ZSAiY29tbWl0dGVlX21lbWJlcnMiCiAgICBpbnQgMAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo1NwogICAgLy8gc2VsZi5jb21taXR0ZWVfdm90ZXMgPSBVSW50NjQoKSAgIyB4R292IFZvdGluZyBDb21taXR0ZWUgdG90YWwgdm90aW5nIHBvd2VyCiAgICBieXRlICJjb21taXR0ZWVfdm90ZXMiCiAgICBpbnQgMAogICAgYXBwX2dsb2JhbF9wdXQKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo1OAogICAgLy8gc2VsZi52b3RlZF9tZW1iZXJzID0gVUludDY0KCkgICMgeEdvdiBWb3RpbmcgQ29tbWl0dGVlIG1lbWJlcnMgd2hvIHZvdGVkCiAgICBieXRlICJ2b3RlZF9tZW1iZXJzIgogICAgaW50IDAKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NTkKICAgIC8vIHNlbGYuYXBwcm92YWxzID0gKAogICAgYnl0ZSAiYXBwcm92YWxzIgogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjYwCiAgICAvLyBVSW50NjQoKQogICAgaW50IDAKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weTo1OS02MQogICAgLy8gc2VsZi5hcHByb3ZhbHMgPSAoCiAgICAvLyAgICAgVUludDY0KCkKICAgIC8vICkgICMgQXBwcm92YWwgdm90ZXMgcmVjZWl2ZWQgYnkgeEdvdiBWb3RpbmcgQ29tbWl0dGVlIG1lbWJlcnMKICAgIGFwcF9nbG9iYWxfcHV0CiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NjIKICAgIC8vIHNlbGYucmVqZWN0aW9ucyA9ICgKICAgIGJ5dGUgInJlamVjdGlvbnMiCiAgICAvLyBzbWFydF9jb250cmFjdHMvcHJvcG9zYWwvY29udHJhY3QucHk6NjMKICAgIC8vIFVJbnQ2NCgpCiAgICBpbnQgMAogICAgLy8gc21hcnRfY29udHJhY3RzL3Byb3Bvc2FsL2NvbnRyYWN0LnB5OjYyLTY0CiAgICAvLyBzZWxmLnJlamVjdGlvbnMgPSAoCiAgICAvLyAgICAgVUludDY0KCkKICAgIC8vICkgICMgUmVqZWN0aW9uIHZvdGVzIHJlY2VpdmVkIGJ5IHhHb3YgVm90aW5nIENvbW1pdHRlZSBtZW1iZXJzCiAgICBhcHBfZ2xvYmFsX3B1dAogICAgcmV0c3ViCg==",
+        "clear": "I3ByYWdtYSB2ZXJzaW9uIDEwCgpzbWFydF9jb250cmFjdHMucHJvcG9zYWwuY29udHJhY3QuUHJvcG9zYWwuY2xlYXJfc3RhdGVfcHJvZ3JhbToKICAgIC8vIHNtYXJ0X2NvbnRyYWN0cy9wcm9wb3NhbC9jb250cmFjdC5weToyMS0yOQogICAgLy8gY2xhc3MgUHJvcG9zYWwoCiAgICAvLyAgICAgQVJDNENvbnRyYWN0LAogICAgLy8gICAgIHN0YXRlX3RvdGFscz1TdGF0ZVRvdGFscygKICAgIC8vICAgICAgICAgZ2xvYmFsX2J5dGVzPWNmZy5HTE9CQUxfQllURVMsCiAgICAvLyAgICAgICAgIGdsb2JhbF91aW50cz1jZmcuR0xPQkFMX1VJTlRTLAogICAgLy8gICAgICAgICBsb2NhbF9ieXRlcz1jZmcuTE9DQUxfQllURVMsCiAgICAvLyAgICAgICAgIGxvY2FsX3VpbnRzPWNmZy5MT0NBTF9VSU5UUywKICAgIC8vICAgICApLAogICAgLy8gKToKICAgIGludCAxCiAgICByZXR1cm4K"
     },
     "state": {
         "global": {
-            "num_byte_slices": 0,
-            "num_uints": 0
+            "num_byte_slices": 4,
+            "num_uints": 12
         },
         "local": {
             "num_byte_slices": 0,
@@ -45,7 +45,72 @@ _APP_SPEC_JSON = r"""{
     },
     "schema": {
         "global": {
-            "declared": {},
+            "declared": {
+                "approvals": {
+                    "type": "uint64",
+                    "key": "approvals"
+                },
+                "category": {
+                    "type": "uint64",
+                    "key": "category"
+                },
+                "cid": {
+                    "type": "bytes",
+                    "key": "cid"
+                },
+                "committee_id": {
+                    "type": "bytes",
+                    "key": "committee_id"
+                },
+                "committee_members": {
+                    "type": "uint64",
+                    "key": "committee_members"
+                },
+                "committee_votes": {
+                    "type": "uint64",
+                    "key": "committee_votes"
+                },
+                "finalization_ts": {
+                    "type": "uint64",
+                    "key": "finalization_ts"
+                },
+                "funding_type": {
+                    "type": "uint64",
+                    "key": "funding_type"
+                },
+                "locked_amount": {
+                    "type": "uint64",
+                    "key": "locked_amount"
+                },
+                "proposer": {
+                    "type": "bytes",
+                    "key": "proposer"
+                },
+                "rejections": {
+                    "type": "uint64",
+                    "key": "rejections"
+                },
+                "requested_amount": {
+                    "type": "uint64",
+                    "key": "requested_amount"
+                },
+                "status": {
+                    "type": "uint64",
+                    "key": "status"
+                },
+                "submission_ts": {
+                    "type": "uint64",
+                    "key": "submission_ts"
+                },
+                "title": {
+                    "type": "bytes",
+                    "key": "title"
+                },
+                "voted_members": {
+                    "type": "uint64",
+                    "key": "voted_members"
+                }
+            },
             "reserved": {}
         },
         "local": {
@@ -57,23 +122,21 @@ _APP_SPEC_JSON = r"""{
         "name": "Proposal",
         "methods": [
             {
-                "name": "hello",
+                "name": "create",
                 "args": [
                     {
-                        "type": "string",
-                        "name": "name"
+                        "type": "address",
+                        "name": "proposer"
                     }
                 ],
                 "returns": {
-                    "type": "string"
+                    "type": "void"
                 }
             }
         ],
         "networks": {}
     },
-    "bare_call_config": {
-        "no_op": "CREATE"
-    }
+    "bare_call_config": {}
 }"""
 APP_SPEC = algokit_utils.ApplicationSpecification.from_json(_APP_SPEC_JSON)
 _TReturn = typing.TypeVar("_TReturn")
@@ -92,6 +155,11 @@ _TArgs = typing.TypeVar("_TArgs", bound=_ArgsBase[typing.Any])
 @dataclasses.dataclass(kw_only=True)
 class _TArgsHolder(typing.Generic[_TArgs]):
     args: _TArgs
+
+
+@dataclasses.dataclass(kw_only=True)
+class DeployCreate(algokit_utils.DeployCreateCallArgs, _TArgsHolder[_TArgs], typing.Generic[_TArgs]):
+    pass
 
 
 def _filter_none(value: dict | typing.Any) -> dict | typing.Any:
@@ -149,12 +217,53 @@ def _convert_deploy_args(
 
 
 @dataclasses.dataclass(kw_only=True)
-class HelloArgs(_ArgsBase[str]):
-    name: str
+class CreateArgs(_ArgsBase[None]):
+    proposer: str
 
     @staticmethod
     def method() -> str:
-        return "hello(string)string"
+        return "create(address)void"
+
+
+class ByteReader:
+    def __init__(self, data: bytes):
+        self._data = data
+
+    @property
+    def as_bytes(self) -> bytes:
+        return self._data
+
+    @property
+    def as_str(self) -> str:
+        return self._data.decode("utf8")
+
+    @property
+    def as_base64(self) -> str:
+        return base64.b64encode(self._data).decode("utf8")
+
+    @property
+    def as_hex(self) -> str:
+        return self._data.hex()
+
+
+class GlobalState:
+    def __init__(self, data: dict[bytes, bytes | int]):
+        self.approvals = typing.cast(int, data.get(b"approvals"))
+        self.category = typing.cast(int, data.get(b"category"))
+        self.cid = ByteReader(typing.cast(bytes, data.get(b"cid")))
+        self.committee_id = ByteReader(typing.cast(bytes, data.get(b"committee_id")))
+        self.committee_members = typing.cast(int, data.get(b"committee_members"))
+        self.committee_votes = typing.cast(int, data.get(b"committee_votes"))
+        self.finalization_ts = typing.cast(int, data.get(b"finalization_ts"))
+        self.funding_type = typing.cast(int, data.get(b"funding_type"))
+        self.locked_amount = typing.cast(int, data.get(b"locked_amount"))
+        self.proposer = ByteReader(typing.cast(bytes, data.get(b"proposer")))
+        self.rejections = typing.cast(int, data.get(b"rejections"))
+        self.requested_amount = typing.cast(int, data.get(b"requested_amount"))
+        self.status = typing.cast(int, data.get(b"status"))
+        self.submission_ts = typing.cast(int, data.get(b"submission_ts"))
+        self.title = ByteReader(typing.cast(bytes, data.get(b"title")))
+        self.voted_members = typing.cast(int, data.get(b"voted_members"))
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -188,45 +297,28 @@ class Composer:
     def execute(self) -> AtomicTransactionResponse:
         return self.app_client.execute_atc(self.atc)
 
-    def hello(
+    def create_create(
         self,
         *,
-        name: str,
-        transaction_parameters: algokit_utils.TransactionParameters | None = None,
-    ) -> "Composer":
-        """Adds a call to `hello(string)string` ABI method
-        
-        :param str name: The `name` ABI parameter
-        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
-        :returns Composer: This Composer instance"""
-
-        args = HelloArgs(
-            name=name,
-        )
-        self.app_client.compose_call(
-            self.atc,
-            call_abi_method=args.method(),
-            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
-            **_as_dict(args, convert_all=True),
-        )
-        return self
-
-    def create_bare(
-        self,
-        *,
+        proposer: str,
         on_complete: typing.Literal["no_op"] = "no_op",
         transaction_parameters: algokit_utils.CreateTransactionParameters | None = None,
     ) -> "Composer":
-        """Adds a call to create an application using the no_op bare method
+        """Adds a call to `create(address)void` ABI method
         
+        :param str proposer: The `proposer` ABI parameter
         :param typing.Literal[no_op] on_complete: On completion type to use
         :param algokit_utils.CreateTransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
+        args = CreateArgs(
+            proposer=proposer,
+        )
         self.app_client.compose_create(
             self.atc,
-            call_abi_method=False,
+            call_abi_method=args.method(),
             transaction_parameters=_convert_create_transaction_parameters(transaction_parameters, on_complete),
+            **_as_dict(args, convert_all=True),
         )
         return self
 
@@ -370,43 +462,33 @@ class ProposalClient:
     def suggested_params(self, value: algosdk.transaction.SuggestedParams | None) -> None:
         self.app_client.suggested_params = value
 
-    def hello(
+    def get_global_state(self) -> GlobalState:
+        """Returns the application's global state wrapped in a strongly typed class with options to format the stored value"""
+
+        state = typing.cast(dict[bytes, bytes | int], self.app_client.get_global_state(raw=True))
+        return GlobalState(state)
+
+    def create_create(
         self,
         *,
-        name: str,
-        transaction_parameters: algokit_utils.TransactionParameters | None = None,
-    ) -> algokit_utils.ABITransactionResponse[str]:
-        """Calls `hello(string)string` ABI method
-        
-        :param str name: The `name` ABI parameter
-        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
-        :returns algokit_utils.ABITransactionResponse[str]: The result of the transaction"""
-
-        args = HelloArgs(
-            name=name,
-        )
-        result = self.app_client.call(
-            call_abi_method=args.method(),
-            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
-            **_as_dict(args, convert_all=True),
-        )
-        return result
-
-    def create_bare(
-        self,
-        *,
+        proposer: str,
         on_complete: typing.Literal["no_op"] = "no_op",
         transaction_parameters: algokit_utils.CreateTransactionParameters | None = None,
-    ) -> algokit_utils.TransactionResponse:
-        """Creates an application using the no_op bare method
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Calls `create(address)void` ABI method
         
+        :param str proposer: The `proposer` ABI parameter
         :param typing.Literal[no_op] on_complete: On completion type to use
         :param algokit_utils.CreateTransactionParameters transaction_parameters: (optional) Additional transaction parameters
-        :returns algokit_utils.TransactionResponse: The result of the transaction"""
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
+        args = CreateArgs(
+            proposer=proposer,
+        )
         result = self.app_client.create(
-            call_abi_method=False,
+            call_abi_method=args.method(),
             transaction_parameters=_convert_create_transaction_parameters(transaction_parameters, on_complete),
+            **_as_dict(args, convert_all=True),
         )
         return result
 
@@ -434,7 +516,7 @@ class ProposalClient:
         on_update: algokit_utils.OnUpdate = algokit_utils.OnUpdate.Fail,
         on_schema_break: algokit_utils.OnSchemaBreak = algokit_utils.OnSchemaBreak.Fail,
         template_values: algokit_utils.TemplateValueMapping | None = None,
-        create_args: algokit_utils.DeployCallArgs | None = None,
+        create_args: DeployCreate[CreateArgs],
         update_args: algokit_utils.DeployCallArgs | None = None,
         delete_args: algokit_utils.DeployCallArgs | None = None,
     ) -> algokit_utils.DeployResponse:
@@ -468,7 +550,7 @@ class ProposalClient:
         has increased beyond the current allocation
         :param dict[str, int|str|bytes] template_values: Values to use for `TMPL_*` template variables, dictionary keys
         should *NOT* include the TMPL_ prefix
-        :param algokit_utils.DeployCallArgs | None create_args: Arguments used when creating an application
+        :param DeployCreate[CreateArgs] create_args: Arguments used when creating an application
         :param algokit_utils.DeployCallArgs | None update_args: Arguments used when updating an application
         :param algokit_utils.DeployCallArgs | None delete_args: Arguments used when deleting an application
         :return DeployResponse: details action taken and relevant transactions
