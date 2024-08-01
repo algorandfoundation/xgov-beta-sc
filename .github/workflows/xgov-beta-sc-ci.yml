@@ -3,6 +3,9 @@ name: Validate xgov-beta-sc
 on:
   workflow_call:
   pull_request:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 0 * * 0'  # Run once a week at midnight on Sunday	
 
 jobs:
   validate:
