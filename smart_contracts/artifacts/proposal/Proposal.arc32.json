@@ -106,6 +106,7 @@
                         "name": "proposer"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }
