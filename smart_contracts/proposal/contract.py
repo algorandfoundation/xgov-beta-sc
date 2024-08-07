@@ -8,12 +8,14 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
+    gtxn,
     subroutine,
 )
 
 import smart_contracts.errors.std_errors as err
 
 from . import config as cfg
+from . import constants as const
 from . import enums as enm
 from . import types as typ
 
@@ -35,6 +37,7 @@ class Proposal(
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
         self.proposer = arc4.Address()
+        self.registry_app_id = UInt64()  # Registry App ID
         self.title = String()  # UTF-8 encoded, max 123 bytes
         self.cid = typ.Cid.from_bytes(
             b""
@@ -63,9 +66,70 @@ class Proposal(
             UInt64()
         )  # Rejection votes received by xGov Voting Committee members
 
-    @arc4.abimethod(create="require")
-    def create(self, proposer: arc4.Address) -> None:
-        self.proposer = proposer
+    @subroutine
+    def algos_to_microalgos(self, algos: UInt64) -> UInt64:
+        return algos * const.MICROALGOS_TO_ALGOS
+
+    @subroutine
+    def submit_authorization(self) -> bool:
+        return (
+            self.is_proposer()
+            and self.is_kyc_verified()
+            and self.status == enm.STATUS_EMPTY
+        )
+
+    @subroutine
+    def submit_input_validation(
+        self,
+        title: String,
+        cid: typ.Cid,
+        funding_type: UInt64,
+        requested_amount: UInt64,
+    ) -> None:
+
+        assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
+        assert title != "", err.WRONG_TITLE_LENGTH
+        assert (
+            cid.length == const.CID_LENGTH
+        ), err.WRONG_CID_LENGTH  # redundant, protected by type
+        assert (
+            funding_type == enm.FUNDING_PROACTIVE
+            or funding_type == enm.FUNDING_RETROACTIVE
+        ), err.WRONG_FUNDING_TYPE
+
+        min_requested_algo_amount = self.get_min_requested_algo_amount()
+        max_requested_algo_amount_large = self.get_max_requested_algo_amount_large()
+
+        assert requested_amount >= self.algos_to_microalgos(
+            min_requested_algo_amount
+        ), err.WRONG_MIN_REQUESTED_AMOUNT
+        assert requested_amount <= self.algos_to_microalgos(
+            max_requested_algo_amount_large
+        ), err.WRONG_MAX_REQUESTED_AMOUNT
+
+    @subroutine
+    def submit_payment_validation(
+        self, payment: gtxn.PaymentTransaction, requested_amount: UInt64
+    ) -> None:
+        expected_lock_amount = requested_amount // 100
+
+        assert payment.sender == self.proposer, err.WRONG_SENDER
+        assert (
+            payment.receiver == Global.current_application_address
+        ), err.WRONG_RECEIVER
+        assert payment.amount == expected_lock_amount, err.WRONG_LOCKED_AMOUNT
+
+    @subroutine
+    def set_category(self, requested_amount: UInt64) -> None:
+        max_requested_amount_small = self.get_max_requested_algo_amount_small()
+        max_requested_amount_medium = self.get_max_requested_algo_amount_medium()
+
+        if requested_amount <= self.algos_to_microalgos(max_requested_amount_small):
+            self.category = UInt64(enm.CATEGORY_SMALL)
+        elif requested_amount <= self.algos_to_microalgos(max_requested_amount_medium):
+            self.category = UInt64(enm.CATEGORY_MEDIUM)
+        else:
+            self.category = UInt64(enm.CATEGORY_LARGE)
 
     @subroutine
     def is_creator(self) -> bool:
@@ -75,6 +139,70 @@ class Proposal(
     def is_proposer(self) -> bool:
         return Txn.sender == self.proposer
 
+    @arc4.abimethod(create="require")
+    def create(self, proposer: arc4.Address) -> None:
+        # assert Global.caller_application_id != 0, err.UNAUTHORIZED  # Only callable by another contract
+
+        self.proposer = proposer
+        self.registry_app_id = Global.caller_application_id
+
+    @arc4.abimethod()
+    def submit_proposal(
+        self,
+        payment: gtxn.PaymentTransaction,
+        title: String,
+        cid: typ.Cid,
+        funding_type: UInt64,
+        requested_amount: UInt64,
+    ) -> None:
+
+        assert self.submit_authorization(), err.UNAUTHORIZED
+
+        self.submit_input_validation(title, cid, funding_type, requested_amount)
+        self.submit_payment_validation(payment, requested_amount)
+
+        self.title = title
+        self.cid = cid.copy()
+        self.set_category(requested_amount)
+        self.funding_type = funding_type
+        self.requested_amount = requested_amount
+        self.locked_amount = requested_amount // 100
+        self.submission_ts = Global.latest_timestamp
+        self.status = UInt64(enm.STATUS_DRAFT)
+
+    ####################################################################################################################
+    # Stub subroutines
+    # these subroutines are placeholders for the actual implementation
     @subroutine
     def is_kyc_verified(self) -> bool:
         return True
+
+    # @subroutine
+    # def get_config_from_registry(self, registry_app_id: UInt64) -> typ.XGovRegistryConfig:
+    #     return typ.XGovRegistryConfig(
+    #         min_requested_amount=arc4.UInt64(10_000),
+    #         max_requested_amount_small=arc4.UInt64(50_000),
+    #         max_requested_amount_medium=arc4.UInt64(250_000),
+    #         max_requested_amount_large=arc4.UInt64(500_000),
+    #         discussion_duration_small=arc4.UInt64(1),
+    #         discussion_duration_medium=arc4.UInt64(2),
+    #         discussion_duration_large=arc4.UInt64(3),
+    #     )
+    @subroutine
+    def get_min_requested_algo_amount(self) -> UInt64:
+        return UInt64(const.MIN_REQUESTED_ALGO_AMOUNT)
+
+    @subroutine
+    def get_max_requested_algo_amount_small(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_SMALL)
+
+    @subroutine
+    def get_max_requested_algo_amount_medium(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_MEDIUM)
+
+    @subroutine
+    def get_max_requested_algo_amount_large(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_LARGE)
+
+    # Stub subroutines end
+    ####################################################################################################################
