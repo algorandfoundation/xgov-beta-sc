@@ -115,6 +115,7 @@
                         "name": "proposer"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }
@@ -143,6 +144,7 @@
                         "name": "requested_amount"
                     }
                 ],
+                "readonly": false,
                 "returns": {
                     "type": "void"
                 }
