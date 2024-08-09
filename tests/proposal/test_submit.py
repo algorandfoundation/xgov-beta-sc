@@ -135,7 +135,7 @@ def test_submit_twice(
             signer=proposer.signer,
         ),
     )
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.submit_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
