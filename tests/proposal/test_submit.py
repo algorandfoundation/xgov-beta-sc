@@ -10,11 +10,11 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.constants import (
-    MAX_REQUESTED_ALGO_AMOUNT_LARGE,
-    MAX_REQUESTED_ALGO_AMOUNT_MEDIUM,
-    MAX_REQUESTED_ALGO_AMOUNT_SMALL,
-    MICROALGOS_TO_ALGOS,
-    MIN_REQUESTED_ALGO_AMOUNT,
+    MAX_REQUESTED_AMOUNT_LARGE,
+    MAX_REQUESTED_AMOUNT_MEDIUM,
+    MAX_REQUESTED_AMOUNT_SMALL,
+    MIN_REQUESTED_AMOUNT,
+    PROPOSAL_COMMITMENT_PERCENTAGE,
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
@@ -26,8 +26,13 @@ from smart_contracts.proposal.enums import (
     STATUS_DRAFT,
 )
 
-REQUESTED_AMOUNT = MIN_REQUESTED_ALGO_AMOUNT * MICROALGOS_TO_ALGOS
-LOCKED_AMOUNT = REQUESTED_AMOUNT // 100
+
+def get_locked_amount(requested_amount: int) -> int:
+    return PROPOSAL_COMMITMENT_PERCENTAGE * (requested_amount // 100)
+
+
+REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
+LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 logic_error_type: Type[LogicError] = LogicError
 
@@ -271,7 +276,7 @@ def test_submit_wrong_requested_amount_1(
     proposer: AddressAndSigner,
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - 1
-    locked_amount = requested_amount // 100
+    locked_amount = get_locked_amount(requested_amount)
     with pytest.raises(logic_error_type, match=err.WRONG_MIN_REQUESTED_AMOUNT):
         proposal_client.submit_proposal(
             payment=TransactionWithSigner(
@@ -300,8 +305,8 @@ def test_submit_wrong_requested_amount_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_LARGE * MICROALGOS_TO_ALGOS + 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_LARGE + 1
+    locked_amount = get_locked_amount(requested_amount)
     with pytest.raises(logic_error_type, match=err.WRONG_MAX_REQUESTED_AMOUNT):
         proposal_client.submit_proposal(
             payment=TransactionWithSigner(
@@ -475,8 +480,8 @@ def test_submit_category_small_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MIN_REQUESTED_ALGO_AMOUNT * MICROALGOS_TO_ALGOS + 1
-    locked_amount = requested_amount // 100
+    requested_amount = MIN_REQUESTED_AMOUNT + 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -507,8 +512,8 @@ def test_submit_category_small_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_SMALL * MICROALGOS_TO_ALGOS - 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_SMALL - 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -539,8 +544,8 @@ def test_submit_category_small_4(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_SMALL * MICROALGOS_TO_ALGOS
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_SMALL
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -571,8 +576,8 @@ def test_submit_category_medium_1(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_SMALL * MICROALGOS_TO_ALGOS + 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_SMALL + 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -603,8 +608,8 @@ def test_submit_category_medium_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_MEDIUM * MICROALGOS_TO_ALGOS - 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM - 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -635,8 +640,8 @@ def test_submit_category_medium_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_MEDIUM * MICROALGOS_TO_ALGOS
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -667,8 +672,8 @@ def test_submit_category_large_1(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_MEDIUM * MICROALGOS_TO_ALGOS + 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM + 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -699,8 +704,8 @@ def test_submit_category_large_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_LARGE * MICROALGOS_TO_ALGOS - 1
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_LARGE - 1
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
@@ -731,8 +736,8 @@ def test_submit_category_large_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    requested_amount = MAX_REQUESTED_ALGO_AMOUNT_LARGE * MICROALGOS_TO_ALGOS
-    locked_amount = requested_amount // 100
+    requested_amount = MAX_REQUESTED_AMOUNT_LARGE
+    locked_amount = get_locked_amount(requested_amount)
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(

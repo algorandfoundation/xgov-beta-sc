@@ -67,16 +67,10 @@ class Proposal(
         )  # Rejection votes received by xGov Voting Committee members
 
     @subroutine
-    def algos_to_microalgos(self, algos: UInt64) -> UInt64:
-        return algos * const.MICROALGOS_TO_ALGOS
-
-    @subroutine
-    def submit_authorization(self) -> bool:
-        return (
-            self.is_proposer()
-            and self.is_kyc_verified()
-            and self.status == enm.STATUS_EMPTY
-        )
+    def submit_check_authorization(self) -> None:
+        assert self.is_proposer(), err.UNAUTHORIZED
+        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
+        assert self.status == enm.STATUS_EMPTY, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def submit_input_validation(
@@ -97,21 +91,23 @@ class Proposal(
             or funding_type == enm.FUNDING_RETROACTIVE
         ), err.WRONG_FUNDING_TYPE
 
-        min_requested_algo_amount = self.get_min_requested_algo_amount()
-        max_requested_algo_amount_large = self.get_max_requested_algo_amount_large()
+        min_requested_amount = self.get_min_requested_amount()
+        max_requested_amount_large = self.get_max_requested_amount_large()
 
-        assert requested_amount >= self.algos_to_microalgos(
-            min_requested_algo_amount
-        ), err.WRONG_MIN_REQUESTED_AMOUNT
-        assert requested_amount <= self.algos_to_microalgos(
-            max_requested_algo_amount_large
+        assert requested_amount >= min_requested_amount, err.WRONG_MIN_REQUESTED_AMOUNT
+        assert (
+            requested_amount <= max_requested_amount_large
         ), err.WRONG_MAX_REQUESTED_AMOUNT
+
+    @subroutine
+    def get_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
+        return const.PROPOSAL_COMMITMENT_PERCENTAGE * (requested_amount // 100)
 
     @subroutine
     def submit_payment_validation(
         self, payment: gtxn.PaymentTransaction, requested_amount: UInt64
     ) -> None:
-        expected_lock_amount = requested_amount // 100
+        expected_lock_amount = self.get_expected_locked_amount(requested_amount)
 
         assert payment.sender == self.proposer, err.WRONG_SENDER
         assert (
@@ -121,12 +117,12 @@ class Proposal(
 
     @subroutine
     def set_category(self, requested_amount: UInt64) -> None:
-        max_requested_amount_small = self.get_max_requested_algo_amount_small()
-        max_requested_amount_medium = self.get_max_requested_algo_amount_medium()
+        max_requested_amount_small = self.get_max_requested_amount_small()
+        max_requested_amount_medium = self.get_max_requested_amount_medium()
 
-        if requested_amount <= self.algos_to_microalgos(max_requested_amount_small):
+        if requested_amount <= max_requested_amount_small:
             self.category = UInt64(enm.CATEGORY_SMALL)
-        elif requested_amount <= self.algos_to_microalgos(max_requested_amount_medium):
+        elif requested_amount <= max_requested_amount_medium:
             self.category = UInt64(enm.CATEGORY_MEDIUM)
         else:
             self.category = UInt64(enm.CATEGORY_LARGE)
@@ -141,6 +137,12 @@ class Proposal(
 
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
+        """Create a new proposal.
+
+        Args:
+            proposer (arc4.Address): Address of the proposer
+
+        """
         # assert Global.caller_application_id != 0, err.UNAUTHORIZED  # Only callable by another contract
 
         self.proposer = proposer
@@ -155,8 +157,30 @@ class Proposal(
         funding_type: UInt64,
         requested_amount: UInt64,
     ) -> None:
+        """Submit the first draft of the proposal.
 
-        assert self.submit_authorization(), err.UNAUTHORIZED
+        Args:
+            payment (gtxn.PaymentTransaction): Commitment payment transaction from the proposer to the contract
+            title (String): Proposal title, max TITLE_MAX_BYTES bytes
+            cid (typ.Cid): IPFS V1 CID
+            funding_type (UInt64): Funding type (Proactive / Retroactive)
+            requested_amount (UInt64): Requested amount in microAlgos
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
+            err.WRONG_TITLE_LENGTH: If the title length is not within the limits
+            err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
+            err.WRONG_FUNDING_TYPE: If the funding type is not FUNDING_PROACTIVE or FUNDING_RETROACTIVE
+            err.WRONG_MIN_REQUESTED_AMOUNT: If the requested amount is less than the minimum requested amount
+            err.WRONG_MAX_REQUESTED_AMOUNT: If the requested amount is more than the maximum requested amount
+            err.WRONG_SENDER: If the sender of the payment transaction is not the proposer
+            err.WRONG_RECEIVER: If the receiver of the payment transaction is not the current application address
+            err.WRONG_LOCKED_AMOUNT: If the amount in the payment transaction is not equal to the expected locked amount
+
+        """
+        self.submit_check_authorization()
 
         self.submit_input_validation(title, cid, funding_type, requested_amount)
         self.submit_payment_validation(payment, requested_amount)
@@ -166,7 +190,7 @@ class Proposal(
         self.set_category(requested_amount)
         self.funding_type = funding_type
         self.requested_amount = requested_amount
-        self.locked_amount = requested_amount // 100
+        self.locked_amount = self.get_expected_locked_amount(requested_amount)
         self.submission_ts = Global.latest_timestamp
         self.status = UInt64(enm.STATUS_DRAFT)
 
@@ -189,20 +213,20 @@ class Proposal(
     #         discussion_duration_large=arc4.UInt64(3),
     #     )
     @subroutine
-    def get_min_requested_algo_amount(self) -> UInt64:
-        return UInt64(const.MIN_REQUESTED_ALGO_AMOUNT)
+    def get_min_requested_amount(self) -> UInt64:
+        return UInt64(const.MIN_REQUESTED_AMOUNT)
 
     @subroutine
-    def get_max_requested_algo_amount_small(self) -> UInt64:
-        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_SMALL)
+    def get_max_requested_amount_small(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_AMOUNT_SMALL)
 
     @subroutine
-    def get_max_requested_algo_amount_medium(self) -> UInt64:
-        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_MEDIUM)
+    def get_max_requested_amount_medium(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_AMOUNT_MEDIUM)
 
     @subroutine
-    def get_max_requested_algo_amount_large(self) -> UInt64:
-        return UInt64(const.MAX_REQUESTED_ALGO_AMOUNT_LARGE)
+    def get_max_requested_amount_large(self) -> UInt64:
+        return UInt64(const.MAX_REQUESTED_AMOUNT_LARGE)
 
     # Stub subroutines end
     ####################################################################################################################

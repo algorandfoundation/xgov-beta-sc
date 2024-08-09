@@ -18,6 +18,9 @@ WRONG_MIN_REQUESTED_AMOUNT = (
 WRONG_MAX_REQUESTED_AMOUNT = (
     "Requested amount is more than the maximum requested amount"
 )
-WRONG_LOCKED_AMOUNT = "Locked amount is not 1% of the requested amount"
+WRONG_LOCKED_AMOUNT = "Locked amount is incorrect"
 WRONG_SENDER = "Wrong Sender"
 WRONG_RECEIVER = "Wrong Receiver"
+
+KYC_NOT_VERIFIED = "KYC is not verified"
+WRONG_PROPOSAL_STATUS = "Wrong Proposal Status"
