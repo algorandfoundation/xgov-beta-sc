@@ -10,11 +10,12 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.constants import (
-    MAX_REQUESTED_AMOUNT_LARGE,
-    MAX_REQUESTED_AMOUNT_MEDIUM,
-    MAX_REQUESTED_AMOUNT_SMALL,
-    MIN_REQUESTED_AMOUNT,
-    PROPOSAL_COMMITMENT_PERCENTAGE,
+    BPS,
+    MAX_REQUESTED_AMOUNT_LARGE,  # TODO placeholder, the actual value will be set by the registry SC
+    MAX_REQUESTED_AMOUNT_MEDIUM,  # TODO placeholder, the actual value will be set by the registry SC
+    MAX_REQUESTED_AMOUNT_SMALL,  # TODO placeholder, the actual value will be set by the registry SC
+    MIN_REQUESTED_AMOUNT,  # TODO placeholder, the actual value will be set by the registry SC
+    PROPOSAL_COMMITMENT_BPS,  # TODO placeholder, the actual value will be set by the registry SC
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
@@ -28,7 +29,7 @@ from smart_contracts.proposal.enums import (
 
 
 def get_locked_amount(requested_amount: int) -> int:
-    return PROPOSAL_COMMITMENT_PERCENTAGE * (requested_amount // 100)
+    return PROPOSAL_COMMITMENT_BPS * requested_amount // BPS
 
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT

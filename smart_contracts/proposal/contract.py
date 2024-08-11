@@ -100,8 +100,16 @@ class Proposal(
         ), err.WRONG_MAX_REQUESTED_AMOUNT
 
     @subroutine
+    def relative_to_absolute_amount(
+        self, amount: UInt64, fraction_in_bps: UInt64
+    ) -> UInt64:
+        return amount * fraction_in_bps // const.BPS
+
+    @subroutine
     def get_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
-        return const.PROPOSAL_COMMITMENT_PERCENTAGE * (requested_amount // 100)
+        return self.relative_to_absolute_amount(
+            requested_amount, UInt64(const.PROPOSAL_COMMITMENT_BPS)
+        )
 
     @subroutine
     def submit_payment_validation(
