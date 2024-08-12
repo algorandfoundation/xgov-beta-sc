@@ -6,7 +6,7 @@ CID_LENGTH: Final[int] = 59
 COMMITTEE_ID_LENGTH: Final[int] = 32
 TITLE_MAX_BYTES: Final[int] = 123
 
-BPS: Final[int] = 10000
+BPS: Final[int] = 10_000
 
 # These are placeholders, the actual values will be set by the registry SC
 # TODO delete after we have the registry SC
