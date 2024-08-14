@@ -1,7 +1,5 @@
-from typing import Type
-
 import pytest
-from algokit_utils import LogicError, TransactionParameters
+from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
@@ -10,32 +8,30 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.constants import (
-    BPS,
     MAX_REQUESTED_AMOUNT_LARGE,  # TODO placeholder, the actual value will be set by the registry SC
     MAX_REQUESTED_AMOUNT_MEDIUM,  # TODO placeholder, the actual value will be set by the registry SC
     MAX_REQUESTED_AMOUNT_SMALL,  # TODO placeholder, the actual value will be set by the registry SC
     MIN_REQUESTED_AMOUNT,  # TODO placeholder, the actual value will be set by the registry SC
-    PROPOSAL_COMMITMENT_BPS,  # TODO placeholder, the actual value will be set by the registry SC
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
     CATEGORY_LARGE,
     CATEGORY_MEDIUM,
+    CATEGORY_NULL,
     CATEGORY_SMALL,
     FUNDING_NULL,
     FUNDING_PROACTIVE,
     STATUS_DRAFT,
+    STATUS_EMPTY,
+)
+from tests.proposal.common import (
+    LOCKED_AMOUNT,
+    REQUESTED_AMOUNT,
+    get_locked_amount,
+    logic_error_type,
 )
 
-
-def get_locked_amount(requested_amount: int) -> int:
-    return PROPOSAL_COMMITMENT_BPS * requested_amount // BPS
-
-
-REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
-LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
-
-logic_error_type: Type[LogicError] = LogicError
+# TODO add tests for submit on other statuses
 
 
 def test_submit_success(
@@ -55,7 +51,7 @@ def test_submit_success(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         transaction_parameters=TransactionParameters(
@@ -67,7 +63,7 @@ def test_submit_success(
     global_state = proposal_client.get_global_state()
 
     assert global_state.title.as_str == "Test Proposal"
-    assert global_state.cid.as_bytes == b"\x00" * 59
+    assert global_state.cid.as_bytes == b"\x01" * 59
     assert global_state.submission_ts > 0
     assert global_state.finalization_ts == 0
     assert global_state.status == STATUS_DRAFT
@@ -81,6 +77,11 @@ def test_submit_success(
     assert global_state.voted_members == 0
     assert global_state.approvals == 0
     assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == LOCKED_AMOUNT
+    )
 
 
 def test_submit_not_proposer(
@@ -101,7 +102,7 @@ def test_submit_not_proposer(
                 signer=not_proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -109,6 +110,24 @@ def test_submit_not_proposer(
                 signer=not_proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_twice(
@@ -128,7 +147,7 @@ def test_submit_twice(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         transaction_parameters=TransactionParameters(
@@ -149,7 +168,7 @@ def test_submit_twice(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -157,6 +176,29 @@ def test_submit_twice(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
+    assert global_state.category == CATEGORY_SMALL
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == REQUESTED_AMOUNT
+    assert global_state.locked_amount == LOCKED_AMOUNT
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == LOCKED_AMOUNT
+    )
 
 
 def test_submit_wrong_title_1(
@@ -177,7 +219,7 @@ def test_submit_wrong_title_1(
                 signer=proposer.signer,
             ),
             title="",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -185,6 +227,24 @@ def test_submit_wrong_title_1(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_title_2(
@@ -205,7 +265,7 @@ def test_submit_wrong_title_2(
                 signer=proposer.signer,
             ),
             title="a" * (TITLE_MAX_BYTES + 1),
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -213,6 +273,24 @@ def test_submit_wrong_title_2(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_funding_type_1(
@@ -233,7 +311,7 @@ def test_submit_wrong_funding_type_1(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_NULL,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -241,6 +319,24 @@ def test_submit_wrong_funding_type_1(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_funding_type_2(
@@ -261,7 +357,7 @@ def test_submit_wrong_funding_type_2(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_NULL + 1,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -269,6 +365,24 @@ def test_submit_wrong_funding_type_2(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_requested_amount_1(
@@ -291,7 +405,7 @@ def test_submit_wrong_requested_amount_1(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=requested_amount,
             transaction_parameters=TransactionParameters(
@@ -299,6 +413,24 @@ def test_submit_wrong_requested_amount_1(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_requested_amount_2(
@@ -321,7 +453,7 @@ def test_submit_wrong_requested_amount_2(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=requested_amount,
             transaction_parameters=TransactionParameters(
@@ -329,6 +461,24 @@ def test_submit_wrong_requested_amount_2(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_payment_1(
@@ -350,7 +500,7 @@ def test_submit_wrong_payment_1(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -358,6 +508,24 @@ def test_submit_wrong_payment_1(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_payment_2(
@@ -379,7 +547,7 @@ def test_submit_wrong_payment_2(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -387,6 +555,24 @@ def test_submit_wrong_payment_2(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_payment_3(
@@ -408,7 +594,7 @@ def test_submit_wrong_payment_3(
                 signer=not_proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -416,6 +602,24 @@ def test_submit_wrong_payment_3(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_wrong_payment_4(
@@ -436,7 +640,7 @@ def test_submit_wrong_payment_4(
                 signer=proposer.signer,
             ),
             title="Test Proposal",
-            cid=b"\x00" * 59,
+            cid=b"\x01" * 59,
             funding_type=FUNDING_PROACTIVE,
             requested_amount=REQUESTED_AMOUNT,
             transaction_parameters=TransactionParameters(
@@ -444,6 +648,24 @@ def test_submit_wrong_payment_4(
                 signer=proposer.signer,
             ),
         )
+
+    global_state = proposal_client.get_global_state()
+
+    assert global_state.title.as_str == ""
+    assert global_state.cid.as_bytes == b""
+    assert global_state.submission_ts == 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_EMPTY
+    assert global_state.category == CATEGORY_NULL
+    assert global_state.funding_type == FUNDING_NULL
+    assert global_state.requested_amount == 0
+    assert global_state.locked_amount == 0
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
 
 
 def test_submit_category_small_1(
@@ -463,7 +685,7 @@ def test_submit_category_small_1(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         transaction_parameters=TransactionParameters(
@@ -473,7 +695,26 @@ def test_submit_category_small_1(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_SMALL
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == REQUESTED_AMOUNT
+    assert global_state.locked_amount == LOCKED_AMOUNT
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == LOCKED_AMOUNT
+    )
 
 
 def test_submit_category_small_2(
@@ -495,7 +736,7 @@ def test_submit_category_small_2(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -505,7 +746,26 @@ def test_submit_category_small_2(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_SMALL
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_small_3(
@@ -527,7 +787,7 @@ def test_submit_category_small_3(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -537,7 +797,26 @@ def test_submit_category_small_3(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_SMALL
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_small_4(
@@ -559,7 +838,7 @@ def test_submit_category_small_4(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -569,7 +848,26 @@ def test_submit_category_small_4(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_SMALL
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_medium_1(
@@ -591,7 +889,7 @@ def test_submit_category_medium_1(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -601,7 +899,26 @@ def test_submit_category_medium_1(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_MEDIUM
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_medium_2(
@@ -623,7 +940,7 @@ def test_submit_category_medium_2(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -633,7 +950,26 @@ def test_submit_category_medium_2(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_MEDIUM
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_medium_3(
@@ -655,7 +991,7 @@ def test_submit_category_medium_3(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -665,7 +1001,26 @@ def test_submit_category_medium_3(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_MEDIUM
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_large_1(
@@ -687,7 +1042,7 @@ def test_submit_category_large_1(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -697,7 +1052,26 @@ def test_submit_category_large_1(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_LARGE
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_large_2(
@@ -719,7 +1093,7 @@ def test_submit_category_large_2(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -729,7 +1103,26 @@ def test_submit_category_large_2(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_LARGE
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
 
 
 def test_submit_category_large_3(
@@ -751,7 +1144,7 @@ def test_submit_category_large_3(
             signer=proposer.signer,
         ),
         title="Test Proposal",
-        cid=b"\x00" * 59,
+        cid=b"\x01" * 59,
         funding_type=FUNDING_PROACTIVE,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
@@ -761,4 +1154,23 @@ def test_submit_category_large_3(
     )
 
     global_state = proposal_client.get_global_state()
+    assert global_state.title.as_str == "Test Proposal"
+    assert global_state.cid.as_bytes == b"\x01" * 59
+    assert global_state.submission_ts > 0
+    assert global_state.finalization_ts == 0
+    assert global_state.status == STATUS_DRAFT
     assert global_state.category == CATEGORY_LARGE
+    assert global_state.funding_type == FUNDING_PROACTIVE
+    assert global_state.requested_amount == requested_amount
+    assert global_state.locked_amount == locked_amount
+    assert global_state.committee_id.as_bytes == b""
+    assert global_state.committee_members == 0
+    assert global_state.committee_votes == 0
+    assert global_state.voted_members == 0
+    assert global_state.approvals == 0
+    assert global_state.rejections == 0
+
+    assert (
+        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
+        == locked_amount
+    )
