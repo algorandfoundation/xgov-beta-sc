@@ -273,13 +273,21 @@ class Proposal(
         """
         self.drop_check_authorization()
 
-        self.status = UInt64(enm.STATUS_EMPTY)
-
         itxn.Payment(
             receiver=self.proposer.native,
             amount=self.locked_amount,
             fee=UInt64(0),  # enforces the proposer to pay the fee
         ).submit()
+
+        #  Clear the proposal data TODO: check if this can be in a struct and clear the struct
+        self.title = String()
+        self.cid = typ.Cid.from_bytes(b"")
+        self.category = UInt64(enm.CATEGORY_NULL)
+        self.funding_type = UInt64(enm.FUNDING_NULL)
+        self.requested_amount = UInt64(0)
+        self.locked_amount = UInt64(0)
+        self.submission_ts = UInt64(0)
+        self.status = UInt64(enm.STATUS_EMPTY)
 
     # @arc4.abimethod()
     # def finalize_proposal(self) -> None:

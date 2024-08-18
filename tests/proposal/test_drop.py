@@ -8,11 +8,18 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.enums import (
+    CATEGORY_SMALL,
     FUNDING_PROACTIVE,
     STATUS_DRAFT,
     STATUS_EMPTY,
 )
-from tests.proposal.common import LOCKED_AMOUNT, REQUESTED_AMOUNT, logic_error_type
+from tests.proposal.common import (
+    LOCKED_AMOUNT,
+    REQUESTED_AMOUNT,
+    assert_account_balance,
+    assert_proposal_global_state,
+    logic_error_type,
+)
 
 # TODO add tests for drop on other statuses
 
@@ -62,16 +69,18 @@ def test_drop_success(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.status == STATUS_EMPTY
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == 0
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        status=STATUS_EMPTY,
     )
 
-    assert (
-        algorand_client.account.get_information(proposer.address)["amount"]  # type: ignore
-        == proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee  # type: ignore
+    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    assert_account_balance(
+        algorand_client,
+        proposer.address,
+        proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
     )
 
 
@@ -130,16 +139,18 @@ def test_drop_twice(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.status == STATUS_EMPTY
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == 0
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        status=STATUS_EMPTY,
     )
 
-    assert (
-        algorand_client.account.get_information(proposer.address)["amount"]  # type: ignore
-        == proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee  # type: ignore
+    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    assert_account_balance(
+        algorand_client,
+        proposer.address,
+        proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
     )
 
 
@@ -169,16 +180,16 @@ def test_drop_empty_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.status == STATUS_EMPTY
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == 0
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        status=STATUS_EMPTY,
     )
 
-    assert (
-        algorand_client.account.get_information(proposer.address)["amount"]  # type: ignore
-        == proposer_balance_before_drop  # type: ignore
+    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    assert_account_balance(
+        algorand_client, proposer.address, proposer_balance_before_drop  # type: ignore
     )
 
 
@@ -224,9 +235,16 @@ def test_drop_not_proposer(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.status == STATUS_DRAFT
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        status=STATUS_DRAFT,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+        category=CATEGORY_SMALL,
     )
+
+    assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)

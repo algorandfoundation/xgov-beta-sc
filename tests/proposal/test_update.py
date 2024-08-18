@@ -11,14 +11,17 @@ from smart_contracts.proposal.constants import (
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
-    CATEGORY_NULL,
     CATEGORY_SMALL,
-    FUNDING_NULL,
     FUNDING_PROACTIVE,
     STATUS_DRAFT,
-    STATUS_EMPTY,
 )
-from tests.proposal.common import LOCKED_AMOUNT, REQUESTED_AMOUNT, logic_error_type
+from tests.proposal.common import (
+    LOCKED_AMOUNT,
+    REQUESTED_AMOUNT,
+    assert_account_balance,
+    assert_proposal_global_state,
+    logic_error_type,
+)
 
 # TODO add tests for update on other statuses
 
@@ -60,26 +63,22 @@ def test_update_success(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == "Updated Test Proposal"
-    assert global_state.cid.as_bytes == b"\x02" * 59
-    assert global_state.status == STATUS_DRAFT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        title="Updated Test Proposal",
+        cid=b"\x02" * 59,
+        status=STATUS_DRAFT,
+        category=CATEGORY_SMALL,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+    )
 
-    assert global_state.submission_ts > 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_SMALL
-    assert global_state.funding_type == FUNDING_PROACTIVE
-    assert global_state.requested_amount == REQUESTED_AMOUNT
-    assert global_state.locked_amount == LOCKED_AMOUNT
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT,
     )
 
 
@@ -129,26 +128,22 @@ def test_update_twice(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == "Updated Test Proposal 2"
-    assert global_state.cid.as_bytes == b"\x03" * 59
-    assert global_state.status == STATUS_DRAFT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        title="Updated Test Proposal 2",
+        cid=b"\x03" * 59,
+        status=STATUS_DRAFT,
+        category=CATEGORY_SMALL,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+    )
 
-    assert global_state.submission_ts > 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_SMALL
-    assert global_state.funding_type == FUNDING_PROACTIVE
-    assert global_state.requested_amount == REQUESTED_AMOUNT
-    assert global_state.locked_amount == LOCKED_AMOUNT
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT,
     )
 
 
@@ -191,26 +186,22 @@ def test_update_not_proposer(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == "Test Proposal"
-    assert global_state.cid.as_bytes == b"\x01" * 59
-    assert global_state.status == STATUS_DRAFT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        status=STATUS_DRAFT,
+        category=CATEGORY_SMALL,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+    )
 
-    assert global_state.submission_ts > 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_SMALL
-    assert global_state.funding_type == FUNDING_PROACTIVE
-    assert global_state.requested_amount == REQUESTED_AMOUNT
-    assert global_state.locked_amount == LOCKED_AMOUNT
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT,
     )
 
 
@@ -232,26 +223,15 @@ def test_update_empty_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == ""
-    assert global_state.cid.as_bytes == b""
-    assert global_state.status == STATUS_EMPTY
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+    )
 
-    assert global_state.submission_ts == 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_NULL
-    assert global_state.funding_type == FUNDING_NULL
-    assert global_state.requested_amount == 0
-    assert global_state.locked_amount == 0
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == 0
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        0,
     )
 
 
@@ -293,26 +273,22 @@ def test_update_wrong_title_1(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == "Test Proposal"
-    assert global_state.cid.as_bytes == b"\x01" * 59
-    assert global_state.status == STATUS_DRAFT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        status=STATUS_DRAFT,
+        category=CATEGORY_SMALL,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+    )
 
-    assert global_state.submission_ts > 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_SMALL
-    assert global_state.funding_type == FUNDING_PROACTIVE
-    assert global_state.requested_amount == REQUESTED_AMOUNT
-    assert global_state.locked_amount == LOCKED_AMOUNT
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT,
     )
 
 
@@ -354,24 +330,20 @@ def test_update_wrong_title_2(
 
     global_state = proposal_client.get_global_state()
 
-    assert global_state.title.as_str == "Test Proposal"
-    assert global_state.cid.as_bytes == b"\x01" * 59
-    assert global_state.status == STATUS_DRAFT
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        status=STATUS_DRAFT,
+        category=CATEGORY_SMALL,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+    )
 
-    assert global_state.submission_ts > 0
-    assert global_state.finalization_ts == 0
-    assert global_state.category == CATEGORY_SMALL
-    assert global_state.funding_type == FUNDING_PROACTIVE
-    assert global_state.requested_amount == REQUESTED_AMOUNT
-    assert global_state.locked_amount == LOCKED_AMOUNT
-    assert global_state.committee_id.as_bytes == b""
-    assert global_state.committee_members == 0
-    assert global_state.committee_votes == 0
-    assert global_state.voted_members == 0
-    assert global_state.approvals == 0
-    assert global_state.rejections == 0
-
-    assert (
-        algorand_client.account.get_information(proposal_client.app_address)["amount"]  # type: ignore
-        == LOCKED_AMOUNT
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT,
     )
