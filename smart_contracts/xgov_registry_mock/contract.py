@@ -4,7 +4,6 @@ from algopy import (
     arc4,
     compile_contract,
     UInt64,
-    op,
     GlobalState,
     StateTotals,
     Txn,
