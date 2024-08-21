@@ -1,0 +1,3550 @@
+{
+  "success": false,
+  "error": null,
+  "result": [
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"unprotected-deletable\", Impact: High, Confidence: High\nDescription: Unprotected Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-deletable-application\n",
+      "check": "unprotected-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid deletable applications.\n- Add access controls to the vulnerable method.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"unprotected-updatable\", Impact: High, Confidence: High\nDescription: Unprotected Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-updatable-application\n",
+      "check": "unprotected-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid upgradable applications.\n- Add access controls to the vulnerable method.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-account\", Impact: High, Confidence: High\nDescription: Missing CloseRemainderTo field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-closeremainderto-field-validation\n",
+      "check": "can-close-account",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `CloseRemainderTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-asset\", Impact: High, Confidence: High\nDescription: Missing AssetCloseTo Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-assetcloseto-field-validation\n",
+      "check": "can-close-asset",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `AssetCloseTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"is-deletable\", Impact: High, Confidence: High\nDescription: Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#deletable-application\n",
+      "check": "is-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `DeleteApplication` type application calls.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"is-updatable\", Impact: High, Confidence: High\nDescription: Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#upgradable-application\n",
+      "check": "is-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `UpdateApplication` type application calls.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 22,
+      "description": "\nCheck: \"missing-fee-check\", Impact: High, Confidence: High\nDescription: Missing Fee Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-fee-field-validation\n",
+      "check": "missing-fee-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `Fee` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 6 -> 27 -> 7",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "35: main_create_empty_proposal_route@4:",
+              "38: txn OnCompletion",
+              "39: !",
+              "40: assert",
+              "41: txn ApplicationID",
+              "42: assert",
+              "53: txna ApplicationArgs 1",
+              "56: callsub create_empty_proposal"
+            ],
+            [
+              "321: create_empty_proposal:",
+              "325: proto 1 1",
+              "332: itxn_begin",
+              "335: int 13",
+              "336: itxn_field GlobalNumUint",
+              "337: int 5",
+              "338: itxn_field GlobalNumByteSlice",
+              "339: byte 0x0a810143",
+              "340: itxn_field ClearStateProgramPages",
+              "341: byte 0x0a200400010a14260b06737461747573000870726f706f7365720863617465676f7279057469746c65036369640d6c6f636b65645f616d6f756e740f72656769737472795f6170705f69640c66756e64696e675f74797065107265717565737465645f616d6f756e740d7375626d697373696f6e5f747331184000038802ae820404cc694eaa04f598981e0439c752f304baa25e50361a008e04000100110038004d003119144431181444361a0188004a23433119144431184431162309493810231244361a01570200361a02361a0317361a0417880033234331191444311844361a01570200361a028801ca2343311914443118448801eb23438a0100320d442a8bff672707320d67898a050088003f8bfc8bfd8bfe8bff8800568cfd8bfb8bff8800d827048bfc6727058bfd678bff88011927088bfe6727098bff678bff8800db27064c67270a320767282467898a000088000c4488001344222865441444898a0001222a6544310012898a000123898a04018bfc8bfd8800628cfd8bfe24124000078bfe251241000423420001224480186d696e696d756d5f7265717565737465645f616d6f756e74880041801e6d6178696d756d5f7265717565737465645f616d6f756e745f6c6172676588001e4c8bff0e448bff0f448bfd898a02018bfe15817b0e448bfe2913448bff898a010122270765448bff6544898a02008bff880019222a65448bfe380012448bfe3807320a12448bfe38081244898a0101801370726f706f73616c5f636f6d6d69746d656e7488ffb78bff4c880001898a02018bfe8bff0b81904e0a898a0100801e6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c88ff7d801f6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d88ff594c8bff0f4100062b24674200128bff8b000e4100062b25674200042b812167898a02008800148bfe8bff88ff1a8cff27048bfe6727058bff67898a000088fe8b4488fe924422286544241244898a0000880034b1222a65442227066544b208b20723b21022b201b327042967270529672b2267270822672709226727062267270a2267282267898a000088fe3e4422286544241244898a00003135810512443134810d124431371444313614442a320367270722672704296727052967270a2267800f66696e616c697a6174696f6e5f747322672822672b2267270822672709226727062267800c636f6d6d69747465655f696429678011636f6d6d69747465655f6d656d626572732267800f636f6d6d69747465655f766f7465732267800d766f7465645f6d656d6265727322678009617070726f76616c732267800a72656a656374696f6e73226789",
+              "342: itxn_field ApprovalProgramPages",
+              "345: method create(address)void",
+              "346: itxn_field ApplicationArgs",
+              "347: frame_dig -1",
+              "348: itxn_field ApplicationArgs",
+              "355: int appl",
+              "356: itxn_field TypeEnum",
+              "357: int 0",
+              "358: itxn_field Fee",
+              "359: itxn_submit",
+              "360: itxn CreatedApplicationID",
+              "363: retsub"
+            ],
+            [
+              "57: itob",
+              "58: byte 0x151f7c75",
+              "59: swap",
+              "60: concat",
+              "61: log",
+              "62: int 1",
+              "63: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 8 -> 28 -> 9",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "65: main_set_proposal_commitment_bps_route@5:",
+              "68: txn OnCompletion",
+              "69: !",
+              "70: assert",
+              "71: txn ApplicationID",
+              "72: assert",
+              "83: txna ApplicationArgs 1",
+              "84: btoi",
+              "87: callsub set_proposal_commitment_bps"
+            ],
+            [
+              "367: set_proposal_commitment_bps:",
+              "371: proto 1 0",
+              "374: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "377: frame_dig -1",
+              "378: app_global_put",
+              "379: retsub"
+            ],
+            [
+              "88: int 1",
+              "89: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 10 -> 29 -> 11",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "91: main_set_min_requested_amount_route@6:",
+              "94: txn OnCompletion",
+              "95: !",
+              "96: assert",
+              "97: txn ApplicationID",
+              "98: assert",
+              "109: txna ApplicationArgs 1",
+              "110: btoi",
+              "113: callsub set_min_requested_amount"
+            ],
+            [
+              "383: set_min_requested_amount:",
+              "387: proto 1 0",
+              "390: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "393: frame_dig -1",
+              "394: app_global_put",
+              "395: retsub"
+            ],
+            [
+              "114: int 1",
+              "115: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 12 -> 30 -> 13",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "117: main_set_max_requested_amount_small_route@7:",
+              "120: txn OnCompletion",
+              "121: !",
+              "122: assert",
+              "123: txn ApplicationID",
+              "124: assert",
+              "135: txna ApplicationArgs 1",
+              "136: btoi",
+              "139: callsub set_max_requested_amount_small"
+            ],
+            [
+              "399: set_max_requested_amount_small:",
+              "403: proto 1 0",
+              "406: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "409: frame_dig -1",
+              "410: app_global_put",
+              "411: retsub"
+            ],
+            [
+              "140: int 1",
+              "141: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 14 -> 31 -> 15",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "143: main_set_max_requested_amount_medium_route@8:",
+              "146: txn OnCompletion",
+              "147: !",
+              "148: assert",
+              "149: txn ApplicationID",
+              "150: assert",
+              "161: txna ApplicationArgs 1",
+              "162: btoi",
+              "165: callsub set_max_requested_amount_medium"
+            ],
+            [
+              "415: set_max_requested_amount_medium:",
+              "419: proto 1 0",
+              "422: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "425: frame_dig -1",
+              "426: app_global_put",
+              "427: retsub"
+            ],
+            [
+              "166: int 1",
+              "167: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 16 -> 32 -> 17",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "169: main_set_max_requested_amount_large_route@9:",
+              "172: txn OnCompletion",
+              "173: !",
+              "174: assert",
+              "175: txn ApplicationID",
+              "176: assert",
+              "187: txna ApplicationArgs 1",
+              "188: btoi",
+              "191: callsub set_max_requested_amount_large"
+            ],
+            [
+              "431: set_max_requested_amount_large:",
+              "435: proto 1 0",
+              "438: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "441: frame_dig -1",
+              "442: app_global_put",
+              "443: retsub"
+            ],
+            [
+              "192: int 1",
+              "193: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 18 -> 33 -> 19",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "195: main_set_publishing_fee_route@10:",
+              "198: txn OnCompletion",
+              "199: !",
+              "200: assert",
+              "201: txn ApplicationID",
+              "202: assert",
+              "213: txna ApplicationArgs 1",
+              "214: btoi",
+              "217: callsub set_publishing_fee"
+            ],
+            [
+              "447: set_publishing_fee:",
+              "451: proto 1 0",
+              "454: byte 0x7075626c697368696e675f666565",
+              "457: frame_dig -1",
+              "458: app_global_put",
+              "459: retsub"
+            ],
+            [
+              "218: int 1",
+              "219: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 20 -> 34 -> 21",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "221: main_set_discussion_duration_small_route@11:",
+              "224: txn OnCompletion",
+              "225: !",
+              "226: assert",
+              "227: txn ApplicationID",
+              "228: assert",
+              "239: txna ApplicationArgs 1",
+              "240: btoi",
+              "243: callsub set_discussion_duration_small"
+            ],
+            [
+              "463: set_discussion_duration_small:",
+              "467: proto 1 0",
+              "470: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "473: frame_dig -1",
+              "474: app_global_put",
+              "475: retsub"
+            ],
+            [
+              "244: int 1",
+              "245: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 22 -> 35 -> 23",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "247: main_set_discussion_duration_medium_route@12:",
+              "250: txn OnCompletion",
+              "251: !",
+              "252: assert",
+              "253: txn ApplicationID",
+              "254: assert",
+              "265: txna ApplicationArgs 1",
+              "266: btoi",
+              "269: callsub set_discussion_duration_medium"
+            ],
+            [
+              "479: set_discussion_duration_medium:",
+              "483: proto 1 0",
+              "486: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "489: frame_dig -1",
+              "490: app_global_put",
+              "491: retsub"
+            ],
+            [
+              "270: int 1",
+              "271: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 24 -> 36 -> 25",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "273: main_set_discussion_duration_large_route@13:",
+              "276: txn OnCompletion",
+              "277: !",
+              "278: assert",
+              "279: txn ApplicationID",
+              "280: assert",
+              "291: txna ApplicationArgs 1",
+              "292: btoi",
+              "295: callsub set_discussion_duration_large"
+            ],
+            [
+              "495: set_discussion_duration_large:",
+              "499: proto 1 0",
+              "502: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "505: frame_dig -1",
+              "506: app_global_put",
+              "507: retsub"
+            ],
+            [
+              "296: int 1",
+              "297: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 26",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "299: main_bare_routing@16:",
+              "310: txn OnCompletion",
+              "311: !",
+              "312: assert",
+              "313: txn ApplicationID",
+              "314: !",
+              "315: assert",
+              "316: int 1",
+              "317: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 27 -> 7",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "35: main_create_empty_proposal_route@4:",
+              "38: txn OnCompletion",
+              "39: !",
+              "40: assert",
+              "41: txn ApplicationID",
+              "42: assert",
+              "53: txna ApplicationArgs 1",
+              "56: callsub create_empty_proposal"
+            ],
+            [
+              "321: create_empty_proposal:",
+              "325: proto 1 1",
+              "332: itxn_begin",
+              "335: int 13",
+              "336: itxn_field GlobalNumUint",
+              "337: int 5",
+              "338: itxn_field GlobalNumByteSlice",
+              "339: byte 0x0a810143",
+              "340: itxn_field ClearStateProgramPages",
+              "341: byte 0x0a200400010a14260b06737461747573000870726f706f7365720863617465676f7279057469746c65036369640d6c6f636b65645f616d6f756e740f72656769737472795f6170705f69640c66756e64696e675f74797065107265717565737465645f616d6f756e740d7375626d697373696f6e5f747331184000038802ae820404cc694eaa04f598981e0439c752f304baa25e50361a008e04000100110038004d003119144431181444361a0188004a23433119144431184431162309493810231244361a01570200361a02361a0317361a0417880033234331191444311844361a01570200361a028801ca2343311914443118448801eb23438a0100320d442a8bff672707320d67898a050088003f8bfc8bfd8bfe8bff8800568cfd8bfb8bff8800d827048bfc6727058bfd678bff88011927088bfe6727098bff678bff8800db27064c67270a320767282467898a000088000c4488001344222865441444898a0001222a6544310012898a000123898a04018bfc8bfd8800628cfd8bfe24124000078bfe251241000423420001224480186d696e696d756d5f7265717565737465645f616d6f756e74880041801e6d6178696d756d5f7265717565737465645f616d6f756e745f6c6172676588001e4c8bff0e448bff0f448bfd898a02018bfe15817b0e448bfe2913448bff898a010122270765448bff6544898a02008bff880019222a65448bfe380012448bfe3807320a12448bfe38081244898a0101801370726f706f73616c5f636f6d6d69746d656e7488ffb78bff4c880001898a02018bfe8bff0b81904e0a898a0100801e6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c88ff7d801f6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d88ff594c8bff0f4100062b24674200128bff8b000e4100062b25674200042b812167898a02008800148bfe8bff88ff1a8cff27048bfe6727058bff67898a000088fe8b4488fe924422286544241244898a0000880034b1222a65442227066544b208b20723b21022b201b327042967270529672b2267270822672709226727062267270a2267282267898a000088fe3e4422286544241244898a00003135810512443134810d124431371444313614442a320367270722672704296727052967270a2267800f66696e616c697a6174696f6e5f747322672822672b2267270822672709226727062267800c636f6d6d69747465655f696429678011636f6d6d69747465655f6d656d626572732267800f636f6d6d69747465655f766f7465732267800d766f7465645f6d656d6265727322678009617070726f76616c732267800a72656a656374696f6e73226789",
+              "342: itxn_field ApprovalProgramPages",
+              "345: method create(address)void",
+              "346: itxn_field ApplicationArgs",
+              "347: frame_dig -1",
+              "348: itxn_field ApplicationArgs",
+              "355: int appl",
+              "356: itxn_field TypeEnum",
+              "357: int 0",
+              "358: itxn_field Fee",
+              "359: itxn_submit",
+              "360: itxn CreatedApplicationID",
+              "363: retsub"
+            ],
+            [
+              "57: itob",
+              "58: byte 0x151f7c75",
+              "59: swap",
+              "60: concat",
+              "61: log",
+              "62: int 1",
+              "63: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 28 -> 9",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "65: main_set_proposal_commitment_bps_route@5:",
+              "68: txn OnCompletion",
+              "69: !",
+              "70: assert",
+              "71: txn ApplicationID",
+              "72: assert",
+              "83: txna ApplicationArgs 1",
+              "84: btoi",
+              "87: callsub set_proposal_commitment_bps"
+            ],
+            [
+              "367: set_proposal_commitment_bps:",
+              "371: proto 1 0",
+              "374: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "377: frame_dig -1",
+              "378: app_global_put",
+              "379: retsub"
+            ],
+            [
+              "88: int 1",
+              "89: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 10 -> 29 -> 11",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "91: main_set_min_requested_amount_route@6:",
+              "94: txn OnCompletion",
+              "95: !",
+              "96: assert",
+              "97: txn ApplicationID",
+              "98: assert",
+              "109: txna ApplicationArgs 1",
+              "110: btoi",
+              "113: callsub set_min_requested_amount"
+            ],
+            [
+              "383: set_min_requested_amount:",
+              "387: proto 1 0",
+              "390: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "393: frame_dig -1",
+              "394: app_global_put",
+              "395: retsub"
+            ],
+            [
+              "114: int 1",
+              "115: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 12 -> 30 -> 13",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "117: main_set_max_requested_amount_small_route@7:",
+              "120: txn OnCompletion",
+              "121: !",
+              "122: assert",
+              "123: txn ApplicationID",
+              "124: assert",
+              "135: txna ApplicationArgs 1",
+              "136: btoi",
+              "139: callsub set_max_requested_amount_small"
+            ],
+            [
+              "399: set_max_requested_amount_small:",
+              "403: proto 1 0",
+              "406: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "409: frame_dig -1",
+              "410: app_global_put",
+              "411: retsub"
+            ],
+            [
+              "140: int 1",
+              "141: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 14 -> 31 -> 15",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "143: main_set_max_requested_amount_medium_route@8:",
+              "146: txn OnCompletion",
+              "147: !",
+              "148: assert",
+              "149: txn ApplicationID",
+              "150: assert",
+              "161: txna ApplicationArgs 1",
+              "162: btoi",
+              "165: callsub set_max_requested_amount_medium"
+            ],
+            [
+              "415: set_max_requested_amount_medium:",
+              "419: proto 1 0",
+              "422: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "425: frame_dig -1",
+              "426: app_global_put",
+              "427: retsub"
+            ],
+            [
+              "166: int 1",
+              "167: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 16 -> 32 -> 17",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "169: main_set_max_requested_amount_large_route@9:",
+              "172: txn OnCompletion",
+              "173: !",
+              "174: assert",
+              "175: txn ApplicationID",
+              "176: assert",
+              "187: txna ApplicationArgs 1",
+              "188: btoi",
+              "191: callsub set_max_requested_amount_large"
+            ],
+            [
+              "431: set_max_requested_amount_large:",
+              "435: proto 1 0",
+              "438: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "441: frame_dig -1",
+              "442: app_global_put",
+              "443: retsub"
+            ],
+            [
+              "192: int 1",
+              "193: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 18 -> 33 -> 19",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "195: main_set_publishing_fee_route@10:",
+              "198: txn OnCompletion",
+              "199: !",
+              "200: assert",
+              "201: txn ApplicationID",
+              "202: assert",
+              "213: txna ApplicationArgs 1",
+              "214: btoi",
+              "217: callsub set_publishing_fee"
+            ],
+            [
+              "447: set_publishing_fee:",
+              "451: proto 1 0",
+              "454: byte 0x7075626c697368696e675f666565",
+              "457: frame_dig -1",
+              "458: app_global_put",
+              "459: retsub"
+            ],
+            [
+              "218: int 1",
+              "219: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 20 -> 34 -> 21",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "221: main_set_discussion_duration_small_route@11:",
+              "224: txn OnCompletion",
+              "225: !",
+              "226: assert",
+              "227: txn ApplicationID",
+              "228: assert",
+              "239: txna ApplicationArgs 1",
+              "240: btoi",
+              "243: callsub set_discussion_duration_small"
+            ],
+            [
+              "463: set_discussion_duration_small:",
+              "467: proto 1 0",
+              "470: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "473: frame_dig -1",
+              "474: app_global_put",
+              "475: retsub"
+            ],
+            [
+              "244: int 1",
+              "245: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 22 -> 35 -> 23",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "247: main_set_discussion_duration_medium_route@12:",
+              "250: txn OnCompletion",
+              "251: !",
+              "252: assert",
+              "253: txn ApplicationID",
+              "254: assert",
+              "265: txna ApplicationArgs 1",
+              "266: btoi",
+              "269: callsub set_discussion_duration_medium"
+            ],
+            [
+              "479: set_discussion_duration_medium:",
+              "483: proto 1 0",
+              "486: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "489: frame_dig -1",
+              "490: app_global_put",
+              "491: retsub"
+            ],
+            [
+              "270: int 1",
+              "271: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 24 -> 36 -> 25",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "273: main_set_discussion_duration_large_route@13:",
+              "276: txn OnCompletion",
+              "277: !",
+              "278: assert",
+              "279: txn ApplicationID",
+              "280: assert",
+              "291: txna ApplicationArgs 1",
+              "292: btoi",
+              "295: callsub set_discussion_duration_large"
+            ],
+            [
+              "495: set_discussion_duration_large:",
+              "499: proto 1 0",
+              "502: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "505: frame_dig -1",
+              "506: app_global_put",
+              "507: retsub"
+            ],
+            [
+              "296: int 1",
+              "297: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 26",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "299: main_bare_routing@16:",
+              "310: txn OnCompletion",
+              "311: !",
+              "312: assert",
+              "313: txn ApplicationID",
+              "314: !",
+              "315: assert",
+              "316: int 1",
+              "317: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"group-size-check\", Impact: High, Confidence: High\nDescription: Usage of absolute indexes without validating GroupSize\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-groupsize-validation\n",
+      "check": "group-size-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid using absolute indexes. Validate GroupSize if used.\n- Favor using ARC-4 ABI and relative indexes for group transactions.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 22,
+      "description": "\nCheck: \"rekey-to\", Impact: High, Confidence: High\nDescription: Rekeyable Logic Signatures\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#rekeyable-logicsig\n",
+      "check": "rekey-to",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `RekeyTo` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 6 -> 27 -> 7",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "35: main_create_empty_proposal_route@4:",
+              "38: txn OnCompletion",
+              "39: !",
+              "40: assert",
+              "41: txn ApplicationID",
+              "42: assert",
+              "53: txna ApplicationArgs 1",
+              "56: callsub create_empty_proposal"
+            ],
+            [
+              "321: create_empty_proposal:",
+              "325: proto 1 1",
+              "332: itxn_begin",
+              "335: int 13",
+              "336: itxn_field GlobalNumUint",
+              "337: int 5",
+              "338: itxn_field GlobalNumByteSlice",
+              "339: byte 0x0a810143",
+              "340: itxn_field ClearStateProgramPages",
+              "341: byte 0x0a200400010a14260b06737461747573000870726f706f7365720863617465676f7279057469746c65036369640d6c6f636b65645f616d6f756e740f72656769737472795f6170705f69640c66756e64696e675f74797065107265717565737465645f616d6f756e740d7375626d697373696f6e5f747331184000038802ae820404cc694eaa04f598981e0439c752f304baa25e50361a008e04000100110038004d003119144431181444361a0188004a23433119144431184431162309493810231244361a01570200361a02361a0317361a0417880033234331191444311844361a01570200361a028801ca2343311914443118448801eb23438a0100320d442a8bff672707320d67898a050088003f8bfc8bfd8bfe8bff8800568cfd8bfb8bff8800d827048bfc6727058bfd678bff88011927088bfe6727098bff678bff8800db27064c67270a320767282467898a000088000c4488001344222865441444898a0001222a6544310012898a000123898a04018bfc8bfd8800628cfd8bfe24124000078bfe251241000423420001224480186d696e696d756d5f7265717565737465645f616d6f756e74880041801e6d6178696d756d5f7265717565737465645f616d6f756e745f6c6172676588001e4c8bff0e448bff0f448bfd898a02018bfe15817b0e448bfe2913448bff898a010122270765448bff6544898a02008bff880019222a65448bfe380012448bfe3807320a12448bfe38081244898a0101801370726f706f73616c5f636f6d6d69746d656e7488ffb78bff4c880001898a02018bfe8bff0b81904e0a898a0100801e6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c88ff7d801f6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d88ff594c8bff0f4100062b24674200128bff8b000e4100062b25674200042b812167898a02008800148bfe8bff88ff1a8cff27048bfe6727058bff67898a000088fe8b4488fe924422286544241244898a0000880034b1222a65442227066544b208b20723b21022b201b327042967270529672b2267270822672709226727062267270a2267282267898a000088fe3e4422286544241244898a00003135810512443134810d124431371444313614442a320367270722672704296727052967270a2267800f66696e616c697a6174696f6e5f747322672822672b2267270822672709226727062267800c636f6d6d69747465655f696429678011636f6d6d69747465655f6d656d626572732267800f636f6d6d69747465655f766f7465732267800d766f7465645f6d656d6265727322678009617070726f76616c732267800a72656a656374696f6e73226789",
+              "342: itxn_field ApprovalProgramPages",
+              "345: method create(address)void",
+              "346: itxn_field ApplicationArgs",
+              "347: frame_dig -1",
+              "348: itxn_field ApplicationArgs",
+              "355: int appl",
+              "356: itxn_field TypeEnum",
+              "357: int 0",
+              "358: itxn_field Fee",
+              "359: itxn_submit",
+              "360: itxn CreatedApplicationID",
+              "363: retsub"
+            ],
+            [
+              "57: itob",
+              "58: byte 0x151f7c75",
+              "59: swap",
+              "60: concat",
+              "61: log",
+              "62: int 1",
+              "63: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 8 -> 28 -> 9",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "65: main_set_proposal_commitment_bps_route@5:",
+              "68: txn OnCompletion",
+              "69: !",
+              "70: assert",
+              "71: txn ApplicationID",
+              "72: assert",
+              "83: txna ApplicationArgs 1",
+              "84: btoi",
+              "87: callsub set_proposal_commitment_bps"
+            ],
+            [
+              "367: set_proposal_commitment_bps:",
+              "371: proto 1 0",
+              "374: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "377: frame_dig -1",
+              "378: app_global_put",
+              "379: retsub"
+            ],
+            [
+              "88: int 1",
+              "89: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 10 -> 29 -> 11",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "91: main_set_min_requested_amount_route@6:",
+              "94: txn OnCompletion",
+              "95: !",
+              "96: assert",
+              "97: txn ApplicationID",
+              "98: assert",
+              "109: txna ApplicationArgs 1",
+              "110: btoi",
+              "113: callsub set_min_requested_amount"
+            ],
+            [
+              "383: set_min_requested_amount:",
+              "387: proto 1 0",
+              "390: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "393: frame_dig -1",
+              "394: app_global_put",
+              "395: retsub"
+            ],
+            [
+              "114: int 1",
+              "115: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 12 -> 30 -> 13",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "117: main_set_max_requested_amount_small_route@7:",
+              "120: txn OnCompletion",
+              "121: !",
+              "122: assert",
+              "123: txn ApplicationID",
+              "124: assert",
+              "135: txna ApplicationArgs 1",
+              "136: btoi",
+              "139: callsub set_max_requested_amount_small"
+            ],
+            [
+              "399: set_max_requested_amount_small:",
+              "403: proto 1 0",
+              "406: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "409: frame_dig -1",
+              "410: app_global_put",
+              "411: retsub"
+            ],
+            [
+              "140: int 1",
+              "141: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 14 -> 31 -> 15",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "143: main_set_max_requested_amount_medium_route@8:",
+              "146: txn OnCompletion",
+              "147: !",
+              "148: assert",
+              "149: txn ApplicationID",
+              "150: assert",
+              "161: txna ApplicationArgs 1",
+              "162: btoi",
+              "165: callsub set_max_requested_amount_medium"
+            ],
+            [
+              "415: set_max_requested_amount_medium:",
+              "419: proto 1 0",
+              "422: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "425: frame_dig -1",
+              "426: app_global_put",
+              "427: retsub"
+            ],
+            [
+              "166: int 1",
+              "167: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 16 -> 32 -> 17",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "169: main_set_max_requested_amount_large_route@9:",
+              "172: txn OnCompletion",
+              "173: !",
+              "174: assert",
+              "175: txn ApplicationID",
+              "176: assert",
+              "187: txna ApplicationArgs 1",
+              "188: btoi",
+              "191: callsub set_max_requested_amount_large"
+            ],
+            [
+              "431: set_max_requested_amount_large:",
+              "435: proto 1 0",
+              "438: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "441: frame_dig -1",
+              "442: app_global_put",
+              "443: retsub"
+            ],
+            [
+              "192: int 1",
+              "193: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 18 -> 33 -> 19",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "195: main_set_publishing_fee_route@10:",
+              "198: txn OnCompletion",
+              "199: !",
+              "200: assert",
+              "201: txn ApplicationID",
+              "202: assert",
+              "213: txna ApplicationArgs 1",
+              "214: btoi",
+              "217: callsub set_publishing_fee"
+            ],
+            [
+              "447: set_publishing_fee:",
+              "451: proto 1 0",
+              "454: byte 0x7075626c697368696e675f666565",
+              "457: frame_dig -1",
+              "458: app_global_put",
+              "459: retsub"
+            ],
+            [
+              "218: int 1",
+              "219: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 20 -> 34 -> 21",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "221: main_set_discussion_duration_small_route@11:",
+              "224: txn OnCompletion",
+              "225: !",
+              "226: assert",
+              "227: txn ApplicationID",
+              "228: assert",
+              "239: txna ApplicationArgs 1",
+              "240: btoi",
+              "243: callsub set_discussion_duration_small"
+            ],
+            [
+              "463: set_discussion_duration_small:",
+              "467: proto 1 0",
+              "470: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "473: frame_dig -1",
+              "474: app_global_put",
+              "475: retsub"
+            ],
+            [
+              "244: int 1",
+              "245: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 22 -> 35 -> 23",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "247: main_set_discussion_duration_medium_route@12:",
+              "250: txn OnCompletion",
+              "251: !",
+              "252: assert",
+              "253: txn ApplicationID",
+              "254: assert",
+              "265: txna ApplicationArgs 1",
+              "266: btoi",
+              "269: callsub set_discussion_duration_medium"
+            ],
+            [
+              "479: set_discussion_duration_medium:",
+              "483: proto 1 0",
+              "486: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "489: frame_dig -1",
+              "490: app_global_put",
+              "491: retsub"
+            ],
+            [
+              "270: int 1",
+              "271: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 4 -> 24 -> 36 -> 25",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "273: main_set_discussion_duration_large_route@13:",
+              "276: txn OnCompletion",
+              "277: !",
+              "278: assert",
+              "279: txn ApplicationID",
+              "280: assert",
+              "291: txna ApplicationArgs 1",
+              "292: btoi",
+              "295: callsub set_discussion_duration_large"
+            ],
+            [
+              "495: set_discussion_duration_large:",
+              "499: proto 1 0",
+              "502: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "505: frame_dig -1",
+              "506: app_global_put",
+              "507: retsub"
+            ],
+            [
+              "296: int 1",
+              "297: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 37 -> 3 -> 26",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "511: __init__:",
+              "514: proto 0 0",
+              "518: txn GlobalNumByteSlice",
+              "519: !",
+              "520: assert",
+              "523: txn GlobalNumUint",
+              "524: int 9",
+              "525: ==",
+              "526: assert",
+              "529: txn LocalNumByteSlice",
+              "530: !",
+              "531: assert",
+              "534: txn LocalNumUint",
+              "535: !",
+              "536: assert",
+              "539: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "542: int 100",
+              "548: app_global_put",
+              "551: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "554: int 10000000000",
+              "560: app_global_put",
+              "563: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "566: int 50000000000",
+              "572: app_global_put",
+              "575: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "578: int 250000000000",
+              "584: app_global_put",
+              "587: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "590: int 500000000000",
+              "596: app_global_put",
+              "599: byte 0x7075626c697368696e675f666565",
+              "602: int 5000000",
+              "608: app_global_put",
+              "611: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "614: int 604800",
+              "620: app_global_put",
+              "623: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "626: int 1209600",
+              "632: app_global_put",
+              "635: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "638: int 1814400",
+              "644: app_global_put",
+              "645: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "299: main_bare_routing@16:",
+              "310: txn OnCompletion",
+              "311: !",
+              "312: assert",
+              "313: txn ApplicationID",
+              "314: !",
+              "315: assert",
+              "316: int 1",
+              "317: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 27 -> 7",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "35: main_create_empty_proposal_route@4:",
+              "38: txn OnCompletion",
+              "39: !",
+              "40: assert",
+              "41: txn ApplicationID",
+              "42: assert",
+              "53: txna ApplicationArgs 1",
+              "56: callsub create_empty_proposal"
+            ],
+            [
+              "321: create_empty_proposal:",
+              "325: proto 1 1",
+              "332: itxn_begin",
+              "335: int 13",
+              "336: itxn_field GlobalNumUint",
+              "337: int 5",
+              "338: itxn_field GlobalNumByteSlice",
+              "339: byte 0x0a810143",
+              "340: itxn_field ClearStateProgramPages",
+              "341: byte 0x0a200400010a14260b06737461747573000870726f706f7365720863617465676f7279057469746c65036369640d6c6f636b65645f616d6f756e740f72656769737472795f6170705f69640c66756e64696e675f74797065107265717565737465645f616d6f756e740d7375626d697373696f6e5f747331184000038802ae820404cc694eaa04f598981e0439c752f304baa25e50361a008e04000100110038004d003119144431181444361a0188004a23433119144431184431162309493810231244361a01570200361a02361a0317361a0417880033234331191444311844361a01570200361a028801ca2343311914443118448801eb23438a0100320d442a8bff672707320d67898a050088003f8bfc8bfd8bfe8bff8800568cfd8bfb8bff8800d827048bfc6727058bfd678bff88011927088bfe6727098bff678bff8800db27064c67270a320767282467898a000088000c4488001344222865441444898a0001222a6544310012898a000123898a04018bfc8bfd8800628cfd8bfe24124000078bfe251241000423420001224480186d696e696d756d5f7265717565737465645f616d6f756e74880041801e6d6178696d756d5f7265717565737465645f616d6f756e745f6c6172676588001e4c8bff0e448bff0f448bfd898a02018bfe15817b0e448bfe2913448bff898a010122270765448bff6544898a02008bff880019222a65448bfe380012448bfe3807320a12448bfe38081244898a0101801370726f706f73616c5f636f6d6d69746d656e7488ffb78bff4c880001898a02018bfe8bff0b81904e0a898a0100801e6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c88ff7d801f6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d88ff594c8bff0f4100062b24674200128bff8b000e4100062b25674200042b812167898a02008800148bfe8bff88ff1a8cff27048bfe6727058bff67898a000088fe8b4488fe924422286544241244898a0000880034b1222a65442227066544b208b20723b21022b201b327042967270529672b2267270822672709226727062267270a2267282267898a000088fe3e4422286544241244898a00003135810512443134810d124431371444313614442a320367270722672704296727052967270a2267800f66696e616c697a6174696f6e5f747322672822672b2267270822672709226727062267800c636f6d6d69747465655f696429678011636f6d6d69747465655f6d656d626572732267800f636f6d6d69747465655f766f7465732267800d766f7465645f6d656d6265727322678009617070726f76616c732267800a72656a656374696f6e73226789",
+              "342: itxn_field ApprovalProgramPages",
+              "345: method create(address)void",
+              "346: itxn_field ApplicationArgs",
+              "347: frame_dig -1",
+              "348: itxn_field ApplicationArgs",
+              "355: int appl",
+              "356: itxn_field TypeEnum",
+              "357: int 0",
+              "358: itxn_field Fee",
+              "359: itxn_submit",
+              "360: itxn CreatedApplicationID",
+              "363: retsub"
+            ],
+            [
+              "57: itob",
+              "58: byte 0x151f7c75",
+              "59: swap",
+              "60: concat",
+              "61: log",
+              "62: int 1",
+              "63: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 28 -> 9",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "65: main_set_proposal_commitment_bps_route@5:",
+              "68: txn OnCompletion",
+              "69: !",
+              "70: assert",
+              "71: txn ApplicationID",
+              "72: assert",
+              "83: txna ApplicationArgs 1",
+              "84: btoi",
+              "87: callsub set_proposal_commitment_bps"
+            ],
+            [
+              "367: set_proposal_commitment_bps:",
+              "371: proto 1 0",
+              "374: byte 0x70726f706f73616c5f636f6d6d69746d656e74",
+              "377: frame_dig -1",
+              "378: app_global_put",
+              "379: retsub"
+            ],
+            [
+              "88: int 1",
+              "89: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 10 -> 29 -> 11",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "91: main_set_min_requested_amount_route@6:",
+              "94: txn OnCompletion",
+              "95: !",
+              "96: assert",
+              "97: txn ApplicationID",
+              "98: assert",
+              "109: txna ApplicationArgs 1",
+              "110: btoi",
+              "113: callsub set_min_requested_amount"
+            ],
+            [
+              "383: set_min_requested_amount:",
+              "387: proto 1 0",
+              "390: byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74",
+              "393: frame_dig -1",
+              "394: app_global_put",
+              "395: retsub"
+            ],
+            [
+              "114: int 1",
+              "115: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 12 -> 30 -> 13",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "117: main_set_max_requested_amount_small_route@7:",
+              "120: txn OnCompletion",
+              "121: !",
+              "122: assert",
+              "123: txn ApplicationID",
+              "124: assert",
+              "135: txna ApplicationArgs 1",
+              "136: btoi",
+              "139: callsub set_max_requested_amount_small"
+            ],
+            [
+              "399: set_max_requested_amount_small:",
+              "403: proto 1 0",
+              "406: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c",
+              "409: frame_dig -1",
+              "410: app_global_put",
+              "411: retsub"
+            ],
+            [
+              "140: int 1",
+              "141: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 14 -> 31 -> 15",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "143: main_set_max_requested_amount_medium_route@8:",
+              "146: txn OnCompletion",
+              "147: !",
+              "148: assert",
+              "149: txn ApplicationID",
+              "150: assert",
+              "161: txna ApplicationArgs 1",
+              "162: btoi",
+              "165: callsub set_max_requested_amount_medium"
+            ],
+            [
+              "415: set_max_requested_amount_medium:",
+              "419: proto 1 0",
+              "422: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d",
+              "425: frame_dig -1",
+              "426: app_global_put",
+              "427: retsub"
+            ],
+            [
+              "166: int 1",
+              "167: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 16 -> 32 -> 17",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "169: main_set_max_requested_amount_large_route@9:",
+              "172: txn OnCompletion",
+              "173: !",
+              "174: assert",
+              "175: txn ApplicationID",
+              "176: assert",
+              "187: txna ApplicationArgs 1",
+              "188: btoi",
+              "191: callsub set_max_requested_amount_large"
+            ],
+            [
+              "431: set_max_requested_amount_large:",
+              "435: proto 1 0",
+              "438: byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765",
+              "441: frame_dig -1",
+              "442: app_global_put",
+              "443: retsub"
+            ],
+            [
+              "192: int 1",
+              "193: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 18 -> 33 -> 19",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "195: main_set_publishing_fee_route@10:",
+              "198: txn OnCompletion",
+              "199: !",
+              "200: assert",
+              "201: txn ApplicationID",
+              "202: assert",
+              "213: txna ApplicationArgs 1",
+              "214: btoi",
+              "217: callsub set_publishing_fee"
+            ],
+            [
+              "447: set_publishing_fee:",
+              "451: proto 1 0",
+              "454: byte 0x7075626c697368696e675f666565",
+              "457: frame_dig -1",
+              "458: app_global_put",
+              "459: retsub"
+            ],
+            [
+              "218: int 1",
+              "219: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 20 -> 34 -> 21",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "221: main_set_discussion_duration_small_route@11:",
+              "224: txn OnCompletion",
+              "225: !",
+              "226: assert",
+              "227: txn ApplicationID",
+              "228: assert",
+              "239: txna ApplicationArgs 1",
+              "240: btoi",
+              "243: callsub set_discussion_duration_small"
+            ],
+            [
+              "463: set_discussion_duration_small:",
+              "467: proto 1 0",
+              "470: byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+              "473: frame_dig -1",
+              "474: app_global_put",
+              "475: retsub"
+            ],
+            [
+              "244: int 1",
+              "245: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 22 -> 35 -> 23",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "247: main_set_discussion_duration_medium_route@12:",
+              "250: txn OnCompletion",
+              "251: !",
+              "252: assert",
+              "253: txn ApplicationID",
+              "254: assert",
+              "265: txna ApplicationArgs 1",
+              "266: btoi",
+              "269: callsub set_discussion_duration_medium"
+            ],
+            [
+              "479: set_discussion_duration_medium:",
+              "483: proto 1 0",
+              "486: byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+              "489: frame_dig -1",
+              "490: app_global_put",
+              "491: retsub"
+            ],
+            [
+              "270: int 1",
+              "271: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 24 -> 36 -> 25",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "21: method create_empty_proposal(address)uint64",
+              "22: method set_proposal_commitment_bps(uint64)void",
+              "23: method set_min_requested_amount(uint64)void",
+              "24: method set_max_requested_amount_small(uint64)void",
+              "25: method set_max_requested_amount_medium(uint64)void",
+              "26: method set_max_requested_amount_large(uint64)void",
+              "27: method set_publishing_fee(uint64)void",
+              "28: method set_discussion_duration_small(uint64)void",
+              "29: method set_discussion_duration_medium(uint64)void",
+              "30: method set_discussion_duration_large(uint64)void",
+              "31: txna ApplicationArgs 0",
+              "32: match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13"
+            ],
+            [
+              "273: main_set_discussion_duration_large_route@13:",
+              "276: txn OnCompletion",
+              "277: !",
+              "278: assert",
+              "279: txn ApplicationID",
+              "280: assert",
+              "291: txna ApplicationArgs 1",
+              "292: btoi",
+              "295: callsub set_discussion_duration_large"
+            ],
+            [
+              "495: set_discussion_duration_large:",
+              "499: proto 1 0",
+              "502: byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+              "505: frame_dig -1",
+              "506: app_global_put",
+              "507: retsub"
+            ],
+            [
+              "296: int 1",
+              "297: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 26",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "19: txn NumAppArgs",
+              "20: bz main_bare_routing@16"
+            ],
+            [
+              "299: main_bare_routing@16:",
+              "310: txn OnCompletion",
+              "311: !",
+              "312: assert",
+              "313: txn ApplicationID",
+              "314: !",
+              "315: assert",
+              "316: int 1",
+              "317: return"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

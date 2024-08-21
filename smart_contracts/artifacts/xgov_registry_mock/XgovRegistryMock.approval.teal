@@ -1,0 +1,645 @@
+#pragma version 10
+
+smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program:
+    txn ApplicationID
+    bnz main_entrypoint@2
+    callsub __init__
+
+main_entrypoint@2:
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txn NumAppArgs
+    bz main_bare_routing@16
+    method "create_empty_proposal(address)uint64"
+    method "set_proposal_commitment_bps(uint64)void"
+    method "set_min_requested_amount(uint64)void"
+    method "set_max_requested_amount_small(uint64)void"
+    method "set_max_requested_amount_medium(uint64)void"
+    method "set_max_requested_amount_large(uint64)void"
+    method "set_publishing_fee(uint64)void"
+    method "set_discussion_duration_small(uint64)void"
+    method "set_discussion_duration_medium(uint64)void"
+    method "set_discussion_duration_large(uint64)void"
+    txna ApplicationArgs 0
+    match main_create_empty_proposal_route@4 main_set_proposal_commitment_bps_route@5 main_set_min_requested_amount_route@6 main_set_max_requested_amount_small_route@7 main_set_max_requested_amount_medium_route@8 main_set_max_requested_amount_large_route@9 main_set_publishing_fee_route@10 main_set_discussion_duration_small_route@11 main_set_discussion_duration_medium_route@12 main_set_discussion_duration_large_route@13
+    err // reject transaction
+
+main_create_empty_proposal_route@4:
+    // smart_contracts/xgov_registry_mock/contract.py:65
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    // smart_contracts/xgov_registry_mock/contract.py:65
+    // @arc4.abimethod()
+    callsub create_empty_proposal
+    itob
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    return
+
+main_set_proposal_commitment_bps_route@5:
+    // smart_contracts/xgov_registry_mock/contract.py:86
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:86
+    // @arc4.abimethod()
+    callsub set_proposal_commitment_bps
+    int 1
+    return
+
+main_set_min_requested_amount_route@6:
+    // smart_contracts/xgov_registry_mock/contract.py:97
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:97
+    // @arc4.abimethod()
+    callsub set_min_requested_amount
+    int 1
+    return
+
+main_set_max_requested_amount_small_route@7:
+    // smart_contracts/xgov_registry_mock/contract.py:108
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:108
+    // @arc4.abimethod()
+    callsub set_max_requested_amount_small
+    int 1
+    return
+
+main_set_max_requested_amount_medium_route@8:
+    // smart_contracts/xgov_registry_mock/contract.py:119
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:119
+    // @arc4.abimethod()
+    callsub set_max_requested_amount_medium
+    int 1
+    return
+
+main_set_max_requested_amount_large_route@9:
+    // smart_contracts/xgov_registry_mock/contract.py:130
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:130
+    // @arc4.abimethod()
+    callsub set_max_requested_amount_large
+    int 1
+    return
+
+main_set_publishing_fee_route@10:
+    // smart_contracts/xgov_registry_mock/contract.py:141
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:141
+    // @arc4.abimethod()
+    callsub set_publishing_fee
+    int 1
+    return
+
+main_set_discussion_duration_small_route@11:
+    // smart_contracts/xgov_registry_mock/contract.py:152
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:152
+    // @arc4.abimethod()
+    callsub set_discussion_duration_small
+    int 1
+    return
+
+main_set_discussion_duration_medium_route@12:
+    // smart_contracts/xgov_registry_mock/contract.py:163
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:163
+    // @arc4.abimethod()
+    callsub set_discussion_duration_medium
+    int 1
+    return
+
+main_set_discussion_duration_large_route@13:
+    // smart_contracts/xgov_registry_mock/contract.py:174
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_registry_mock/contract.py:174
+    // @arc4.abimethod()
+    callsub set_discussion_duration_large
+    int 1
+    return
+
+main_bare_routing@16:
+    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txn OnCompletion
+    !
+    assert // reject transaction
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    return
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal(proposer: bytes) -> uint64:
+create_empty_proposal:
+    // smart_contracts/xgov_registry_mock/contract.py:65-66
+    // @arc4.abimethod()
+    // def create_empty_proposal(self, proposer: arc4.Address) -> UInt64:
+    proto 1 1
+    // smart_contracts/xgov_registry_mock/contract.py:78-82
+    // res = arc4.arc4_create(
+    //     Proposal,
+    //     proposer,
+    //     compiled=compiled,
+    // )
+    itxn_begin
+    // smart_contracts/xgov_registry_mock/contract.py:77
+    // compiled = compile_contract(Proposal)
+    int 13
+    itxn_field GlobalNumUint
+    int 5
+    itxn_field GlobalNumByteSlice
+    byte base64 CoEBQw==
+    itxn_field ClearStateProgramPages
+    byte base64 CiAEAAEKFCYLBnN0YXR1cwAIcHJvcG9zZXIIY2F0ZWdvcnkFdGl0bGUDY2lkDWxvY2tlZF9hbW91bnQPcmVnaXN0cnlfYXBwX2lkDGZ1bmRpbmdfdHlwZRByZXF1ZXN0ZWRfYW1vdW50DXN1Ym1pc3Npb25fdHMxGEAAA4gCroIEBMxpTqoE9ZiYHgQ5x1LzBLqiXlA2GgCOBAABABEAOABNADEZFEQxGBRENhoBiABKI0MxGRREMRhEMRYjCUk4ECMSRDYaAVcCADYaAjYaAxc2GgQXiAAzI0MxGRREMRhENhoBVwIANhoCiAHKI0MxGRREMRhEiAHrI0OKAQAyDUQqi/9nJwcyDWeJigUAiAA/i/yL/Yv+i/+IAFaM/Yv7i/+IANgnBIv8ZycFi/1ni/+IARknCIv+ZycJi/9ni/+IANsnBkxnJwoyB2coJGeJigAAiAAMRIgAE0QiKGVEFESJigABIiplRDEAEomKAAEjiYoEAYv8i/2IAGKM/Yv+JBJAAAeL/iUSQQAEI0IAASJEgBhtaW5pbXVtX3JlcXVlc3RlZF9hbW91bnSIAEGAHm1heGltdW1fcmVxdWVzdGVkX2Ftb3VudF9sYXJnZYgAHkyL/w5Ei/8PRIv9iYoCAYv+FYF7DkSL/ikTRIv/iYoBASInB2VEi/9lRImKAgCL/4gAGSIqZUSL/jgAEkSL/jgHMgoSRIv+OAgSRImKAQGAE3Byb3Bvc2FsX2NvbW1pdG1lbnSI/7eL/0yIAAGJigIBi/6L/wuBkE4KiYoBAIAebWF4aW11bV9yZXF1ZXN0ZWRfYW1vdW50X3NtYWxsiP99gB9tYXhpbXVtX3JlcXVlc3RlZF9hbW91bnRfbWVkaXVtiP9ZTIv/D0EABiskZ0IAEov/iwAOQQAGKyVnQgAEK4EhZ4mKAgCIABSL/ov/iP8ajP8nBIv+ZycFi/9niYoAAIj+i0SI/pJEIihlRCQSRImKAACIADSxIiplRCInBmVEsgiyByOyECKyAbMnBClnJwUpZysiZycIImcnCSJnJwYiZycKImcoImeJigAAiP4+RCIoZUQkEkSJigAAMTWBBRJEMTSBDRJEMTcURDE2FEQqMgNnJwciZycEKWcnBSlnJwoiZ4APZmluYWxpemF0aW9uX3RzImcoImcrImcnCCJnJwkiZycGImeADGNvbW1pdHRlZV9pZClngBFjb21taXR0ZWVfbWVtYmVycyJngA9jb21taXR0ZWVfdm90ZXMiZ4ANdm90ZWRfbWVtYmVycyJngAlhcHByb3ZhbHMiZ4AKcmVqZWN0aW9ucyJniQ==
+    itxn_field ApprovalProgramPages
+    // smart_contracts/xgov_registry_mock/contract.py:79
+    // Proposal,
+    method "create(address)void"
+    itxn_field ApplicationArgs
+    frame_dig -1
+    itxn_field ApplicationArgs
+    // smart_contracts/xgov_registry_mock/contract.py:78-82
+    // res = arc4.arc4_create(
+    //     Proposal,
+    //     proposer,
+    //     compiled=compiled,
+    // )
+    int appl
+    itxn_field TypeEnum
+    int 0
+    itxn_field Fee
+    itxn_submit
+    itxn CreatedApplicationID
+    // smart_contracts/xgov_registry_mock/contract.py:84
+    // return res.created_app.id
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_commitment_bps(commitment_bps: uint64) -> void:
+set_proposal_commitment_bps:
+    // smart_contracts/xgov_registry_mock/contract.py:86-87
+    // @arc4.abimethod()
+    // def set_proposal_commitment_bps(self, commitment_bps: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:30
+    // key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
+    byte 0x70726f706f73616c5f636f6d6d69746d656e74
+    // smart_contracts/xgov_registry_mock/contract.py:95
+    // self.proposal_commitment_bps.value = commitment_bps
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_min_requested_amount(min_requested_amount: uint64) -> void:
+set_min_requested_amount:
+    // smart_contracts/xgov_registry_mock/contract.py:97-98
+    // @arc4.abimethod()
+    // def set_min_requested_amount(self, min_requested_amount: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:34
+    // key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
+    byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74
+    // smart_contracts/xgov_registry_mock/contract.py:106
+    // self.min_requested_amount.value = min_requested_amount
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_small(max_requested_amount: uint64) -> void:
+set_max_requested_amount_small:
+    // smart_contracts/xgov_registry_mock/contract.py:108-109
+    // @arc4.abimethod()
+    // def set_max_requested_amount_small(self, max_requested_amount: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:38
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c
+    // smart_contracts/xgov_registry_mock/contract.py:117
+    // self.max_requested_amount_small.value = max_requested_amount
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_medium(max_requested_amount: uint64) -> void:
+set_max_requested_amount_medium:
+    // smart_contracts/xgov_registry_mock/contract.py:119-120
+    // @arc4.abimethod()
+    // def set_max_requested_amount_medium(self, max_requested_amount: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:42
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d
+    // smart_contracts/xgov_registry_mock/contract.py:128
+    // self.max_requested_amount_medium.value = max_requested_amount
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_large(max_requested_amount: uint64) -> void:
+set_max_requested_amount_large:
+    // smart_contracts/xgov_registry_mock/contract.py:130-131
+    // @arc4.abimethod()
+    // def set_max_requested_amount_large(self, max_requested_amount: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:46
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765
+    // smart_contracts/xgov_registry_mock/contract.py:139
+    // self.max_requested_amount_large.value = max_requested_amount
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee(publishing_fee: uint64) -> void:
+set_publishing_fee:
+    // smart_contracts/xgov_registry_mock/contract.py:141-142
+    // @arc4.abimethod()
+    // def set_publishing_fee(self, publishing_fee: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:50
+    // key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    byte 0x7075626c697368696e675f666565
+    // smart_contracts/xgov_registry_mock/contract.py:150
+    // self.publishing_fee.value = publishing_fee
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_small(discussion_duration: uint64) -> void:
+set_discussion_duration_small:
+    // smart_contracts/xgov_registry_mock/contract.py:152-153
+    // @arc4.abimethod()
+    // def set_discussion_duration_small(self, discussion_duration: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:54
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
+    // smart_contracts/xgov_registry_mock/contract.py:161
+    // self.discussion_duration_small.value = discussion_duration
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_medium(discussion_duration: uint64) -> void:
+set_discussion_duration_medium:
+    // smart_contracts/xgov_registry_mock/contract.py:163-164
+    // @arc4.abimethod()
+    // def set_discussion_duration_medium(self, discussion_duration: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:58
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
+    // smart_contracts/xgov_registry_mock/contract.py:172
+    // self.discussion_duration_medium.value = discussion_duration
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_large(discussion_duration: uint64) -> void:
+set_discussion_duration_large:
+    // smart_contracts/xgov_registry_mock/contract.py:174-175
+    // @arc4.abimethod()
+    // def set_discussion_duration_large(self, discussion_duration: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:62
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
+    // smart_contracts/xgov_registry_mock/contract.py:183
+    // self.discussion_duration_large.value = discussion_duration
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__init__() -> void:
+__init__:
+    // smart_contracts/xgov_registry_mock/contract.py:21
+    // def __init__(self) -> None:
+    proto 0 0
+    // smart_contracts/xgov_registry_mock/contract.py:22-23
+    // # Preconditions
+    // assert Txn.global_num_byte_slice == mock_cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
+    txn GlobalNumByteSlice
+    !
+    assert // Wrong Global Bytes allocation
+    // smart_contracts/xgov_registry_mock/contract.py:24
+    // assert Txn.global_num_uint == mock_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
+    txn GlobalNumUint
+    int 9
+    ==
+    assert // Wrong Global UInts allocation
+    // smart_contracts/xgov_registry_mock/contract.py:25
+    // assert Txn.local_num_byte_slice == mock_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
+    txn LocalNumByteSlice
+    !
+    assert // Wrong Local Bytes allocation
+    // smart_contracts/xgov_registry_mock/contract.py:26
+    // assert Txn.local_num_uint == mock_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
+    txn LocalNumUint
+    !
+    assert // Wrong Local UInts allocation
+    // smart_contracts/xgov_registry_mock/contract.py:30
+    // key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
+    byte 0x70726f706f73616c5f636f6d6d69746d656e74
+    // smart_contracts/xgov_registry_mock/contract.py:29
+    // UInt64(mock_cfg.PROPOSAL_COMMITMENT_BPS),
+    int 100
+    // smart_contracts/xgov_registry_mock/contract.py:28-31
+    // self.proposal_commitment_bps = GlobalState(
+    //     UInt64(mock_cfg.PROPOSAL_COMMITMENT_BPS),
+    //     key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:34
+    // key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
+    byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74
+    // smart_contracts/xgov_registry_mock/contract.py:33
+    // UInt64(mock_cfg.MIN_REQUESTED_AMOUNT),
+    int 10000000000
+    // smart_contracts/xgov_registry_mock/contract.py:32-35
+    // self.min_requested_amount = GlobalState(
+    //     UInt64(mock_cfg.MIN_REQUESTED_AMOUNT),
+    //     key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:38
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c
+    // smart_contracts/xgov_registry_mock/contract.py:37
+    // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_SMALL),
+    int 50000000000
+    // smart_contracts/xgov_registry_mock/contract.py:36-39
+    // self.max_requested_amount_small = GlobalState(
+    //     UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_SMALL),
+    //     key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:42
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d
+    // smart_contracts/xgov_registry_mock/contract.py:41
+    // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_MEDIUM),
+    int 250000000000
+    // smart_contracts/xgov_registry_mock/contract.py:40-43
+    // self.max_requested_amount_medium = GlobalState(
+    //     UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_MEDIUM),
+    //     key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:46
+    // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
+    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765
+    // smart_contracts/xgov_registry_mock/contract.py:45
+    // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
+    int 500000000000
+    // smart_contracts/xgov_registry_mock/contract.py:44-47
+    // self.max_requested_amount_large = GlobalState(
+    //     UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
+    //     key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:50
+    // key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    byte 0x7075626c697368696e675f666565
+    // smart_contracts/xgov_registry_mock/contract.py:49
+    // UInt64(mock_cfg.PUBLISHING_FEE),
+    int 5000000
+    // smart_contracts/xgov_registry_mock/contract.py:48-51
+    // self.publishing_fee = GlobalState(
+    //     UInt64(mock_cfg.PUBLISHING_FEE),
+    //     key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:54
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
+    // smart_contracts/xgov_registry_mock/contract.py:53
+    // UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
+    int 604800
+    // smart_contracts/xgov_registry_mock/contract.py:52-55
+    // self.discussion_duration_small = GlobalState(
+    //     UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
+    //     key=reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:58
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
+    // smart_contracts/xgov_registry_mock/contract.py:57
+    // UInt64(mock_cfg.DISCUSSION_DURATION_MEDIUM),
+    int 1209600
+    // smart_contracts/xgov_registry_mock/contract.py:56-59
+    // self.discussion_duration_medium = GlobalState(
+    //     UInt64(mock_cfg.DISCUSSION_DURATION_MEDIUM),
+    //     key=reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:62
+    // key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
+    byte 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
+    // smart_contracts/xgov_registry_mock/contract.py:61
+    // UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
+    int 1814400
+    // smart_contracts/xgov_registry_mock/contract.py:60-63
+    // self.discussion_duration_large = GlobalState(
+    //     UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
+    //     key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
+    // )
+    app_global_put
+    retsub
