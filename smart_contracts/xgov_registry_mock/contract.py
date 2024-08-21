@@ -1,20 +1,19 @@
 # pyright: reportMissingModuleSource=false
 from algopy import (
     ARC4Contract,
-    arc4,
-    compile_contract,
-    UInt64,
     GlobalState,
     StateTotals,
     Txn,
+    UInt64,
+    arc4,
+    compile_contract,
 )
 
+import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
-from . import config as mock_cfg
-import smart_contracts.errors.std_errors as err
-
 from ..xgov_registry import config as reg_cfg
+from . import config as mock_cfg
 
 
 class XgovRegistryMock(
