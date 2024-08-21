@@ -74,12 +74,15 @@ class XgovRegistryMock(
         )
 
     @arc4.abimethod()
-    def create_empty_proposal(self, proposer: arc4.Address) -> UInt64:
+    def create_empty_proposal(
+        self, proposer: arc4.Address, committee_publisher: arc4.Address
+    ) -> UInt64:
         """
         Create an empty proposal
 
         Args:
             proposer (arc4.Address): The proposer's address
+            committee_publisher (arc4.Address): The committee publisher's address
 
         Returns:
             UInt64: The ID of the created proposal
@@ -89,6 +92,7 @@ class XgovRegistryMock(
         res = arc4.arc4_create(
             Proposal,
             proposer,
+            committee_publisher,
             compiled=compiled,
         )
 

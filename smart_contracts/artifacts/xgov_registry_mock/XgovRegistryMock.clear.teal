@@ -1,7 +1,7 @@
 #pragma version 10
 
 smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_state_program:
-    // smart_contracts/xgov_registry_mock/contract.py:12-20
+    // smart_contracts/xgov_registry_mock/contract.py:21-29
     // class XgovRegistryMock(
     //     ARC4Contract,
     //     state_totals=StateTotals(
