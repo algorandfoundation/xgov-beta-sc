@@ -9,6 +9,7 @@ from algopy import (
     UInt64,
     arc4,
     gtxn,
+    itxn,
     subroutine,
 )
 
@@ -35,6 +36,10 @@ class Proposal(
         assert Txn.global_num_uint == cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
         assert Txn.local_num_byte_slice == cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
+
+        self.committee_publisher = (
+            arc4.Address()
+        )  # TODO: remove after we have the registry SC
 
         self.proposer = arc4.Address()
         self.registry_app_id = UInt64()  # Registry App ID
@@ -66,6 +71,37 @@ class Proposal(
             UInt64()
         )  # Rejection votes received by xGov Voting Committee members
 
+    # @subroutine
+    # def finalize_check_authorization(self) -> None:
+    #
+    #     assert self.is_proposer(), err.UNAUTHORIZED
+    #     assert self.status == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+    #     assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
+    #
+    #     discussion_duration = Global.latest_timestamp - self.submission_ts
+    #     minimum_discussion_duration = self.get_discussion_duration(self.category)
+    #
+    #     assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
+
+    @subroutine
+    def drop_check_authorization(self) -> None:
+        assert self.is_proposer(), err.UNAUTHORIZED
+        assert self.status == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
+    def updateable_input_validation(self, title: String, cid: typ.Cid) -> None:
+        assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
+        assert title != "", err.WRONG_TITLE_LENGTH
+        assert (
+            cid.length == const.CID_LENGTH
+        ), err.WRONG_CID_LENGTH  # redundant, protected by type
+
+    @subroutine
+    def update_check_authorization(self) -> None:
+        assert self.is_proposer(), err.UNAUTHORIZED
+        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
+        assert self.status == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+
     @subroutine
     def submit_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
@@ -81,11 +117,8 @@ class Proposal(
         requested_amount: UInt64,
     ) -> None:
 
-        assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
-        assert title != "", err.WRONG_TITLE_LENGTH
-        assert (
-            cid.length == const.CID_LENGTH
-        ), err.WRONG_CID_LENGTH  # redundant, protected by type
+        self.updateable_input_validation(title, cid)
+
         assert (
             funding_type == enm.FUNDING_PROACTIVE
             or funding_type == enm.FUNDING_RETROACTIVE
@@ -108,7 +141,7 @@ class Proposal(
     @subroutine
     def get_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
         return self.relative_to_absolute_amount(
-            requested_amount, UInt64(const.PROPOSAL_COMMITMENT_BPS)
+            requested_amount, self.get_proposal_commitment_bps()
         )
 
     @subroutine
@@ -202,6 +235,75 @@ class Proposal(
         self.submission_ts = Global.latest_timestamp
         self.status = UInt64(enm.STATUS_DRAFT)
 
+    @arc4.abimethod()
+    def update_proposal(self, title: String, cid: typ.Cid) -> None:
+        """Update the proposal.
+
+        Args:
+            title (String): Proposal title, max TITLE_MAX_BYTES bytes
+            cid (typ.Cid): IPFS V1 CID
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+            err.WRONG_TITLE_LENGTH: If the title length is not within the limits
+            err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
+
+        """
+        self.update_check_authorization()
+
+        self.updateable_input_validation(title, cid)
+
+        self.title = title
+        self.cid = cid.copy()
+
+    @arc4.abimethod()
+    def drop_proposal(self) -> None:
+        """Drop the proposal.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+
+        """
+        self.drop_check_authorization()
+
+        itxn.Payment(
+            receiver=self.proposer.native,
+            amount=self.locked_amount,
+            fee=UInt64(0),  # enforces the proposer to pay the fee
+        ).submit()
+
+        #  Clear the proposal data TODO: check if this can be in a struct and clear the struct
+        self.title = String()
+        self.cid = typ.Cid.from_bytes(b"")
+        self.category = UInt64(enm.CATEGORY_NULL)
+        self.funding_type = UInt64(enm.FUNDING_NULL)
+        self.requested_amount = UInt64(0)
+        self.locked_amount = UInt64(0)
+        self.submission_ts = UInt64(0)
+        self.status = UInt64(enm.STATUS_EMPTY)
+
+    # @arc4.abimethod()
+    # def finalize_proposal(self) -> None:
+    #     """Finalize the proposal.
+    #
+    #     Raises:
+    #         err.UNAUTHORIZED: If the sender is not the proposer
+    #         err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+    #
+    #     """
+    #     self.finalize_check_authorization()
+    #
+    #     self.status = UInt64(enm.STATUS_FINAL)
+    #     self.finalization_ts = Global.latest_timestamp
+    #
+    #     itxn.Payment(
+    #         receiver=self.get_committee_publisher_address().native,
+    #         amount=self.get_publishing_fee(),
+    #         fee=UInt64(0),  # enforces the proposer to pay the fee
+    #     ).submit()
+
     ####################################################################################################################
     # Stub subroutines
     # these subroutines are placeholders for the actual implementation
@@ -235,6 +337,27 @@ class Proposal(
     @subroutine
     def get_max_requested_amount_large(self) -> UInt64:
         return UInt64(const.MAX_REQUESTED_AMOUNT_LARGE)
+
+    @subroutine
+    def get_proposal_commitment_bps(self) -> UInt64:
+        return UInt64(const.PROPOSAL_COMMITMENT_BPS)
+
+    @subroutine
+    def get_committee_publisher_address(self) -> arc4.Address:
+        return self.committee_publisher
+
+    @subroutine
+    def get_publishing_fee(self) -> UInt64:
+        return UInt64(const.PUBLISHING_FEE)
+
+    @subroutine
+    def get_discussion_duration(self, category: UInt64) -> UInt64:
+        if category == enm.CATEGORY_SMALL:
+            return UInt64(const.DISCUSSION_DURATION_SMALL)
+        elif category == enm.CATEGORY_MEDIUM:
+            return UInt64(const.DISCUSSION_DURATION_MEDIUM)
+        else:
+            return UInt64(const.DISCUSSION_DURATION_LARGE)
 
     # Stub subroutines end
     ####################################################################################################################

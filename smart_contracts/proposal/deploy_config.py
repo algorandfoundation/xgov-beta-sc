@@ -24,5 +24,5 @@ def deploy(
         indexer_client=indexer_client,
     )
     app_client.create_create(
-        proposer="YUO5WDTSKVI5VADGDNGDCFDTPDO2TQMH2OZGZ6MLDXA6G2ZU5CD5GWVHBE"
+        proposer="YUO5WDTSKVI5VADGDNGDCFDTPDO2TQMH2OZGZ6MLDXA6G2ZU5CD5GWVHBE",
     )
