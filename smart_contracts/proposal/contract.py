@@ -177,19 +177,14 @@ class Proposal(
         return Txn.sender == self.proposer
 
     @arc4.abimethod(create="require")
-    def create(self, proposer: arc4.Address, committee_publisher: arc4.Address) -> None:
+    def create(self, proposer: arc4.Address) -> None:
         """Create a new proposal.
 
         Args:
             proposer (arc4.Address): Address of the proposer
-            committee_publisher (arc4.Address), temporary: Address of the committee publisher
 
         """
         # assert Global.caller_application_id != 0, err.UNAUTHORIZED  # Only callable by another contract
-
-        self.committee_publisher = (
-            committee_publisher  # TODO: remove after we have the registry SC
-        )
 
         self.proposer = proposer
         self.registry_app_id = Global.caller_application_id

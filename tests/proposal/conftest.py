@@ -83,6 +83,5 @@ def proposal_client(
 
     client.create_create(
         proposer=proposer.address,
-        committee_publisher=committee_publisher.address,
     )
     return client
