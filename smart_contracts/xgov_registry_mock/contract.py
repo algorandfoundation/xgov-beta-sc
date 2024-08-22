@@ -54,9 +54,9 @@ class XgovRegistryMock(
             UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
         )
-        self.publishing_fee = GlobalState(
-            UInt64(mock_cfg.PUBLISHING_FEE),
-            key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+        self.publishing_fee_bps = GlobalState(
+            UInt64(mock_cfg.PUBLISHING_FEE_BPS),
+            key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
         )
         self.discussion_duration_small = GlobalState(
             UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
@@ -151,15 +151,15 @@ class XgovRegistryMock(
         self.max_requested_amount_large.value = max_requested_amount
 
     @arc4.abimethod()
-    def set_publishing_fee(self, publishing_fee: UInt64) -> None:
+    def set_publishing_fee(self, publishing_fee_bps: UInt64) -> None:
         """
         Set the publishing fee
 
         Args:
-            publishing_fee (UInt64): The publishing fee
+            publishing_fee_bps (UInt64): The publishing fee
 
         """
-        self.publishing_fee.value = publishing_fee
+        self.publishing_fee_bps.value = publishing_fee_bps
 
     @arc4.abimethod()
     def set_discussion_duration_small(self, discussion_duration: UInt64) -> None:

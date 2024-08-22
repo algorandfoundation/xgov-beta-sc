@@ -446,17 +446,17 @@ set_max_requested_amount_large:
     retsub
 
 
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee(publishing_fee: uint64) -> void:
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee(publishing_fee_bps: uint64) -> void:
 set_publishing_fee:
     // smart_contracts/xgov_registry_mock/contract.py:153-154
     // @arc4.abimethod()
-    // def set_publishing_fee(self, publishing_fee: UInt64) -> None:
+    // def set_publishing_fee(self, publishing_fee_bps: UInt64) -> None:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:59
-    // key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    // key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
     byte 0x7075626c697368696e675f666565
     // smart_contracts/xgov_registry_mock/contract.py:162
-    // self.publishing_fee.value = publishing_fee
+    // self.publishing_fee_bps.value = publishing_fee_bps
     frame_dig -1
     app_global_put
     retsub
@@ -602,15 +602,15 @@ __init__:
     // )
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:59
-    // key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    // key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
     byte 0x7075626c697368696e675f666565
     // smart_contracts/xgov_registry_mock/contract.py:58
-    // UInt64(mock_cfg.PUBLISHING_FEE),
-    int 5000000
+    // UInt64(mock_cfg.PUBLISHING_FEE_BPS),
+    int 500
     // smart_contracts/xgov_registry_mock/contract.py:57-60
-    // self.publishing_fee = GlobalState(
-    //     UInt64(mock_cfg.PUBLISHING_FEE),
-    //     key=reg_cfg.GS_KEY_PUBLISHING_FEE,
+    // self.publishing_fee_bps = GlobalState(
+    //     UInt64(mock_cfg.PUBLISHING_FEE_BPS),
+    //     key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
     // )
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:63
