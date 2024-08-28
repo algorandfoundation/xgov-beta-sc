@@ -26,3 +26,5 @@ KYC_NOT_VERIFIED = "KYC is not verified"
 WRONG_PROPOSAL_STATUS = "Wrong Proposal Status"
 
 TOO_EARLY = "Too early"
+
+MISSING_CONFIG = "Missing Config"

@@ -6,7 +6,6 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
-    compile_contract,
 )
 
 import smart_contracts.errors.std_errors as err
@@ -86,11 +85,9 @@ class XgovRegistryMock(
             UInt64: The ID of the created proposal
 
         """
-        compiled = compile_contract(Proposal)
         res = arc4.arc4_create(
             Proposal,
             proposer,
-            compiled=compiled,
         )
 
         return res.created_app.id

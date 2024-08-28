@@ -7,14 +7,16 @@ from algosdk.encoding import encode_address
 from smart_contracts.artifacts.proposal.client import GlobalState
 from smart_contracts.proposal.constants import (
     BPS,
-    MIN_REQUESTED_AMOUNT,
-    PROPOSAL_COMMITMENT_BPS,
 )
 from smart_contracts.proposal.enums import (
     CATEGORY_NULL,
     FUNDING_NULL,
     STATUS_EMPTY,
     STATUS_FINAL,
+)
+from smart_contracts.xgov_registry_mock.config import (
+    MIN_REQUESTED_AMOUNT,
+    PROPOSAL_COMMITMENT_BPS,
 )
 
 
