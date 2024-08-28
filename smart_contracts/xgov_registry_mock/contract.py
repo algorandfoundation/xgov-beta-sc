@@ -86,11 +86,9 @@ class XgovRegistryMock(
             UInt64: The ID of the created proposal
 
         """
-        compiled = compile_contract(Proposal)
         res = arc4.arc4_create(
             Proposal,
             proposer,
-            compiled=compiled,
         )
 
         return res.created_app.id
