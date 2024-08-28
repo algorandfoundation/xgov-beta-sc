@@ -6,7 +6,6 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
-    compile_contract,
 )
 
 import smart_contracts.errors.std_errors as err
