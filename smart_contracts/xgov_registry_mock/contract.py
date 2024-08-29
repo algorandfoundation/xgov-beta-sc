@@ -69,6 +69,14 @@ class XgovRegistryMock(
             UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
         )
+        self.committee_publisher = GlobalState(
+            arc4.Address(mock_cfg.COMMITTEE_PUBLISHER),
+            key=reg_cfg.GS_KEY_COMMITTEE_PUBLISHER,
+        )
+        self.proposal_fee = GlobalState(
+            UInt64(mock_cfg.PROPOSAL_FEE),
+            key=reg_cfg.GS_KEY_PROPOSAL_FEE,
+        )
 
     @arc4.abimethod()
     def create_empty_proposal(
@@ -190,3 +198,25 @@ class XgovRegistryMock(
 
         """
         self.discussion_duration_large.value = discussion_duration
+
+    @arc4.abimethod()
+    def set_committee_publisher(self, committee_publisher: arc4.Address) -> None:
+        """
+        Set the committee publisher
+
+        Args:
+            committee_publisher (arc4.Address): The committee publisher
+
+        """
+        self.committee_publisher.value = committee_publisher
+
+    @arc4.abimethod()
+    def set_proposal_fee(self, proposal_fee: UInt64) -> None:
+        """
+        Set the proposal fee
+
+        Args:
+            proposal_fee (UInt64): The proposal fee
+
+        """
+        self.proposal_fee.value = proposal_fee

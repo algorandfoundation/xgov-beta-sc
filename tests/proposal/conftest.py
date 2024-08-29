@@ -8,6 +8,7 @@ from algokit_utils import (
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.config import config
+from algosdk.encoding import encode_address
 from algosdk.v2client.algod import AlgodClient
 from algosdk.v2client.indexer import IndexerClient
 
@@ -21,20 +22,6 @@ def algorand_client() -> AlgorandClient:
     client = AlgorandClient.default_local_net()
     client.set_suggested_params_timeout(0)
     return client
-
-
-@pytest.fixture(scope="session")
-def committee_publisher(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
 
 
 @pytest.fixture(scope="function")
@@ -124,3 +111,10 @@ def proposal_client(
     )
 
     return client
+
+
+@pytest.fixture(scope="session")
+def committee_publisher(xgov_registry_mock_client: XgovRegistryMockClient) -> str:
+    return encode_address(  # type: ignore
+        xgov_registry_mock_client.get_global_state().committee_publisher.as_bytes
+    )
