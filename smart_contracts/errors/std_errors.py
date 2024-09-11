@@ -27,6 +27,10 @@ WRONG_PROPOSAL_STATUS = "Wrong Proposal Status"
 
 TOO_EARLY = "Too early"
 
+MISSING_CONFIG = "Missing Config"
+
+MISSING_CONFIG = "Missing Config"
+
 PENDING_PROPOSALS = "Pending proposals"
 WRONG_PAYMENT_AMOUNT = "Wrong payment amount"
 INSUFFICIENT_FUNDS = "Insufficient funds"

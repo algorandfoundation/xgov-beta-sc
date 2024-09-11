@@ -7,8 +7,6 @@ from algosdk.encoding import encode_address
 from smart_contracts.artifacts.proposal.client import GlobalState
 from smart_contracts.proposal.constants import (
     BPS,
-    MIN_REQUESTED_AMOUNT,
-    PROPOSAL_COMMITMENT_BPS,
 )
 from smart_contracts.proposal.enums import (
     CATEGORY_NULL,
@@ -16,10 +14,18 @@ from smart_contracts.proposal.enums import (
     STATUS_EMPTY,
     STATUS_FINAL,
 )
+from smart_contracts.xgov_registry_mock.config import (
+    MIN_REQUESTED_AMOUNT,
+    PROPOSAL_COMMITMENT_BPS,
+)
+
+
+def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:
+    return amount * fraction_in_bps // BPS
 
 
 def get_locked_amount(requested_amount: int) -> int:
-    return PROPOSAL_COMMITMENT_BPS * requested_amount // BPS
+    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
 
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT

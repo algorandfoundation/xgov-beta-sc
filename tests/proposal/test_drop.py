@@ -6,6 +6,7 @@ from algokit_utils.beta.composer import PayParams
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
+from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.enums import (
     CATEGORY_SMALL,
@@ -28,6 +29,7 @@ def test_drop_success(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -47,6 +49,7 @@ def test_drop_success(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -64,6 +67,7 @@ def test_drop_success(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -73,6 +77,7 @@ def test_drop_success(
         global_state,
         proposer_address=proposer.address,
         status=STATUS_EMPTY,
+        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
@@ -88,6 +93,7 @@ def test_drop_twice(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -107,6 +113,7 @@ def test_drop_twice(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -124,6 +131,7 @@ def test_drop_twice(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -134,6 +142,7 @@ def test_drop_twice(
                 signer=proposer.signer,
                 suggested_params=sp,
                 note="a",
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -143,6 +152,7 @@ def test_drop_twice(
         global_state,
         proposer_address=proposer.address,
         status=STATUS_EMPTY,
+        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
@@ -158,6 +168,7 @@ def test_drop_empty_proposal(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
@@ -175,6 +186,7 @@ def test_drop_empty_proposal(
                 signer=proposer.signer,
                 suggested_params=sp,
                 note="a",
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -184,6 +196,7 @@ def test_drop_empty_proposal(
         global_state,
         proposer_address=proposer.address,
         status=STATUS_EMPTY,
+        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
@@ -198,6 +211,7 @@ def test_drop_not_proposer(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     not_proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -217,6 +231,7 @@ def test_drop_not_proposer(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -230,6 +245,7 @@ def test_drop_not_proposer(
                 signer=not_proposer.signer,
                 suggested_params=sp,
                 note="a",
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -245,6 +261,7 @@ def test_drop_not_proposer(
         requested_amount=REQUESTED_AMOUNT,
         locked_amount=LOCKED_AMOUNT,
         category=CATEGORY_SMALL,
+        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)

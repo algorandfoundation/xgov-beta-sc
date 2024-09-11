@@ -6,12 +6,9 @@ from algokit_utils.beta.composer import PayParams
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
+from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.constants import (
-    MAX_REQUESTED_AMOUNT_LARGE,  # TODO placeholder, the actual value will be set by the registry SC
-    MAX_REQUESTED_AMOUNT_MEDIUM,  # TODO placeholder, the actual value will be set by the registry SC
-    MAX_REQUESTED_AMOUNT_SMALL,  # TODO placeholder, the actual value will be set by the registry SC
-    MIN_REQUESTED_AMOUNT,  # TODO placeholder, the actual value will be set by the registry SC
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
@@ -21,6 +18,12 @@ from smart_contracts.proposal.enums import (
     FUNDING_NULL,
     FUNDING_PROACTIVE,
     STATUS_DRAFT,
+)
+from smart_contracts.xgov_registry_mock.config import (
+    MAX_REQUESTED_AMOUNT_LARGE,
+    MAX_REQUESTED_AMOUNT_MEDIUM,
+    MAX_REQUESTED_AMOUNT_SMALL,
+    MIN_REQUESTED_AMOUNT,
 )
 from tests.proposal.common import (
     LOCKED_AMOUNT,
@@ -38,6 +41,7 @@ def test_submit_success(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -57,6 +61,7 @@ def test_submit_success(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -64,6 +69,7 @@ def test_submit_success(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -86,6 +92,7 @@ def test_submit_not_proposer(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     not_proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         proposal_client.submit_proposal(
@@ -106,6 +113,7 @@ def test_submit_not_proposer(
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
                 signer=not_proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -113,6 +121,7 @@ def test_submit_not_proposer(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -127,6 +136,7 @@ def test_submit_twice(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -146,6 +156,7 @@ def test_submit_twice(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
@@ -167,6 +178,7 @@ def test_submit_twice(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -174,6 +186,7 @@ def test_submit_twice(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -195,6 +208,7 @@ def test_submit_wrong_title_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
         proposal_client.submit_proposal(
@@ -215,6 +229,7 @@ def test_submit_wrong_title_1(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -222,6 +237,7 @@ def test_submit_wrong_title_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -236,6 +252,7 @@ def test_submit_wrong_title_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
         proposal_client.submit_proposal(
@@ -256,6 +273,7 @@ def test_submit_wrong_title_2(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -263,6 +281,7 @@ def test_submit_wrong_title_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -277,6 +296,7 @@ def test_submit_wrong_funding_type_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
         proposal_client.submit_proposal(
@@ -297,6 +317,7 @@ def test_submit_wrong_funding_type_1(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -304,6 +325,7 @@ def test_submit_wrong_funding_type_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -318,6 +340,7 @@ def test_submit_wrong_funding_type_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
         proposal_client.submit_proposal(
@@ -338,6 +361,7 @@ def test_submit_wrong_funding_type_2(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -345,6 +369,7 @@ def test_submit_wrong_funding_type_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -359,6 +384,7 @@ def test_submit_wrong_requested_amount_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - 1
     locked_amount = get_locked_amount(requested_amount)
@@ -381,6 +407,7 @@ def test_submit_wrong_requested_amount_1(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -388,6 +415,7 @@ def test_submit_wrong_requested_amount_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -402,6 +430,7 @@ def test_submit_wrong_requested_amount_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE + 1
     locked_amount = get_locked_amount(requested_amount)
@@ -424,6 +453,7 @@ def test_submit_wrong_requested_amount_2(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -431,6 +461,7 @@ def test_submit_wrong_requested_amount_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -445,6 +476,7 @@ def test_submit_wrong_payment_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT - 1
     with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
@@ -466,6 +498,7 @@ def test_submit_wrong_payment_1(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -473,6 +506,7 @@ def test_submit_wrong_payment_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -487,6 +521,7 @@ def test_submit_wrong_payment_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT + 1
     with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
@@ -508,6 +543,7 @@ def test_submit_wrong_payment_2(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -515,6 +551,7 @@ def test_submit_wrong_payment_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -530,6 +567,7 @@ def test_submit_wrong_payment_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     not_proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_SENDER):
         proposal_client.submit_proposal(
@@ -550,6 +588,7 @@ def test_submit_wrong_payment_3(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -557,6 +596,7 @@ def test_submit_wrong_payment_3(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -571,6 +611,7 @@ def test_submit_wrong_payment_4(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
         proposal_client.submit_proposal(
@@ -591,6 +632,7 @@ def test_submit_wrong_payment_4(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -598,6 +640,7 @@ def test_submit_wrong_payment_4(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
 
@@ -612,6 +655,7 @@ def test_submit_category_small_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -631,6 +675,7 @@ def test_submit_category_small_1(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -638,6 +683,7 @@ def test_submit_category_small_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -659,6 +705,7 @@ def test_submit_category_small_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MIN_REQUESTED_AMOUNT + 1
     locked_amount = get_locked_amount(requested_amount)
@@ -680,6 +727,7 @@ def test_submit_category_small_2(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -687,6 +735,7 @@ def test_submit_category_small_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -708,6 +757,7 @@ def test_submit_category_small_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL - 1
     locked_amount = get_locked_amount(requested_amount)
@@ -729,6 +779,7 @@ def test_submit_category_small_3(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -736,6 +787,7 @@ def test_submit_category_small_3(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -757,6 +809,7 @@ def test_submit_category_small_4(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL
     locked_amount = get_locked_amount(requested_amount)
@@ -778,6 +831,7 @@ def test_submit_category_small_4(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -785,6 +839,7 @@ def test_submit_category_small_4(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -806,6 +861,7 @@ def test_submit_category_medium_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL + 1
     locked_amount = get_locked_amount(requested_amount)
@@ -827,6 +883,7 @@ def test_submit_category_medium_1(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -834,6 +891,7 @@ def test_submit_category_medium_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -855,6 +913,7 @@ def test_submit_category_medium_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM - 1
     locked_amount = get_locked_amount(requested_amount)
@@ -876,6 +935,7 @@ def test_submit_category_medium_2(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -883,6 +943,7 @@ def test_submit_category_medium_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -904,6 +965,7 @@ def test_submit_category_medium_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM
     locked_amount = get_locked_amount(requested_amount)
@@ -925,6 +987,7 @@ def test_submit_category_medium_3(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -932,6 +995,7 @@ def test_submit_category_medium_3(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -953,6 +1017,7 @@ def test_submit_category_large_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM + 1
     locked_amount = get_locked_amount(requested_amount)
@@ -974,6 +1039,7 @@ def test_submit_category_large_1(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -981,6 +1047,7 @@ def test_submit_category_large_1(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -1002,6 +1069,7 @@ def test_submit_category_large_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE - 1
     locked_amount = get_locked_amount(requested_amount)
@@ -1023,6 +1091,7 @@ def test_submit_category_large_2(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -1030,6 +1099,7 @@ def test_submit_category_large_2(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
@@ -1051,6 +1121,7 @@ def test_submit_category_large_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE
     locked_amount = get_locked_amount(requested_amount)
@@ -1072,6 +1143,7 @@ def test_submit_category_large_3(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -1079,6 +1151,7 @@ def test_submit_category_large_3(
 
     assert_proposal_global_state(
         global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         status=STATUS_DRAFT,
         title="Test Proposal",
