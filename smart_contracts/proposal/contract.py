@@ -1,6 +1,7 @@
 # pyright: reportMissingModuleSource=false
 
 from algopy import (
+    Account,
     ARC4Contract,
     Bytes,
     Global,
@@ -112,17 +113,32 @@ class Proposal(
             key=prop_cfg.GS_KEY_REJECTIONS,
         )
 
-    # @subroutine
-    # def finalize_check_authorization(self) -> None:
-    #
-    #     assert self.is_proposer(), err.UNAUTHORIZED
-    #     assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
-    #     assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
-    #
-    #     discussion_duration = Global.latest_timestamp - self.submission_ts.value
-    #     minimum_discussion_duration = self.get_discussion_duration(self.category.value)
-    #
-    #     assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
+    @subroutine
+    def get_discussion_duration(self, category: UInt64) -> UInt64:
+        if category == enm.CATEGORY_SMALL:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
+            )
+        elif category == enm.CATEGORY_MEDIUM:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
+            )
+        else:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
+            )
+
+    @subroutine
+    def finalize_check_authorization(self) -> None:
+
+        assert self.is_proposer(), err.UNAUTHORIZED
+        assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
+
+        discussion_duration = Global.latest_timestamp - self.submission_ts.value
+        minimum_discussion_duration = self.get_discussion_duration(self.category.value)
+
+        assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
 
     @subroutine
     def drop_check_authorization(self) -> None:
@@ -314,6 +330,7 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
+            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -353,25 +370,38 @@ class Proposal(
         self.submission_ts.value = UInt64(0)
         self.status.value = UInt64(enm.STATUS_EMPTY)
 
-    # @arc4.abimethod()
-    # def finalize_proposal(self) -> None:
-    #     """Finalize the proposal.
-    #
-    #     Raises:
-    #         err.UNAUTHORIZED: If the sender is not the proposer
-    #         err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
-    #
-    #     """
-    #     self.finalize_check_authorization()
-    #
-    #     self.status.value = UInt64(enm.STATUS_FINAL)
-    #     self.finalization_ts.value = Global.latest_timestamp
-    #
-    #     itxn.Payment(
-    #         receiver=self.get_committee_publisher_address().native,
-    #         amount=self.get_publishing_fee(),
-    #         fee=UInt64(0),  # enforces the proposer to pay the fee
-    #     ).submit()
+    @arc4.abimethod()
+    def finalize_proposal(self) -> None:
+        """Finalize the proposal.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
+            err.TOO_EARLY: If the proposal is finalized before the minimum time
+
+        """
+        self.finalize_check_authorization()
+
+        self.status.value = UInt64(enm.STATUS_FINAL)
+        self.finalization_ts.value = Global.latest_timestamp
+
+        proposal_fee = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_PROPOSAL_FEE)
+        )
+        publishing_fee_bps = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_PUBLISHING_FEE_BPS)
+        )
+
+        itxn.Payment(
+            receiver=Account(
+                self.get_bytes_from_registry_config(
+                    Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+                )
+            ),
+            amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
+            fee=UInt64(0),  # enforces the proposer to pay the fee
+        ).submit()
 
     ####################################################################################################################
     # Stub subroutines
@@ -379,10 +409,6 @@ class Proposal(
     @subroutine
     def is_kyc_verified(self) -> bool:
         return True
-
-    # @subroutine
-    # def get_committee_publisher_address(self) -> arc4.Address:
-    #     return self.committee_publisher
 
     # Stub subroutines end
     ####################################################################################################################

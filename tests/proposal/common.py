@@ -20,8 +20,12 @@ from smart_contracts.xgov_registry_mock.config import (
 )
 
 
+def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:
+    return amount * fraction_in_bps // BPS
+
+
 def get_locked_amount(requested_amount: int) -> int:
-    return PROPOSAL_COMMITMENT_BPS * requested_amount // BPS
+    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
 
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT

@@ -1,8 +1,8 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 0
-GLOBAL_UINTS: Final[int] = 9
+GLOBAL_BYTES: Final[int] = 1
+GLOBAL_UINTS: Final[int] = 10
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -16,3 +16,7 @@ PUBLISHING_FEE_BPS: Final[int] = 500
 DISCUSSION_DURATION_SMALL: Final[int] = 604_800  # 1 week in seconds
 DISCUSSION_DURATION_MEDIUM: Final[int] = 1_209_600  # 2 weeks in seconds
 DISCUSSION_DURATION_LARGE: Final[int] = 1_814_400  # 3 weeks in seconds
+COMMITTEE_PUBLISHER: Final[str] = (
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"  # zero address
+)
+PROPOSAL_FEE: Final[int] = 100_000_000  # amount in microAlgos
