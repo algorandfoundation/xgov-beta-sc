@@ -31,7 +31,7 @@ def test_finalize_success(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: str,
+    committee_publisher: AddressAndSigner,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -65,7 +65,7 @@ def test_finalize_success(
         reg_gs.proposal_fee, reg_gs.publishing_fee_bps
     )
     committee_publisher_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
-        committee_publisher
+        committee_publisher.address
     )[
         "amount"
     ]
@@ -78,7 +78,7 @@ def test_finalize_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher],
+            accounts=[committee_publisher.address],
             suggested_params=sp,
         ),
     )
@@ -88,7 +88,7 @@ def test_finalize_success(
 
     assert_account_balance(
         algorand_client=algorand_client,
-        address=committee_publisher,
+        address=committee_publisher.address,
         expected_balance=committee_publisher_balance_before_finalize + publishing_fee,  # type: ignore
     )
 
@@ -114,7 +114,7 @@ def test_finalize_not_proposer(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     not_proposer: AddressAndSigner,
-    committee_publisher: str,
+    committee_publisher: AddressAndSigner,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -154,7 +154,7 @@ def test_finalize_not_proposer(
                 signer=not_proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher],
+                accounts=[committee_publisher.address],
             ),
         )
     xgov_registry_mock_client.set_discussion_duration_small(
@@ -184,7 +184,7 @@ def test_finalize_empty_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: str,
+    committee_publisher: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
@@ -202,7 +202,7 @@ def test_finalize_empty_proposal(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher],
+                accounts=[committee_publisher.address],
             ),
         )
     xgov_registry_mock_client.set_discussion_duration_small(
@@ -223,7 +223,7 @@ def test_finalize_twice(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: str,
+    committee_publisher: AddressAndSigner,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -262,7 +262,7 @@ def test_finalize_twice(
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
-            accounts=[committee_publisher],
+            accounts=[committee_publisher.address],
         ),
     )
 
@@ -273,7 +273,7 @@ def test_finalize_twice(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher],
+                accounts=[committee_publisher.address],
                 note="Second finalize",
             ),
         )
@@ -302,7 +302,7 @@ def test_finalize_too_early(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: str,
+    committee_publisher: AddressAndSigner,
 ) -> None:
     proposal_client.submit_proposal(
         payment=TransactionWithSigner(
@@ -336,7 +336,7 @@ def test_finalize_too_early(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher],
+                accounts=[committee_publisher.address],
             ),
         )
 

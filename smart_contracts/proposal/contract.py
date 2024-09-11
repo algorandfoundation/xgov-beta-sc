@@ -330,6 +330,7 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
+            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -376,6 +377,8 @@ class Proposal(
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
+            err.TOO_EARLY: If the proposal is finalized before the minimum time
 
         """
         self.finalize_check_authorization()

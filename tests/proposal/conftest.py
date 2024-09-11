@@ -8,9 +8,6 @@ from algokit_utils import (
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.config import config
-from algosdk.encoding import encode_address
-from algosdk.v2client.algod import AlgodClient
-from algosdk.v2client.indexer import IndexerClient
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
@@ -54,8 +51,8 @@ def not_proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
 
 @pytest.fixture(scope="session")
 def xgov_registry_mock_client(
-    algod_client: AlgodClient,
-    indexer_client: IndexerClient,
+    algorand_client: AlgorandClient,
+    committee_publisher: AddressAndSigner,
 ) -> XgovRegistryMockClient:
     config.configure(
         debug=True,
@@ -63,30 +60,29 @@ def xgov_registry_mock_client(
     )
 
     client = XgovRegistryMockClient(
-        algod_client,
-        creator=get_localnet_default_account(algod_client),
-        indexer_client=indexer_client,
+        algorand_client.client.algod,
+        creator=get_localnet_default_account(algorand_client.client.algod),
+        indexer_client=algorand_client.client.indexer,
     )
 
     client.create_bare()
 
     ensure_funded(
-        algod_client,
+        algorand_client.client.algod,
         EnsureBalanceParameters(
             account_to_fund=client.app_address,
             min_spending_balance_micro_algos=INITIAL_FUNDS,
         ),
     )
 
+    client.set_committee_publisher(committee_publisher=committee_publisher.address)
+
     return client
 
 
 @pytest.fixture(scope="function")
 def proposal_client(
-    algod_client: AlgodClient,
-    indexer_client: IndexerClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
 ) -> ProposalClient:
@@ -106,7 +102,7 @@ def proposal_client(
     )
 
     client = ProposalClient(
-        algod_client,
+        algorand_client.client.algod,
         app_id=proposal_app_id.return_value,
     )
 
@@ -114,7 +110,14 @@ def proposal_client(
 
 
 @pytest.fixture(scope="session")
-def committee_publisher(xgov_registry_mock_client: XgovRegistryMockClient) -> str:
-    return encode_address(  # type: ignore
-        xgov_registry_mock_client.get_global_state().committee_publisher.as_bytes
+def committee_publisher(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
     )
+    return account
