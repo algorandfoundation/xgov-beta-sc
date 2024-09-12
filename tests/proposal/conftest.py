@@ -11,7 +11,12 @@ from algokit_utils.config import config
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
-from tests.proposal.common import INITIAL_FUNDS
+from tests.proposal.common import (
+    DEFAULT_COMMITTEE_ID,
+    DEFAULT_COMMITTEE_MEMBERS,
+    DEFAULT_COMMITTEE_VOTES,
+    INITIAL_FUNDS,
+)
 
 
 @pytest.fixture(scope="session")
@@ -76,6 +81,9 @@ def xgov_registry_mock_client(
     )
 
     client.set_committee_publisher(committee_publisher=committee_publisher.address)
+    client.set_committee_id(committee_id=DEFAULT_COMMITTEE_ID)
+    client.set_committee_members(committee_members=DEFAULT_COMMITTEE_MEMBERS)
+    client.set_committee_votes(committee_votes=DEFAULT_COMMITTEE_VOTES)
 
     return client
 

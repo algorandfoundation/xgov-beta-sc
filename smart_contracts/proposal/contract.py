@@ -18,12 +18,12 @@ from algopy import (
 from algopy.op import AppGlobal
 
 import smart_contracts.errors.std_errors as err
+from smart_contracts.common import types as typ
 
 from ..xgov_registry import config as reg_cfg
 from . import config as prop_cfg
 from . import constants as const
 from . import enums as enm
-from . import types as typ
 
 
 class Proposal(
@@ -127,6 +127,32 @@ class Proposal(
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
             )
+
+    @subroutine
+    def verify_and_set_committee(self) -> None:
+
+        committee_id = typ.CommitteeId.from_bytes(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
+        )
+        assert committee_id != typ.CommitteeId.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+
+        committee_members = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
+        )
+        assert committee_members >= UInt64(
+            const.MIN_COMMITTEE_MEMBERS
+        ), err.WRONG_COMMITTEE_MEMBERS
+
+        committee_votes = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
+        )
+        assert committee_votes >= UInt64(
+            const.MIN_COMMITTEE_VOTES
+        ), err.WRONG_COMMITTEE_VOTES
+
+        self.committee_id.value = committee_id.copy()
+        self.committee_members.value = committee_members
+        self.committee_votes.value = committee_votes
 
     @subroutine
     def finalize_check_authorization(self) -> None:
@@ -379,9 +405,14 @@ class Proposal(
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.TOO_EARLY: If the proposal is finalized before the minimum time
+            err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
+            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
+            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
 
         """
         self.finalize_check_authorization()
+
+        self.verify_and_set_committee()
 
         self.status.value = UInt64(enm.STATUS_FINAL)
         self.finalization_ts.value = Global.latest_timestamp
