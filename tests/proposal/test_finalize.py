@@ -8,10 +8,6 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.constants import (
-    MIN_COMMITTEE_MEMBERS,
-    MIN_COMMITTEE_VOTES,
-)
 from smart_contracts.proposal.enums import (
     CATEGORY_SMALL,
     FUNDING_PROACTIVE,
@@ -482,7 +478,7 @@ def test_finalize_wrong_committee_members(
         discussion_duration=0
     )  # so we could actually finalize
     xgov_registry_mock_client.set_committee_members(
-        committee_members=MIN_COMMITTEE_MEMBERS - 1
+        committee_members=0
     )  # invalid committee members
     with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_MEMBERS):
         proposal_client.finalize_proposal(
@@ -556,7 +552,7 @@ def test_finalize_wrong_committee_votes(
         discussion_duration=0
     )  # so we could actually finalize
     xgov_registry_mock_client.set_committee_votes(
-        committee_votes=MIN_COMMITTEE_VOTES - 1
+        committee_votes=0
     )  # invalid committee votes
     with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_VOTES):
         proposal_client.finalize_proposal(

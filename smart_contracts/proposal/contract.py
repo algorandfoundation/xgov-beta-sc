@@ -139,16 +139,12 @@ class Proposal(
         committee_members = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
         )
-        assert committee_members >= UInt64(
-            const.MIN_COMMITTEE_MEMBERS
-        ), err.WRONG_COMMITTEE_MEMBERS
+        assert committee_members > UInt64(0), err.WRONG_COMMITTEE_MEMBERS
 
         committee_votes = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
         )
-        assert committee_votes >= UInt64(
-            const.MIN_COMMITTEE_VOTES
-        ), err.WRONG_COMMITTEE_VOTES
+        assert committee_votes > UInt64(0), err.WRONG_COMMITTEE_VOTES
 
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = committee_members
