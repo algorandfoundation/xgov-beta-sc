@@ -254,17 +254,17 @@ class XGovRegistry(
         self.proposer_box[proposer_key] = box_value
 
     @arc4.abimethod
-    def open_proposal(self, proposal_type: arc4.Uint8, requested_amount: arc4.Uint64) -> UInt64:
+    def open_proposal(self) -> UInt64:
         # Check if the caller is a registered proposer
         proposer_key = b'p' + Txn.sender.bytes
         proposer_state, exists = self.proposer_box.maybe(proposer_key)
         assert exists, "Not a proposer"
-        
+
         # Check if the proposer already has an active proposal
         assert not proposer_state.active_proposal, "Proposer already has an active proposal"
 
         # Ensure the transaction has the correct payment
-        assert Txn.fee >= Global.min_txn_fee * UInt64(2), "Insufficient fee"
+        assert Txn.fee >= Global.min_txn_fee * UInt64(3), "Insufficient fee"
         assert Txn.amount == self.proposal_fee, "Insufficient payment"
         assert Txn.receiver == self.application_address, "Payment must be to current application"
 
