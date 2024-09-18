@@ -8,8 +8,9 @@ LOCAL_UINTS: Final[int] = 0
 
 # Global state keys
 GS_KEY_XGOV_MANAGER: Final[bytes] = b"xgov_manager"
-GS_KEY_KYC_PROVIDER: Final[bytes] = b"kyc_provider"
 GS_KEY_XGOV_PAYOR: Final[bytes] = b"xgov_payor"
+GS_KEY_KYC_PROVIDER: Final[bytes] = b"kyc_provider"
+GS_KEY_COMMITTEE_MANAGER: Final[bytes] = b"committee_manager"
 GS_KEY_COMMITTEE_PUBLISHER: Final[bytes] = b"committee_publisher"
 GS_KEY_XGOV_MIN_BALANCE: Final[bytes] = b"xgov_min_balance"
 GS_KEY_PROPOSER_FEE: Final[bytes] = b"proposer_fee"
