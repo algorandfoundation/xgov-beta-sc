@@ -1,8 +1,8 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 1
-GLOBAL_UINTS: Final[int] = 10
+GLOBAL_BYTES: Final[int] = 2
+GLOBAL_UINTS: Final[int] = 12
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -20,3 +20,6 @@ COMMITTEE_PUBLISHER: Final[str] = (
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ"  # zero address
 )
 PROPOSAL_FEE: Final[int] = 100_000_000  # amount in microAlgos
+COMMITTEE_ID: Final[bytes] = b""
+COMMITTEE_MEMBERS: Final[int] = 0
+COMMITTEE_VOTES: Final[int] = 0

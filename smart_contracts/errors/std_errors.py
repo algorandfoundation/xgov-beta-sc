@@ -28,3 +28,6 @@ WRONG_PROPOSAL_STATUS = "Wrong Proposal Status"
 TOO_EARLY = "Too early"
 
 MISSING_CONFIG = "Missing Config"
+EMPTY_COMMITTEE_ID = "Empty Committee ID"
+WRONG_COMMITTEE_MEMBERS = "Wrong Committee Members"
+WRONG_COMMITTEE_VOTES = "Wrong Committee Votes"

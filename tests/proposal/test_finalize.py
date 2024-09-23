@@ -15,6 +15,9 @@ from smart_contracts.proposal.enums import (
     STATUS_FINAL,
 )
 from tests.proposal.common import (
+    DEFAULT_COMMITTEE_ID,
+    DEFAULT_COMMITTEE_MEMBERS,
+    DEFAULT_COMMITTEE_VOTES,
     LOCKED_AMOUNT,
     REQUESTED_AMOUNT,
     assert_account_balance,
@@ -23,7 +26,7 @@ from tests.proposal.common import (
     relative_to_absolute_amount,
 )
 
-# TODO add tests for drop on other statuses
+# TODO add tests for finalize on other statuses
 
 
 def test_finalize_success(
@@ -105,6 +108,9 @@ def test_finalize_success(
         requested_amount=REQUESTED_AMOUNT,
         locked_amount=LOCKED_AMOUNT,
         category=CATEGORY_SMALL,
+        committee_id=DEFAULT_COMMITTEE_ID,
+        committee_members=DEFAULT_COMMITTEE_MEMBERS,
+        committee_votes=DEFAULT_COMMITTEE_VOTES,
     )
 
 
@@ -294,6 +300,9 @@ def test_finalize_twice(
         requested_amount=REQUESTED_AMOUNT,
         locked_amount=LOCKED_AMOUNT,
         category=CATEGORY_SMALL,
+        committee_id=DEFAULT_COMMITTEE_ID,
+        committee_members=DEFAULT_COMMITTEE_MEMBERS,
+        committee_votes=DEFAULT_COMMITTEE_VOTES,
     )
 
 
@@ -356,3 +365,223 @@ def test_finalize_too_early(
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)
+
+
+def test_finalize_wrong_committee_id(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee_publisher: AddressAndSigner,
+) -> None:
+    proposal_client.submit_proposal(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=LOCKED_AMOUNT,
+                )
+            ),
+            signer=proposer.signer,
+        ),
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+        ),
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=0
+    )  # so we could actually finalize
+    xgov_registry_mock_client.clear_committee_id()  # invalid committee id
+    with pytest.raises(logic_error_type, match=err.EMPTY_COMMITTEE_ID):
+        proposal_client.finalize_proposal(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                suggested_params=sp,
+            ),
+        )
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=discussion_duration
+    )  # restore
+    xgov_registry_mock_client.set_committee_id(
+        committee_id=DEFAULT_COMMITTEE_ID
+    )  # restore
+
+    global_state = proposal_client.get_global_state()
+
+    assert_proposal_global_state(
+        global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        proposer_address=proposer.address,
+        status=STATUS_DRAFT,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+        category=CATEGORY_SMALL,
+    )
+
+
+def test_finalize_wrong_committee_members(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee_publisher: AddressAndSigner,
+) -> None:
+    proposal_client.submit_proposal(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=LOCKED_AMOUNT,
+                )
+            ),
+            signer=proposer.signer,
+        ),
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+        ),
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=0
+    )  # so we could actually finalize
+    xgov_registry_mock_client.set_committee_members(
+        committee_members=0
+    )  # invalid committee members
+    with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_MEMBERS):
+        proposal_client.finalize_proposal(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                suggested_params=sp,
+            ),
+        )
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=discussion_duration
+    )  # restore
+    xgov_registry_mock_client.set_committee_members(
+        committee_members=DEFAULT_COMMITTEE_MEMBERS
+    )  # restore
+
+    global_state = proposal_client.get_global_state()
+
+    assert_proposal_global_state(
+        global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        proposer_address=proposer.address,
+        status=STATUS_DRAFT,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+        category=CATEGORY_SMALL,
+    )
+
+
+def test_finalize_wrong_committee_votes(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee_publisher: AddressAndSigner,
+) -> None:
+    proposal_client.submit_proposal(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=LOCKED_AMOUNT,
+                )
+            ),
+            signer=proposer.signer,
+        ),
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+        ),
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=0
+    )  # so we could actually finalize
+    xgov_registry_mock_client.set_committee_votes(
+        committee_votes=0
+    )  # invalid committee votes
+    with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_VOTES):
+        proposal_client.finalize_proposal(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                suggested_params=sp,
+            ),
+        )
+    xgov_registry_mock_client.set_discussion_duration_small(
+        discussion_duration=discussion_duration
+    )  # restore
+    xgov_registry_mock_client.set_committee_votes(
+        committee_votes=DEFAULT_COMMITTEE_VOTES
+    )  # restore
+
+    global_state = proposal_client.get_global_state()
+
+    assert_proposal_global_state(
+        global_state,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        proposer_address=proposer.address,
+        status=STATUS_DRAFT,
+        title="Test Proposal",
+        cid=b"\x01" * 59,
+        funding_type=FUNDING_PROACTIVE,
+        requested_amount=REQUESTED_AMOUNT,
+        locked_amount=LOCKED_AMOUNT,
+        category=CATEGORY_SMALL,
+    )
