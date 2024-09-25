@@ -1,0 +1,5 @@
+#pragma version 10
+
+smart_contracts.proposal_mock.contract.ProposalMock.clear_state_program:
+    int 1
+    return

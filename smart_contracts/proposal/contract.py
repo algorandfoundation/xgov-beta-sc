@@ -390,7 +390,7 @@ class Proposal(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_FEE)
         )
         publishing_fee_bps = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_PUBLISHING_FEE_BPS)
+            Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
         )
 
         itxn.Payment(

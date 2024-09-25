@@ -20,8 +20,8 @@ from algopy import (
 
 import smart_contracts.errors.std_errors as err
 from . import config as cfg
-from . import constants as const
-from . import enums as enm
+# from . import constants as const
+# from . import enums as enm
 from . import types as typ
 
 from ..proposal import enums as proposal_enm
@@ -92,12 +92,21 @@ class XGovRegistry(
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
         # boxes
-        self.xgov_box = BoxMap(arc4.Address, arc4.Address, key_prefix="x")
-        self.proposer_box = BoxMap(arc4.Address, typ.ProposerBoxValue, key_prefix="p")
+        self.xgov_box = BoxMap(Account, arc4.Address, key_prefix=b"x")
+        self.proposer_box = BoxMap(Account, typ.ProposerBoxValue, key_prefix=b"p")
 
     @subroutine
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value.native
+
+    @subroutine
+    def is_xgov(self) -> bool:
+        return Txn.sender in self.xgov_box
+
+    @subroutine
+    def is_proposer(self) -> bool:
+        return Txn.sender in self.proposer_box
+    
 
     @subroutine
     def no_pending_proposals(self) -> bool:
@@ -124,9 +133,6 @@ class XGovRegistry(
             payor (arc4.Address): Address of the payor
             committee_manager (arc4.Address): Address of the committee manager
         """
-        assert (
-            Global.caller_application_id != 0
-        ), err.UNAUTHORIZED  # Only callable by another contract
 
         self.xgov_manager.value = manager
         self.xgov_payor.value = payor
@@ -135,27 +141,27 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_xgov_manager(self, new_manager: arc4.Address) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can set new manager"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.xgov_manager.value = new_manager
 
     @arc4.abimethod()
     def set_kyc_provider(self, new_provider: arc4.Address) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can set KYC Provider"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.kyc_provider.value = new_provider
 
     @arc4.abimethod()
     def set_payor(self, new_payor: arc4.Address) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can set KYC Provider"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.xgov_payor.value = new_payor
 
     @arc4.abimethod()
-    def set_publisher(self, new_publisher: arc4.Address) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can set Publisher"
+    def set_committee_publisher(self, new_publisher: arc4.Address) -> None:
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.committee_publisher.value = new_publisher
 
     @arc4.abimethod()
     def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can configure registry"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), "Cannot configure with pending proposals"
         
         self.xgov_min_balance.value = config.xgov_min_balance.native
@@ -188,29 +194,29 @@ class XGovRegistry(
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can update registry"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), "Cannot update with pending proposals"
 
     @arc4.abimethod()
-    def subscribe_xgov(self, pmt: gtxn.PaymentTransaction) -> None:
+    def subscribe_xgov(self, payment: gtxn.PaymentTransaction) -> None:
         # check if already an xGov
-        xgov = arc4.Address(Txn.sender)
+        xgov = Txn.sender
         exists = self.xgov_box.maybe(xgov)[1]
         assert not exists, "Already an xGov"
 
         # check payment
-        assert pmt.receiver == Global.current_application_address, "Payment must be to current application"
-        assert pmt.amount == self.xgov_min_balance.value, "Incorrect payment amount"
+        assert payment.receiver == Global.current_application_address, "Payment must be to current application"
+        assert payment.amount == self.xgov_min_balance.value, "Incorrect payment amount"
 
         # create box
-        self.xgov_box[xgov] = xgov
+        self.xgov_box[xgov] = arc4.Address(xgov)
 
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
         # ensure they covered the itxn fee
         assert Txn.fee >= (Global.min_txn_fee * UInt64(2)), "Fee must cover refund payment"
 
-        xgov = arc4.Address(Txn.sender)
+        xgov = Txn.sender
         exists = self.xgov_box.maybe(xgov)[1]
         assert exists, "Not an xGov"
 
@@ -227,9 +233,9 @@ class XGovRegistry(
     @arc4.abimethod()
     def set_voting_account(self, voting_address: arc4.Address) -> None:
         # Check if the sender is an xGov member
-        xgov = arc4.Address(Txn.sender)
+        xgov = Txn.sender
         old_voting_address, exists = self.xgov_box.maybe(xgov)
-        assert exists, "Only xGov members can set a voting account"
+        assert exists, err.UNAUTHORIZED
 
         # Check that the voting account is different from the current voting account
         assert old_voting_address != voting_address, "Voting account must be different from the current voting account"
@@ -238,17 +244,17 @@ class XGovRegistry(
         self.xgov_box[xgov] = voting_address
 
     @arc4.abimethod()
-    def subscribe_proposer(self, pmt: gtxn.PaymentTransaction) -> None:
+    def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
 
-        proposer = arc4.Address(Txn.sender)
-        exists = self.proposer_box.maybe(proposer)[1]
-        assert not exists, "Already a proposer"
+        assert not self.is_proposer(), "Already a proposer"
+        # exists = self.proposer_box.maybe(Txn.sender)[1]
+        # assert not exists, "Already a proposer"
 
         # check fee
-        assert pmt.receiver == Global.current_application_address, "Payment must be to current application"
-        assert pmt.amount == self.proposer_fee.value, "Incorrect payment amount"
+        assert payment.receiver == Global.current_application_address, "Payment must be to current application"
+        assert payment.amount == self.proposer_fee.value, "Incorrect payment amount"
 
-        self.proposer_box[proposer] = typ.ProposerBoxValue(
+        self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
             active_proposal=arc4.Bool(False),
             kyc_status=arc4.Bool(False),
             kyc_expiring=arc4.UInt64(0),
@@ -257,24 +263,23 @@ class XGovRegistry(
     @arc4.abimethod()
     def set_proposer_kyc(self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64) -> None:
         # check if kyc provider
-        assert Txn.sender == self.kyc_provider.value.native, "Only KYC Provider can validate KYC"
+        assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
         
-        assert proposer in self.proposer_box, "Proposer does not exist"
+        assert proposer.native in self.proposer_box, "Proposer does not exist"
 
-        proposer_state = self.proposer_box.maybe(proposer)[0].copy()
+        proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
 
-        self.proposer_box[proposer] = typ.ProposerBoxValue(
+        self.proposer_box[proposer.native] = typ.ProposerBoxValue(
             active_proposal=proposer_state.active_proposal,
             kyc_status=kyc_status,
             kyc_expiring=kyc_expiring
         )
 
     @arc4.abimethod
-    def open_proposal(self, pmt: gtxn.PaymentTransaction) -> UInt64:
+    def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
         # Check if the caller is a registered proposer
-        proposer = arc4.Address(Txn.sender)
-
-        assert proposer in self.proposer_box, "Not a proposer"
+        proposer = Txn.sender
+        assert proposer in self.proposer_box, err.UNAUTHORIZED
 
         proposer_state = self.proposer_box.maybe(proposer)[0].copy()
 
@@ -284,8 +289,8 @@ class XGovRegistry(
         assert Txn.fee >= Global.min_txn_fee * UInt64(3), "Insufficient fee"
 
         # Ensure the transaction has the correct payment
-        assert pmt.amount == self.proposal_fee.value, "Insufficient payment"
-        assert pmt.receiver == Global.current_application_address, "Payment must be to current application"
+        assert payment.amount == self.proposal_fee.value, "Insufficient payment"
+        assert payment.receiver == Global.current_application_address, "Payment must be to current application"
 
         # Create the Proposal App
         compiled = compile_contract(proposal_contract.Proposal)
@@ -324,26 +329,25 @@ class XGovRegistry(
         return proposal_app.id
 
     @arc4.abimethod()
-    def vote_proposal(self, proposal_id: Application, vote: UInt64, vote_amount: UInt64) -> None:
-
+    def vote_proposal(self, proposal_id: Application, xgov_address: arc4.Address, vote: UInt64, vote_amount: UInt64) -> None:
         # ensure a voting enum is being used
         assert vote < UInt64(3), "Vote must be of Null, Approve, or Reject"
-
-        # Verify the caller is an xGov member
-        xgov = arc4.Address(Txn.sender)
-        voting_address, exists = self.xgov_box.maybe(xgov)
-        assert exists, "Caller is not an xGov member"
-
-        # Verify the caller is using their voting address
-        assert Txn.sender == voting_address.native, "Must use xGov voting address"
 
         # verify proposal id is genuine proposal
         assert Global.current_application_address == proposal_id.creator
 
+        # make sure they're voting on behalf of an xgov
+        voting_address, exists = self.xgov_box.maybe(xgov_address.native)
+        assert exists, err.UNAUTHORIZED
+
+        # Verify the caller is using their voting address
+        assert Txn.sender == voting_address.native, "Must use xGov voting address"
+
         # Call the Proposal App to register the vote
-        # TODO: uncomment this
+        # TODO: uncomment this when vote_proposal exists on the proposal contract
         # arc4.abi_call(
         #     proposal_contract.Proposal.vote_proposal,
+        #     xgov_address,
         #     UInt64(vote),
         #     vote_amount,
         #     app_id=proposal_id
@@ -352,7 +356,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def pay_grant_proposal(self, proposal_id: Application) -> None:
         # Verify the caller is the xGov Payor
-        assert arc4.Address(Txn.sender) == self.xgov_payor.value, "Only xGov Payor can pay grant proposals"
+        assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
         assert proposal_id.creator == Global.current_application_address, "Invalid proposal"
@@ -367,10 +371,10 @@ class XGovRegistry(
         # Verify the proposal is in the approved state
         assert status == UInt64(proposal_enm.STATUS_APPROVED), "Proposal is not approved"
 
-        assert proposer in self.proposer_box, "Proposer does not exist"
+        assert proposer.native in self.proposer_box, "Proposer does not exist"
 
         # Verify the proposer's KYC is still valid
-        proposer_state = self.proposer_box.maybe(proposer)[0].copy()
+        proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
         
         assert proposer_state.kyc_status, "Proposer KYC is not valid"
         assert proposer_state.kyc_expiring > Global.latest_timestamp, "Proposer KYC has expired"
@@ -386,21 +390,21 @@ class XGovRegistry(
         self.pending_proposals.value = (self.pending_proposals.value - UInt64(1))
 
         # Update proposer's active proposal status
-        self.proposer_box[proposer] = typ.ProposerBoxValue(
+        self.proposer_box[proposer.native] = typ.ProposerBoxValue(
             active_proposal=arc4.Bool(False),
             kyc_status=proposer_state.kyc_status,
             kyc_expiring=proposer_state.kyc_expiring
         )
 
     @arc4.abimethod()
-    def deposit_funds(self, pmt: gtxn.PaymentTransaction) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can deposit funds"
-        assert pmt.receiver == Global.current_application_address
-        self.outstanding_funds.value += pmt.amount
+    def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        assert payment.receiver == Global.current_application_address
+        self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()
     def withdraw_funds(self, amount: UInt64) -> None:
-        assert self.is_xgov_manager(), "Only xGov Manager can withdraw funds"
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert amount <= self.outstanding_funds.value, "Insufficient funds"
         self.outstanding_funds.value = (self.outstanding_funds.value - amount)
         
@@ -409,3 +413,42 @@ class XGovRegistry(
             amount=amount,
             fee=UInt64(0),
         ).submit()
+
+    @arc4.abimethod(readonly=True)
+    def get_state(self) -> typ.TypedGlobalState:
+        return typ.TypedGlobalState(
+            xgov_manager=self.xgov_manager.value,
+            xgov_payor=self.xgov_payor.value,
+            kyc_provider=self.kyc_provider.value,
+            committee_manager=self.committee_manager.value,
+            committee_publisher=self.committee_publisher.value,
+            xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+            proposer_fee=arc4.UInt64(self.proposal_fee.value),
+            proposal_fee=arc4.UInt64(self.proposal_fee.value),
+            proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),
+            proposal_commitment_bps=arc4.UInt64(self.proposal_commitment_bps.value),
+            min_requested_amount=arc4.UInt64(self.min_requested_amount.value),
+            max_requested_amount_small=arc4.UInt64(self.max_requested_amount_small.value),
+            max_requested_amount_medium=arc4.UInt64(self.max_requested_amount_medium.value),
+            max_requested_amount_large=arc4.UInt64(self.max_requested_amount_large.value),
+            discussion_duration_small=arc4.UInt64(self.discussion_duration_small.value),
+            discussion_duration_medium=arc4.UInt64(self.discussion_duration_medium.value),
+            discussion_duration_large=arc4.UInt64(self.discussion_duration_large.value),
+            discussion_duration_xlarge=arc4.UInt64(self.discussion_duration_xlarge.value),
+            voting_duration_small=arc4.UInt64(self.voting_duration_small.value),
+            voting_duration_medium=arc4.UInt64(self.voting_duration_medium.value),
+            voting_duration_large=arc4.UInt64(self.voting_duration_large.value),
+            voting_duration_xlarge=arc4.UInt64(self.voting_duration_xlarge.value),
+            cool_down_duration=arc4.UInt64(self.cool_down_duration.value),
+            quorum_small=arc4.UInt64(self.quorum_small.value),
+            quorum_medium=arc4.UInt64(self.quorum_medium.value),
+            quorum_large=arc4.UInt64(self.quorum_large.value),
+            weighted_quorum_small=arc4.UInt64(self.weighted_quorum_small.value),
+            weighted_quorum_medium=arc4.UInt64(self.weighted_quorum_medium.value),
+            weighted_quorum_large=arc4.UInt64(self.weighted_quorum_large.value),
+            outstanding_funds=arc4.UInt64(self.outstanding_funds.value),
+            pending_proposals=arc4.UInt64(self.pending_proposals.value),
+            committee_id=self.committee_id.value.copy(),
+            committee_members=arc4.UInt64(self.committee_members.value),
+            committee_votes=arc4.UInt64(self.committee_votes.value)
+        )

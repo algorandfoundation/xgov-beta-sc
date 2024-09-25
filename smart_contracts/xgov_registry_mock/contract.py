@@ -55,7 +55,7 @@ class XgovRegistryMock(
         )
         self.publishing_fee_bps = GlobalState(
             UInt64(mock_cfg.PUBLISHING_FEE_BPS),
-            key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
+            key=reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS,
         )
         self.discussion_duration_small = GlobalState(
             UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
