@@ -1461,20 +1461,20 @@ vote_proposal:
     proto 4 0
     // smart_contracts/xgov_registry/contract.py:330-331
     // # ensure a voting enum is being used
-    // assert vote < UInt64(3), "Vote must be of Null, Approve, or Reject"
+    // assert vote < UInt64(3), err.INVALID_VOTE
     frame_dig -2
     int 3
     <
-    assert // Vote must be of Null, Approve, or Reject
+    assert // Invalid vote
     // smart_contracts/xgov_registry/contract.py:333-334
     // # verify proposal id is genuine proposal
-    // assert Global.current_application_address == proposal_id.creator
+    // assert Global.current_application_address == proposal_id.creator, err.INVALID_PROPOSAL
     global CurrentApplicationAddress
     frame_dig -4
     app_params_get AppCreator
     assert // application exists
     ==
-    assert
+    assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:336-337
     // # make sure they're voting on behalf of an xgov
     // voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -1487,10 +1487,10 @@ vote_proposal:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:340-341
     // # Verify the caller is using their voting address
-    // assert Txn.sender == voting_address.native, "Must use xGov voting address"
+    // assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
     txn Sender
     ==
-    assert // Must use xGov voting address
+    assert // Must be voting address
     // smart_contracts/xgov_registry/contract.py:343-350
     // # Call the Proposal App to register the vote
     // arc4.abi_call(
@@ -1802,7 +1802,7 @@ withdraw_funds:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:405
-    // assert amount <= self.outstanding_funds.value, "Insufficient funds"
+    // assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
     int 0
     byte 0x6f75747374616e64696e675f66756e6473
     app_global_get_ex

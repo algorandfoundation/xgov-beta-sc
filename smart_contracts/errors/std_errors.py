@@ -48,3 +48,5 @@ VOTING_ADDRESS_MUST_BE_DIFFERENT = "Voting account must be different from the cu
 ALREADY_PROPOSER = "Already a proposer"
 ALREADY_XGOV = "Already an xgov"
 NO_PENDING_PROPOSALS = "Cannot perform operation with pending proposals"
+INVALID_VOTE = "Invalid vote"
+MUST_BE_VOTING_ADDRESS = "Must be voting address"

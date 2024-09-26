@@ -328,17 +328,17 @@ class XGovRegistry(
     @arc4.abimethod()
     def vote_proposal(self, proposal_id: Application, xgov_address: arc4.Address, vote: UInt64, vote_amount: UInt64) -> None:
         # ensure a voting enum is being used
-        assert vote < UInt64(3), "Vote must be of Null, Approve, or Reject"
+        assert vote < UInt64(3), err.INVALID_VOTE
 
         # verify proposal id is genuine proposal
-        assert Global.current_application_address == proposal_id.creator
+        assert Global.current_application_address == proposal_id.creator, err.INVALID_PROPOSAL
 
         # make sure they're voting on behalf of an xgov
         voting_address, exists = self.xgov_box.maybe(xgov_address.native)
         assert exists, err.UNAUTHORIZED
 
         # Verify the caller is using their voting address
-        assert Txn.sender == voting_address.native, "Must use xGov voting address"
+        assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
         arc4.abi_call(
@@ -402,7 +402,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def withdraw_funds(self, amount: UInt64) -> None:
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert amount <= self.outstanding_funds.value, "Insufficient funds"
+        assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
         self.outstanding_funds.value = (self.outstanding_funds.value - amount)
         
         itxn.Payment(
