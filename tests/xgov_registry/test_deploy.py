@@ -1,7 +1,4 @@
-from algosdk.v2client.algod import AlgodClient
-
 import algokit_utils
-from algokit_utils.beta.account_manager import AddressAndSigner
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
 from tests.xgov_registry.common import assert_registry_global_state

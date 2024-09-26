@@ -24,11 +24,14 @@ __puya_arc4_router__:
     // ):
     proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___after_if_else@7
+    bz __puya_arc4_router___after_if_else@10
     method "create(address)void"
-    method "vote_proposal()void"
+    method "set_status(uint64)void"
+    method "set_requested_amount(uint64)void"
+    method "release_funds()void"
+    method "vote_proposal(address,uint64,uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___create_route@2 __puya_arc4_router___vote_proposal_route@3
+    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___release_funds_route@5 __puya_arc4_router___vote_proposal_route@6
     int 0
     retsub
 
@@ -58,8 +61,60 @@ __puya_arc4_router___create_route@2:
     int 1
     retsub
 
-__puya_arc4_router___vote_proposal_route@3:
+__puya_arc4_router___set_status_route@3:
     // smart_contracts/proposal_mock/contract.py:122
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/proposal_mock/contract.py:20-28
+    // class ProposalMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=prop_cfg.GLOBAL_BYTES,
+    //         global_uints=prop_cfg.GLOBAL_UINTS,
+    //         local_bytes=prop_cfg.LOCAL_BYTES,
+    //         local_uints=prop_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/proposal_mock/contract.py:122
+    // @arc4.abimethod()
+    callsub set_status
+    int 1
+    retsub
+
+__puya_arc4_router___set_requested_amount_route@4:
+    // smart_contracts/proposal_mock/contract.py:126
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/proposal_mock/contract.py:20-28
+    // class ProposalMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=prop_cfg.GLOBAL_BYTES,
+    //         global_uints=prop_cfg.GLOBAL_UINTS,
+    //         local_bytes=prop_cfg.LOCAL_BYTES,
+    //         local_uints=prop_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/proposal_mock/contract.py:126
+    // @arc4.abimethod()
+    callsub set_requested_amount
+    int 1
+    retsub
+
+__puya_arc4_router___release_funds_route@5:
+    // smart_contracts/proposal_mock/contract.py:130
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -69,7 +124,18 @@ __puya_arc4_router___vote_proposal_route@3:
     int 1
     retsub
 
-__puya_arc4_router___after_if_else@7:
+__puya_arc4_router___vote_proposal_route@6:
+    // smart_contracts/proposal_mock/contract.py:134
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    int 1
+    retsub
+
+__puya_arc4_router___after_if_else@10:
     // smart_contracts/proposal_mock/contract.py:20-28
     // class ProposalMock(
     //     ARC4Contract,
@@ -107,6 +173,34 @@ create:
     // self.registry_app_id.value = Global.caller_application_id
     byte 0x72656769737472795f6170705f6964
     global CallerApplicationID
+    app_global_put
+    retsub
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.set_status(status: uint64) -> void:
+set_status:
+    // smart_contracts/proposal_mock/contract.py:122-123
+    // @arc4.abimethod()
+    // def set_status(self, status: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/proposal_mock/contract.py:124
+    // self.status.value = status
+    byte 0x737461747573
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount(requested_amount: uint64) -> void:
+set_requested_amount:
+    // smart_contracts/proposal_mock/contract.py:126-127
+    // @arc4.abimethod()
+    // def set_requested_amount(self, requested_amount: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/proposal_mock/contract.py:128
+    // self.requested_amount.value = requested_amount
+    byte 0x7265717565737465645f616d6f756e74
+    frame_dig -1
     app_global_put
     retsub
 

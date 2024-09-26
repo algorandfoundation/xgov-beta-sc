@@ -1,12 +1,147 @@
+import pytest
 
-def test_subscribe_proposer_success() -> None:
-    pass
+from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
+from algokit_utils.beta.algorand_client import AlgorandClient
+from algokit_utils.beta.composer import PayParams
 
-def test_subscribe_proposer_already_proposer() -> None:
-    pass
+from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
-def test_subscribe_proposer_wrong_recipient() -> None:
-    pass
+from algosdk.encoding import decode_address
+from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-def test_subscribe_proposer_wrong_amount() -> None:
-    pass
+from smart_contracts.errors import std_errors as err
+from tests.xgov_registry.common import logic_error_type
+
+def test_subscribe_proposer_success(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    random_account: AddressAndSigner,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    xgov_registry_client.subscribe_proposer(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=random_account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.proposer_fee
+                ),
+            ),
+            signer=random_account.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=random_account.address,
+            signer=random_account.signer,
+            suggested_params=sp,
+            boxes=[(0, b"p" + decode_address(random_account.address))]
+        ),
+    )
+
+def test_subscribe_proposer_already_proposer(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: AddressAndSigner,
+    random_account: AddressAndSigner,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    xgov_registry_client.subscribe_proposer(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=random_account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.proposer_fee
+                ),
+            ),
+            signer=random_account.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=random_account.address,
+            signer=random_account.signer,
+            suggested_params=sp,
+            boxes=[(0, b"p" + decode_address(random_account.address))]
+        ),
+    )
+
+    with pytest.raises(logic_error_type, match=err.ALREADY_PROPOSER):
+        xgov_registry_client.subscribe_proposer(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.proposer_fee
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, b"p" + decode_address(random_account.address))]
+            ),
+        )
+    
+
+def test_subscribe_proposer_wrong_recipient(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: AddressAndSigner,
+    random_account: AddressAndSigner,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
+        xgov_registry_client.subscribe_proposer(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=random_account.address,
+                        amount=global_state.proposer_fee
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, b"p" + decode_address(random_account.address))]
+            ),
+        )
+
+def test_subscribe_proposer_wrong_amount(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: AddressAndSigner,
+    random_account: AddressAndSigner,
+) -> None:
+    sp = algorand_client.get_suggested_params()
+
+    with pytest.raises(logic_error_type, match=err.WRONG_PAYMENT_AMOUNT):
+        xgov_registry_client.subscribe_proposer(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=100
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, b"p" + decode_address(random_account.address))]
+            ),
+        )

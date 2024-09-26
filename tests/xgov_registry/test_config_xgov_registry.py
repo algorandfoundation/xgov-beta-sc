@@ -10,6 +10,7 @@ from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryConfig
 )
 
+from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
@@ -38,11 +39,13 @@ def test_config_xgov_registry_success(
     assert_registry_config(
         global_state=global_state,
         xgov_min_balance=xgov_registry_config.xgov_min_balance,
+        proposal_publishing_bps=xgov_registry_config.proposal_publishing_bps,
+        proposal_commitment_bps=xgov_registry_config.proposal_commitment_bps,
         proposer_fee=xgov_registry_config.proposer_fee,
         proposal_fee=xgov_registry_config.proposal_fee,
-        max_requested_amount_small=xgov_registry_config.max_req_amount[0],
-        max_requested_amount_medium=xgov_registry_config.max_req_amount[1],
-        max_requested_amount_large=xgov_registry_config.max_req_amount[2],
+        max_requested_amount_small=xgov_registry_config.max_requested_amount[0],
+        max_requested_amount_medium=xgov_registry_config.max_requested_amount[1],
+        max_requested_amount_large=xgov_registry_config.max_requested_amount[2],
         discussion_duration_small=xgov_registry_config.discussion_duration[0],
         discussion_duration_medium=xgov_registry_config.discussion_duration[1],
         discussion_duration_large=xgov_registry_config.discussion_duration[2],
@@ -74,7 +77,6 @@ def test_config_xgov_registry_not_manager(
             ),
         )
 
-
 def test_config_xgov_registry_pending_proposals(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
@@ -102,6 +104,16 @@ def test_config_xgov_registry_pending_proposals(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
+            boxes=[(0, b"p" + decode_address(proposer.address))]
+        ),
+    )
+
+    xgov_registry_client.set_kyc_provider(
+        provider=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
         ),
     )
 
@@ -115,6 +127,7 @@ def test_config_xgov_registry_pending_proposals(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
+            boxes=[(0, b"p" + decode_address(proposer.address))]
         ),
     )
 
@@ -133,8 +146,13 @@ def test_config_xgov_registry_pending_proposals(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            suggested_params=sp,
+            boxes=[(0, b"p" + decode_address(proposer.address))]
         ),
     )
+
+    global_state = xgov_registry_client.get_global_state()
+    print(global_state.pending_proposals)
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
@@ -144,4 +162,3 @@ def test_config_xgov_registry_pending_proposals(
                 signer=deployer.signer,
             ),
         )
-    

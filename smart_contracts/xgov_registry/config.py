@@ -1,7 +1,7 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 5
+GLOBAL_BYTES: Final[int] = 6
 GLOBAL_UINTS: Final[int] = 30
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0

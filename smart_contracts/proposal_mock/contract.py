@@ -120,5 +120,22 @@ class ProposalMock(
         self.registry_app_id.value = Global.caller_application_id
 
     @arc4.abimethod()
-    def vote_proposal(self) -> None:
+    def set_status(self, status: UInt64) -> None:
+        self.status.value = status
+
+    @arc4.abimethod()
+    def set_requested_amount(self, requested_amount: UInt64) -> None:
+        self.requested_amount.value = requested_amount
+
+    @arc4.abimethod()
+    def release_funds(self) -> None:
+        pass
+
+    @arc4.abimethod()
+    def vote_proposal(
+        self,
+        xgov_address: arc4.Address,
+        vote: UInt64,
+        amount: UInt64,
+    ) -> None:
         pass

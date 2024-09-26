@@ -16,7 +16,7 @@ def test_set_payor_success(
     random_account: AddressAndSigner,
 ) -> None:
     xgov_registry_client.set_payor(
-        new_payor=random_account.address,
+        payor=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -36,7 +36,7 @@ def test_set_payor_not_manager(
 ) -> None:
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.set_payor(
-            new_payor=random_account.address,
+            payor=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,

@@ -16,7 +16,6 @@ from smart_contracts.artifacts.xgov_registry.client import (
 
 from tests.proposal.common import INITIAL_FUNDS
 
-
 @pytest.fixture(scope="session")
 def algorand_client() -> AlgorandClient:
     client = AlgorandClient.default_local_net()
@@ -25,6 +24,20 @@ def algorand_client() -> AlgorandClient:
 
 @pytest.fixture(scope="session")
 def deployer(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def xgov(algorand_client: AlgorandClient) -> AddressAndSigner:
     account = algorand_client.account.random()
 
     ensure_funded(
@@ -100,10 +113,10 @@ def xgov_registry_config() -> XGovRegistryConfig:
         xgov_min_balance=1_000_000,
         proposer_fee=10_000_000,
         proposal_fee=1_000_000,
-        proposal_publishing_perc=1_000,
-        proposal_commitment_perc=1_000,
-        min_req_amount=1_000,
-        max_req_amount=[
+        proposal_publishing_bps=1_000,
+        proposal_commitment_bps=1_000,
+        min_requested_amount=1_000,
+        max_requested_amount=[
             100_000_000,
             1_000_000_000,
             10_000_000_000,
