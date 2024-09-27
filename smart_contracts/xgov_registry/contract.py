@@ -250,7 +250,7 @@ class XGovRegistry(
     def set_proposer_kyc(self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64) -> None:
         # check if kyc provider
         assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
-        assert self.is_proposer(proposer.native), "Proposer does not exist"
+        assert self.is_proposer(proposer.native), err.PROPOSER_DOES_NOT_EXIST
 
         proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
 

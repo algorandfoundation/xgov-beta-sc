@@ -29,8 +29,6 @@ TOO_EARLY = "Too early"
 
 MISSING_CONFIG = "Missing Config"
 
-MISSING_CONFIG = "Missing Config"
-
 PENDING_PROPOSALS = "Pending proposals"
 WRONG_PAYMENT_AMOUNT = "Wrong payment amount"
 INSUFFICIENT_FUNDS = "Insufficient funds"
@@ -50,3 +48,4 @@ ALREADY_XGOV = "Already an xgov"
 NO_PENDING_PROPOSALS = "Cannot perform operation with pending proposals"
 INVALID_VOTE = "Invalid vote"
 MUST_BE_VOTING_ADDRESS = "Must be voting address"
+PROPOSER_DOES_NOT_EXIST = "Proposer does not exist"
