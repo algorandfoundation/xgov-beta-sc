@@ -5,7 +5,10 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.client import (
+    XGovRegistryClient,
+    XGovRegistryConfig
+)
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 
 from algosdk.encoding import decode_address
@@ -17,14 +20,25 @@ from tests.xgov_registry.common import logic_error_type
 
 def test_vote_proposal_success(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -32,7 +46,7 @@ def test_vote_proposal_success(
                 PayParams(
                     sender=xgov.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=xgov.signer,
@@ -111,7 +125,7 @@ def test_vote_proposal_success(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -158,14 +172,25 @@ def test_vote_proposal_success(
 
 def test_vote_proposal_wrong_vote_enum(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -173,7 +198,7 @@ def test_vote_proposal_wrong_vote_enum(
                 PayParams(
                     sender=xgov.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=xgov.signer,
@@ -252,7 +277,7 @@ def test_vote_proposal_wrong_vote_enum(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -300,14 +325,25 @@ def test_vote_proposal_wrong_vote_enum(
 
 def test_vote_proposal_not_a_proposal_app(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -315,7 +351,7 @@ def test_vote_proposal_not_a_proposal_app(
                 PayParams(
                     sender=xgov.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=xgov.signer,
@@ -394,7 +430,7 @@ def test_vote_proposal_not_a_proposal_app(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -442,14 +478,25 @@ def test_vote_proposal_not_a_proposal_app(
 
 def test_vote_proposal_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.deposit_funds(
         payment=TransactionWithSigner(
@@ -517,7 +564,7 @@ def test_vote_proposal_not_an_xgov(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -558,21 +605,32 @@ def test_vote_proposal_not_an_xgov(
                 signer=xgov.signer,
                 suggested_params=sp,
                 boxes=[(0, b"x" + decode_address(xgov.address))],
-                foreign_apps=[(xgov_registry_client.app_id)],
+                foreign_apps=[(proposal_mock_app_id)],
                 accounts=[(xgov.address)]
             ),
         )
 
 def test_vote_proposal_wrong_voting_address(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -580,7 +638,7 @@ def test_vote_proposal_wrong_voting_address(
                 PayParams(
                     sender=xgov.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=xgov.signer,
@@ -669,7 +727,7 @@ def test_vote_proposal_wrong_voting_address(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -710,7 +768,7 @@ def test_vote_proposal_wrong_voting_address(
                 signer=xgov.signer,
                 suggested_params=sp,
                 boxes=[(0, b"x" + decode_address(xgov.address))],
-                foreign_apps=[(xgov_registry_client.app_id)],
+                foreign_apps=[(proposal_mock_app_id)],
                 accounts=[(xgov.address)]
             ),
         )

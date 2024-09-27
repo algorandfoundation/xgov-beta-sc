@@ -5,7 +5,10 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.client import (
+    XGovRegistryClient,
+    XGovRegistryConfig
+)
 
 from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
@@ -16,14 +19,24 @@ from tests.xgov_registry.common import logic_error_type
 
 def test_open_proposal_success(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_proposer(
         payment=TransactionWithSigner(
@@ -73,7 +86,7 @@ def test_open_proposal_success(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -103,7 +116,7 @@ def test_open_proposal_not_a_proposer(
                     PayParams(
                         sender=random_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee
+                        amount=global_state.proposal_fee
                     ),
                 ),
                 signer=random_account.signer,
@@ -118,14 +131,23 @@ def test_open_proposal_not_a_proposer(
 
 def test_open_proposal_active_proposal(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_proposer(
         payment=TransactionWithSigner(
@@ -175,7 +197,7 @@ def test_open_proposal_active_proposal(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposal_fee
                 ),
             ),
             signer=proposer.signer,
@@ -195,7 +217,7 @@ def test_open_proposal_active_proposal(
                     PayParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee
+                        amount=global_state.proposal_fee
                     ),
                 ),
                 signer=proposer.signer,

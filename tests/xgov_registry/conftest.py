@@ -112,7 +112,7 @@ def xgov_registry_config() -> XGovRegistryConfig:
     return XGovRegistryConfig(
         xgov_min_balance=1_000_000,
         proposer_fee=10_000_000,
-        proposal_fee=1_000_000,
+        proposal_fee=100_000_000,
         proposal_publishing_bps=1_000,
         proposal_commitment_bps=1_000,
         min_requested_amount=1_000,

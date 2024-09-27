@@ -79,15 +79,23 @@ def test_config_xgov_registry_not_manager(
 
 def test_config_xgov_registry_pending_proposals(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
-    xgov_registry_config: XGovRegistryConfig
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_proposer(
         payment=TransactionWithSigner(

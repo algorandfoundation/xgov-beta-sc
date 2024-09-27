@@ -5,7 +5,10 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.client import (
+    XGovRegistryClient,
+    XGovRegistryConfig
+)
 
 from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
@@ -46,14 +49,24 @@ def test_update_xgov_registry_not_manager(
 
 def test_update_xgov_registry_pending_proposals(
     xgov_registry_client: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.subscribe_proposer(
         payment=TransactionWithSigner(

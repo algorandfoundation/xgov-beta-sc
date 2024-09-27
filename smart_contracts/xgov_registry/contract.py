@@ -112,7 +112,7 @@ class XGovRegistry(
         ).submit()
 
         # Update the outstanding funds
-        self.outstanding_funds.value = (self.outstanding_funds.value - amount)
+        self.outstanding_funds.value -= amount
 
     @arc4.abimethod(create="require")
     def create(self, manager: arc4.Address, payor: arc4.Address, comittee_manager: arc4.Address) -> None:
@@ -272,7 +272,7 @@ class XGovRegistry(
         """
 
         # ensure they covered the itxn fee
-        assert Txn.fee >= (Global.min_txn_fee * UInt64(2)), err.INSUFFICIENT_FEE
+        assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
         assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
@@ -282,7 +282,7 @@ class XGovRegistry(
         itxn.Payment(
             receiver=Txn.sender,
             amount=self.xgov_min_balance.value,
-            fee=UInt64(0),
+            fee=0,
         ).submit()
 
     @arc4.abimethod()
@@ -408,7 +408,7 @@ class XGovRegistry(
         assert proposer_state.kyc_status, err.INVALID_KYC
         assert proposer_state.kyc_expiring, err.EXPIRED_KYC
 
-        assert Txn.fee >= Global.min_txn_fee * UInt64(3), err.INSUFFICIENT_FEE
+        assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
 
         # Ensure the transaction has the correct payment
         assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
@@ -443,7 +443,7 @@ class XGovRegistry(
         ).submit()
 
         # Increment pending proposals
-        self.pending_proposals.value += UInt64(1)
+        self.pending_proposals.value += 1
 
         return proposal_app.id
 
@@ -465,7 +465,7 @@ class XGovRegistry(
         """
 
         # ensure a voting enum is being used
-        assert vote < UInt64(3), err.INVALID_VOTE
+        assert vote < 3, err.INVALID_VOTE
 
         # verify proposal id is genuine proposal
         assert Global.current_application_address == Application(proposal_id.native).creator, err.INVALID_PROPOSAL
@@ -536,7 +536,7 @@ class XGovRegistry(
         )
 
         # Decrement pending proposals count
-        self.pending_proposals.value = (self.pending_proposals.value - UInt64(1))
+        self.pending_proposals.value -= 1
 
         # Update proposer's active proposal status
         self.proposer_box[proposer.native] = typ.ProposerBoxValue(
@@ -576,13 +576,13 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
-        assert Txn.fee >= (Global.min_txn_fee * UInt64(2)), err.INSUFFICIENT_FEE
-        self.outstanding_funds.value = (self.outstanding_funds.value - amount)
+        assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
+        self.outstanding_funds.value -= amount
         
         itxn.Payment(
             receiver=self.xgov_manager.value.native,
             amount=amount,
-            fee=UInt64(0),
+            fee=0,
         ).submit()
 
     @arc4.abimethod(readonly=True)
