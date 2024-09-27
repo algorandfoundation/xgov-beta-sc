@@ -415,6 +415,7 @@ class XGovRegistry(
         assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # Create the Proposal App
+        # TODO: replace the proposal mock contract with the real one
         compiled = compile_contract(proposal_contract.ProposalMock)
         proposal_app = (
             itxn.ApplicationCall(
