@@ -96,14 +96,6 @@ class XGovRegistry(
     @subroutine
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value.native
-
-    @subroutine
-    def is_xgov(self, account: Account) -> bool:
-        return account in self.xgov_box
-
-    @subroutine
-    def is_proposer(self, account: Account) -> bool:
-        return account in self.proposer_box
     
     @subroutine
     def no_pending_proposals(self) -> bool:
@@ -197,7 +189,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov(self, payment: gtxn.PaymentTransaction) -> None:
-        assert not self.is_xgov(Txn.sender), err.ALREADY_XGOV
+        assert not Txn.sender in self.xgov_box, err.ALREADY_XGOV
         # check payment
         assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
         assert payment.amount == self.xgov_min_balance.value, err.WRONG_PAYMENT_AMOUNT
@@ -209,7 +201,7 @@ class XGovRegistry(
     def unsubscribe_xgov(self) -> None:
         # ensure they covered the itxn fee
         assert Txn.fee >= (Global.min_txn_fee * UInt64(2)), err.INSUFFICIENT_FEE
-        assert self.is_xgov(Txn.sender), err.UNAUTHORIZED
+        assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
         del self.xgov_box[Txn.sender]
@@ -235,7 +227,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
-        assert not self.is_proposer(Txn.sender), err.ALREADY_PROPOSER
+        assert not Txn.sender in self.proposer_box, err.ALREADY_PROPOSER
         # check fee
         assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
         assert payment.amount == self.proposer_fee.value, err.WRONG_PAYMENT_AMOUNT
@@ -250,7 +242,7 @@ class XGovRegistry(
     def set_proposer_kyc(self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64) -> None:
         # check if kyc provider
         assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
-        assert self.is_proposer(proposer.native), err.PROPOSER_DOES_NOT_EXIST
+        assert proposer.native in self.proposer_box, err.PROPOSER_DOES_NOT_EXIST
 
         proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
 
@@ -276,7 +268,7 @@ class XGovRegistry(
     @arc4.abimethod
     def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
         # Check if the caller is a registered proposer
-        assert self.is_proposer(Txn.sender), err.UNAUTHORIZED
+        assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
 
         proposer_state = self.proposer_box.maybe(Txn.sender)[0].copy()
 
