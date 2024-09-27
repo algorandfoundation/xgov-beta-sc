@@ -332,7 +332,7 @@ def test_open_proposal_wrong_amount(
 
     sp.min_fee *= 3  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PAYMENT):
+    with pytest.raises(logic_error_type, match=err.WRONG_PAYMENT_AMOUNT):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
