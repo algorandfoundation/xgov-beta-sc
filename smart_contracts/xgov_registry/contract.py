@@ -438,7 +438,7 @@ class XGovRegistry(
         # Transfer funds to the new Proposal App
         itxn.Payment(
             receiver=proposal_app.address,
-            amount=self.proposal_fee.value,
+            amount=self.proposal_fee.value - cfg.PROPOSAL_MBR,
             fee=0,
         ).submit()
 
