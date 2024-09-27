@@ -391,6 +391,8 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not a proposer
             err.ALREADY_ACTIVE_PROPOSAL: If the proposer already has an active proposal
+            err.INVALID_KYC: If the proposer does not have valid KYC
+            err.EXPIRED_KYC: If the proposers KYC is expired
             err.INSUFFICIENT_FEE: If the fee for the current transaction doesnt cover the inner transaction fees
             err.WRONG_RECEIVER: If the recipient is not the registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount doesnt match the proposal fee
@@ -403,6 +405,8 @@ class XGovRegistry(
 
         # Check if the proposer already has an active proposal
         assert not proposer_state.active_proposal, err.ALREADY_ACTIVE_PROPOSAL
+        assert proposer_state.kyc_status, err.INVALID_KYC
+        assert proposer_state.kyc_expiring, err.EXPIRED_KYC
 
         assert Txn.fee >= Global.min_txn_fee * UInt64(3), err.INSUFFICIENT_FEE
 
