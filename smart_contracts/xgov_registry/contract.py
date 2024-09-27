@@ -342,7 +342,7 @@ class XGovRegistry(
 
         # Call the Proposal App to register the vote
         arc4.abi_call(
-            proposal_contract.ProposalMock.vote_proposal,
+            proposal_contract.ProposalMock.vote,
             xgov_address,
             vote,
             vote_amount,

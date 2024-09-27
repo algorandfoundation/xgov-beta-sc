@@ -132,7 +132,7 @@ class ProposalMock(
         pass
 
     @arc4.abimethod()
-    def vote_proposal(
+    def vote(
         self,
         xgov_address: arc4.Address,
         vote: UInt64,
