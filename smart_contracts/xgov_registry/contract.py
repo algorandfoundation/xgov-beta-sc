@@ -433,11 +433,7 @@ class XGovRegistry(
         )
 
         # Update proposer state
-        self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
-            active_proposal=arc4.Bool(True),
-            kyc_expiring=proposer_state.kyc_expiring,
-            kyc_status=proposer_state.kyc_status
-        )
+        self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)
 
         # Transfer funds to the new Proposal App
         itxn.Payment(
@@ -472,7 +468,7 @@ class XGovRegistry(
         assert vote < UInt64(3), err.INVALID_VOTE
 
         # verify proposal id is genuine proposal
-        assert Global.current_application_address == proposal_id.creator, err.INVALID_PROPOSAL
+        assert Global.current_application_address == Application(proposal_id.native).creator, err.INVALID_PROPOSAL
 
         # make sure they're voting on behalf of an xgov
         voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -487,11 +483,11 @@ class XGovRegistry(
             xgov_address,
             vote,
             vote_amount,
-            app_id=proposal_id
+            app_id=proposal_id.native
         )
 
     @arc4.abimethod()
-    def pay_grant_proposal(self, proposal_id: Application) -> None:
+    def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
         """Disburses the funds for an approved proposal
 
         Args:
@@ -511,13 +507,13 @@ class XGovRegistry(
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert proposal_id.creator == Global.current_application_address, err.INVALID_PROPOSAL
+        assert Application(proposal_id.native).creator == Global.current_application_address, err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id, b"status")
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(proposal_id, b"proposer")
+        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, b"status")
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(proposal_id.native, b"proposer")
         proposer = arc4.Address(proposer_bytes)
-        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(proposal_id, b"requested_amount")
+        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, b"requested_amount")
         # Verify the proposal is in the approved state
         assert status == UInt64(proposal_enm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
 
@@ -536,7 +532,7 @@ class XGovRegistry(
         
         arc4.abi_call(
             "release_funds",
-            app_id=proposal_id
+            app_id=proposal_id.native
         )
 
         # Decrement pending proposals count
