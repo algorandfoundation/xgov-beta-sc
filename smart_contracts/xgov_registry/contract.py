@@ -22,9 +22,9 @@ import smart_contracts.errors.std_errors as err
 from . import config as cfg
 from . import types as typ
 
-from ..proposal import enums as proposal_enm
+from ..proposal import enums as penm
 from ..proposal_mock import contract as proposal_contract
-from ..proposal import config as proposal_config
+from ..proposal import config as pcfg
 from ..proposal import types as ptyp
 
 class XGovRegistry(
@@ -422,10 +422,10 @@ class XGovRegistry(
                 app_args=(arc4.arc4_signature("create(address)void"), Txn.sender),
                 approval_program=compiled.approval_program,
                 clear_state_program=compiled.clear_state_program,
-                global_num_bytes=proposal_config.GLOBAL_BYTES,
-                global_num_uint=proposal_config.GLOBAL_UINTS,
-                local_num_bytes=proposal_config.LOCAL_BYTES,
-                local_num_uint=proposal_config.LOCAL_UINTS,
+                global_num_bytes=pcfg.GLOBAL_BYTES,
+                global_num_uint=pcfg.GLOBAL_UINTS,
+                local_num_bytes=pcfg.LOCAL_BYTES,
+                local_num_uint=pcfg.LOCAL_UINTS,
                 fee=0
             )
             .submit()
@@ -510,12 +510,12 @@ class XGovRegistry(
         assert Application(proposal_id.native).creator == Global.current_application_address, err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, b"status")
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(proposal_id.native, b"proposer")
+        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_STATUS)
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(proposal_id.native, pcfg.GS_KEY_PROPOSER)
         proposer = arc4.Address(proposer_bytes)
-        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, b"requested_amount")
+        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT)
         # Verify the proposal is in the approved state
-        assert status == UInt64(proposal_enm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
+        assert status == UInt64(penm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
 
         assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
 
