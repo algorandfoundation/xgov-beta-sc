@@ -107,7 +107,7 @@ class XGovRegistry(
     
     @subroutine
     def no_pending_proposals(self) -> bool:
-        return (self.pending_proposals.value == 0)
+        return self.pending_proposals.value == 0
     
     @subroutine
     def disburse_funds(self, recipient: arc4.Address, amount: UInt64) -> None:
