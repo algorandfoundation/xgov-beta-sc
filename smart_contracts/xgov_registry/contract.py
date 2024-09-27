@@ -25,6 +25,7 @@ from . import types as typ
 from ..proposal import enums as proposal_enm
 from ..proposal_mock import contract as proposal_contract
 from ..proposal import config as proposal_config
+from ..proposal import types as ptyp
 
 class XGovRegistry(
     ARC4Contract,
@@ -359,14 +360,14 @@ class XGovRegistry(
     @arc4.abimethod()
     def declare_committee(
         self,
-        id: arc4.StaticArray[arc4.Byte, t.Literal[32]],
+        id: ptyp.CommitteeId,
         size: UInt64,
         votes: UInt64
     ) -> None:
         """Sets the committee details
 
         Args:
-            id (arc4.StaticArray[arc4.Byte, t.Literal[32]]): The id of the commitee
+            id (ptyp.ComitteeId): The id of the commitee
             size (UInt64): The size of the committee
             votes (UInt64): The voting power of the committee
 

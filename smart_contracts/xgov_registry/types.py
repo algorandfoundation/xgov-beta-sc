@@ -2,6 +2,8 @@ import typing as t
 
 from algopy import arc4
 
+from ..proposal import types as ptyp
+
 class TypedGlobalState(arc4.Struct):
     xgov_manager: arc4.Address
     xgov_payor: arc4.Address
@@ -22,7 +24,7 @@ class TypedGlobalState(arc4.Struct):
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     outstanding_funds: arc4.UInt64
     pending_proposals: arc4.UInt64
-    committee_id: arc4.StaticArray[arc4.Byte, t.Literal[32]]
+    committee_id: ptyp.CommitteeId
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
 
