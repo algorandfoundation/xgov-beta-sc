@@ -11,7 +11,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal_mock import enums as enm
+from smart_contracts.proposal import enums as enm
 from tests.xgov_registry.common import logic_error_type
 
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient

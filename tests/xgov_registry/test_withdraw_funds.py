@@ -6,13 +6,10 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 
-from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from smart_contracts.xgov_registry import enums as enm
 from tests.xgov_registry.common import logic_error_type
 
 def test_withdraw_funds_success(
@@ -55,7 +52,6 @@ def test_withdraw_funds_success(
     after_global_state = xgov_registry_client.get_global_state()
 
     assert before_global_state.outstanding_funds == after_global_state.outstanding_funds
-
 
 def test_withdraw_funds_not_manager(
     xgov_registry_client: XGovRegistryClient,

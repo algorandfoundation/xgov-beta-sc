@@ -13,8 +13,8 @@ from algopy import (
 
 import smart_contracts.errors.std_errors as err
 
-from . import config as prop_cfg
-from . import enums as enm
+from ..proposal import config as prop_cfg
+from ..proposal import enums as enm
 from ..proposal import types as typ
 
 class ProposalMock(
