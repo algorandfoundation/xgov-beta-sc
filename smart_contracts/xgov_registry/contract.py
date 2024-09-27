@@ -244,10 +244,10 @@ class XGovRegistry(
         assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
         assert proposer.native in self.proposer_box, err.PROPOSER_DOES_NOT_EXIST
 
-        proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
+        active_proposal = self.proposer_box[proposer.native].copy().active_proposal
 
         self.proposer_box[proposer.native] = typ.ProposerBoxValue(
-            active_proposal=proposer_state.active_proposal,
+            active_proposal=active_proposal,
             kyc_status=kyc_status,
             kyc_expiring=kyc_expiring
         )
@@ -270,11 +270,11 @@ class XGovRegistry(
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
 
-        proposer_state = self.proposer_box.maybe(Txn.sender)[0].copy()
+        proposer_state = self.proposer_box[Txn.sender].copy()
 
         # Check if the proposer already has an active proposal
         assert not proposer_state.active_proposal, err.ALREADY_ACTIVE_PROPOSAL
-        
+
         assert Txn.fee >= Global.min_txn_fee * UInt64(3), err.INSUFFICIENT_FEE
 
         # Ensure the transaction has the correct payment
@@ -360,7 +360,7 @@ class XGovRegistry(
         assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
 
         # Verify the proposer's KYC is still valid
-        proposer_state = self.proposer_box.maybe(proposer.native)[0].copy()
+        proposer_state = self.proposer_box[proposer.native].copy()
         
         assert proposer_state.kyc_status, err.INVALID_KYC
         assert proposer_state.kyc_expiring > Global.latest_timestamp, err.EXPIRED_KYC
