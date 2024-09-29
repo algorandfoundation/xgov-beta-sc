@@ -10,6 +10,9 @@ STATUS_DRAFT: Final[int] = (
 STATUS_FINAL: Final[int] = (
     20  # Draft is submitted to vote by the Proposer after minimum discussion time
 )
+STATUS_VOTING: Final[int] = (
+    25  # Final proposal is open to vote until the voting session expires
+)
 STATUS_APPROVED: Final[int] = 30  # Approved at the end of voting phase
 STATUS_REJECTED: Final[int] = 40  # Rejected at the end of voting phase
 STATUS_FUNDED: Final[int] = 50  # Proposal has been funded

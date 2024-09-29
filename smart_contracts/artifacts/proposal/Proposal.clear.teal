@@ -1,7 +1,7 @@
 #pragma version 10
 
 smart_contracts.proposal.contract.Proposal.clear_state_program:
-    // smart_contracts/proposal/contract.py:29-37
+    // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
     //     state_totals=StateTotals(
