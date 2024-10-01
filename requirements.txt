@@ -1,7 +1,7 @@
 algokit-utils==2.3.1 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:a3bbbbe3cc9eb04a343b762a8dab9970232080facc8ec3fc74f8d3d942315ec1
-algorand-python==2.0.1 ; python_version >= "3.12" and python_version < "4.0" \
-    --hash=sha256:e4ba4b893688bc8b9aa6591df21ba49d5e8a28e9047b81330a3621bf7d6bf5ce
+algorand-python==2.1.0 ; python_version >= "3.12" and python_version < "4.0" \
+    --hash=sha256:a03bc0b6c96db171e957f0e8ccc396f98cc87f738b8679cf0400d7cda30b3b54
 anyio==4.4.0 ; python_version >= "3.12" and python_version < "4.0" \
     --hash=sha256:5aadc6a1bbb7cdb0bede386cac5e2940f5e2ff3aa20277e991cf028e0585ce94 \
     --hash=sha256:c1b2d8f46a8a812513012e1107cb0e68c17159a7a594208005a57dc776e1bdc7
