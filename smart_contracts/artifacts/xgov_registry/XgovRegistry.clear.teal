@@ -1,15 +1,5 @@
 #pragma version 10
 
 smart_contracts.xgov_registry.contract.XgovRegistry.clear_state_program:
-    // smart_contracts/xgov_registry/contract.py:6-14
-    // class XgovRegistry(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=cfg.GLOBAL_BYTES,
-    //         global_uints=cfg.GLOBAL_UINTS,
-    //         local_bytes=cfg.LOCAL_BYTES,
-    //         local_uints=cfg.LOCAL_UINTS,
-    //     ),
-    // ):
     int 1
     return
