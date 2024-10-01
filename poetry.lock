@@ -279,6 +279,30 @@ filecache = ["filelock (>=3.8.0)"]
 redis = ["redis (>=2.10.5)"]
 
 [[package]]
+name = "cattrs"
+version = "24.1.2"
+description = "Composable complex class support for attrs and dataclasses."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "cattrs-24.1.2-py3-none-any.whl", hash = "sha256:67c7495b760168d931a10233f979b28dc04daf853b30752246f4f8471c6d68d0"},
+    {file = "cattrs-24.1.2.tar.gz", hash = "sha256:8028cfe1ff5382df59dd36474a86e02d817b06eaf8af84555441bac915d2ef85"},
+]
+
+[package.dependencies]
+attrs = ">=23.1.0"
+
+[package.extras]
+bson = ["pymongo (>=4.4.0)"]
+cbor2 = ["cbor2 (>=5.4.6)"]
+msgpack = ["msgpack (>=1.0.5)"]
+msgspec = ["msgspec (>=0.18.5)"]
+orjson = ["orjson (>=3.9.2)"]
+pyyaml = ["pyyaml (>=6.0)"]
+tomlkit = ["tomlkit (>=0.11.8)"]
+ujson = ["ujson (>=5.7.0)"]
+
+[[package]]
 name = "certifi"
 version = "2024.7.4"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1296,16 +1320,17 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "puyapy"
-version = "3.0.3"
+version = "3.2.0"
 description = "An optimising compiler for Algorand Python"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "puyapy-3.0.3-py3-none-any.whl", hash = "sha256:0bb843f52fc917832123b0c76fdb7128350c06380fcd609ec0acf5c11ff4cddb"},
+    {file = "puyapy-3.2.0-py3-none-any.whl", hash = "sha256:b5fbfecfd2174a67c91501314df295332ee1df5e40bbdf14ef844a7514e97631"},
 ]
 
 [package.dependencies]
 attrs = ">=23.2.0,<24.0.0"
+cattrs = ">=24.1,<25.0"
 colorama = {version = ">=0.4.6,<0.5.0", markers = "sys_platform == \"win32\""}
 docstring-parser = ">=0.14.1"
 immutabledict = ">=4.2.0,<5.0.0"
@@ -1984,4 +2009,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "2a6dab4989d1280e5d892ce450beb35d9a41403090785c3392f8ddd7d4c9082c"
+content-hash = "7c20ce0b83c64d84e74a0330e76415c0161f0cd4eeda66b40b474e124abc5218"
