@@ -15,117 +15,24 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import (
+    logic_error_type,
+    committee_id,
+    committee_votes,
+    committee_size
+)
 
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 
 def test_pay_grant_proposal_success(
     xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=10_000_001
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
 
     proposal_mock_client.set_requested_amount(
         requested_amount=10_000_000,
@@ -146,126 +53,41 @@ def test_pay_grant_proposal_success(
         ),
     )
 
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    sp.min_fee *= 3  # type: ignore
+
     # payout
     xgov_registry_client.pay_grant_proposal(
-        proposal_id=proposal_mock_app_id,
+        proposal_id=proposal_mock_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
             boxes=[(0, b"p" + decode_address(proposer.address))],
-            foreign_apps=[(proposal_mock_app_id)],
+            foreign_apps=[(proposal_mock_client.app_id)],
             accounts=[(proposer.address)]
         ),
     )
 
 def test_pay_grant_proposal_not_payor(
     xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=10_000_001
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
 
     proposal_mock_client.set_requested_amount(
         requested_amount=10_000_000,
@@ -286,16 +108,29 @@ def test_pay_grant_proposal_not_payor(
         ),
     )
 
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    sp.min_fee *= 3  # type: ignore
+
     # payout
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_app_id,
+            proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
                 boxes=[(0, b"p" + decode_address(proposer.address))],
-                foreign_apps=[(proposal_mock_app_id)],
+                foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )
@@ -322,123 +157,26 @@ def test_pay_grant_proposal_not_a_proposal_app(
     # payout
     with pytest.raises(logic_error_type, match=err.INVALID_PROPOSAL):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=100,
+            proposal_id=xgov_registry_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, b"p" + decode_address(proposer.address))],
-                accounts=[(proposer.address)]
+                accounts=[(proposer.address)],
+                foreign_apps=[xgov_registry_client.app_id]
             ),
         )
 
 def test_pay_grant_proposal_not_approved(
     xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=10_000_001
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
 
     proposal_mock_client.set_requested_amount(
         requested_amount=10_000_000,
@@ -459,127 +197,42 @@ def test_pay_grant_proposal_not_approved(
         ),
     )
 
-    # payout
-    with pytest.raises(logic_error_type, match=err.PROPOSAL_IS_NOT_APPROVED):
-        xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_app_id,
-            transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
-                suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
-                foreign_apps=[(proposal_mock_app_id)],
-                accounts=[(proposer.address)]
-            ),
-        )
-
-def test_pay_grant_proposal_invalid_kyc(
-    xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
-    algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
-    proposer: AddressAndSigner,
-) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=10_000_001
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
             suggested_params=sp,
         ),
     )
 
     sp.min_fee *= 3  # type: ignore
 
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
+    # payout
+    with pytest.raises(logic_error_type, match=err.PROPOSAL_IS_NOT_APPROVED):
+        xgov_registry_client.pay_grant_proposal(
+            proposal_id=proposal_mock_client.app_id,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                suggested_params=sp,
+                boxes=[(0, b"p" + decode_address(proposer.address))],
+                foreign_apps=[(proposal_mock_client.app_id)],
+                accounts=[(proposer.address)]
             ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
+        )
 
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
+def test_pay_grant_proposal_invalid_kyc(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: AddressAndSigner,
+    proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
 
     proposal_mock_client.set_requested_amount(
         requested_amount=10_000_000,
@@ -593,6 +246,17 @@ def test_pay_grant_proposal_invalid_kyc(
     # approve
     proposal_mock_client.set_status(
         status=enm.STATUS_APPROVED,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -612,127 +276,31 @@ def test_pay_grant_proposal_invalid_kyc(
         ),
     )
 
+    sp.min_fee *= 3  # type: ignore
+
     # payout
     with pytest.raises(logic_error_type, match=err.INVALID_KYC):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_app_id,
+            proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, b"p" + decode_address(proposer.address))],
-                foreign_apps=[(proposal_mock_app_id)],
+                foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )
 
 def test_pay_grant_proposal_expired_kyc(
     xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=10_000_001
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
 
     proposal_mock_client.set_requested_amount(
         requested_amount=10_000_000,
@@ -746,6 +314,17 @@ def test_pay_grant_proposal_expired_kyc(
     # approve
     proposal_mock_client.set_status(
         status=enm.STATUS_APPROVED,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -765,112 +344,34 @@ def test_pay_grant_proposal_expired_kyc(
         ),
     )
 
+    sp.min_fee *= 3  # type: ignore
+
     # payout
     with pytest.raises(logic_error_type, match=err.EXPIRED_KYC):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_app_id,
+            proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, b"p" + decode_address(proposer.address))],
-                foreign_apps=[(proposal_mock_app_id)],
+                foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )
 
 def test_pay_grant_proposal_insufficient_funds(
     xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
+    proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    # Call the config_xgov_registry method
-    xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    open_proposal_response = xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
-    # finalize
-    proposal_mock_app_id = open_proposal_response.return_value
-    
-    proposal_mock_client = ProposalMockClient(
-        algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
-    )
-
     proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
+        requested_amount=100_000_000,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -888,16 +389,29 @@ def test_pay_grant_proposal_insufficient_funds(
         ),
     )
 
+    proposal_mock_client.set_committee_details(
+        id=committee_id,
+        size=committee_size,
+        votes=committee_votes,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    sp.min_fee *= 3  # type: ignore
+
     # payout
     with pytest.raises(logic_error_type, match=err.INSUFFICIENT_TREASURY_FUNDS):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_app_id,
+            proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, b"p" + decode_address(proposer.address))],
-                foreign_apps=[(proposal_mock_app_id)],
+                foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )

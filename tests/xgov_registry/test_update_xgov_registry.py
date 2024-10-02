@@ -68,25 +68,6 @@ def test_update_xgov_registry_pending_proposals(
 
     global_state = xgov_registry_client.get_global_state()
 
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
     xgov_registry_client.set_kyc_provider(
         provider=deployer.address,
         transaction_parameters=TransactionParameters(

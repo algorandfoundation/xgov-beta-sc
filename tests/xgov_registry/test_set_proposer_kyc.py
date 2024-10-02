@@ -19,28 +19,8 @@ def test_set_proposer_kyc_success(
     deployer: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
 
     xgov_registry_client.set_kyc_provider(
         provider=deployer.address,
@@ -74,25 +54,6 @@ def test_set_proposer_kyc_not_kyc_provider(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
-        ),
-    )
-
     xgov_registry_client.set_kyc_provider(
         provider=deployer.address,
         transaction_parameters=TransactionParameters(
@@ -125,7 +86,7 @@ def test_set_proposer_kyc_not_a_proposer(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.set_proposer_kyc(
             proposer=random_account.address,
             kyc_status=True,

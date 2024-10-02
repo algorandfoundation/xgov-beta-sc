@@ -103,6 +103,10 @@ class XGovRegistry(
         return self.pending_proposals.value == 0
     
     @subroutine
+    def is_proposal(self, proposal_id: arc4.UInt64) -> bool:
+        return Application(proposal_id.native).creator == Global.current_application_address
+    
+    @subroutine
     def disburse_funds(self, recipient: arc4.Address, amount: UInt64) -> None:
         # Transfer the funds to the receiver
         itxn.Payment(
@@ -286,7 +290,7 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod()
-    def set_voting_account(self, voting_address: arc4.Address) -> None:
+    def set_voting_account(self, xgov_address: arc4.Address, voting_address: arc4.Address) -> None:
         """Sets the voting account for the XGov
 
         Args:
@@ -298,14 +302,14 @@ class XGovRegistry(
         """
 
         # Check if the sender is an xGov member
-        old_voting_address, exists = self.xgov_box.maybe(Txn.sender)
+        old_voting_address, exists = self.xgov_box.maybe(xgov_address.native)
         assert exists, err.UNAUTHORIZED
 
-        # Check that the voting account is different from the current voting account
-        assert old_voting_address != voting_address, err.VOTING_ADDRESS_MUST_BE_DIFFERENT
+        # Check that the sender is either the xgov or the voting address
+        assert Txn.sender == old_voting_address or Txn.sender == xgov_address, err.UNAUTHORIZED
 
         # Update the voting account in the xGov box
-        self.xgov_box[Txn.sender] = voting_address
+        self.xgov_box[xgov_address.native] = voting_address
 
     @arc4.abimethod()
     def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
@@ -448,27 +452,36 @@ class XGovRegistry(
         return proposal_app.id
 
     @arc4.abimethod()
-    def vote_proposal(self, proposal_id: arc4.UInt64, xgov_address: arc4.Address, vote: UInt64, vote_amount: UInt64) -> None:
+    def vote_proposal(self, proposal_id: arc4.UInt64, xgov_address: arc4.Address, approval_votes: UInt64, rejection_votes: UInt64, null_votes: UInt64) -> None:
         """Votes on a proposal
 
         Args:
             proposal_id (arc4.UInt64): The application id of the proposal app being voted on
             xgov_address: (arc4.Address): The address of the xgov being voted on behalf of
-            vote: (UInt64): The kind of vote on the proposal; Approve, Reject, Null
-            vote_amount (UInt64): The amount of voting power being allocated
+            approval_votes: (UInt64): The number of approvals from the xgov allocated
+            down_votes: (UInt64): The number of rejections from the xgov allocated
             
         Raises:
-            err.INVALID_VOTE: If the vote value is invalid, must be 0 for Null, 1 for Approve, or 2 for Reject
+            err.INVALID_VOTE: If the votes amount to more than the voting power of the committee
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.UNAUTHORIZED: If the xgov_address is not an XGov
             err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
         """
 
-        # ensure a voting enum is being used
-        assert vote < 3, err.INVALID_VOTE
-
         # verify proposal id is genuine proposal
-        assert Global.current_application_address == Application(proposal_id.native).creator, err.INVALID_PROPOSAL
+        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+        
+        # Verify the proposal is in the approved state
+        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_STATUS)
+        assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
+
+        # verify their voting allocation is not more than allowed
+        # and allocate any remaining votes to null
+        vote_sum = (approval_votes + rejection_votes + null_votes)
+        proposal_committee_votes, proposal_committee_votes_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_COMMITTEE_VOTES)
+        assert vote_sum <= proposal_committee_votes, err.INVALID_VOTE
+        extra_null_votes = proposal_committee_votes - vote_sum
+        null_votes += extra_null_votes
 
         # make sure they're voting on behalf of an xgov
         voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -481,8 +494,9 @@ class XGovRegistry(
         arc4.abi_call(
             proposal_contract.ProposalMock.vote,
             xgov_address,
-            vote,
-            vote_amount,
+            approval_votes,
+            rejection_votes,
+            null_votes,
             app_id=proposal_id.native
         )
 
@@ -507,7 +521,7 @@ class XGovRegistry(
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert Application(proposal_id.native).creator == Global.current_application_address, err.INVALID_PROPOSAL
+        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
         status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_STATUS)
@@ -558,7 +572,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert (payment.receiver == Global.current_application_address), err.WRONG_RECEIVER
+        assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
         self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()

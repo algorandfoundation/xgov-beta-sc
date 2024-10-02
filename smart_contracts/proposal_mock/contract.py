@@ -128,6 +128,12 @@ class ProposalMock(
         self.requested_amount.value = requested_amount
 
     @arc4.abimethod()
+    def set_committee_details(self, id: typ.CommitteeId, size: UInt64, votes: UInt64) -> None:
+        self.committee_id.value = id.copy()
+        self.committee_members.value = size
+        self.committee_votes.value = votes
+
+    @arc4.abimethod()
     def release_funds(self) -> None:
         pass
 
@@ -135,7 +141,8 @@ class ProposalMock(
     def vote(
         self,
         xgov_address: arc4.Address,
-        vote: UInt64,
-        amount: UInt64,
+        approval_votes: UInt64,
+        rejection_votes: UInt64,
+        null_votes: UInt64
     ) -> None:
         pass

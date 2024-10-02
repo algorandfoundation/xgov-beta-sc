@@ -9,6 +9,10 @@ from algosdk.encoding import encode_address
 
 logic_error_type: Type[LogicError] = LogicError
 
+committee_id = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+committee_size = 10
+committee_votes = 100
+
 def assert_registry_global_state(
     global_state: GlobalState,
     *,

@@ -19,30 +19,11 @@ def test_set_voting_account_success(
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.subscribe_xgov(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=xgov.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance
-                ),
-            ),
-            signer=xgov.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(xgov.address))]
-        ),
-    )
-
     xgov_registry_client.set_voting_account(
+        xgov_address=xgov.address,
         voting_address=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
@@ -63,35 +44,29 @@ def test_set_voting_account_not_an_xgov(
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
-            voting_address=random_account.address,
+            xgov_address=random_account.address,
+            voting_address=xgov.address,
             transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
+                sender=random_account.address,
+                signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))]
+                boxes=[(0, b"x" + decode_address(random_account.address))]
             ),
         )
 
-def test_set_voting_account_same_address(
+def test_set_voting_account_not_voting_account_or_xgov(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
+    deployer: AddressAndSigner,
+    random_account: AddressAndSigner,
     xgov: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.subscribe_xgov(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=xgov.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance
-                ),
-            ),
-            signer=xgov.signer,
-        ),
+    xgov_registry_client.set_voting_account(
+        xgov_address=xgov.address,
+        voting_address=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
@@ -100,13 +75,14 @@ def test_set_voting_account_same_address(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.VOTING_ADDRESS_MUST_BE_DIFFERENT):
+    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
-            voting_address=xgov.address,
+            xgov_address=xgov.address,
+            voting_address=random_account.address,
             transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
+                sender=random_account.address,
+                signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))]
+                boxes=[(0, b"x" + decode_address(random_account.address))]
             ),
         )

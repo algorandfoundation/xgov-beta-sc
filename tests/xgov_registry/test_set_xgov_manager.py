@@ -36,7 +36,6 @@ def test_set_xgov_manager_success(
 def test_set_xgov_manager_not_manager(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    xgov: AddressAndSigner,
     random_account: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -46,9 +45,9 @@ def test_set_xgov_manager_not_manager(
         xgov_registry_client.set_xgov_manager(
             manager=random_account.address,
             transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
+                sender=random_account.address,
+                signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))]
+                boxes=[(0, b"x" + decode_address(random_account.address))]
             ),
         )

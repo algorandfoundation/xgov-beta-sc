@@ -96,27 +96,8 @@ def test_withdraw_funds_insufficient_funds(
     algorand_client: AlgorandClient,
     deployer: AddressAndSigner,
 ) -> None:
-    added_amount = 10_000_000
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2
-
-    xgov_registry_client.deposit_funds(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=added_amount
-                ),
-            ),
-            signer=deployer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
 
     with pytest.raises(logic_error_type, match=err.INSUFFICIENT_FUNDS):
         xgov_registry_client.withdraw_funds(

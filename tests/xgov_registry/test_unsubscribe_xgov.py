@@ -27,7 +27,7 @@ def test_unsubscribe_xgov_success(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=random_account.signer,
@@ -66,7 +66,7 @@ def test_unsubscribe_xgov_wrong_fee(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.xgov_min_balance
                 ),
             ),
             signer=random_account.signer,
