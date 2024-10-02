@@ -1383,7 +1383,7 @@ assign_voter_input_validation:
     !
     // smart_contracts/proposal/contract.py:134
     // assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
-    assert // Voter already assigned
+    assert // Voter Already Assigned
     retsub
 
 
