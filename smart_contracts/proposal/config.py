@@ -6,6 +6,9 @@ GLOBAL_UINTS: Final[int] = 13
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
+# TODO: get the actual required pages for the proposal contract, 1 extra page is just a guess
+PROPOSAL_MBR: Final[int] = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
+
 # Global state keys
 GS_KEY_PROPOSER: Final[bytes] = b"proposer"
 GS_KEY_REGISTRY_APP_ID: Final[bytes] = b"registry_app_id"

@@ -1,17 +1,10 @@
 from typing import Final
-from ..proposal.config import (
-    GLOBAL_BYTES as PROPOSAL_GLOBAL_BYTES,
-    GLOBAL_UINTS as PROPOSAL_GLOBAL_UINTS
-)
 
 # State Schema
 GLOBAL_BYTES: Final[int] = 6
 GLOBAL_UINTS: Final[int] = 30
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
-
-# TODO: get the actual required pages for the proposal contract, 1 extra page is just a guess
-PROPOSAL_MBR: Final[int] = 200_000 + (28_500 * PROPOSAL_GLOBAL_UINTS) + (50_000 * PROPOSAL_GLOBAL_BYTES)
 
 # Global state keys
 GS_KEY_XGOV_MANAGER: Final[bytes] = b"xgov_manager"
