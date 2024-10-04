@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algosdk.v2client.algod import AlgodClient
 from algokit_utils.beta.account_manager import AddressAndSigner
@@ -12,7 +13,7 @@ from tests.xgov_registry.common import (
 
 def test_set_payor_success(
     xgov_registry_client: XGovRegistryClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
 ) -> None:
     xgov_registry_client.set_payor(

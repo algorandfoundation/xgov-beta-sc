@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -43,7 +44,7 @@ def test_subscribe_proposer_success(
 def test_subscribe_proposer_already_proposer(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
@@ -92,7 +93,7 @@ def test_subscribe_proposer_already_proposer(
 def test_subscribe_proposer_wrong_recipient(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
@@ -121,7 +122,7 @@ def test_subscribe_proposer_wrong_recipient(
 def test_subscribe_proposer_wrong_amount(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()

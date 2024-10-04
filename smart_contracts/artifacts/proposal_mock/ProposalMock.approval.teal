@@ -24,14 +24,15 @@ __puya_arc4_router__:
     // ):
     proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___after_if_else@10
+    bz __puya_arc4_router___after_if_else@11
     method "create(address)void"
     method "set_status(uint64)void"
     method "set_requested_amount(uint64)void"
+    method "set_committee_details(byte[32],uint64,uint64)void"
     method "release_funds()void"
-    method "vote_proposal(address,uint64,uint64)void"
+    method "vote(address,uint64,uint64,uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___release_funds_route@5 __puya_arc4_router___vote_proposal_route@6
+    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7
     int 0
     retsub
 
@@ -113,7 +114,7 @@ __puya_arc4_router___set_requested_amount_route@4:
     int 1
     retsub
 
-__puya_arc4_router___release_funds_route@5:
+__puya_arc4_router___set_committee_details_route@5:
     // smart_contracts/proposal_mock/contract.py:130
     // @arc4.abimethod()
     txn OnCompletion
@@ -121,11 +122,29 @@ __puya_arc4_router___release_funds_route@5:
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
+    // smart_contracts/proposal_mock/contract.py:20-28
+    // class ProposalMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=prop_cfg.GLOBAL_BYTES,
+    //         global_uints=prop_cfg.GLOBAL_UINTS,
+    //         local_bytes=prop_cfg.LOCAL_BYTES,
+    //         local_uints=prop_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    txna ApplicationArgs 2
+    btoi
+    txna ApplicationArgs 3
+    btoi
+    // smart_contracts/proposal_mock/contract.py:130
+    // @arc4.abimethod()
+    callsub set_committee_details
     int 1
     retsub
 
-__puya_arc4_router___vote_proposal_route@6:
-    // smart_contracts/proposal_mock/contract.py:134
+__puya_arc4_router___release_funds_route@6:
+    // smart_contracts/proposal_mock/contract.py:136
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -135,7 +154,18 @@ __puya_arc4_router___vote_proposal_route@6:
     int 1
     retsub
 
-__puya_arc4_router___after_if_else@10:
+__puya_arc4_router___vote_route@7:
+    // smart_contracts/proposal_mock/contract.py:140
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    int 1
+    retsub
+
+__puya_arc4_router___after_if_else@11:
     // smart_contracts/proposal_mock/contract.py:20-28
     // class ProposalMock(
     //     ARC4Contract,
@@ -200,6 +230,30 @@ set_requested_amount:
     // smart_contracts/proposal_mock/contract.py:128
     // self.requested_amount.value = requested_amount
     byte 0x7265717565737465645f616d6f756e74
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details(id: bytes, size: uint64, votes: uint64) -> void:
+set_committee_details:
+    // smart_contracts/proposal_mock/contract.py:130-131
+    // @arc4.abimethod()
+    // def set_committee_details(self, id: typ.CommitteeId, size: UInt64, votes: UInt64) -> None:
+    proto 3 0
+    // smart_contracts/proposal_mock/contract.py:132
+    // self.committee_id.value = id.copy()
+    byte 0x636f6d6d69747465655f6964
+    frame_dig -3
+    app_global_put
+    // smart_contracts/proposal_mock/contract.py:133
+    // self.committee_members.value = size
+    byte 0x636f6d6d69747465655f6d656d62657273
+    frame_dig -2
+    app_global_put
+    // smart_contracts/proposal_mock/contract.py:134
+    // self.committee_votes.value = votes
+    byte 0x636f6d6d69747465655f766f746573
     frame_dig -1
     app_global_put
     retsub

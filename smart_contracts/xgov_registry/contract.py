@@ -99,6 +99,10 @@ class XGovRegistry(
         return Txn.sender == self.xgov_manager.value.native
     
     @subroutine
+    def is_xgov_committee_manager(self) -> bool:
+        return Txn.sender == self.committee_manager.value.native
+
+    @subroutine
     def no_pending_proposals(self) -> bool:
         return self.pending_proposals.value == 0
     
@@ -119,7 +123,7 @@ class XGovRegistry(
         self.outstanding_funds.value -= amount
 
     @arc4.abimethod(create="require")
-    def create(self, manager: arc4.Address, payor: arc4.Address, comittee_manager: arc4.Address) -> None:
+    def create(self) -> None:
         """Create the xgov registry.
 
         Args:
@@ -128,9 +132,7 @@ class XGovRegistry(
             committee_manager (arc4.Address): Address of the committee manager
         """
 
-        self.xgov_manager.value = manager
-        self.xgov_payor.value = payor
-        self.committee_manager.value = comittee_manager
+        self.xgov_manager.value = arc4.Address(Txn.sender)
 
     @arc4.abimethod()
     def set_xgov_manager(self, manager: arc4.Address) -> None:
@@ -173,6 +175,20 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.xgov_payor.value = payor
+
+    @arc4.abimethod()
+    def set_committee_manager(self, manager: arc4.Address) -> None:
+        """Sets the committee manager.
+
+        Args:
+            manager (arc4.Address): Address of the new manager
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current XGov manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.committee_manager.value = manager
 
     @arc4.abimethod()
     def set_committee_publisher(self, publisher: arc4.Address) -> None:
@@ -371,7 +387,7 @@ class XGovRegistry(
         """Sets the committee details
 
         Args:
-            id (ptyp.ComitteeId): The id of the commitee
+            id (ptyp.CommitteeId): The id of the commitee
             size (UInt64): The size of the committee
             votes (UInt64): The voting power of the committee
 
@@ -379,7 +395,7 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the XGov manager
         """
 
-        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
 
         self.committee_id.value = id.copy()
         self.committee_members.value = size

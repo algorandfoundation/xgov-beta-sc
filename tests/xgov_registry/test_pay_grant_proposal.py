@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -27,7 +28,7 @@ from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 def test_pay_grant_proposal_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient
 ) -> None:
@@ -82,7 +83,7 @@ def test_pay_grant_proposal_success(
 def test_pay_grant_proposal_not_payor(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient
 ) -> None:
@@ -139,7 +140,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -171,7 +172,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
 def test_pay_grant_proposal_not_approved(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient
 ) -> None:
@@ -227,7 +228,7 @@ def test_pay_grant_proposal_not_approved(
 def test_pay_grant_proposal_invalid_kyc(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient
 ) -> None:
@@ -295,7 +296,7 @@ def test_pay_grant_proposal_invalid_kyc(
 def test_pay_grant_proposal_expired_kyc(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient,
 ) -> None:
@@ -363,7 +364,7 @@ def test_pay_grant_proposal_expired_kyc(
 def test_pay_grant_proposal_insufficient_funds(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
     proposal_mock_client: ProposalMockClient
 ) -> None:

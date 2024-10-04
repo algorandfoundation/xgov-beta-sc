@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -19,7 +20,7 @@ from tests.xgov_registry.common import logic_error_type
 def test_update_xgov_registry_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
@@ -51,7 +52,7 @@ def test_update_xgov_registry_pending_proposals(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()

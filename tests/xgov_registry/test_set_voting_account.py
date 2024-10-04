@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -57,7 +58,7 @@ def test_set_voting_account_not_an_xgov(
 def test_set_voting_account_not_voting_account_or_xgov(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
 ) -> None:

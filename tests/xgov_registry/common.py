@@ -1,6 +1,11 @@
 from typing import Type
 
 from algokit_utils import LogicError
+from algokit_utils.models import Account
+from algokit_utils.beta.account_manager import (
+    AddressAndSigner,
+    AccountTransactionSigner
+)
 from smart_contracts.artifacts.xgov_registry.client import (
     GlobalState,
     TypedGlobalState
@@ -13,16 +18,16 @@ committee_id = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 committee_size = 10
 committee_votes = 100
 
+def AddressAndSignerFromAccount(acc: Account) -> AddressAndSigner:
+    signer = AccountTransactionSigner(acc.private_key)
+    return AddressAndSigner(address=acc.address, signer=signer)
+
 def assert_registry_global_state(
     global_state: GlobalState,
     *,
     manager_address: str,
-    payor_address: str,
-    committee_manager_address: str
 ) -> None:
     assert encode_address(global_state.xgov_manager.as_bytes) == manager_address  # type: ignore
-    assert encode_address(global_state.xgov_payor.as_bytes) == payor_address  # type: ignore
-    assert encode_address(global_state.committee_manager.as_bytes) == committee_manager_address  # type: ignore
 
 def assert_registry_payor(
     global_state: GlobalState,

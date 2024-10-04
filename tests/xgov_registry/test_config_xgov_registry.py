@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -18,7 +19,7 @@ from tests.xgov_registry.common import (
 
 def test_config_xgov_registry_success(
     xgov_registry_client: XGovRegistryClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     xgov_registry_config: XGovRegistryConfig
 ) -> None:
     # Call the config_xgov_registry method
@@ -77,7 +78,7 @@ def test_config_xgov_registry_not_manager(
 def test_config_xgov_registry_pending_proposals(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposal_mock_client: ProposalMockClient
 ) -> None:
     print(proposal_mock_client.app_address)

@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -21,7 +22,7 @@ def test_open_proposal_success(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -114,7 +115,7 @@ def test_open_proposal_active_proposal(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -195,7 +196,7 @@ def test_open_proposal_active_proposal(
 def test_open_proposal_wrong_fee(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
@@ -247,7 +248,7 @@ def test_open_proposal_wrong_fee(
 def test_open_proposal_wrong_amount(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
@@ -301,7 +302,7 @@ def test_open_proposal_wrong_amount(
 def test_open_proposal_wrong_recipient(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()

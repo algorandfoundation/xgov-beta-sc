@@ -1,5 +1,6 @@
 import pytest
 
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -15,7 +16,7 @@ from tests.xgov_registry.common import logic_error_type
 def test_withdraw_funds_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
     added_amount = 10_000_000
@@ -56,7 +57,7 @@ def test_withdraw_funds_success(
 def test_withdraw_funds_not_manager(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     random_account: AddressAndSigner,
 ) -> None:
     added_amount = 10_000_000
@@ -94,7 +95,7 @@ def test_withdraw_funds_not_manager(
 def test_withdraw_funds_insufficient_funds(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2

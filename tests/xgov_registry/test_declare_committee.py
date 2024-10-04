@@ -15,15 +15,15 @@ from tests.xgov_registry.common import (
 
 def test_declare_committee_success(
     xgov_registry_client: XGovRegistryClient,
-    deployer: AddressAndSigner,
+    committee_manager: AddressAndSigner
 ) -> None:
     xgov_registry_client.declare_committee(
         id=committee_id,
         size=committee_size,
         votes=committee_votes,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 

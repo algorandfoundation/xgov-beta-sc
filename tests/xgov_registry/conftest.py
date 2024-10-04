@@ -5,6 +5,7 @@ from algokit_utils import (
     ensure_funded,
     get_localnet_default_account,
 )
+from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -21,6 +22,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from tests.proposal.common import INITIAL_FUNDS
+from tests.xgov_registry.common import AddressAndSignerFromAccount
 
 @pytest.fixture(scope="session")
 def algorand_client() -> AlgorandClient:
@@ -28,8 +30,28 @@ def algorand_client() -> AlgorandClient:
     client.set_suggested_params_timeout(0)
     return client
 
-@pytest.fixture(scope="session")
-def deployer(algorand_client: AlgorandClient) -> AddressAndSigner:
+@pytest.fixture(scope="function")
+def deployer(algorand_client: AlgorandClient) -> Account:
+    deployer = get_localnet_default_account(algorand_client.client.algod)
+    account = AddressAndSignerFromAccount(deployer)
+    algorand_client.account.set_signer(deployer.address, account.signer)
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=deployer.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+
+    return deployer
+
+@pytest.fixture(scope="function")
+def committee_manager(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: Account
+) -> AddressAndSigner:
     account = algorand_client.account.random()
 
     ensure_funded(
@@ -39,12 +61,21 @@ def deployer(algorand_client: AlgorandClient) -> AddressAndSigner:
             min_spending_balance_micro_algos=INITIAL_FUNDS,
         ),
     )
+    
+    xgov_registry_client.set_committee_manager(
+        manager=account.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
     return account
 
 @pytest.fixture(scope="function")
 def xgov_registry_client(
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
     xgov_registry_config: XGovRegistryConfig
 ) -> XGovRegistryClient:
     config.configure(
@@ -52,16 +83,22 @@ def xgov_registry_client(
         # trace_all=True,
     )
 
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
     client = XGovRegistryClient(
         algorand_client.client.algod,
-        creator=get_localnet_default_account(algorand_client.client.algod),
+        sender=deployer.address,
+        creator=deployer,
         indexer_client=algorand_client.client.indexer,
     )
 
     client.create_create(
-        manager=deployer.address,
-        payor=deployer.address,
-        comittee_manager=deployer.address
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp
+        ),
     )
 
     ensure_funded(
@@ -72,8 +109,23 @@ def xgov_registry_client(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    client.set_payor(
+        payor=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp
+        ),
+    )
+
+    client.set_committee_manager(
+        manager=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp
+        ),
+    )
 
     # Call the config_xgov_registry method
     client.config_xgov_registry(
@@ -81,6 +133,7 @@ def xgov_registry_client(
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
+            suggested_params=sp
         ),
     )
 
@@ -198,7 +251,7 @@ def xgov(
 def proposer(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: AddressAndSigner,
+    deployer: Account,
 ) -> AddressAndSigner:
     account = algorand_client.account.random()
 
