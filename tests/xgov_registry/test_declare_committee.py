@@ -8,9 +8,9 @@ from smart_contracts.errors import std_errors as err
 
 from tests.xgov_registry.common import (
     logic_error_type,
-    committee_id,
-    committee_size,
-    committee_votes,
+    COMMITTEE_ID,
+    COMMITTEE_SIZE,
+    COMMITTEE_VOTES,
 )
 
 def test_declare_committee_success(
@@ -18,9 +18,9 @@ def test_declare_committee_success(
     committee_manager: AddressAndSigner
 ) -> None:
     xgov_registry_client.declare_committee(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=committee_manager.address,
             signer=committee_manager.signer,
@@ -33,9 +33,9 @@ def test_declare_committee_not_manager(
 ) -> None:
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.declare_committee(
-            id=committee_id,
-            size=committee_size,
-            votes=committee_votes,
+            id=COMMITTEE_ID,
+            size=COMMITTEE_SIZE,
+            votes=COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,

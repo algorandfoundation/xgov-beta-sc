@@ -18,9 +18,9 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from tests.xgov_registry.common import (
     logic_error_type,
-    committee_id,
-    committee_votes,
-    committee_size
+    COMMITTEE_ID,
+    COMMITTEE_VOTES,
+    COMMITTEE_SIZE
 )
 
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
@@ -55,9 +55,9 @@ def test_pay_grant_proposal_success(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -110,9 +110,9 @@ def test_pay_grant_proposal_not_payor(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -199,9 +199,9 @@ def test_pay_grant_proposal_not_approved(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -255,9 +255,9 @@ def test_pay_grant_proposal_invalid_kyc(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -323,9 +323,9 @@ def test_pay_grant_proposal_expired_kyc(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -391,9 +391,9 @@ def test_pay_grant_proposal_insufficient_funds(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,

@@ -5,9 +5,9 @@ from tests.xgov_registry.common import assert_get_state
 from algokit_utils import TransactionParameters
 
 from tests.xgov_registry.common import (
-    committee_id,
-    committee_votes,
-    committee_size
+    COMMITTEE_ID,
+    COMMITTEE_VOTES,
+    COMMITTEE_SIZE
 )
 
 def test_get_state_success(
@@ -16,9 +16,9 @@ def test_get_state_success(
 ) -> None:
 
     xgov_registry_client.declare_committee(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=committee_manager.address,
             signer=committee_manager.signer,

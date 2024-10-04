@@ -81,8 +81,6 @@ def test_config_xgov_registry_pending_proposals(
     deployer: Account,
     proposal_mock_client: ProposalMockClient
 ) -> None:
-    print(proposal_mock_client.app_address)
-
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,

@@ -12,9 +12,9 @@ from algosdk.encoding import decode_address
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
     logic_error_type,
-    committee_id,
-    committee_votes,
-    committee_size,
+    COMMITTEE_ID,
+    COMMITTEE_VOTES,
+    COMMITTEE_SIZE,
 )
 
 from smart_contracts.proposal import enums as enm
@@ -49,9 +49,9 @@ def test_vote_proposal_success(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -62,7 +62,7 @@ def test_vote_proposal_success(
     xgov_registry_client.vote_proposal(
         proposal_id=proposal_mock_client.app_id,
         xgov_address=xgov.address,
-        approval_votes=committee_votes,
+        approval_votes=COMMITTEE_VOTES,
         rejection_votes=0,
         null_votes=0,
         transaction_parameters=TransactionParameters(
@@ -105,9 +105,9 @@ def test_vote_proposal_not_in_voting_phase(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -118,7 +118,7 @@ def test_vote_proposal_not_in_voting_phase(
     xgov_registry_client.vote_proposal(
         proposal_id=proposal_mock_client.app_id,
         xgov_address=xgov.address,
-        approval_votes=committee_votes,
+        approval_votes=COMMITTEE_VOTES,
         rejection_votes=0,
         null_votes=0,
         transaction_parameters=TransactionParameters(
@@ -161,9 +161,9 @@ def test_vote_proposal_wrong_vote_amount(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -175,7 +175,7 @@ def test_vote_proposal_wrong_vote_amount(
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=xgov.address,
-            approval_votes=(committee_votes + 1),
+            approval_votes=(COMMITTEE_VOTES + 1),
             rejection_votes=0,
             null_votes=0,
             transaction_parameters=TransactionParameters(
@@ -201,7 +201,7 @@ def test_vote_proposal_not_a_proposal_app(
         xgov_registry_client.vote_proposal(
             proposal_id=xgov_registry_client.app_id,
             xgov_address=xgov.address,
-            approval_votes=committee_votes,
+            approval_votes=COMMITTEE_VOTES,
             rejection_votes=0,
             null_votes=0,
             transaction_parameters=TransactionParameters(
@@ -244,9 +244,9 @@ def test_vote_proposal_not_an_xgov(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -258,7 +258,7 @@ def test_vote_proposal_not_an_xgov(
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=random_account.address,
-            approval_votes=committee_votes,
+            approval_votes=COMMITTEE_VOTES,
             rejection_votes=0,
             null_votes=0,
             transaction_parameters=TransactionParameters(
@@ -302,9 +302,9 @@ def test_vote_proposal_wrong_voting_address(
     )
 
     proposal_mock_client.set_committee_details(
-        id=committee_id,
-        size=committee_size,
-        votes=committee_votes,
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -317,7 +317,7 @@ def test_vote_proposal_wrong_voting_address(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=xgov.address,
             approval_votes=0,
-            rejection_votes=committee_votes,
+            rejection_votes=COMMITTEE_VOTES,
             null_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,

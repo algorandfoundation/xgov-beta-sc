@@ -14,9 +14,9 @@ from algosdk.encoding import encode_address
 
 logic_error_type: Type[LogicError] = LogicError
 
-committee_id = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-committee_size = 10
-committee_votes = 100
+COMMITTEE_ID = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+COMMITTEE_SIZE = 10
+COMMITTEE_VOTES = 100
 
 def AddressAndSignerFromAccount(acc: Account) -> AddressAndSigner:
     signer = AccountTransactionSigner(acc.private_key)
