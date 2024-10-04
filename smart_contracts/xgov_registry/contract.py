@@ -567,11 +567,7 @@ class XGovRegistry(
         self.pending_proposals.value -= 1
 
         # Update proposer's active proposal status
-        self.proposer_box[proposer.native] = typ.ProposerBoxValue(
-            active_proposal=arc4.Bool(False),
-            kyc_status=proposer_state.kyc_status,
-            kyc_expiring=proposer_state.kyc_expiring
-        )
+        self.proposer_box[proposer.native].active_proposal = arc4.Bool(False)
 
     @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
