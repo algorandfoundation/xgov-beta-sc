@@ -1,0 +1,5 @@
+#pragma version 10
+
+smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.clear_state_program:
+    int 1
+    return

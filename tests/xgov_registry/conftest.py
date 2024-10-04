@@ -18,6 +18,8 @@ from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryConfig
 )
 
+from smart_contracts.artifacts.xgov_subscriber_app_mock.client import XGovSubscriberAppMockClient
+
 from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
@@ -350,3 +352,41 @@ def proposal_mock_client(
     )
 
     return proposal_mock_client
+
+@pytest.fixture(scope="function")
+def xgov_subscriber_app(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> XGovSubscriberAppMockClient:
+    config.configure(
+        debug=True,
+        # trace_all=True,
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    client = XGovSubscriberAppMockClient(
+        algorand_client.client.algod,
+        sender=deployer.address,
+        creator=deployer,
+        indexer_client=algorand_client.client.indexer,
+    )
+
+    client.create_bare(
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp
+        ),
+    )
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=client.app_address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+
+    return client

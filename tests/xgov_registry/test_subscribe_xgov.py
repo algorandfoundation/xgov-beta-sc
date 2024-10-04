@@ -6,6 +6,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_subscriber_app_mock.client import XGovSubscriberAppMockClient
 
 from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
@@ -39,6 +40,29 @@ def test_subscribe_xgov_success(
             boxes=[(0, b"x" + decode_address(random_account.address))]
         ),
     )
+
+def test_app_subscribe_xgov_success(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    random_account: AddressAndSigner,
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3
+
+    xgov_subscriber_app.subscribe_xgov(
+        app_id=xgov_registry_client.app_id,
+        transaction_parameters=TransactionParameters(
+            sender=random_account.address,
+            signer=random_account.signer,
+            suggested_params=sp,
+            foreign_apps=[xgov_registry_client.app_id],
+            boxes=[
+                (xgov_registry_client.app_id, b"x" + decode_address(xgov_subscriber_app.app_address))
+            ]
+        ),
+    )
+
 
 def test_subscribe_xgov_already_xgov(
     xgov_registry_client: XGovRegistryClient,
