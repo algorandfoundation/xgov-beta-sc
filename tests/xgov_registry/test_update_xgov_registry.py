@@ -15,7 +15,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 def test_update_xgov_registry_success(
     xgov_registry_client: XGovRegistryClient,
@@ -39,7 +39,7 @@ def test_update_xgov_registry_not_manager(
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.update_update_xgov_registry(
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
@@ -112,7 +112,7 @@ def test_update_xgov_registry_pending_proposals(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.NO_PENDING_PROPOSALS):
+    with pytest.raises(logicErrorType, match=err.NO_PENDING_PROPOSALS):
         xgov_registry_client.update_update_xgov_registry(
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,

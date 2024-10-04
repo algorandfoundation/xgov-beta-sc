@@ -10,7 +10,7 @@ from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from algosdk.encoding import decode_address
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 def test_set_proposer_kyc_success(
     xgov_registry_client: XGovRegistryClient,
@@ -64,7 +64,7 @@ def test_set_proposer_kyc_not_kyc_provider(
 
     sp.min_fee *= 3  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_proposer_kyc(
             proposer=proposer.address,
             kyc_status=True,
@@ -85,7 +85,7 @@ def test_set_proposer_kyc_not_a_proposer(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.PROPOSER_DOES_NOT_EXIST):
+    with pytest.raises(logicErrorType, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.set_proposer_kyc(
             proposer=random_account.address,
             kyc_status=True,

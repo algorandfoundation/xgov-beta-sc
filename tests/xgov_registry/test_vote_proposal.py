@@ -11,7 +11,7 @@ from algosdk.encoding import decode_address
 
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
-    logic_error_type,
+    logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_VOTES,
     COMMITTEE_SIZE,
@@ -171,7 +171,7 @@ def test_vote_proposal_wrong_vote_amount(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.INVALID_VOTE):
+    with pytest.raises(logicErrorType, match=err.INVALID_VOTE):
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=xgov.address,
@@ -197,7 +197,7 @@ def test_vote_proposal_not_a_proposal_app(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.INVALID_PROPOSAL):
+    with pytest.raises(logicErrorType, match=err.INVALID_PROPOSAL):
         xgov_registry_client.vote_proposal(
             proposal_id=xgov_registry_client.app_id,
             xgov_address=xgov.address,
@@ -254,7 +254,7 @@ def test_vote_proposal_not_an_xgov(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=random_account.address,
@@ -312,7 +312,7 @@ def test_vote_proposal_wrong_voting_address(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.MUST_BE_VOTING_ADDRESS):
+    with pytest.raises(logicErrorType, match=err.MUST_BE_VOTING_ADDRESS):
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_mock_client.app_id,
             xgov_address=xgov.address,

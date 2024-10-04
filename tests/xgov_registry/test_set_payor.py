@@ -8,7 +8,7 @@ from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
     assert_registry_payor,
-    logic_error_type
+    logicErrorType
 )
 
 def test_set_payor_success(
@@ -35,7 +35,7 @@ def test_set_payor_not_manager(
     xgov_registry_client: XGovRegistryClient,
     random_account: AddressAndSigner,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_payor(
             payor=random_account.address,
             transaction_parameters=TransactionParameters(

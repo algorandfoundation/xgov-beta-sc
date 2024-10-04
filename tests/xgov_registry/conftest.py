@@ -24,7 +24,33 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from tests.proposal.common import INITIAL_FUNDS
-from tests.xgov_registry.common import AddressAndSignerFromAccount
+from tests.xgov_registry.common import (
+    AddressAndSignerFromAccount,
+    XGOV_MIN_BALANCE,
+    PROPOSER_FEE,
+    PROPOSAL_FEE,
+    PROPOSAL_PUBLISHING_BPS,
+    PROPOSAL_COMMITTMENT_BPS,
+    MIN_REQUESTED_AMOUNT,
+    MAX_REQUESTED_AMOUNT_SMALL,
+    MAX_REQUESTED_AMOUNT_MEDIUM,
+    MAX_REQUESTED_AMOUNT_LARGE,
+    DISCUSSION_DURATION_SMALL,
+    DISCUSSION_DURATION_MEDIUM,
+    DISCUSSION_DURATION_LARGE,
+    DISCUSSION_DURATION_XLARGE,
+    VOTING_DURATION_SMALL,
+    VOTING_DURATION_MEDIUM,
+    VOTING_DURATION_LARGE,
+    VOTING_DURATION_XLARGE,
+    COOL_DOWN_DURATION,
+    QUORUM_SMALL,
+    QUORUM_MEDIUM,
+    QURUM_LARGE,
+    WEIGHTED_QUORUM_SMALL,
+    WEIGHTED_QUORUM_MEDIUM,
+    WEIGHTED_QUORUM_LARGE,
+)
 
 @pytest.fixture(scope="session")
 def algorand_client() -> AlgorandClient:
@@ -171,39 +197,39 @@ def xgov_registry_client(
 @pytest.fixture(scope="function")
 def xgov_registry_config() -> XGovRegistryConfig:
     return XGovRegistryConfig(
-        xgov_min_balance=1_000_000,
-        proposer_fee=10_000_000,
-        proposal_fee=100_000_000,
-        proposal_publishing_bps=1_000,
-        proposal_commitment_bps=1_000,
-        min_requested_amount=1_000,
+        xgov_min_balance=XGOV_MIN_BALANCE,
+        proposer_fee=PROPOSER_FEE,
+        proposal_fee=PROPOSAL_FEE,
+        proposal_publishing_bps=PROPOSAL_PUBLISHING_BPS,
+        proposal_commitment_bps=PROPOSAL_COMMITTMENT_BPS,
+        min_requested_amount=MIN_REQUESTED_AMOUNT,
         max_requested_amount=[
-            100_000_000,
-            1_000_000_000,
-            10_000_000_000,
+            MAX_REQUESTED_AMOUNT_SMALL,
+            MAX_REQUESTED_AMOUNT_MEDIUM,
+            MAX_REQUESTED_AMOUNT_LARGE,
         ],
         discussion_duration=[
-            86400,
-            172800,
-            259200,
-            345600,
+            DISCUSSION_DURATION_SMALL,
+            DISCUSSION_DURATION_MEDIUM,
+            DISCUSSION_DURATION_LARGE,
+            DISCUSSION_DURATION_XLARGE,
         ],
         voting_duration=[
-            86400,
-            172800,
-            259200,
-            345600,
+            VOTING_DURATION_SMALL,
+            VOTING_DURATION_MEDIUM,
+            VOTING_DURATION_LARGE,
+            VOTING_DURATION_XLARGE,
         ],
-        cool_down_duration=86400,
+        cool_down_duration=COOL_DOWN_DURATION,
         quorum=[
-            100,
-            200,
-            300,
+            QUORUM_SMALL,
+            QUORUM_MEDIUM,
+            QURUM_LARGE,
         ],
         weighted_quorum=[
-            200,
-            300,
-            400,
+            WEIGHTED_QUORUM_SMALL,
+            WEIGHTED_QUORUM_MEDIUM,
+            WEIGHTED_QUORUM_LARGE,
         ]
     )
 

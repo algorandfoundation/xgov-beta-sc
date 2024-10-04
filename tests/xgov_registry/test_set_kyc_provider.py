@@ -8,7 +8,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 
 def test_set_kyc_provider_success(
@@ -37,7 +37,7 @@ def test_set_kyc_provider_not_manager(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_kyc_provider(
             provider=random_account.address,
             transaction_parameters=TransactionParameters(

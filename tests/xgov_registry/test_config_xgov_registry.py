@@ -14,7 +14,7 @@ from smart_contracts.artifacts.xgov_registry.client import (
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
     assert_registry_config,
-    logic_error_type
+    logicErrorType
 )
 
 def test_config_xgov_registry_success(
@@ -66,7 +66,7 @@ def test_config_xgov_registry_not_manager(
     random_account: AddressAndSigner,
     xgov_registry_config: XGovRegistryConfig
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(
@@ -81,7 +81,7 @@ def test_config_xgov_registry_pending_proposals(
     deployer: Account,
     proposal_mock_client: ProposalMockClient
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(

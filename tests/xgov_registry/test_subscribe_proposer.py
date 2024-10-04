@@ -12,7 +12,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 def test_subscribe_proposer_success(
     xgov_registry_client: XGovRegistryClient,
@@ -69,7 +69,7 @@ def test_subscribe_proposer_already_proposer(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.ALREADY_PROPOSER):
+    with pytest.raises(logicErrorType, match=err.ALREADY_PROPOSER):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -99,7 +99,7 @@ def test_subscribe_proposer_wrong_recipient(
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
+    with pytest.raises(logicErrorType, match=err.WRONG_RECEIVER):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -127,7 +127,7 @@ def test_subscribe_proposer_wrong_amount(
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PAYMENT_AMOUNT):
+    with pytest.raises(logicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(

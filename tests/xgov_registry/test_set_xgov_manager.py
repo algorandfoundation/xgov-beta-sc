@@ -12,7 +12,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 def test_set_xgov_manager_success(
     xgov_registry_client: XGovRegistryClient,
@@ -42,7 +42,7 @@ def test_set_xgov_manager_not_manager(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_xgov_manager(
             manager=random_account.address,
             transaction_parameters=TransactionParameters(

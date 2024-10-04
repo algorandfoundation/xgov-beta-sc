@@ -7,7 +7,7 @@ from algokit_utils import TransactionParameters
 from smart_contracts.errors import std_errors as err
 
 from tests.xgov_registry.common import (
-    logic_error_type,
+    logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_SIZE,
     COMMITTEE_VOTES,
@@ -31,7 +31,7 @@ def test_declare_committee_not_manager(
     xgov_registry_client: XGovRegistryClient,
     random_account: AddressAndSigner
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.declare_committee(
             id=COMMITTEE_ID,
             size=COMMITTEE_SIZE,

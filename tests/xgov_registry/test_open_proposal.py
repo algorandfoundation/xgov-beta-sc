@@ -15,7 +15,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 
 def test_open_proposal_success(
@@ -91,7 +91,7 @@ def test_open_proposal_not_a_proposer(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -173,7 +173,7 @@ def test_open_proposal_active_proposal(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.ALREADY_ACTIVE_PROPOSAL):
+    with pytest.raises(logicErrorType, match=err.ALREADY_ACTIVE_PROPOSAL):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -225,7 +225,7 @@ def test_open_proposal_wrong_fee(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.INSUFFICIENT_FEE):
+    with pytest.raises(logicErrorType, match=err.INSUFFICIENT_FEE):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -279,7 +279,7 @@ def test_open_proposal_wrong_amount(
 
     sp.min_fee *= 3  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PAYMENT_AMOUNT):
+    with pytest.raises(logicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -333,7 +333,7 @@ def test_open_proposal_wrong_recipient(
 
     sp.min_fee *= 3  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
+    with pytest.raises(logicErrorType, match=err.WRONG_RECEIVER):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(

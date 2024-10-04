@@ -12,7 +12,7 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logic_error_type
+from tests.xgov_registry.common import logicErrorType
 
 def test_unsubscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
@@ -114,7 +114,7 @@ def test_unsubscribe_xgov_wrong_fee(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.INSUFFICIENT_FEE):
+    with pytest.raises(logicErrorType, match=err.INSUFFICIENT_FEE):
         xgov_registry_client.unsubscribe_xgov(
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
@@ -132,7 +132,7 @@ def test_unsubscribe_xgov_not_an_xgov(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.unsubscribe_xgov(
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,

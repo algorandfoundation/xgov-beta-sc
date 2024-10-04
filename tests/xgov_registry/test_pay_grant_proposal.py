@@ -17,7 +17,7 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from tests.xgov_registry.common import (
-    logic_error_type,
+    logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_VOTES,
     COMMITTEE_SIZE
@@ -123,7 +123,7 @@ def test_pay_grant_proposal_not_payor(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
@@ -156,7 +156,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
     )
 
     # payout
-    with pytest.raises(logic_error_type, match=err.INVALID_PROPOSAL):
+    with pytest.raises(logicErrorType, match=err.INVALID_PROPOSAL):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=xgov_registry_client.app_id,
             transaction_parameters=TransactionParameters(
@@ -212,7 +212,7 @@ def test_pay_grant_proposal_not_approved(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(logic_error_type, match=err.PROPOSAL_IS_NOT_APPROVED):
+    with pytest.raises(logicErrorType, match=err.PROPOSAL_IS_NOT_APPROVED):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
@@ -280,7 +280,7 @@ def test_pay_grant_proposal_invalid_kyc(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(logic_error_type, match=err.INVALID_KYC):
+    with pytest.raises(logicErrorType, match=err.INVALID_KYC):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
@@ -348,7 +348,7 @@ def test_pay_grant_proposal_expired_kyc(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(logic_error_type, match=err.EXPIRED_KYC):
+    with pytest.raises(logicErrorType, match=err.EXPIRED_KYC):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
@@ -404,7 +404,7 @@ def test_pay_grant_proposal_insufficient_funds(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(logic_error_type, match=err.INSUFFICIENT_TREASURY_FUNDS):
+    with pytest.raises(logicErrorType, match=err.INSUFFICIENT_TREASURY_FUNDS):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
