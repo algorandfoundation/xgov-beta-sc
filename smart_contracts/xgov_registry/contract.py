@@ -421,12 +421,10 @@ class XGovRegistry(
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
 
-        proposer_state = self.proposer_box[Txn.sender].copy()
-
         # Check if the proposer already has an active proposal
-        assert not proposer_state.active_proposal, err.ALREADY_ACTIVE_PROPOSAL
-        assert proposer_state.kyc_status, err.INVALID_KYC
-        assert proposer_state.kyc_expiring, err.EXPIRED_KYC
+        assert not self.proposer_box[Txn.sender].active_proposal, err.ALREADY_ACTIVE_PROPOSAL
+        assert self.proposer_box[Txn.sender].kyc_status, err.INVALID_KYC
+        assert self.proposer_box[Txn.sender].kyc_expiring > Global.latest_timestamp, err.EXPIRED_KYC
 
         assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
 
