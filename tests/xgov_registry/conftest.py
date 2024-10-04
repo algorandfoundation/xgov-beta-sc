@@ -3,7 +3,6 @@ import pytest
 from algokit_utils import (
     EnsureBalanceParameters,
     ensure_funded,
-    get_localnet_default_account,
 )
 from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
@@ -51,28 +50,6 @@ from tests.xgov_registry.common import (
     WEIGHTED_QUORUM_MEDIUM,
     WEIGHTED_QUORUM_LARGE,
 )
-
-@pytest.fixture(scope="session")
-def algorand_client() -> AlgorandClient:
-    client = AlgorandClient.default_local_net()
-    client.set_suggested_params_timeout(0)
-    return client
-
-@pytest.fixture(scope="function")
-def deployer(algorand_client: AlgorandClient) -> Account:
-    deployer = get_localnet_default_account(algorand_client.client.algod)
-    account = AddressAndSignerFromAccount(deployer)
-    algorand_client.account.set_signer(deployer.address, account.signer)
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=deployer.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-
-    return deployer
 
 @pytest.fixture(scope="function")
 def committee_manager(
