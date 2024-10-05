@@ -118,6 +118,17 @@ def assert_registry_config(
     assert global_state.weighted_quorum_medium == weighted_quorum_medium
     assert global_state.weighted_quorum_large == weighted_quorum_large
 
+def assert_committee(
+    global_state: GlobalState,
+    *,
+    committee_id: list[int],
+    committee_size: int,
+    committee_votes: int
+) -> None:
+    assert global_state.committee_id.as_bytes == bytes(committee_id)
+    assert global_state.committee_members == committee_size
+    assert global_state.committee_votes == committee_votes
+
 def assert_get_state(
     global_state: GlobalState,
     get_state: TypedGlobalState

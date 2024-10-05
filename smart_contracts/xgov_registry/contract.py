@@ -21,6 +21,7 @@ from algopy import (
 import smart_contracts.errors.std_errors as err
 from . import config as cfg
 from . import types as typ
+from ..proposal import types as ptyp
 
 from ..proposal import enums as penm
 from ..proposal_mock import contract as proposal_contract
@@ -84,7 +85,7 @@ class XGovRegistry(
         
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
         
-        self.committee_id = GlobalState(arc4.StaticArray[arc4.Byte, t.Literal[32]], key=cfg.GS_KEY_COMMITTEE_ID)
+        self.committee_id = GlobalState(ptyp.CommitteeId, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
 

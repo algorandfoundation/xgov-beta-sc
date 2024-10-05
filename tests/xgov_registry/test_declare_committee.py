@@ -7,6 +7,7 @@ from algokit_utils import TransactionParameters
 from smart_contracts.errors import std_errors as err
 
 from tests.xgov_registry.common import (
+    assert_committee,
     logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_SIZE,
@@ -26,6 +27,16 @@ def test_declare_committee_success(
             signer=committee_manager.signer,
         ),
     )
+
+    global_state = xgov_registry_client.get_global_state()
+    
+    assert_committee(
+        global_state=global_state,
+        committee_id=COMMITTEE_ID,
+        committee_size=COMMITTEE_SIZE,
+        committee_votes=COMMITTEE_VOTES,
+    )
+
 
 def test_declare_committee_not_manager(
     xgov_registry_client: XGovRegistryClient,
