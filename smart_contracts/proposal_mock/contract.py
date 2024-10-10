@@ -141,8 +141,8 @@ class ProposalMock(
     def vote(
         self,
         xgov_address: arc4.Address,
-        approval_votes: UInt64,
-        rejection_votes: UInt64,
-        null_votes: UInt64
+        approval_votes: arc4.UInt64,
+        rejection_votes: arc4.UInt64,
+        null_votes: arc4.UInt64
     ) -> None:
         pass

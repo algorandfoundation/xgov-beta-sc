@@ -382,15 +382,15 @@ class XGovRegistry(
     def declare_committee(
         self,
         id: ptyp.CommitteeId,
-        size: UInt64,
-        votes: UInt64
+        size: arc4.UInt64,
+        votes: arc4.UInt64
     ) -> None:
         """Sets the committee details
 
         Args:
             id (ptyp.CommitteeId): The id of the commitee
-            size (UInt64): The size of the committee
-            votes (UInt64): The voting power of the committee
+            size (arc4.UInt64): The size of the committee
+            votes (arc4.UInt64): The voting power of the committee
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the XGov manager
@@ -399,8 +399,8 @@ class XGovRegistry(
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
 
         self.committee_id.value = id.copy()
-        self.committee_members.value = size
-        self.committee_votes.value = votes
+        self.committee_members.value = size.native
+        self.committee_votes.value = votes.native
 
     @arc4.abimethod
     def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
@@ -467,14 +467,14 @@ class XGovRegistry(
         return proposal_app.id
 
     @arc4.abimethod()
-    def vote_proposal(self, proposal_id: arc4.UInt64, xgov_address: arc4.Address, approval_votes: UInt64, rejection_votes: UInt64, null_votes: UInt64) -> None:
+    def vote_proposal(self, proposal_id: arc4.UInt64, xgov_address: arc4.Address, approval_votes: arc4.UInt64, rejection_votes: arc4.UInt64) -> None:
         """Votes on a proposal
 
         Args:
             proposal_id (arc4.UInt64): The application id of the proposal app being voted on
             xgov_address: (arc4.Address): The address of the xgov being voted on behalf of
-            approval_votes: (UInt64): The number of approvals from the xgov allocated
-            down_votes: (UInt64): The number of rejections from the xgov allocated
+            approval_votes: (arc4.UInt64): The number of approvals from the xgov allocated
+            rejection_votes: (arc4.UInt64): The number of rejections from the xgov allocated
             
         Raises:
             err.INVALID_VOTE: If the votes amount to more than the voting power of the committee
@@ -492,11 +492,11 @@ class XGovRegistry(
 
         # verify their voting allocation is not more than allowed
         # and allocate any remaining votes to null
-        vote_sum = (approval_votes + rejection_votes + null_votes)
+        vote_sum = (approval_votes.native + rejection_votes.native)
         proposal_committee_votes, proposal_committee_votes_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_COMMITTEE_VOTES)
         assert vote_sum <= proposal_committee_votes, err.INVALID_VOTE
         extra_null_votes = proposal_committee_votes - vote_sum
-        null_votes += extra_null_votes
+        null_votes = extra_null_votes
 
         # make sure they're voting on behalf of an xgov
         voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -511,7 +511,7 @@ class XGovRegistry(
             xgov_address,
             approval_votes,
             rejection_votes,
-            null_votes,
+            arc4.UInt64(null_votes),
             app_id=proposal_id.native
         )
 

@@ -63,7 +63,6 @@ def test_vote_proposal_success(
         xgov_address=xgov.address,
         approval_votes=COMMITTEE_VOTES,
         rejection_votes=0,
-        null_votes=0,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
@@ -119,7 +118,6 @@ def test_vote_proposal_not_in_voting_phase(
         xgov_address=xgov.address,
         approval_votes=COMMITTEE_VOTES,
         rejection_votes=0,
-        null_votes=0,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
@@ -176,7 +174,6 @@ def test_vote_proposal_wrong_vote_amount(
             xgov_address=xgov.address,
             approval_votes=(COMMITTEE_VOTES + 1),
             rejection_votes=0,
-            null_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
@@ -202,7 +199,6 @@ def test_vote_proposal_not_a_proposal_app(
             xgov_address=xgov.address,
             approval_votes=COMMITTEE_VOTES,
             rejection_votes=0,
-            null_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
@@ -259,7 +255,6 @@ def test_vote_proposal_not_an_xgov(
             xgov_address=random_account.address,
             approval_votes=COMMITTEE_VOTES,
             rejection_votes=0,
-            null_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
@@ -317,7 +312,6 @@ def test_vote_proposal_wrong_voting_address(
             xgov_address=xgov.address,
             approval_votes=0,
             rejection_votes=COMMITTEE_VOTES,
-            null_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
