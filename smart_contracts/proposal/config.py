@@ -2,7 +2,7 @@ from typing import Final
 
 # State Schema
 GLOBAL_BYTES: Final[int] = 5
-GLOBAL_UINTS: Final[int] = 13
+GLOBAL_UINTS: Final[int] = 16
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -13,6 +13,7 @@ GS_KEY_TITLE: Final[bytes] = b"title"
 GS_KEY_CID: Final[bytes] = b"cid"
 GS_KEY_SUBMISSION_TS: Final[bytes] = b"submission_timestamp"
 GS_KEY_FINALIZATION_TS: Final[bytes] = b"finalization_timestamp"
+GS_KEY_VOTE_OPEN_TS: Final[bytes] = b"vote_opening_timestamp"
 GS_KEY_STATUS: Final[bytes] = b"status"
 GS_KEY_CATEGORY: Final[bytes] = b"category"
 GS_KEY_FUNDING_TYPE: Final[bytes] = b"funding_type"
@@ -24,3 +25,6 @@ GS_KEY_COMMITTEE_VOTES: Final[bytes] = b"committee_votes"
 GS_KEY_VOTED_MEMBERS: Final[bytes] = b"voted_members"
 GS_KEY_APPROVALS: Final[bytes] = b"approvals"
 GS_KEY_REJECTIONS: Final[bytes] = b"rejections"
+
+# Boxes
+VOTER_BOX_KEY_PREFIX: Final[str] = "V"

@@ -55,6 +55,38 @@ def not_proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
 
 
 @pytest.fixture(scope="session")
+def committee_member(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def committee_members(algorand_client: AlgorandClient) -> list[AddressAndSigner]:
+    accounts = [
+        algorand_client.account.random() for _ in range(DEFAULT_COMMITTEE_MEMBERS)
+    ]
+
+    for account in accounts:
+        ensure_funded(
+            algorand_client.client.algod,
+            EnsureBalanceParameters(
+                account_to_fund=account.address,
+                min_spending_balance_micro_algos=INITIAL_FUNDS,
+            ),
+        )
+
+    return accounts
+
+
+@pytest.fixture(scope="session")
 def xgov_registry_mock_client(
     algorand_client: AlgorandClient,
     committee_publisher: AddressAndSigner,

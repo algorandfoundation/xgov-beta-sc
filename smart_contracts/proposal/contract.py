@@ -3,6 +3,7 @@
 from algopy import (
     Account,
     ARC4Contract,
+    BoxMap,
     Bytes,
     Global,
     GlobalState,
@@ -68,6 +69,10 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_FINALIZATION_TS,
         )
+        self.vote_open_ts = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_VOTE_OPEN_TS,
+        )
         self.status = GlobalState(
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
@@ -112,6 +117,21 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_REJECTIONS,
         )
+
+        self.voters = BoxMap(
+            arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
+        )
+        self.voters_count = UInt64(0)
+        self.assigned_votes = UInt64(0)
+
+    @subroutine
+    def assign_voter_check_authorization(self) -> None:
+        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
+    def assign_voter_input_validation(self, voter: arc4.Address) -> None:
+        assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
 
     @subroutine
     def get_discussion_duration(self, category: UInt64) -> UInt64:
@@ -282,6 +302,14 @@ class Proposal(
     def is_proposer(self) -> bool:
         return Txn.sender == self.proposer.value
 
+    @subroutine
+    def is_committee_publisher(self) -> bool:
+        return Txn.sender == Account(
+            self.get_bytes_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+            )
+        )
+
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
         """Create a new proposal.
@@ -429,6 +457,40 @@ class Proposal(
             amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
             fee=UInt64(0),  # enforces the proposer to pay the fee
         ).submit()
+
+    @arc4.abimethod()
+    def assign_voter(self, voter: arc4.Address, voting_power: UInt64) -> None:
+        """Assign a voter to the proposal.
+
+        Args:
+            voter (arc4.Address): Voter address
+            voting_power (UInt64): Voting power
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
+            err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
+            err.VOTING_POWER_MISMATCH: If the total voting power does not match the committee votes
+
+        """
+        self.assign_voter_check_authorization()
+
+        self.assign_voter_input_validation(voter)
+
+        self.voters[voter] = typ.VoterBox(
+            votes=arc4.UInt64(voting_power),
+            voted=arc4.Bool(False),  # noqa: FBT003
+        )
+
+        self.voters_count += UInt64(1)
+        self.assigned_votes += voting_power
+
+        if self.voters_count == self.committee_members.value:
+            assert (
+                self.assigned_votes == self.committee_votes.value
+            ), err.VOTING_POWER_MISMATCH
+            self.status.value = UInt64(enm.STATUS_VOTING)
+            self.vote_open_ts.value = Global.latest_timestamp
 
     ####################################################################################################################
     # Stub subroutines

@@ -13,6 +13,7 @@ from smart_contracts.proposal.enums import (
     FUNDING_NULL,
     STATUS_EMPTY,
     STATUS_FINAL,
+    STATUS_VOTING,
 )
 from smart_contracts.xgov_registry_mock.config import (
     MIN_REQUESTED_AMOUNT,
@@ -36,8 +37,8 @@ logic_error_type: Type[LogicError] = LogicError
 INITIAL_FUNDS = 10_000_000_000
 
 DEFAULT_COMMITTEE_ID = b"\x01" * 32
-DEFAULT_COMMITTEE_MEMBERS = 1
-DEFAULT_COMMITTEE_VOTES = 1
+DEFAULT_COMMITTEE_MEMBERS = 10
+DEFAULT_COMMITTEE_VOTES = 100
 
 
 def assert_proposal_global_state(
@@ -58,6 +59,8 @@ def assert_proposal_global_state(
     approvals: int = 0,
     rejections: int = 0,
     registry_app_id: int = 0,
+    assigned_votes: int = 0,
+    voters_count: int = 0,
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
@@ -74,6 +77,8 @@ def assert_proposal_global_state(
     assert global_state.approvals == approvals
     assert global_state.rejections == rejections
     assert global_state.registry_app_id == registry_app_id
+    assert global_state.assigned_votes == assigned_votes
+    assert global_state.voters_count == voters_count
 
     if status == STATUS_EMPTY:
         assert global_state.submission_ts == 0
@@ -84,6 +89,11 @@ def assert_proposal_global_state(
         assert global_state.finalization_ts > 0
     else:
         assert global_state.finalization_ts == 0
+
+    if status >= STATUS_VOTING:
+        assert global_state.vote_open_ts > 0
+    else:
+        assert global_state.vote_open_ts == 0
 
 
 def assert_account_balance(
