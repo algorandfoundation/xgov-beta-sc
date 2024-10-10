@@ -92,8 +92,8 @@ class XGovRegistry(
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
         # boxes
-        self.xgov_box = BoxMap(Account, arc4.Address, key_prefix=b"x")
-        self.proposer_box = BoxMap(Account, typ.ProposerBoxValue, key_prefix=b"p")
+        self.xgov_box = BoxMap(Account, arc4.Address, key_prefix=cfg.XGOV_BOX_MAP_PREFIX)
+        self.proposer_box = BoxMap(Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX)
 
     @subroutine
     def is_xgov_manager(self) -> bool:
