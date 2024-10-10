@@ -1,5 +1,15 @@
 #pragma version 10
 
 smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_state_program:
+    // smart_contracts/xgov_registry_mock/contract.py:19-27
+    // class XgovRegistryMock(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=mock_cfg.GLOBAL_BYTES,
+    //         global_uints=mock_cfg.GLOBAL_UINTS,
+    //         local_bytes=mock_cfg.LOCAL_BYTES,
+    //         local_uints=mock_cfg.LOCAL_UINTS,
+    //     ),
+    // ):
     int 1
     return

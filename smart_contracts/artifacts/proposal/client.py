@@ -47,6 +47,11 @@ _APP_SPEC_JSON = r"""{
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "assign_voter(address,uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -611,9 +616,9 @@ class Composer:
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> "Composer":
         """Assign a voter to the proposal.
-
+        
         Adds a call to `assign_voter(address,uint64)void` ABI method
-
+        
         :param str voter: Voter address
         :param int voting_power: Voting power
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
@@ -915,9 +920,9 @@ class ProposalClient:
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Assign a voter to the proposal.
-
+        
         Calls `assign_voter(address,uint64)void` ABI method
-
+        
         :param str voter: Voter address
         :param int voting_power: Voting power
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
