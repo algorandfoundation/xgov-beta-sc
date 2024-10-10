@@ -7,10 +7,11 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
-from algosdk.encoding import decode_address
-
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    proposer_box_name,
+    logicErrorType
+)
 
 def test_set_proposer_kyc_success(
     xgov_registry_client: XGovRegistryClient,
@@ -39,7 +40,7 @@ def test_set_proposer_kyc_success(
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -72,7 +73,7 @@ def test_set_proposer_kyc_not_kyc_provider(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
-                boxes=[(0, b"p" + decode_address(proposer.address))]
+                boxes=[(0, proposer_box_name(proposer.address))]
             ),
         )
 
@@ -94,6 +95,6 @@ def test_set_proposer_kyc_not_a_proposer(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))]
             ),
         )

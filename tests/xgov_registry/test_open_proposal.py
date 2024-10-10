@@ -15,7 +15,10 @@ from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    proposer_box_name,
+    logicErrorType
+)
 
 
 def test_open_proposal_success(
@@ -58,7 +61,7 @@ def test_open_proposal_success(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -77,7 +80,7 @@ def test_open_proposal_success(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -107,7 +110,7 @@ def test_open_proposal_not_a_proposer(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))]
             ),
         )
 
@@ -150,7 +153,7 @@ def test_open_proposal_active_proposal(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -169,7 +172,7 @@ def test_open_proposal_active_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -189,7 +192,7 @@ def test_open_proposal_active_proposal(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))]
+                boxes=[(0, proposer_box_name(proposer.address))]
             ),
         )
 
@@ -221,7 +224,7 @@ def test_open_proposal_wrong_fee(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -241,7 +244,7 @@ def test_open_proposal_wrong_fee(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))]
+                boxes=[(0, proposer_box_name(proposer.address))]
             ),
         )
 
@@ -273,7 +276,7 @@ def test_open_proposal_wrong_amount(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -295,7 +298,7 @@ def test_open_proposal_wrong_amount(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))]
+                boxes=[(0, proposer_box_name(proposer.address))]
             ),
         )
 
@@ -327,7 +330,7 @@ def test_open_proposal_wrong_recipient(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -349,6 +352,6 @@ def test_open_proposal_wrong_recipient(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))]
+                boxes=[(0, proposer_box_name(proposer.address))]
             ),
         )

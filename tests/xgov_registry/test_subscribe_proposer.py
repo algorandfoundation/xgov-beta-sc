@@ -8,11 +8,13 @@ from algokit_utils.beta.composer import PayParams
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
-from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    proposer_box_name,
+    logicErrorType
+)
 
 def test_subscribe_proposer_success(
     xgov_registry_client: XGovRegistryClient,
@@ -37,7 +39,7 @@ def test_subscribe_proposer_success(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(random_account.address))]
+            boxes=[(0, proposer_box_name(random_account.address))]
         ),
     )
 
@@ -65,7 +67,7 @@ def test_subscribe_proposer_already_proposer(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(random_account.address))]
+            boxes=[(0, proposer_box_name(random_account.address))]
         ),
     )
 
@@ -85,7 +87,7 @@ def test_subscribe_proposer_already_proposer(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))]
             ),
         )
     
@@ -115,7 +117,7 @@ def test_subscribe_proposer_wrong_recipient(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))]
             ),
         )
 
@@ -143,6 +145,6 @@ def test_subscribe_proposer_wrong_amount(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))]
             ),
         )

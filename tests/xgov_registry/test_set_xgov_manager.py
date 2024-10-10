@@ -4,15 +4,14 @@ from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
-from algosdk.encoding import decode_address
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    xgov_box_name,
+    logicErrorType
+)
 
 def test_set_xgov_manager_success(
     xgov_registry_client: XGovRegistryClient,
@@ -29,7 +28,7 @@ def test_set_xgov_manager_success(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(deployer.address))]
+            boxes=[(0, xgov_box_name(deployer.address))]
         ),
     )
 
@@ -49,6 +48,6 @@ def test_set_xgov_manager_not_manager(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(random_account.address))]
+                boxes=[(0, xgov_box_name(random_account.address))]
             ),
         )

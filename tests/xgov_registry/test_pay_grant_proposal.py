@@ -17,6 +17,7 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from tests.xgov_registry.common import (
+    proposer_box_name,
     logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_VOTES,
@@ -74,7 +75,7 @@ def test_pay_grant_proposal_success(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))],
+            boxes=[(0, proposer_box_name(proposer.address))],
             foreign_apps=[(proposal_mock_client.app_id)],
             accounts=[(proposer.address)]
         ),
@@ -130,7 +131,7 @@ def test_pay_grant_proposal_not_payor(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -163,7 +164,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 accounts=[(proposer.address)],
                 foreign_apps=[xgov_registry_client.app_id]
             ),
@@ -219,7 +220,7 @@ def test_pay_grant_proposal_not_approved(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -273,7 +274,7 @@ def test_pay_grant_proposal_invalid_kyc(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))],
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
@@ -287,7 +288,7 @@ def test_pay_grant_proposal_invalid_kyc(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -341,7 +342,7 @@ def test_pay_grant_proposal_expired_kyc(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))],
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
@@ -355,7 +356,7 @@ def test_pay_grant_proposal_expired_kyc(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -411,7 +412,7 @@ def test_pay_grant_proposal_insufficient_funds(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
-                boxes=[(0, b"p" + decode_address(proposer.address))],
+                boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),

@@ -24,7 +24,8 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from tests.proposal.common import INITIAL_FUNDS
 from tests.xgov_registry.common import (
-    AddressAndSignerFromAccount,
+    xgov_box_name,
+    proposer_box_name,
     XGOV_MIN_BALANCE,
     PROPOSER_FEE,
     PROPOSAL_FEE,
@@ -246,7 +247,7 @@ def xgov(
             sender=account.address,
             signer=account.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(account.address))]
+            boxes=[(0, xgov_box_name(account.address))]
         ),
     )
 
@@ -286,7 +287,7 @@ def proposer(
             sender=account.address,
             signer=account.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(account.address))]
+            boxes=[(0, proposer_box_name(account.address))]
         ),
     )
 
@@ -298,7 +299,7 @@ def proposer(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(account.address))]
+            boxes=[(0, proposer_box_name(account.address))]
         ),
     )
 
@@ -343,7 +344,7 @@ def proposal_mock_client(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 

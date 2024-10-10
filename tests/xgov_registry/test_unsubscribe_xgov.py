@@ -8,11 +8,13 @@ from algokit_utils.beta.composer import PayParams
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from smart_contracts.artifacts.xgov_subscriber_app_mock.client import XGovSubscriberAppMockClient
 
-from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    xgov_box_name,
+    logicErrorType
+)
 
 def test_unsubscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
@@ -37,7 +39,7 @@ def test_unsubscribe_xgov_success(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(random_account.address))]
+            boxes=[(0, xgov_box_name(random_account.address))]
         ),
     )
 
@@ -48,7 +50,7 @@ def test_unsubscribe_xgov_success(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(random_account.address))]
+            boxes=[(0, xgov_box_name(random_account.address))]
         ),
     )
 
@@ -69,7 +71,7 @@ def test_app_subscribe_xgov_success(
             suggested_params=sp,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
-                (xgov_registry_client.app_id, b"x" + decode_address(xgov_subscriber_app.app_address))
+                (xgov_registry_client.app_id, xgov_box_name(xgov_subscriber_app.app_address))
             ]
         ),
     )
@@ -82,7 +84,7 @@ def test_app_subscribe_xgov_success(
             suggested_params=sp,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
-                (xgov_registry_client.app_id, b"x" + decode_address(xgov_subscriber_app.app_address))
+                (xgov_registry_client.app_id, xgov_box_name(xgov_subscriber_app.app_address))
             ]
         ),
     )
@@ -110,7 +112,7 @@ def test_unsubscribe_xgov_wrong_fee(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(random_account.address))]
+            boxes=[(0, xgov_box_name(random_account.address))]
         ),
     )
 
@@ -120,7 +122,7 @@ def test_unsubscribe_xgov_wrong_fee(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(random_account.address))]
+                boxes=[(0, xgov_box_name(random_account.address))]
             ),
         )
 
@@ -138,6 +140,6 @@ def test_unsubscribe_xgov_not_an_xgov(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(random_account.address))]
+                boxes=[(0, xgov_box_name(random_account.address))]
             ),
         )

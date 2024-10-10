@@ -10,7 +10,16 @@ from smart_contracts.artifacts.xgov_registry.client import (
     GlobalState,
     TypedGlobalState
 )
-from algosdk.encoding import encode_address
+
+from smart_contracts.xgov_registry.config import (
+    XGOV_BOX_MAP_PREFIX,
+    PROPOSER_BOX_MAP_PREFIX,
+)
+
+from algosdk.encoding import (
+    encode_address,
+    decode_address
+)
 
 logicErrorType: Type[LogicError] = LogicError
 
@@ -48,6 +57,12 @@ WEIGHTED_QUORUM_LARGE = 400
 COMMITTEE_ID = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 COMMITTEE_SIZE = 10
 COMMITTEE_VOTES = 100
+
+def xgov_box_name(address: str) -> bytes:
+    return XGOV_BOX_MAP_PREFIX + decode_address(address)
+
+def proposer_box_name(address: str) -> bytes:
+    return PROPOSER_BOX_MAP_PREFIX + decode_address(address)
 
 def AddressAndSignerFromAccount(acc: Account) -> AddressAndSigner:
     signer = AccountTransactionSigner(acc.private_key)

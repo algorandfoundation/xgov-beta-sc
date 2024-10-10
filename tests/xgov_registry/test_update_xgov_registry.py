@@ -11,11 +11,13 @@ from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryConfig
 )
 
-from algosdk.encoding import decode_address
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import logicErrorType
+from tests.xgov_registry.common import (
+    proposer_box_name,
+    logicErrorType
+)
 
 def test_update_xgov_registry_success(
     xgov_registry_client: XGovRegistryClient,
@@ -88,7 +90,7 @@ def test_update_xgov_registry_pending_proposals(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 
@@ -108,7 +110,7 @@ def test_update_xgov_registry_pending_proposals(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, b"p" + decode_address(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))]
         ),
     )
 

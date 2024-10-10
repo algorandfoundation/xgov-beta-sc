@@ -7,10 +7,9 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 
-from algosdk.encoding import decode_address
-
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
+    xgov_box_name,
     logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_VOTES,
@@ -69,7 +68,7 @@ def test_vote_proposal_success(
             sender=xgov.address,
             signer=xgov.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(xgov.address))],
+            boxes=[(0, xgov_box_name(xgov.address))],
             foreign_apps=[(proposal_mock_client.app_id)],
             accounts=[(xgov.address)]
         ),
@@ -125,7 +124,7 @@ def test_vote_proposal_not_in_voting_phase(
             sender=xgov.address,
             signer=xgov.signer,
             suggested_params=sp,
-            boxes=[(0, b"x" + decode_address(xgov.address))],
+            boxes=[(0, xgov_box_name(xgov.address))],
             foreign_apps=[(proposal_mock_client.app_id)],
             accounts=[(xgov.address)]
         ),
@@ -182,7 +181,7 @@ def test_vote_proposal_wrong_vote_amount(
                 sender=xgov.address,
                 signer=xgov.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))],
+                boxes=[(0, xgov_box_name(xgov.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -208,7 +207,7 @@ def test_vote_proposal_not_a_proposal_app(
                 sender=xgov.address,
                 signer=xgov.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))],
+                boxes=[(0, xgov_box_name(xgov.address))],
                 foreign_apps=[(xgov_registry_client.app_id)],
                 accounts=[(proposer.address)]
             ),
@@ -265,7 +264,7 @@ def test_vote_proposal_not_an_xgov(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(random_account.address))],
+                boxes=[(0, xgov_box_name(random_account.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(random_account.address)]
             ),
@@ -323,7 +322,7 @@ def test_vote_proposal_wrong_voting_address(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, b"x" + decode_address(xgov.address))],
+                boxes=[(0, xgov_box_name(xgov.address))],
                 foreign_apps=[(proposal_mock_client.app_id)],
                 accounts=[(xgov.address)]
             ),
