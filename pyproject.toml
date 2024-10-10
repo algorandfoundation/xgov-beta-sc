@@ -9,19 +9,19 @@ readme = "README.md"
 python = "^3.12"
 algokit-utils = "^2.3.1"
 python-dotenv = "^1.0.0"
-algorand-python = "^2.0.1"
+algorand-python = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^1.1.7"
 black = {extras = ["d"], version = "^24.8.0"}
-ruff = "^0.6.4"
+ruff = "^0.6.8"
 mypy = "^1.11.2"
-pytest = "^8.3.2"
+pytest = "^8.3.3"
 pytest-cov = "^5.0.0"
 pytest-sugar = "^1.0.0"
 pip-audit = "^2.7.3"
 pre-commit = "^3.8.0"
-puyapy = "^3.0.3"
+puyapy = "^3.2.0"
 
 [build-system]
 requires = ["poetry-core"]
