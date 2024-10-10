@@ -1,6 +1,12 @@
 #pragma version 10
 
 smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:
+    callsub __puya_arc4_router__
+    return
+
+
+// smart_contracts.xgov_registry.contract.XgovRegistry.__puya_arc4_router__() -> uint64:
+__puya_arc4_router__:
     // smart_contracts/xgov_registry/contract.py:6-14
     // class XgovRegistry(
     //     ARC4Contract,
@@ -11,14 +17,16 @@ smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:
     //         local_uints=cfg.LOCAL_UINTS,
     //     ),
     // ):
+    proto 0 1
     txn NumAppArgs
-    bz main_bare_routing@5
+    bz __puya_arc4_router___bare_routing@5
     method "hello(string)string"
     txna ApplicationArgs 0
-    match main_hello_route@2
-    err // reject transaction
+    match __puya_arc4_router___hello_route@2
+    int 0
+    retsub
 
-main_hello_route@2:
+__puya_arc4_router___hello_route@2:
     // smart_contracts/xgov_registry/contract.py:15
     // @arc4.abimethod()
     txn OnCompletion
@@ -45,9 +53,9 @@ main_hello_route@2:
     concat
     log
     int 1
-    return
+    retsub
 
-main_bare_routing@5:
+__puya_arc4_router___bare_routing@5:
     // smart_contracts/xgov_registry/contract.py:6-14
     // class XgovRegistry(
     //     ARC4Contract,
@@ -59,13 +67,26 @@ main_bare_routing@5:
     //     ),
     // ):
     txn OnCompletion
-    !
-    assert // reject transaction
+    bnz __puya_arc4_router___after_if_else@9
     txn ApplicationID
     !
     assert // is creating
     int 1
-    return
+    retsub
+
+__puya_arc4_router___after_if_else@9:
+    // smart_contracts/xgov_registry/contract.py:6-14
+    // class XgovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    int 0
+    retsub
 
 
 // smart_contracts.xgov_registry.contract.XgovRegistry.hello(name: bytes) -> bytes:
