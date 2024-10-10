@@ -117,7 +117,7 @@ def test_assign_voter_success(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_length=1,
+        voters_count=1,
         assigned_votes=10,
     )
 
@@ -209,7 +209,7 @@ def test_assign_voter_assign_all_voters(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_length=len(committee_members),
+        voters_count=len(committee_members),
         assigned_votes=10 * len(committee_members),
     )
 
@@ -410,7 +410,7 @@ def test_assign_voter_voter_already_assigned(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_length=1,
+        voters_count=1,
         assigned_votes=10,
     )
 
@@ -634,7 +634,7 @@ def test_assign_voter_voting_power_mismatch(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_length=len(committee_members[:-1]),
+        voters_count=len(committee_members[:-1]),
         assigned_votes=10 * len(committee_members[:-1]),
     )
 
@@ -745,6 +745,6 @@ def test_assign_voter_voting_open(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_length=len(committee_members),
+        voters_count=len(committee_members),
         assigned_votes=10 * len(committee_members),
     )

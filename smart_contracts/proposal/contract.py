@@ -121,7 +121,7 @@ class Proposal(
         self.voters = BoxMap(
             arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
         )
-        self.voters_length = UInt64(0)
+        self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
 
     @subroutine
@@ -482,10 +482,10 @@ class Proposal(
             voted=arc4.Bool(False),  # noqa: FBT003
         )
 
-        self.voters_length += UInt64(1)
+        self.voters_count += UInt64(1)
         self.assigned_votes += voting_power
 
-        if self.voters_length == self.committee_members.value:
+        if self.voters_count == self.committee_members.value:
             assert (
                 self.assigned_votes == self.committee_votes.value
             ), err.VOTING_POWER_MISMATCH

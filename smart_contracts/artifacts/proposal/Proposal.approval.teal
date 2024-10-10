@@ -1195,22 +1195,22 @@ assign_voter:
     swap
     box_put
     // smart_contracts/proposal/contract.py:485
-    // self.voters_length += UInt64(1)
+    // self.voters_count += UInt64(1)
     int 0
     // smart_contracts/proposal/contract.py:124
-    // self.voters_length = UInt64(0)
-    byte "voters_length"
+    // self.voters_count = UInt64(0)
+    byte "voters_count"
     // smart_contracts/proposal/contract.py:485
-    // self.voters_length += UInt64(1)
+    // self.voters_count += UInt64(1)
     app_global_get_ex
-    assert // check self.voters_length exists
+    assert // check self.voters_count exists
     int 1
     +
     // smart_contracts/proposal/contract.py:124
-    // self.voters_length = UInt64(0)
-    byte "voters_length"
+    // self.voters_count = UInt64(0)
+    byte "voters_count"
     // smart_contracts/proposal/contract.py:485
-    // self.voters_length += UInt64(1)
+    // self.voters_count += UInt64(1)
     swap
     app_global_put
     // smart_contracts/proposal/contract.py:486
@@ -1233,21 +1233,21 @@ assign_voter:
     swap
     app_global_put
     // smart_contracts/proposal/contract.py:488
-    // if self.voters_length == self.committee_members.value:
+    // if self.voters_count == self.committee_members.value:
     int 0
     // smart_contracts/proposal/contract.py:124
-    // self.voters_length = UInt64(0)
-    byte "voters_length"
+    // self.voters_count = UInt64(0)
+    byte "voters_count"
     // smart_contracts/proposal/contract.py:488
-    // if self.voters_length == self.committee_members.value:
+    // if self.voters_count == self.committee_members.value:
     app_global_get_ex
-    assert // check self.voters_length exists
+    assert // check self.voters_count exists
     int 0
     // smart_contracts/proposal/contract.py:102
     // key=prop_cfg.GS_KEY_COMMITTEE_MEMBERS,
     byte 0x636f6d6d69747465655f6d656d62657273
     // smart_contracts/proposal/contract.py:488
-    // if self.voters_length == self.committee_members.value:
+    // if self.voters_count == self.committee_members.value:
     app_global_get_ex
     assert // check self.committee_members exists
     ==
@@ -1365,7 +1365,7 @@ assign_voter_input_validation:
     // smart_contracts/proposal/contract.py:122-134
     //         arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
     //     )
-    //     self.voters_length = UInt64(0)
+    //     self.voters_count = UInt64(0)
     //     self.assigned_votes = UInt64(0)
     // 
     // @subroutine
@@ -1636,8 +1636,8 @@ __init__:
     // )
     app_global_put
     // smart_contracts/proposal/contract.py:124
-    // self.voters_length = UInt64(0)
-    byte "voters_length"
+    // self.voters_count = UInt64(0)
+    byte "voters_count"
     int 0
     app_global_put
     // smart_contracts/proposal/contract.py:125

@@ -60,7 +60,7 @@ def assert_proposal_global_state(
     rejections: int = 0,
     registry_app_id: int = 0,
     assigned_votes: int = 0,
-    voters_length: int = 0,
+    voters_count: int = 0,
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
@@ -78,7 +78,7 @@ def assert_proposal_global_state(
     assert global_state.rejections == rejections
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
-    assert global_state.voters_length == voters_length
+    assert global_state.voters_count == voters_count
 
     if status == STATUS_EMPTY:
         assert global_state.submission_ts == 0
