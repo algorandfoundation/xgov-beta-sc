@@ -1,0 +1,36 @@
+name: Auto-Merge to Branches
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  merge-to-branches:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Merge main into chore/dependabot/gh-actions
+        run: |
+          git checkout chore/dependabot/gh-actions
+          git merge main --no-edit
+          git push origin chore/dependabot/gh-actions
+
+      - name: Merge main into chore/dependabot/pip
+        run: |
+          git checkout chore/dependabot/pip
+          git merge main --no-edit
+          git push origin chore/dependabot/pip
+
