@@ -512,6 +512,7 @@ class XGovRegistry(
         assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
+        # TODO: switch to Proposal contract
         arc4.abi_call(
             proposal_contract.ProposalMock.vote,
             xgov_address,
