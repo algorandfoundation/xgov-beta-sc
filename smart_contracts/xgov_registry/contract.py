@@ -123,6 +123,13 @@ class XGovRegistry(
         # Update the outstanding funds
         self.outstanding_funds.value -= amount
 
+    @subroutine
+    def valid_kyc(self, address: Account) -> bool:
+        return (
+            self.proposer_box[address].kyc_status
+            and self.proposer_box[address].kyc_expiring > Global.latest_timestamp
+        )
+
     @arc4.abimethod(create="require")
     def create(self) -> None:
         """Create the xgov registry.
@@ -424,8 +431,7 @@ class XGovRegistry(
 
         # Check if the proposer already has an active proposal
         assert not self.proposer_box[Txn.sender].active_proposal, err.ALREADY_ACTIVE_PROPOSAL
-        assert self.proposer_box[Txn.sender].kyc_status, err.INVALID_KYC
-        assert self.proposer_box[Txn.sender].kyc_expiring > Global.latest_timestamp, err.EXPIRED_KYC
+        assert self.valid_kyc(Txn.sender), err.INVALID_KYC
 
         assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
 
@@ -551,8 +557,7 @@ class XGovRegistry(
         # Verify the proposer's KYC is still valid
         proposer_state = self.proposer_box[proposer.native].copy()
         
-        assert proposer_state.kyc_status, err.INVALID_KYC
-        assert proposer_state.kyc_expiring > Global.latest_timestamp, err.EXPIRED_KYC
+        assert self.valid_kyc(proposer.native), err.INVALID_KYC
 
         # Verify sufficient funds are available
         assert self.outstanding_funds.value >= requested_amount, err.INSUFFICIENT_TREASURY_FUNDS
