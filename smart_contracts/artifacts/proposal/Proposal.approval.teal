@@ -26,13 +26,13 @@ __puya_arc4_router__:
     txn NumAppArgs
     bz __puya_arc4_router___after_if_else@11
     method "create(address)void"
-    method "submit_proposal(pay,string,byte[59],uint64,uint64)void"
-    method "update_proposal(string,byte[59])void"
-    method "drop_proposal()void"
-    method "finalize_proposal()void"
+    method "submit(pay,string,byte[59],uint64,uint64)void"
+    method "update(string,byte[59])void"
+    method "drop()void"
+    method "finalize()void"
     method "assign_voter(address,uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7
+    match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7
     int 0
     retsub
 
@@ -62,7 +62,7 @@ __puya_arc4_router___create_route@2:
     int 1
     retsub
 
-__puya_arc4_router___submit_proposal_route@3:
+__puya_arc4_router___submit_route@3:
     // smart_contracts/proposal/contract.py:327
     // @arc4.abimethod()
     txn OnCompletion
@@ -97,11 +97,11 @@ __puya_arc4_router___submit_proposal_route@3:
     btoi
     // smart_contracts/proposal/contract.py:327
     // @arc4.abimethod()
-    callsub submit_proposal
+    callsub submit
     int 1
     retsub
 
-__puya_arc4_router___update_proposal_route@4:
+__puya_arc4_router___update_route@4:
     // smart_contracts/proposal/contract.py:373
     // @arc4.abimethod()
     txn OnCompletion
@@ -124,11 +124,11 @@ __puya_arc4_router___update_proposal_route@4:
     txna ApplicationArgs 2
     // smart_contracts/proposal/contract.py:373
     // @arc4.abimethod()
-    callsub update_proposal
+    callsub update
     int 1
     retsub
 
-__puya_arc4_router___drop_proposal_route@5:
+__puya_arc4_router___drop_route@5:
     // smart_contracts/proposal/contract.py:396
     // @arc4.abimethod()
     txn OnCompletion
@@ -136,11 +136,11 @@ __puya_arc4_router___drop_proposal_route@5:
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    callsub drop_proposal
+    callsub drop
     int 1
     retsub
 
-__puya_arc4_router___finalize_proposal_route@6:
+__puya_arc4_router___finalize_route@6:
     // smart_contracts/proposal/contract.py:423
     // @arc4.abimethod()
     txn OnCompletion
@@ -148,7 +148,7 @@ __puya_arc4_router___finalize_proposal_route@6:
     assert // OnCompletion is NoOp
     txn ApplicationID
     assert // is not creating
-    callsub finalize_proposal
+    callsub finalize
     int 1
     retsub
 
@@ -221,11 +221,11 @@ create:
     retsub
 
 
-// smart_contracts.proposal.contract.Proposal.submit_proposal(payment: uint64, title: bytes, cid: bytes, funding_type: uint64, requested_amount: uint64) -> void:
-submit_proposal:
+// smart_contracts.proposal.contract.Proposal.submit(payment: uint64, title: bytes, cid: bytes, funding_type: uint64, requested_amount: uint64) -> void:
+submit:
     // smart_contracts/proposal/contract.py:327-335
     // @arc4.abimethod()
-    // def submit_proposal(
+    // def submit(
     //     self,
     //     payment: gtxn.PaymentTransaction,
     //     title: String,
@@ -633,11 +633,11 @@ set_category_after_if_else@6:
     retsub
 
 
-// smart_contracts.proposal.contract.Proposal.update_proposal(title: bytes, cid: bytes) -> void:
-update_proposal:
+// smart_contracts.proposal.contract.Proposal.update(title: bytes, cid: bytes) -> void:
+update:
     // smart_contracts/proposal/contract.py:373-374
     // @arc4.abimethod()
-    // def update_proposal(self, title: String, cid: typ.Cid) -> None:
+    // def update(self, title: String, cid: typ.Cid) -> None:
     proto 2 0
     // smart_contracts/proposal/contract.py:389
     // self.update_check_authorization()
@@ -687,11 +687,11 @@ update_check_authorization:
     retsub
 
 
-// smart_contracts.proposal.contract.Proposal.drop_proposal() -> void:
-drop_proposal:
+// smart_contracts.proposal.contract.Proposal.drop() -> void:
+drop:
     // smart_contracts/proposal/contract.py:396-397
     // @arc4.abimethod()
-    // def drop_proposal(self) -> None:
+    // def drop(self) -> None:
     proto 0 0
     // smart_contracts/proposal/contract.py:405
     // self.drop_check_authorization()
@@ -798,11 +798,11 @@ drop_check_authorization:
     retsub
 
 
-// smart_contracts.proposal.contract.Proposal.finalize_proposal() -> void:
-finalize_proposal:
+// smart_contracts.proposal.contract.Proposal.finalize() -> void:
+finalize:
     // smart_contracts/proposal/contract.py:423-424
     // @arc4.abimethod()
-    // def finalize_proposal(self) -> None:
+    // def finalize(self) -> None:
     proto 0 0
     // smart_contracts/proposal/contract.py:437
     // self.finalize_check_authorization()

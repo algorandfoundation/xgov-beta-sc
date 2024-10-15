@@ -33,7 +33,7 @@ def test_update_success(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -55,7 +55,7 @@ def test_update_success(
         ),
     )
 
-    proposal_client.update_proposal(
+    proposal_client.update(
         title="Updated Test Proposal",
         cid=b"\x02" * 59,
         transaction_parameters=TransactionParameters(
@@ -93,7 +93,7 @@ def test_update_twice(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -115,7 +115,7 @@ def test_update_twice(
         ),
     )
 
-    proposal_client.update_proposal(
+    proposal_client.update(
         title="Updated Test Proposal",
         cid=b"\x02" * 59,
         transaction_parameters=TransactionParameters(
@@ -124,7 +124,7 @@ def test_update_twice(
         ),
     )
 
-    proposal_client.update_proposal(
+    proposal_client.update(
         title="Updated Test Proposal 2",
         cid=b"\x03" * 59,
         transaction_parameters=TransactionParameters(
@@ -163,7 +163,7 @@ def test_update_not_proposer(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -186,7 +186,7 @@ def test_update_not_proposer(
     )
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
-        proposal_client.update_proposal(
+        proposal_client.update(
             title="Updated Test Proposal",
             cid=b"\x02" * 59,
             transaction_parameters=TransactionParameters(
@@ -226,7 +226,7 @@ def test_update_empty_proposal(
 ) -> None:
 
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.update_proposal(
+        proposal_client.update(
             title="Updated Test Proposal",
             cid=b"\x01" * 59,
             transaction_parameters=TransactionParameters(
@@ -257,7 +257,7 @@ def test_update_wrong_title_1(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -280,7 +280,7 @@ def test_update_wrong_title_1(
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
-        proposal_client.update_proposal(
+        proposal_client.update(
             title="",
             cid=b"\x02" * 59,
             transaction_parameters=TransactionParameters(
@@ -318,7 +318,7 @@ def test_update_wrong_title_2(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -341,7 +341,7 @@ def test_update_wrong_title_2(
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
-        proposal_client.update_proposal(
+        proposal_client.update(
             title="a" * (TITLE_MAX_BYTES + 1),
             cid=b"\x02" * 59,
             transaction_parameters=TransactionParameters(

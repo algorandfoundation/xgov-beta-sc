@@ -36,7 +36,7 @@ def test_finalize_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -76,7 +76,7 @@ def test_finalize_success(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -122,7 +122,7 @@ def test_finalize_not_proposer(
     not_proposer: AddressAndSigner,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -154,7 +154,7 @@ def test_finalize_not_proposer(
         discussion_duration=0
     )  # so we could actually finalize
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
                 signer=not_proposer.signer,
@@ -202,7 +202,7 @@ def test_finalize_empty_proposal(
         discussion_duration=0
     )  # so we could actually finalize
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -231,7 +231,7 @@ def test_finalize_twice(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -262,7 +262,7 @@ def test_finalize_twice(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -273,7 +273,7 @@ def test_finalize_twice(
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -313,7 +313,7 @@ def test_finalize_too_early(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -339,7 +339,7 @@ def test_finalize_too_early(
     sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(logic_error_type, match=err.TOO_EARLY):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -374,7 +374,7 @@ def test_finalize_wrong_committee_id(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -407,7 +407,7 @@ def test_finalize_wrong_committee_id(
     )  # so we could actually finalize
     xgov_registry_mock_client.clear_committee_id()  # invalid committee id
     with pytest.raises(logic_error_type, match=err.EMPTY_COMMITTEE_ID):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -446,7 +446,7 @@ def test_finalize_wrong_committee_members(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -481,7 +481,7 @@ def test_finalize_wrong_committee_members(
         committee_members=0
     )  # invalid committee members
     with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_MEMBERS):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -520,7 +520,7 @@ def test_finalize_wrong_committee_votes(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -555,7 +555,7 @@ def test_finalize_wrong_committee_votes(
         committee_votes=0
     )  # invalid committee votes
     with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_VOTES):
-        proposal_client.finalize_proposal(
+        proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,

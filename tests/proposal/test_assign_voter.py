@@ -39,7 +39,7 @@ def test_assign_voter_success(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -70,7 +70,7 @@ def test_assign_voter_success(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -130,7 +130,7 @@ def test_assign_voter_assign_all_voters(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -161,7 +161,7 @@ def test_assign_voter_assign_all_voters(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -222,7 +222,7 @@ def test_assign_voter_not_committee_publisher(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -253,7 +253,7 @@ def test_assign_voter_not_committee_publisher(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -312,7 +312,7 @@ def test_assign_voter_voter_already_assigned(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -343,7 +343,7 @@ def test_assign_voter_voter_already_assigned(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -462,7 +462,7 @@ def test_assign_voter_draft_proposal(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -536,7 +536,7 @@ def test_assign_voter_voting_power_mismatch(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -567,7 +567,7 @@ def test_assign_voter_voting_power_mismatch(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -647,7 +647,7 @@ def test_assign_voter_voting_open(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -678,7 +678,7 @@ def test_assign_voter_voting_open(
     xgov_registry_mock_client.set_discussion_duration_small(
         discussion_duration=0
     )  # so we could actually finalize
-    proposal_client.finalize_proposal(
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,

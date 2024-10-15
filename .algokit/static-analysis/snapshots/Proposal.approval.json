@@ -176,13 +176,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "36: int 0",
@@ -298,13 +298,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "39: __puya_arc4_router___create_route@2:",
@@ -444,16 +444,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -474,10 +474,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -909,16 +909,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -939,10 +939,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -1381,16 +1381,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -1411,10 +1411,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -1853,16 +1853,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -1883,10 +1883,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -2317,16 +2317,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -2347,10 +2347,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -2788,16 +2788,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -2818,10 +2818,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -3259,16 +3259,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -3289,10 +3289,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -3718,16 +3718,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -3748,10 +3748,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -4184,16 +4184,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -4214,10 +4214,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -4650,16 +4650,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "104: __puya_arc4_router___update_proposal_route@4:",
+              "104: __puya_arc4_router___update_route@4:",
               "107: txn OnCompletion",
               "108: !",
               "109: assert",
@@ -4668,10 +4668,10 @@
               "122: txna ApplicationArgs 1",
               "123: extract 2 0",
               "124: txna ApplicationArgs 2",
-              "127: callsub update_proposal"
+              "127: callsub update"
             ],
             [
-              "637: update_proposal:",
+              "637: update:",
               "641: proto 2 0",
               "644: callsub update_check_authorization"
             ],
@@ -4856,25 +4856,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "131: __puya_arc4_router___drop_proposal_route@5:",
+              "131: __puya_arc4_router___drop_route@5:",
               "134: txn OnCompletion",
               "135: !",
               "136: assert",
               "137: txn ApplicationID",
               "138: assert",
-              "139: callsub drop_proposal"
+              "139: callsub drop"
             ],
             [
-              "691: drop_proposal:",
+              "691: drop:",
               "695: proto 0 0",
               "698: callsub drop_check_authorization"
             ],
@@ -5062,25 +5062,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -5434,25 +5434,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -5813,25 +5813,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -6193,13 +6193,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -6453,13 +6453,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -6726,13 +6726,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "36: int 0",
@@ -6766,13 +6766,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "39: __puya_arc4_router___create_route@2:",
@@ -6830,16 +6830,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -6860,10 +6860,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -7213,16 +7213,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -7243,10 +7243,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -7603,16 +7603,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -7633,10 +7633,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -7993,16 +7993,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -8023,10 +8023,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -8375,16 +8375,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -8405,10 +8405,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -8764,16 +8764,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -8794,10 +8794,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -9153,16 +9153,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -9183,10 +9183,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -9530,16 +9530,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -9560,10 +9560,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -9914,16 +9914,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -9944,10 +9944,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -10298,16 +10298,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "104: __puya_arc4_router___update_proposal_route@4:",
+              "104: __puya_arc4_router___update_route@4:",
               "107: txn OnCompletion",
               "108: !",
               "109: assert",
@@ -10316,10 +10316,10 @@
               "122: txna ApplicationArgs 1",
               "123: extract 2 0",
               "124: txna ApplicationArgs 2",
-              "127: callsub update_proposal"
+              "127: callsub update"
             ],
             [
-              "637: update_proposal:",
+              "637: update:",
               "641: proto 2 0",
               "644: callsub update_check_authorization"
             ],
@@ -10422,25 +10422,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "131: __puya_arc4_router___drop_proposal_route@5:",
+              "131: __puya_arc4_router___drop_route@5:",
               "134: txn OnCompletion",
               "135: !",
               "136: assert",
               "137: txn ApplicationID",
               "138: assert",
-              "139: callsub drop_proposal"
+              "139: callsub drop"
             ],
             [
-              "691: drop_proposal:",
+              "691: drop:",
               "695: proto 0 0",
               "698: callsub drop_check_authorization"
             ],
@@ -10546,25 +10546,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -10836,25 +10836,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -11133,25 +11133,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -11431,13 +11431,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -11609,13 +11609,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -11903,13 +11903,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "36: int 0",
@@ -12025,13 +12025,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "39: __puya_arc4_router___create_route@2:",
@@ -12171,16 +12171,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -12201,10 +12201,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -12636,16 +12636,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -12666,10 +12666,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -13108,16 +13108,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -13138,10 +13138,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -13580,16 +13580,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -13610,10 +13610,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -14044,16 +14044,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -14074,10 +14074,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -14515,16 +14515,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -14545,10 +14545,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -14986,16 +14986,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -15016,10 +15016,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -15445,16 +15445,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -15475,10 +15475,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -15911,16 +15911,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -15941,10 +15941,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -16377,16 +16377,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "104: __puya_arc4_router___update_proposal_route@4:",
+              "104: __puya_arc4_router___update_route@4:",
               "107: txn OnCompletion",
               "108: !",
               "109: assert",
@@ -16395,10 +16395,10 @@
               "122: txna ApplicationArgs 1",
               "123: extract 2 0",
               "124: txna ApplicationArgs 2",
-              "127: callsub update_proposal"
+              "127: callsub update"
             ],
             [
-              "637: update_proposal:",
+              "637: update:",
               "641: proto 2 0",
               "644: callsub update_check_authorization"
             ],
@@ -16583,25 +16583,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "131: __puya_arc4_router___drop_proposal_route@5:",
+              "131: __puya_arc4_router___drop_route@5:",
               "134: txn OnCompletion",
               "135: !",
               "136: assert",
               "137: txn ApplicationID",
               "138: assert",
-              "139: callsub drop_proposal"
+              "139: callsub drop"
             ],
             [
-              "691: drop_proposal:",
+              "691: drop:",
               "695: proto 0 0",
               "698: callsub drop_check_authorization"
             ],
@@ -16789,25 +16789,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -17161,25 +17161,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -17540,25 +17540,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -17920,13 +17920,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -18180,13 +18180,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -18453,13 +18453,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "36: int 0",
@@ -18493,13 +18493,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "39: __puya_arc4_router___create_route@2:",
@@ -18557,16 +18557,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -18587,10 +18587,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -18940,16 +18940,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -18970,10 +18970,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -19330,16 +19330,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -19360,10 +19360,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -19720,16 +19720,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -19750,10 +19750,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -20102,16 +20102,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -20132,10 +20132,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -20491,16 +20491,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -20521,10 +20521,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -20880,16 +20880,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -20910,10 +20910,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -21257,16 +21257,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -21287,10 +21287,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -21641,16 +21641,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "65: __puya_arc4_router___submit_proposal_route@3:",
+              "65: __puya_arc4_router___submit_route@3:",
               "68: txn OnCompletion",
               "69: !",
               "70: assert",
@@ -21671,10 +21671,10 @@
               "95: btoi",
               "96: txna ApplicationArgs 4",
               "97: btoi",
-              "100: callsub submit_proposal"
+              "100: callsub submit"
             ],
             [
-              "225: submit_proposal:",
+              "225: submit:",
               "236: proto 5 0",
               "239: callsub submit_check_authorization"
             ],
@@ -22025,16 +22025,16 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "104: __puya_arc4_router___update_proposal_route@4:",
+              "104: __puya_arc4_router___update_route@4:",
               "107: txn OnCompletion",
               "108: !",
               "109: assert",
@@ -22043,10 +22043,10 @@
               "122: txna ApplicationArgs 1",
               "123: extract 2 0",
               "124: txna ApplicationArgs 2",
-              "127: callsub update_proposal"
+              "127: callsub update"
             ],
             [
-              "637: update_proposal:",
+              "637: update:",
               "641: proto 2 0",
               "644: callsub update_check_authorization"
             ],
@@ -22149,25 +22149,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "131: __puya_arc4_router___drop_proposal_route@5:",
+              "131: __puya_arc4_router___drop_route@5:",
               "134: txn OnCompletion",
               "135: !",
               "136: assert",
               "137: txn ApplicationID",
               "138: assert",
-              "139: callsub drop_proposal"
+              "139: callsub drop"
             ],
             [
-              "691: drop_proposal:",
+              "691: drop:",
               "695: proto 0 0",
               "698: callsub drop_check_authorization"
             ],
@@ -22273,25 +22273,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -22563,25 +22563,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -22860,25 +22860,25 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
-              "143: __puya_arc4_router___finalize_proposal_route@6:",
+              "143: __puya_arc4_router___finalize_route@6:",
               "146: txn OnCompletion",
               "147: !",
               "148: assert",
               "149: txn ApplicationID",
               "150: assert",
-              "151: callsub finalize_proposal"
+              "151: callsub finalize"
             ],
             [
-              "802: finalize_proposal:",
+              "802: finalize:",
               "806: proto 0 0",
               "809: callsub finalize_check_authorization"
             ],
@@ -23158,13 +23158,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",
@@ -23336,13 +23336,13 @@
             ],
             [
               "28: method create(address)void",
-              "29: method submit_proposal(pay,string,byte[59],uint64,uint64)void",
-              "30: method update_proposal(string,byte[59])void",
-              "31: method drop_proposal()void",
-              "32: method finalize_proposal()void",
+              "29: method submit(pay,string,byte[59],uint64,uint64)void",
+              "30: method update(string,byte[59])void",
+              "31: method drop()void",
+              "32: method finalize()void",
               "33: method assign_voter(address,uint64)void",
               "34: txna ApplicationArgs 0",
-              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_proposal_route@3 __puya_arc4_router___update_proposal_route@4 __puya_arc4_router___drop_proposal_route@5 __puya_arc4_router___finalize_proposal_route@6 __puya_arc4_router___assign_voter_route@7"
+              "35: match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7"
             ],
             [
               "155: __puya_arc4_router___assign_voter_route@7:",

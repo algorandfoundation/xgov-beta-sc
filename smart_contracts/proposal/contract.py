@@ -325,7 +325,7 @@ class Proposal(
         self.registry_app_id.value = Global.caller_application_id
 
     @arc4.abimethod()
-    def submit_proposal(
+    def submit(
         self,
         payment: gtxn.PaymentTransaction,
         title: String,
@@ -371,7 +371,7 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def update_proposal(self, title: String, cid: typ.Cid) -> None:
+    def update(self, title: String, cid: typ.Cid) -> None:
         """Update the proposal.
 
         Args:
@@ -394,7 +394,7 @@ class Proposal(
         self.cid.value = cid.copy()
 
     @arc4.abimethod()
-    def drop_proposal(self) -> None:
+    def drop(self) -> None:
         """Drop the proposal.
 
         Raises:
@@ -421,7 +421,7 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_EMPTY)
 
     @arc4.abimethod()
-    def finalize_proposal(self) -> None:
+    def finalize(self) -> None:
         """Finalize the proposal.
 
         Raises:
