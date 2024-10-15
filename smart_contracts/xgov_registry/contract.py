@@ -442,9 +442,11 @@ class XGovRegistry(
         # Create the Proposal App
         # TODO: replace the proposal mock contract with the real one
         compiled = compile_contract(proposal_contract.ProposalMock)
+        
         proposal_app = (
-            itxn.ApplicationCall(
-                app_args=(arc4.arc4_signature("create(address)void"), Txn.sender),
+            arc4.abi_call(
+                proposal_contract.ProposalMock.create,
+                Txn.sender,
                 approval_program=compiled.approval_program,
                 clear_state_program=compiled.clear_state_program,
                 global_num_bytes=pcfg.GLOBAL_BYTES,
@@ -452,9 +454,7 @@ class XGovRegistry(
                 local_num_bytes=pcfg.LOCAL_BYTES,
                 local_num_uint=pcfg.LOCAL_UINTS,
                 fee=0
-            )
-            .submit()
-            .created_app
+            ).created_app
         )
 
         # Update proposer state
