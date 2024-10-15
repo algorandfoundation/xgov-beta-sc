@@ -175,7 +175,6 @@ class Proposal(
 
         assert self.is_proposer(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
 
         discussion_duration = Global.latest_timestamp - self.submission_ts.value
         minimum_discussion_duration = self.get_discussion_duration(self.category.value)
@@ -198,13 +197,11 @@ class Proposal(
     @subroutine
     def update_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def submit_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
         assert self.status.value == enm.STATUS_EMPTY, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
@@ -344,7 +341,6 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -380,7 +376,6 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -427,7 +422,6 @@ class Proposal(
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.TOO_EARLY: If the proposal is finalized before the minimum time
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
             err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
@@ -491,13 +485,3 @@ class Proposal(
             ), err.VOTING_POWER_MISMATCH
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
-
-    ####################################################################################################################
-    # Stub subroutines
-    # these subroutines are placeholders for the actual implementation
-    @subroutine
-    def is_kyc_verified(self) -> bool:
-        return True
-
-    # Stub subroutines end
-    ####################################################################################################################
