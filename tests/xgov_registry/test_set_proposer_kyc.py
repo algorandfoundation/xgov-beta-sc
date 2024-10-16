@@ -20,17 +20,6 @@ def test_set_proposer_kyc_success(
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(
@@ -50,19 +39,7 @@ def test_set_proposer_kyc_not_kyc_provider(
     deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):

@@ -71,15 +71,6 @@ def test_update_xgov_registry_pending_proposals(
 
     global_state = xgov_registry_client.get_global_state()
 
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(

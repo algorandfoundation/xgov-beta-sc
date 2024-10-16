@@ -42,15 +42,6 @@ def test_open_proposal_success(
 
     global_state = xgov_registry_client.get_global_state()
 
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(
@@ -134,15 +125,6 @@ def test_open_proposal_active_proposal(
 
     global_state = xgov_registry_client.get_global_state()
 
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(
@@ -207,15 +189,6 @@ def test_open_proposal_wrong_fee(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
@@ -258,15 +231,6 @@ def test_open_proposal_wrong_amount(
     
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -312,15 +276,6 @@ def test_open_proposal_wrong_recipient(
     
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    xgov_registry_client.set_kyc_provider(
-        provider=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-        ),
-    )
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
