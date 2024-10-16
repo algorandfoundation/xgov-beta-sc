@@ -1486,11 +1486,11 @@ __init__:
     // key=prop_cfg.GS_KEY_MILESTONE_APPROVED,
     byte 0x6d696c6573746f6e655f617070726f766564
     // smart_contracts/proposal/contract.py:125
-    // False,
+    // False,  # noqa: FBT003
     int 0
     // smart_contracts/proposal/contract.py:124-127
     // self.milestone_approved = GlobalState(
-    //     False,
+    //     False,  # noqa: FBT003
     //     key=prop_cfg.GS_KEY_MILESTONE_APPROVED,
     // )
     app_global_put
