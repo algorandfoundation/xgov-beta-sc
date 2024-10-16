@@ -31,52 +31,20 @@ def test_pay_grant_proposal_success(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
-    proposal_mock_client: ProposalMockClient
+    approved_proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_APPROVED,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     # payout
     xgov_registry_client.pay_grant_proposal(
-        proposal_id=proposal_mock_client.app_id,
+        proposal_id=approved_proposal_mock_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
             boxes=[(0, proposer_box_name(proposer.address))],
-            foreign_apps=[(proposal_mock_client.app_id)],
+            foreign_apps=[(approved_proposal_mock_client.app_id)],
             accounts=[(proposer.address)]
         ),
     )
@@ -84,55 +52,22 @@ def test_pay_grant_proposal_success(
 def test_pay_grant_proposal_not_payor(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account,
     proposer: AddressAndSigner,
-    proposal_mock_client: ProposalMockClient
+    approved_proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_APPROVED,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
 
     # payout
     with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_client.app_id,
+            proposal_id=approved_proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(proposal_mock_client.app_id)],
+                foreign_apps=[(approved_proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )
@@ -231,40 +166,10 @@ def test_pay_grant_proposal_invalid_kyc(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
-    proposal_mock_client: ProposalMockClient
+    approved_proposal_mock_client: ProposalMockClient
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_APPROVED,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -283,13 +188,13 @@ def test_pay_grant_proposal_invalid_kyc(
     # payout
     with pytest.raises(logicErrorType, match=err.INVALID_KYC):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_client.app_id,
+            proposal_id=approved_proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(proposal_mock_client.app_id)],
+                foreign_apps=[(approved_proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )
@@ -299,40 +204,10 @@ def test_pay_grant_proposal_expired_kyc(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
-    proposal_mock_client: ProposalMockClient,
+    approved_proposal_mock_client: ProposalMockClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
-
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_APPROVED,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
-
-    proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -351,13 +226,13 @@ def test_pay_grant_proposal_expired_kyc(
     # payout
     with pytest.raises(logicErrorType, match=err.EXPIRED_KYC):
         xgov_registry_client.pay_grant_proposal(
-            proposal_id=proposal_mock_client.app_id,
+            proposal_id=approved_proposal_mock_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(proposal_mock_client.app_id)],
+                foreign_apps=[(approved_proposal_mock_client.app_id)],
                 accounts=[(proposer.address)]
             ),
         )

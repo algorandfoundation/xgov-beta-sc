@@ -16,14 +16,17 @@ from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryClient,
     XGovRegistryConfig
 )
-
 from smart_contracts.artifacts.xgov_subscriber_app_mock.client import XGovSubscriberAppMockClient
 
-from algosdk.encoding import decode_address
+from smart_contracts.proposal import enums as enm
+
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from tests.proposal.common import INITIAL_FUNDS
 from tests.xgov_registry.common import (
+    COMMITTEE_ID,
+    COMMITTEE_SIZE,
+    COMMITTEE_VOTES,
     xgov_box_name,
     proposer_box_name,
     XGOV_MIN_BALANCE,
@@ -356,6 +359,150 @@ def proposal_mock_client(
     )
 
     return proposal_mock_client
+
+@pytest.fixture(scope="function")
+def approved_proposal_mock_client(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+) -> ProposalMockClient:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    global_state = xgov_registry_client.get_global_state()
+
+    open_proposal_response = xgov_registry_client.open_proposal(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.proposal_fee
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+            boxes=[(0, proposer_box_name(proposer.address))]
+        ),
+    )
+
+    proposal_mock_app_id = open_proposal_response.return_value
+    
+    proposal_mock_client = ProposalMockClient(
+        algorand_client.client.algod,
+        app_id=proposal_mock_app_id,
+    )
+
+    sp.min_fee *= 2  # type: ignore
+
+    proposal_mock_client.set_requested_amount(
+        requested_amount=10_000_000,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    # approve
+    proposal_mock_client.set_status(
+        status=enm.STATUS_APPROVED,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    proposal_mock_client.set_committee_details(
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    return proposal_mock_client
+
+
+@pytest.fixture(scope="function")
+def voting_proposal_mock_client(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+) -> ProposalMockClient:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    global_state = xgov_registry_client.get_global_state()
+
+    open_proposal_response = xgov_registry_client.open_proposal(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.proposal_fee
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+            boxes=[(0, proposer_box_name(proposer.address))]
+        ),
+    )
+
+    proposal_mock_app_id = open_proposal_response.return_value
+    
+    proposal_mock_client = ProposalMockClient(
+        algorand_client.client.algod,
+        app_id=proposal_mock_app_id,
+    )
+
+    sp.min_fee *= 2  # type: ignore
+
+    proposal_mock_client.set_requested_amount(
+        requested_amount=10_000_000,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    # approve
+    proposal_mock_client.set_status(
+        status=enm.STATUS_VOTING,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    proposal_mock_client.set_committee_details(
+        id=COMMITTEE_ID,
+        size=COMMITTEE_SIZE,
+        votes=COMMITTEE_VOTES,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    return proposal_mock_client
+
 
 @pytest.fixture(scope="function")
 def xgov_subscriber_app(
