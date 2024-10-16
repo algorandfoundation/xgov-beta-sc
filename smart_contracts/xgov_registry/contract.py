@@ -554,9 +554,6 @@ class XGovRegistry(
         assert status == UInt64(penm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
 
         assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
-
-        # Verify the proposer's KYC is still valid
-        proposer_state = self.proposer_box[proposer.native].copy()
         
         assert self.valid_kyc(proposer.native), err.INVALID_KYC
 
@@ -571,6 +568,7 @@ class XGovRegistry(
         )
 
         # Decrement pending proposals count
+        # TODO: might happen on decommission as well
         self.pending_proposals.value -= 1
 
         # Update proposer's active proposal status
@@ -588,7 +586,6 @@ class XGovRegistry(
             err.WRONG_RECEIVER: If the recipient is not the treasury
         """
 
-        assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
         self.outstanding_funds.value += payment.amount
 

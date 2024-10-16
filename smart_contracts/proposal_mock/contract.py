@@ -28,13 +28,6 @@ class ProposalMock(
 ):
 
     def __init__(self) -> None:
-        # Preconditions
-        assert (
-            Txn.global_num_byte_slice == prop_cfg.GLOBAL_BYTES
-        ), err.WRONG_GLOBAL_BYTES
-        assert Txn.global_num_uint == prop_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
-        assert Txn.local_num_byte_slice == prop_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
-        assert Txn.local_num_uint == prop_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
         self.proposer = GlobalState(
             arc4.Address(),
