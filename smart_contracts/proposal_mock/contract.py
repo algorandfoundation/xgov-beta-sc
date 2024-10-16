@@ -105,9 +105,6 @@ class ProposalMock(
         Args:
             proposer (arc4.Address): Address of the proposer
         """
-        assert (
-            Global.caller_application_id != 0
-        ), err.UNAUTHORIZED  # Only callable by another contract
 
         self.proposer.value = proposer
         self.registry_app_id.value = Global.caller_application_id
