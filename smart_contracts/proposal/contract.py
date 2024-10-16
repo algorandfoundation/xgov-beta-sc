@@ -117,6 +117,14 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_REJECTIONS,
         )
+        self.nulls = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_NULLS,
+        )
+        self.milestone_approved = GlobalState(
+            False,  # noqa: FBT003
+            key=prop_cfg.GS_KEY_MILESTONE_APPROVED,
+        )
 
         self.voters = BoxMap(
             arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
