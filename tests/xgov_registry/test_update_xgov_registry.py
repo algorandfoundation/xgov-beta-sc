@@ -70,7 +70,6 @@ def test_update_xgov_registry_pending_proposals(
     )
 
     global_state = xgov_registry_client.get_global_state()
-
     sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(

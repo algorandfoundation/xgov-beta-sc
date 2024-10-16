@@ -58,6 +58,8 @@ COMMITTEE_ID = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 COMMITTEE_SIZE = 10
 COMMITTEE_VOTES = 100
 
+DEPOSIT_AMOUNT = 10_000_000
+
 def xgov_box_name(address: str) -> bytes:
     return XGOV_BOX_MAP_PREFIX + decode_address(address)
 
