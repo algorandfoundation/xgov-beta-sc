@@ -126,13 +126,3 @@ class ProposalMock(
     @arc4.abimethod()
     def release_funds(self) -> None:
         pass
-
-    @arc4.abimethod()
-    def vote(
-        self,
-        xgov_address: arc4.Address,
-        approval_votes: arc4.UInt64,
-        rejection_votes: arc4.UInt64,
-        null_votes: arc4.UInt64
-    ) -> None:
-        pass

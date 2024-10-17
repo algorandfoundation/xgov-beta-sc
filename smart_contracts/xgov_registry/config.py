@@ -1,7 +1,7 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 6
+GLOBAL_BYTES: Final[int] = 7
 GLOBAL_UINTS: Final[int] = 30
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
@@ -9,6 +9,7 @@ LOCAL_UINTS: Final[int] = 0
 # Global state keys
 GS_KEY_XGOV_MANAGER: Final[bytes] = b"xgov_manager"
 GS_KEY_XGOV_PAYOR: Final[bytes] = b"xgov_payor"
+GS_KEY_XGOV_REVIEWER: Final[bytes] = b"xgov_reviewer"
 GS_KEY_KYC_PROVIDER: Final[bytes] = b"kyc_provider"
 GS_KEY_COMMITTEE_MANAGER: Final[bytes] = b"committee_manager"
 GS_KEY_COMMITTEE_PUBLISHER: Final[bytes] = b"committee_publisher"
