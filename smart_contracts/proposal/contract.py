@@ -117,6 +117,14 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_REJECTIONS,
         )
+        self.nulls = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_NULLS,
+        )
+        self.milestone_approved = GlobalState(
+            False,  # noqa: FBT003
+            key=prop_cfg.GS_KEY_MILESTONE_APPROVED,
+        )
 
         self.voters = BoxMap(
             arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
@@ -175,7 +183,6 @@ class Proposal(
 
         assert self.is_proposer(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
 
         discussion_duration = Global.latest_timestamp - self.submission_ts.value
         minimum_discussion_duration = self.get_discussion_duration(self.category.value)
@@ -198,13 +205,11 @@ class Proposal(
     @subroutine
     def update_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def submit_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.is_kyc_verified(), err.KYC_NOT_VERIFIED
         assert self.status.value == enm.STATUS_EMPTY, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
@@ -325,7 +330,7 @@ class Proposal(
         self.registry_app_id.value = Global.caller_application_id
 
     @arc4.abimethod()
-    def submit_proposal(
+    def submit(
         self,
         payment: gtxn.PaymentTransaction,
         title: String,
@@ -344,7 +349,6 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -371,7 +375,7 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def update_proposal(self, title: String, cid: typ.Cid) -> None:
+    def update(self, title: String, cid: typ.Cid) -> None:
         """Update the proposal.
 
         Args:
@@ -380,7 +384,6 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
@@ -394,7 +397,7 @@ class Proposal(
         self.cid.value = cid.copy()
 
     @arc4.abimethod()
-    def drop_proposal(self) -> None:
+    def drop(self) -> None:
         """Drop the proposal.
 
         Raises:
@@ -421,13 +424,12 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_EMPTY)
 
     @arc4.abimethod()
-    def finalize_proposal(self) -> None:
+    def finalize(self) -> None:
         """Finalize the proposal.
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
-            err.KYC_NOT_VERIFIED: If the proposer's KYC is not verified
             err.TOO_EARLY: If the proposal is finalized before the minimum time
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
             err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
@@ -491,13 +493,3 @@ class Proposal(
             ), err.VOTING_POWER_MISMATCH
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
-
-    ####################################################################################################################
-    # Stub subroutines
-    # these subroutines are placeholders for the actual implementation
-    @subroutine
-    def is_kyc_verified(self) -> bool:
-        return True
-
-    # Stub subroutines end
-    ####################################################################################################################

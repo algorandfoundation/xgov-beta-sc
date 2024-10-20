@@ -58,9 +58,11 @@ def assert_proposal_global_state(
     voted_members: int = 0,
     approvals: int = 0,
     rejections: int = 0,
+    nulls: int = 0,
     registry_app_id: int = 0,
     assigned_votes: int = 0,
     voters_count: int = 0,
+    milestone_approved: bool = False,
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
@@ -76,9 +78,11 @@ def assert_proposal_global_state(
     assert global_state.voted_members == voted_members
     assert global_state.approvals == approvals
     assert global_state.rejections == rejections
+    assert global_state.nulls == nulls
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
     assert global_state.voters_count == voters_count
+    assert global_state.milestone_approved == milestone_approved
 
     if status == STATUS_EMPTY:
         assert global_state.submission_ts == 0
