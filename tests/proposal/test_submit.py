@@ -43,7 +43,7 @@ def test_submit_success(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -95,7 +95,7 @@ def test_submit_not_proposer(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -138,7 +138,7 @@ def test_submit_twice(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -160,7 +160,7 @@ def test_submit_twice(
         ),
     )
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -211,7 +211,7 @@ def test_submit_wrong_title_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -255,7 +255,7 @@ def test_submit_wrong_title_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -299,7 +299,7 @@ def test_submit_wrong_funding_type_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -343,7 +343,7 @@ def test_submit_wrong_funding_type_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -389,7 +389,7 @@ def test_submit_wrong_requested_amount_1(
     requested_amount = REQUESTED_AMOUNT - 1
     locked_amount = get_locked_amount(requested_amount)
     with pytest.raises(logic_error_type, match=err.WRONG_MIN_REQUESTED_AMOUNT):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -435,7 +435,7 @@ def test_submit_wrong_requested_amount_2(
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE + 1
     locked_amount = get_locked_amount(requested_amount)
     with pytest.raises(logic_error_type, match=err.WRONG_MAX_REQUESTED_AMOUNT):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -480,7 +480,7 @@ def test_submit_wrong_payment_1(
 ) -> None:
     locked_amount = LOCKED_AMOUNT - 1
     with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -525,7 +525,7 @@ def test_submit_wrong_payment_2(
 ) -> None:
     locked_amount = LOCKED_AMOUNT + 1
     with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -570,7 +570,7 @@ def test_submit_wrong_payment_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_SENDER):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -614,7 +614,7 @@ def test_submit_wrong_payment_4(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
-        proposal_client.submit_proposal(
+        proposal_client.submit(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -657,7 +657,7 @@ def test_submit_category_small_1(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -709,7 +709,7 @@ def test_submit_category_small_2(
 ) -> None:
     requested_amount = MIN_REQUESTED_AMOUNT + 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -761,7 +761,7 @@ def test_submit_category_small_3(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL - 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -813,7 +813,7 @@ def test_submit_category_small_4(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -865,7 +865,7 @@ def test_submit_category_medium_1(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_SMALL + 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -917,7 +917,7 @@ def test_submit_category_medium_2(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM - 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -969,7 +969,7 @@ def test_submit_category_medium_3(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -1021,7 +1021,7 @@ def test_submit_category_large_1(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM + 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -1073,7 +1073,7 @@ def test_submit_category_large_2(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE - 1
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -1125,7 +1125,7 @@ def test_submit_category_large_3(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE
     locked_amount = get_locked_amount(requested_amount)
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(

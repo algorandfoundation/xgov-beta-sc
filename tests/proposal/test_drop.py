@@ -31,7 +31,7 @@ def test_drop_success(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -62,7 +62,7 @@ def test_drop_success(
         "amount"
     ]
 
-    proposal_client.drop_proposal(
+    proposal_client.drop(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -95,7 +95,7 @@ def test_drop_twice(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -126,7 +126,7 @@ def test_drop_twice(
         "amount"
     ]
 
-    proposal_client.drop_proposal(
+    proposal_client.drop(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -136,7 +136,7 @@ def test_drop_twice(
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.drop_proposal(
+        proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -180,7 +180,7 @@ def test_drop_empty_proposal(
     ]
 
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.drop_proposal(
+        proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -213,7 +213,7 @@ def test_drop_not_proposer(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit_proposal(
+    proposal_client.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -239,7 +239,7 @@ def test_drop_not_proposer(
     sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
-        proposal_client.drop_proposal(
+        proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
                 signer=not_proposer.signer,

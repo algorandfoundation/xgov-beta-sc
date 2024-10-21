@@ -5,22 +5,27 @@
                 "no_op": "CREATE"
             }
         },
-        "submit_proposal(pay,string,byte[59],uint64,uint64)void": {
+        "submit(pay,string,byte[59],uint64,uint64)void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "update_proposal(string,byte[59])void": {
+        "update(string,byte[59])void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "drop_proposal()void": {
+        "drop()void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "finalize_proposal()void": {
+        "finalize()void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "assign_voter(address,uint64)void": {
             "call_config": {
                 "no_op": "CALL"
             }
@@ -33,7 +38,7 @@
     "state": {
         "global": {
             "num_byte_slices": 5,
-            "num_uints": 13
+            "num_uints": 18
         },
         "local": {
             "num_byte_slices": 0,
@@ -46,6 +51,10 @@
                 "approvals": {
                     "type": "uint64",
                     "key": "approvals"
+                },
+                "assigned_votes": {
+                    "type": "uint64",
+                    "key": "assigned_votes"
                 },
                 "category": {
                     "type": "uint64",
@@ -79,6 +88,14 @@
                     "type": "uint64",
                     "key": "locked_amount"
                 },
+                "milestone_approved": {
+                    "type": "uint64",
+                    "key": "milestone_approved"
+                },
+                "nulls": {
+                    "type": "uint64",
+                    "key": "nulls"
+                },
                 "proposer": {
                     "type": "bytes",
                     "key": "proposer"
@@ -107,9 +124,17 @@
                     "type": "bytes",
                     "key": "title"
                 },
+                "vote_open_ts": {
+                    "type": "uint64",
+                    "key": "vote_opening_timestamp"
+                },
                 "voted_members": {
                     "type": "uint64",
                     "key": "voted_members"
+                },
+                "voters_count": {
+                    "type": "uint64",
+                    "key": "voters_count"
                 }
             },
             "reserved": {}
@@ -138,7 +163,7 @@
                 "desc": "Create a new proposal."
             },
             {
-                "name": "submit_proposal",
+                "name": "submit",
                 "args": [
                     {
                         "type": "pay",
@@ -173,7 +198,7 @@
                 "desc": "Submit the first draft of the proposal."
             },
             {
-                "name": "update_proposal",
+                "name": "update",
                 "args": [
                     {
                         "type": "string",
@@ -193,7 +218,7 @@
                 "desc": "Update the proposal."
             },
             {
-                "name": "drop_proposal",
+                "name": "drop",
                 "args": [],
                 "readonly": false,
                 "returns": {
@@ -202,13 +227,33 @@
                 "desc": "Drop the proposal."
             },
             {
-                "name": "finalize_proposal",
+                "name": "finalize",
                 "args": [],
                 "readonly": false,
                 "returns": {
                     "type": "void"
                 },
                 "desc": "Finalize the proposal."
+            },
+            {
+                "name": "assign_voter",
+                "args": [
+                    {
+                        "type": "address",
+                        "name": "voter",
+                        "desc": "Voter address"
+                    },
+                    {
+                        "type": "uint64",
+                        "name": "voting_power",
+                        "desc": "Voting power"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Assign a voter to the proposal."
             }
         ],
         "networks": {}

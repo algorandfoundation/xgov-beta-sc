@@ -1,0 +1,111 @@
+#pragma version 10
+
+smart_contracts.xgov_registry.contract.XgovRegistry.approval_program:
+    callsub __puya_arc4_router__
+    return
+
+
+// smart_contracts.xgov_registry.contract.XgovRegistry.__puya_arc4_router__() -> uint64:
+__puya_arc4_router__:
+    // smart_contracts/xgov_registry/contract.py:6-14
+    // class XgovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    proto 0 1
+    txn NumAppArgs
+    bz __puya_arc4_router___bare_routing@5
+    method "hello(string)string"
+    txna ApplicationArgs 0
+    match __puya_arc4_router___hello_route@2
+    int 0
+    retsub
+
+__puya_arc4_router___hello_route@2:
+    // smart_contracts/xgov_registry/contract.py:15
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    // smart_contracts/xgov_registry/contract.py:6-14
+    // class XgovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    // smart_contracts/xgov_registry/contract.py:15
+    // @arc4.abimethod()
+    callsub hello
+    byte 0x151f7c75
+    swap
+    concat
+    log
+    int 1
+    retsub
+
+__puya_arc4_router___bare_routing@5:
+    // smart_contracts/xgov_registry/contract.py:6-14
+    // class XgovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txn OnCompletion
+    bnz __puya_arc4_router___after_if_else@9
+    txn ApplicationID
+    !
+    assert // is creating
+    int 1
+    retsub
+
+__puya_arc4_router___after_if_else@9:
+    // smart_contracts/xgov_registry/contract.py:6-14
+    // class XgovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    int 0
+    retsub
+
+
+// smart_contracts.xgov_registry.contract.XgovRegistry.hello(name: bytes) -> bytes:
+hello:
+    // smart_contracts/xgov_registry/contract.py:15-16
+    // @arc4.abimethod()
+    // def hello(self, name: arc4.String) -> arc4.String:
+    proto 1 1
+    // smart_contracts/xgov_registry/contract.py:17
+    // return "Hello, " + name
+    frame_dig -1
+    extract 2 0
+    byte 0x48656c6c6f2c20
+    swap
+    concat
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    retsub

@@ -28,22 +28,27 @@ _APP_SPEC_JSON = r"""{
                 "no_op": "CREATE"
             }
         },
-        "submit_proposal(pay,string,byte[59],uint64,uint64)void": {
+        "submit(pay,string,byte[59],uint64,uint64)void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "update_proposal(string,byte[59])void": {
+        "update(string,byte[59])void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "drop_proposal()void": {
+        "drop()void": {
             "call_config": {
                 "no_op": "CALL"
             }
         },
-        "finalize_proposal()void": {
+        "finalize()void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "assign_voter(address,uint64)void": {
             "call_config": {
                 "no_op": "CALL"
             }
@@ -56,7 +61,7 @@ _APP_SPEC_JSON = r"""{
     "state": {
         "global": {
             "num_byte_slices": 5,
-            "num_uints": 13
+            "num_uints": 18
         },
         "local": {
             "num_byte_slices": 0,
@@ -69,6 +74,10 @@ _APP_SPEC_JSON = r"""{
                 "approvals": {
                     "type": "uint64",
                     "key": "approvals"
+                },
+                "assigned_votes": {
+                    "type": "uint64",
+                    "key": "assigned_votes"
                 },
                 "category": {
                     "type": "uint64",
@@ -102,6 +111,14 @@ _APP_SPEC_JSON = r"""{
                     "type": "uint64",
                     "key": "locked_amount"
                 },
+                "milestone_approved": {
+                    "type": "uint64",
+                    "key": "milestone_approved"
+                },
+                "nulls": {
+                    "type": "uint64",
+                    "key": "nulls"
+                },
                 "proposer": {
                     "type": "bytes",
                     "key": "proposer"
@@ -130,9 +147,17 @@ _APP_SPEC_JSON = r"""{
                     "type": "bytes",
                     "key": "title"
                 },
+                "vote_open_ts": {
+                    "type": "uint64",
+                    "key": "vote_opening_timestamp"
+                },
                 "voted_members": {
                     "type": "uint64",
                     "key": "voted_members"
+                },
+                "voters_count": {
+                    "type": "uint64",
+                    "key": "voters_count"
                 }
             },
             "reserved": {}
@@ -160,7 +185,7 @@ _APP_SPEC_JSON = r"""{
                 "desc": "Create a new proposal."
             },
             {
-                "name": "submit_proposal",
+                "name": "submit",
                 "args": [
                     {
                         "type": "pay",
@@ -194,7 +219,7 @@ _APP_SPEC_JSON = r"""{
                 "desc": "Submit the first draft of the proposal."
             },
             {
-                "name": "update_proposal",
+                "name": "update",
                 "args": [
                     {
                         "type": "string",
@@ -213,7 +238,7 @@ _APP_SPEC_JSON = r"""{
                 "desc": "Update the proposal."
             },
             {
-                "name": "drop_proposal",
+                "name": "drop",
                 "args": [],
                 "returns": {
                     "type": "void"
@@ -221,12 +246,31 @@ _APP_SPEC_JSON = r"""{
                 "desc": "Drop the proposal."
             },
             {
-                "name": "finalize_proposal",
+                "name": "finalize",
                 "args": [],
                 "returns": {
                     "type": "void"
                 },
                 "desc": "Finalize the proposal."
+            },
+            {
+                "name": "assign_voter",
+                "args": [
+                    {
+                        "type": "address",
+                        "name": "voter",
+                        "desc": "Voter address"
+                    },
+                    {
+                        "type": "uint64",
+                        "name": "voting_power",
+                        "desc": "Voting power"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Assign a voter to the proposal."
             }
         ],
         "networks": {}
@@ -312,7 +356,7 @@ def _convert_deploy_args(
 
 
 @dataclasses.dataclass(kw_only=True)
-class SubmitProposalArgs(_ArgsBase[None]):
+class SubmitArgs(_ArgsBase[None]):
     """Submit the first draft of the proposal."""
 
     payment: TransactionWithSigner
@@ -328,11 +372,11 @@ class SubmitProposalArgs(_ArgsBase[None]):
 
     @staticmethod
     def method() -> str:
-        return "submit_proposal(pay,string,byte[59],uint64,uint64)void"
+        return "submit(pay,string,byte[59],uint64,uint64)void"
 
 
 @dataclasses.dataclass(kw_only=True)
-class UpdateProposalArgs(_ArgsBase[None]):
+class UpdateArgs(_ArgsBase[None]):
     """Update the proposal."""
 
     title: str
@@ -342,25 +386,39 @@ class UpdateProposalArgs(_ArgsBase[None]):
 
     @staticmethod
     def method() -> str:
-        return "update_proposal(string,byte[59])void"
+        return "update(string,byte[59])void"
 
 
 @dataclasses.dataclass(kw_only=True)
-class DropProposalArgs(_ArgsBase[None]):
+class DropArgs(_ArgsBase[None]):
     """Drop the proposal."""
 
     @staticmethod
     def method() -> str:
-        return "drop_proposal()void"
+        return "drop()void"
 
 
 @dataclasses.dataclass(kw_only=True)
-class FinalizeProposalArgs(_ArgsBase[None]):
+class FinalizeArgs(_ArgsBase[None]):
     """Finalize the proposal."""
 
     @staticmethod
     def method() -> str:
-        return "finalize_proposal()void"
+        return "finalize()void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class AssignVoterArgs(_ArgsBase[None]):
+    """Assign a voter to the proposal."""
+
+    voter: str
+    """Voter address"""
+    voting_power: int
+    """Voting power"""
+
+    @staticmethod
+    def method() -> str:
+        return "assign_voter(address,uint64)void"
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -399,6 +457,7 @@ class ByteReader:
 class GlobalState:
     def __init__(self, data: dict[bytes, bytes | int]):
         self.approvals = typing.cast(int, data.get(b"approvals"))
+        self.assigned_votes = typing.cast(int, data.get(b"assigned_votes"))
         self.category = typing.cast(int, data.get(b"category"))
         self.cid = ByteReader(typing.cast(bytes, data.get(b"cid")))
         self.committee_id = ByteReader(typing.cast(bytes, data.get(b"committee_id")))
@@ -407,6 +466,8 @@ class GlobalState:
         self.finalization_ts = typing.cast(int, data.get(b"finalization_timestamp"))
         self.funding_type = typing.cast(int, data.get(b"funding_type"))
         self.locked_amount = typing.cast(int, data.get(b"locked_amount"))
+        self.milestone_approved = typing.cast(int, data.get(b"milestone_approved"))
+        self.nulls = typing.cast(int, data.get(b"nulls"))
         self.proposer = ByteReader(typing.cast(bytes, data.get(b"proposer")))
         self.registry_app_id = typing.cast(int, data.get(b"registry_app_id"))
         self.rejections = typing.cast(int, data.get(b"rejections"))
@@ -414,7 +475,9 @@ class GlobalState:
         self.status = typing.cast(int, data.get(b"status"))
         self.submission_ts = typing.cast(int, data.get(b"submission_timestamp"))
         self.title = ByteReader(typing.cast(bytes, data.get(b"title")))
+        self.vote_open_ts = typing.cast(int, data.get(b"vote_opening_timestamp"))
         self.voted_members = typing.cast(int, data.get(b"voted_members"))
+        self.voters_count = typing.cast(int, data.get(b"voters_count"))
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -448,7 +511,7 @@ class Composer:
     def execute(self) -> AtomicTransactionResponse:
         return self.app_client.execute_atc(self.atc)
 
-    def submit_proposal(
+    def submit(
         self,
         *,
         payment: TransactionWithSigner,
@@ -460,7 +523,7 @@ class Composer:
     ) -> "Composer":
         """Submit the first draft of the proposal.
         
-        Adds a call to `submit_proposal(pay,string,byte[59],uint64,uint64)void` ABI method
+        Adds a call to `submit(pay,string,byte[59],uint64,uint64)void` ABI method
         
         :param TransactionWithSigner payment: Commitment payment transaction from the proposer to the contract
         :param str title: Proposal title, max TITLE_MAX_BYTES bytes
@@ -470,7 +533,7 @@ class Composer:
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
-        args = SubmitProposalArgs(
+        args = SubmitArgs(
             payment=payment,
             title=title,
             cid=cid,
@@ -485,7 +548,7 @@ class Composer:
         )
         return self
 
-    def update_proposal(
+    def update(
         self,
         *,
         title: str,
@@ -494,14 +557,14 @@ class Composer:
     ) -> "Composer":
         """Update the proposal.
         
-        Adds a call to `update_proposal(string,byte[59])void` ABI method
+        Adds a call to `update(string,byte[59])void` ABI method
         
         :param str title: Proposal title, max TITLE_MAX_BYTES bytes
         :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] cid: IPFS V1 CID
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
-        args = UpdateProposalArgs(
+        args = UpdateArgs(
             title=title,
             cid=cid,
         )
@@ -513,19 +576,19 @@ class Composer:
         )
         return self
 
-    def drop_proposal(
+    def drop(
         self,
         *,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> "Composer":
         """Drop the proposal.
         
-        Adds a call to `drop_proposal()void` ABI method
+        Adds a call to `drop()void` ABI method
         
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
-        args = DropProposalArgs()
+        args = DropArgs()
         self.app_client.compose_call(
             self.atc,
             call_abi_method=args.method(),
@@ -534,19 +597,47 @@ class Composer:
         )
         return self
 
-    def finalize_proposal(
+    def finalize(
         self,
         *,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> "Composer":
         """Finalize the proposal.
         
-        Adds a call to `finalize_proposal()void` ABI method
+        Adds a call to `finalize()void` ABI method
         
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
-        args = FinalizeProposalArgs()
+        args = FinalizeArgs()
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def assign_voter(
+        self,
+        *,
+        voter: str,
+        voting_power: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Assign a voter to the proposal.
+        
+        Adds a call to `assign_voter(address,uint64)void` ABI method
+        
+        :param str voter: Voter address
+        :param int voting_power: Voting power
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = AssignVoterArgs(
+            voter=voter,
+            voting_power=voting_power,
+        )
         self.app_client.compose_call(
             self.atc,
             call_abi_method=args.method(),
@@ -728,7 +819,7 @@ class ProposalClient:
         state = typing.cast(dict[bytes, bytes | int], self.app_client.get_global_state(raw=True))
         return GlobalState(state)
 
-    def submit_proposal(
+    def submit(
         self,
         *,
         payment: TransactionWithSigner,
@@ -740,7 +831,7 @@ class ProposalClient:
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Submit the first draft of the proposal.
         
-        Calls `submit_proposal(pay,string,byte[59],uint64,uint64)void` ABI method
+        Calls `submit(pay,string,byte[59],uint64,uint64)void` ABI method
         
         :param TransactionWithSigner payment: Commitment payment transaction from the proposer to the contract
         :param str title: Proposal title, max TITLE_MAX_BYTES bytes
@@ -750,7 +841,7 @@ class ProposalClient:
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
-        args = SubmitProposalArgs(
+        args = SubmitArgs(
             payment=payment,
             title=title,
             cid=cid,
@@ -764,7 +855,7 @@ class ProposalClient:
         )
         return result
 
-    def update_proposal(
+    def update(
         self,
         *,
         title: str,
@@ -773,14 +864,14 @@ class ProposalClient:
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Update the proposal.
         
-        Calls `update_proposal(string,byte[59])void` ABI method
+        Calls `update(string,byte[59])void` ABI method
         
         :param str title: Proposal title, max TITLE_MAX_BYTES bytes
         :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] cid: IPFS V1 CID
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
-        args = UpdateProposalArgs(
+        args = UpdateArgs(
             title=title,
             cid=cid,
         )
@@ -791,19 +882,19 @@ class ProposalClient:
         )
         return result
 
-    def drop_proposal(
+    def drop(
         self,
         *,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Drop the proposal.
         
-        Calls `drop_proposal()void` ABI method
+        Calls `drop()void` ABI method
         
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
-        args = DropProposalArgs()
+        args = DropArgs()
         result = self.app_client.call(
             call_abi_method=args.method(),
             transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
@@ -811,19 +902,46 @@ class ProposalClient:
         )
         return result
 
-    def finalize_proposal(
+    def finalize(
         self,
         *,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Finalize the proposal.
         
-        Calls `finalize_proposal()void` ABI method
+        Calls `finalize()void` ABI method
         
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
-        args = FinalizeProposalArgs()
+        args = FinalizeArgs()
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def assign_voter(
+        self,
+        *,
+        voter: str,
+        voting_power: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Assign a voter to the proposal.
+        
+        Calls `assign_voter(address,uint64)void` ABI method
+        
+        :param str voter: Voter address
+        :param int voting_power: Voting power
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = AssignVoterArgs(
+            voter=voter,
+            voting_power=voting_power,
+        )
         result = self.app_client.call(
             call_abi_method=args.method(),
             transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
