@@ -37,6 +37,10 @@ __puya_arc4_router__:
     method "set_discussion_duration_large(uint64)void"
     method "set_committee_publisher(address)void"
     method "set_proposal_fee(uint64)void"
+    method "set_committee_id(byte[32])void"
+    method "clear_committee_id()void"
+    method "set_committee_members(uint64)void"
+    method "set_committee_votes(uint64)void"
     txna ApplicationArgs 0
     match __puya_arc4_router___create_empty_proposal_route@2 __puya_arc4_router___set_proposal_commitment_bps_route@3 __puya_arc4_router___set_min_requested_amount_route@4 __puya_arc4_router___set_max_requested_amount_small_route@5 __puya_arc4_router___set_max_requested_amount_medium_route@6 __puya_arc4_router___set_max_requested_amount_large_route@7 __puya_arc4_router___set_publishing_fee_route@8 __puya_arc4_router___set_discussion_duration_small_route@9 __puya_arc4_router___set_discussion_duration_medium_route@10 __puya_arc4_router___set_discussion_duration_large_route@11 __puya_arc4_router___set_committee_publisher_route@12 __puya_arc4_router___set_proposal_fee_route@13
     int 0
@@ -590,6 +594,70 @@ set_proposal_fee:
     retsub
 
 
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_id(committee_id: bytes) -> void:
+set_committee_id:
+    // smart_contracts/xgov_registry_mock/contract.py:237-238
+    // @arc4.abimethod()
+    // def set_committee_id(self, committee_id: CommitteeId) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:83
+    // key=reg_cfg.GS_KEY_COMMITTEE_ID,
+    byte 0x636f6d6d69747465655f6964
+    // smart_contracts/xgov_registry_mock/contract.py:246
+    // self.committee_id.value = committee_id.copy()
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id() -> void:
+clear_committee_id:
+    // smart_contracts/xgov_registry_mock/contract.py:248-249
+    // @arc4.abimethod()
+    // def clear_committee_id(self) -> None:
+    proto 0 0
+    // smart_contracts/xgov_registry_mock/contract.py:83
+    // key=reg_cfg.GS_KEY_COMMITTEE_ID,
+    byte 0x636f6d6d69747465655f6964
+    // smart_contracts/xgov_registry_mock/contract.py:254
+    // self.committee_id.value = CommitteeId.from_bytes(mock_cfg.COMMITTEE_ID)
+    byte 0x
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_members(committee_members: uint64) -> void:
+set_committee_members:
+    // smart_contracts/xgov_registry_mock/contract.py:256-257
+    // @arc4.abimethod()
+    // def set_committee_members(self, committee_members: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:87
+    // key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+    byte 0x636f6d6d69747465655f6d656d62657273
+    // smart_contracts/xgov_registry_mock/contract.py:265
+    // self.committee_members.value = committee_members
+    frame_dig -1
+    app_global_put
+    retsub
+
+
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_votes(committee_votes: uint64) -> void:
+set_committee_votes:
+    // smart_contracts/xgov_registry_mock/contract.py:267-268
+    // @arc4.abimethod()
+    // def set_committee_votes(self, committee_votes: UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry_mock/contract.py:91
+    // key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
+    byte 0x636f6d6d69747465655f766f746573
+    // smart_contracts/xgov_registry_mock/contract.py:276
+    // self.committee_votes.value = committee_votes
+    frame_dig -1
+    app_global_put
+    retsub
+
+
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__init__() -> void:
 __init__:
     // smart_contracts/xgov_registry_mock/contract.py:26
@@ -598,7 +666,7 @@ __init__:
     // smart_contracts/xgov_registry_mock/contract.py:29
     // Txn.global_num_byte_slice == mock_cfg.GLOBAL_BYTES
     txn GlobalNumByteSlice
-    int 1
+    int 2
     ==
     // smart_contracts/xgov_registry_mock/contract.py:27-30
     // # Preconditions
@@ -609,7 +677,7 @@ __init__:
     // smart_contracts/xgov_registry_mock/contract.py:31
     // assert Txn.global_num_uint == mock_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    int 10
+    int 12
     ==
     assert // Wrong Global UInts allocation
     // smart_contracts/xgov_registry_mock/contract.py:32
@@ -752,6 +820,42 @@ __init__:
     // self.proposal_fee = GlobalState(
     //     UInt64(mock_cfg.PROPOSAL_FEE),
     //     key=reg_cfg.GS_KEY_PROPOSAL_FEE,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:83
+    // key=reg_cfg.GS_KEY_COMMITTEE_ID,
+    byte 0x636f6d6d69747465655f6964
+    // smart_contracts/xgov_registry_mock/contract.py:82
+    // CommitteeId.from_bytes(mock_cfg.COMMITTEE_ID),
+    byte 0x
+    // smart_contracts/xgov_registry_mock/contract.py:81-84
+    // self.committee_id = GlobalState(
+    //     CommitteeId.from_bytes(mock_cfg.COMMITTEE_ID),
+    //     key=reg_cfg.GS_KEY_COMMITTEE_ID,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:87
+    // key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+    byte 0x636f6d6d69747465655f6d656d62657273
+    // smart_contracts/xgov_registry_mock/contract.py:86
+    // UInt64(mock_cfg.COMMITTEE_MEMBERS),
+    int 0
+    // smart_contracts/xgov_registry_mock/contract.py:85-88
+    // self.committee_members = GlobalState(
+    //     UInt64(mock_cfg.COMMITTEE_MEMBERS),
+    //     key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+    // )
+    app_global_put
+    // smart_contracts/xgov_registry_mock/contract.py:91
+    // key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
+    byte 0x636f6d6d69747465655f766f746573
+    // smart_contracts/xgov_registry_mock/contract.py:90
+    // UInt64(mock_cfg.COMMITTEE_VOTES),
+    int 0
+    // smart_contracts/xgov_registry_mock/contract.py:89-92
+    // self.committee_votes = GlobalState(
+    //     UInt64(mock_cfg.COMMITTEE_VOTES),
+    //     key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
     // )
     app_global_put
     retsub

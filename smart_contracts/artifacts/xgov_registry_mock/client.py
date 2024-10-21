@@ -82,6 +82,26 @@ _APP_SPEC_JSON = r"""{
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "set_committee_id(byte[32])void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "clear_committee_id()void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_committee_members(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_committee_votes(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -90,8 +110,8 @@ _APP_SPEC_JSON = r"""{
     },
     "state": {
         "global": {
-            "num_byte_slices": 1,
-            "num_uints": 10
+            "num_byte_slices": 2,
+            "num_uints": 12
         },
         "local": {
             "num_byte_slices": 0,
@@ -101,9 +121,21 @@ _APP_SPEC_JSON = r"""{
     "schema": {
         "global": {
             "declared": {
+                "committee_id": {
+                    "type": "bytes",
+                    "key": "committee_id"
+                },
+                "committee_members": {
+                    "type": "uint64",
+                    "key": "committee_members"
+                },
                 "committee_publisher": {
                     "type": "bytes",
                     "key": "committee_publisher"
+                },
+                "committee_votes": {
+                    "type": "uint64",
+                    "key": "committee_votes"
                 },
                 "discussion_duration_large": {
                     "type": "uint64",
@@ -324,6 +356,56 @@ _APP_SPEC_JSON = r"""{
                     "type": "void"
                 },
                 "desc": "Set the proposal fee"
+            },
+            {
+                "name": "set_committee_id",
+                "args": [
+                    {
+                        "type": "byte[32]",
+                        "name": "committee_id",
+                        "desc": "The committee ID"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the committee ID"
+            },
+            {
+                "name": "clear_committee_id",
+                "args": [],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Clear the committee ID"
+            },
+            {
+                "name": "set_committee_members",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "committee_members",
+                        "desc": "The number of committee members"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the number of committee members"
+            },
+            {
+                "name": "set_committee_votes",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "committee_votes",
+                        "desc": "The number of committee votes"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the number of committee votes"
             }
         ],
         "networks": {}
@@ -549,6 +631,51 @@ class SetProposalFeeArgs(_ArgsBase[None]):
         return "set_proposal_fee(uint64)void"
 
 
+@dataclasses.dataclass(kw_only=True)
+class SetCommitteeIdArgs(_ArgsBase[None]):
+    """Set the committee ID"""
+
+    committee_id: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
+    """The committee ID"""
+
+    @staticmethod
+    def method() -> str:
+        return "set_committee_id(byte[32])void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class ClearCommitteeIdArgs(_ArgsBase[None]):
+    """Clear the committee ID"""
+
+    @staticmethod
+    def method() -> str:
+        return "clear_committee_id()void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class SetCommitteeMembersArgs(_ArgsBase[None]):
+    """Set the number of committee members"""
+
+    committee_members: int
+    """The number of committee members"""
+
+    @staticmethod
+    def method() -> str:
+        return "set_committee_members(uint64)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class SetCommitteeVotesArgs(_ArgsBase[None]):
+    """Set the number of committee votes"""
+
+    committee_votes: int
+    """The number of committee votes"""
+
+    @staticmethod
+    def method() -> str:
+        return "set_committee_votes(uint64)void"
+
+
 class ByteReader:
     def __init__(self, data: bytes):
         self._data = data
@@ -572,7 +699,10 @@ class ByteReader:
 
 class GlobalState:
     def __init__(self, data: dict[bytes, bytes | int]):
+        self.committee_id = ByteReader(typing.cast(bytes, data.get(b"committee_id")))
+        self.committee_members = typing.cast(int, data.get(b"committee_members"))
         self.committee_publisher = ByteReader(typing.cast(bytes, data.get(b"committee_publisher")))
+        self.committee_votes = typing.cast(int, data.get(b"committee_votes"))
         self.discussion_duration_large = typing.cast(int, data.get(b"discussion_duration_large"))
         self.discussion_duration_medium = typing.cast(int, data.get(b"discussion_duration_medium"))
         self.discussion_duration_small = typing.cast(int, data.get(b"discussion_duration_small"))
@@ -907,6 +1037,102 @@ class Composer:
 
         args = SetProposalFeeArgs(
             proposal_fee=proposal_fee,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def set_committee_id(
+        self,
+        *,
+        committee_id: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int],
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Set the committee ID
+        
+        Adds a call to `set_committee_id(byte[32])void` ABI method
+        
+        :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] committee_id: The committee ID
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = SetCommitteeIdArgs(
+            committee_id=committee_id,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def clear_committee_id(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Clear the committee ID
+        
+        Adds a call to `clear_committee_id()void` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = ClearCommitteeIdArgs()
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def set_committee_members(
+        self,
+        *,
+        committee_members: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Set the number of committee members
+        
+        Adds a call to `set_committee_members(uint64)void` ABI method
+        
+        :param int committee_members: The number of committee members
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = SetCommitteeMembersArgs(
+            committee_members=committee_members,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def set_committee_votes(
+        self,
+        *,
+        committee_votes: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Set the number of committee votes
+        
+        Adds a call to `set_committee_votes(uint64)void` ABI method
+        
+        :param int committee_votes: The number of committee votes
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = SetCommitteeVotesArgs(
+            committee_votes=committee_votes,
         )
         self.app_client.compose_call(
             self.atc,
@@ -1361,6 +1587,98 @@ class XgovRegistryMockClient:
 
         args = SetProposalFeeArgs(
             proposal_fee=proposal_fee,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def set_committee_id(
+        self,
+        *,
+        committee_id: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int],
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Set the committee ID
+        
+        Calls `set_committee_id(byte[32])void` ABI method
+        
+        :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] committee_id: The committee ID
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = SetCommitteeIdArgs(
+            committee_id=committee_id,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def clear_committee_id(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Clear the committee ID
+        
+        Calls `clear_committee_id()void` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = ClearCommitteeIdArgs()
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def set_committee_members(
+        self,
+        *,
+        committee_members: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Set the number of committee members
+        
+        Calls `set_committee_members(uint64)void` ABI method
+        
+        :param int committee_members: The number of committee members
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = SetCommitteeMembersArgs(
+            committee_members=committee_members,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def set_committee_votes(
+        self,
+        *,
+        committee_votes: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Set the number of committee votes
+        
+        Calls `set_committee_votes(uint64)void` ABI method
+        
+        :param int committee_votes: The number of committee votes
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = SetCommitteeVotesArgs(
+            committee_votes=committee_votes,
         )
         result = self.app_client.call(
             call_abi_method=args.method(),

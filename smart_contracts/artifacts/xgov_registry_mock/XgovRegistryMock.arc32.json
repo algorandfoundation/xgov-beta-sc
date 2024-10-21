@@ -59,6 +59,26 @@
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "set_committee_id(byte[32])void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "clear_committee_id()void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_committee_members(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_committee_votes(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -67,8 +87,8 @@
     },
     "state": {
         "global": {
-            "num_byte_slices": 1,
-            "num_uints": 10
+            "num_byte_slices": 2,
+            "num_uints": 12
         },
         "local": {
             "num_byte_slices": 0,
@@ -78,9 +98,21 @@
     "schema": {
         "global": {
             "declared": {
+                "committee_id": {
+                    "type": "bytes",
+                    "key": "committee_id"
+                },
+                "committee_members": {
+                    "type": "uint64",
+                    "key": "committee_members"
+                },
                 "committee_publisher": {
                     "type": "bytes",
                     "key": "committee_publisher"
+                },
+                "committee_votes": {
+                    "type": "uint64",
+                    "key": "committee_votes"
                 },
                 "discussion_duration_large": {
                     "type": "uint64",
@@ -313,6 +345,60 @@
                     "type": "void"
                 },
                 "desc": "Set the proposal fee"
+            },
+            {
+                "name": "set_committee_id",
+                "args": [
+                    {
+                        "type": "byte[32]",
+                        "name": "committee_id",
+                        "desc": "The committee ID"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the committee ID"
+            },
+            {
+                "name": "clear_committee_id",
+                "args": [],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Clear the committee ID"
+            },
+            {
+                "name": "set_committee_members",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "committee_members",
+                        "desc": "The number of committee members"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the number of committee members"
+            },
+            {
+                "name": "set_committee_votes",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "committee_votes",
+                        "desc": "The number of committee votes"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the number of committee votes"
             }
         ],
         "networks": {}

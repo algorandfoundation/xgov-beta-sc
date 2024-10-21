@@ -35,6 +35,10 @@ logic_error_type: Type[LogicError] = LogicError
 
 INITIAL_FUNDS = 10_000_000_000
 
+DEFAULT_COMMITTEE_ID = b"\x01" * 32
+DEFAULT_COMMITTEE_MEMBERS = 1
+DEFAULT_COMMITTEE_VOTES = 1
+
 
 def assert_proposal_global_state(
     global_state: GlobalState,

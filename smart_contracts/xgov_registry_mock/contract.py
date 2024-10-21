@@ -11,6 +11,7 @@ from algopy import (
 import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
+from ..common.types import CommitteeId
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
@@ -75,6 +76,18 @@ class XgovRegistryMock(
         self.proposal_fee = GlobalState(
             UInt64(mock_cfg.PROPOSAL_FEE),
             key=reg_cfg.GS_KEY_PROPOSAL_FEE,
+        )
+        self.committee_id = GlobalState(
+            CommitteeId.from_bytes(mock_cfg.COMMITTEE_ID),
+            key=reg_cfg.GS_KEY_COMMITTEE_ID,
+        )
+        self.committee_members = GlobalState(
+            UInt64(mock_cfg.COMMITTEE_MEMBERS),
+            key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+        )
+        self.committee_votes = GlobalState(
+            UInt64(mock_cfg.COMMITTEE_VOTES),
+            key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
 
     @arc4.abimethod()
@@ -219,3 +232,44 @@ class XgovRegistryMock(
 
         """
         self.proposal_fee.value = proposal_fee
+
+    @arc4.abimethod()
+    def set_committee_id(self, committee_id: CommitteeId) -> None:
+        """
+        Set the committee ID
+
+        Args:
+            committee_id (CommitteeId): The committee ID
+
+        """
+        self.committee_id.value = committee_id.copy()
+
+    @arc4.abimethod()
+    def clear_committee_id(self) -> None:
+        """
+        Clear the committee ID
+
+        """
+        self.committee_id.value = CommitteeId.from_bytes(mock_cfg.COMMITTEE_ID)
+
+    @arc4.abimethod()
+    def set_committee_members(self, committee_members: UInt64) -> None:
+        """
+        Set the number of committee members
+
+        Args:
+            committee_members (UInt64): The number of committee members
+
+        """
+        self.committee_members.value = committee_members
+
+    @arc4.abimethod()
+    def set_committee_votes(self, committee_votes: UInt64) -> None:
+        """
+        Set the number of committee votes
+
+        Args:
+            committee_votes (UInt64): The number of committee votes
+
+        """
+        self.committee_votes.value = committee_votes
