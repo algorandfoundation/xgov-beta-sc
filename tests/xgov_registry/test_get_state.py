@@ -1,22 +1,22 @@
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-
-from algokit_utils.beta.account_manager import AddressAndSigner
-from tests.xgov_registry.common import assert_get_state
 from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
 
+from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from tests.xgov_registry.common import (
     COMMITTEE_ID,
+    COMMITTEE_SIZE,
     COMMITTEE_VOTES,
-    COMMITTEE_SIZE
+    assert_get_state,
 )
 
+
 def test_get_state_success(
-        xgov_registry_client: XGovRegistryClient,
-        committee_manager: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    committee_manager: AddressAndSigner,
 ) -> None:
 
     xgov_registry_client.declare_committee(
-        id=COMMITTEE_ID,
+        cid=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -28,7 +28,4 @@ def test_get_state_success(
     global_state = xgov_registry_client.get_global_state()
     get_state = xgov_registry_client.get_state()
 
-    assert_get_state(
-        global_state=global_state,
-        get_state=get_state.return_value
-    )
+    assert_get_state(global_state=global_state, get_state=get_state.return_value)

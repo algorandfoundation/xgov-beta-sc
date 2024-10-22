@@ -1,20 +1,15 @@
 import pytest
-
-from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
-
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-
+from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
+from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import (
-    proposer_box_name,
-    logicErrorType
-)
+from tests.xgov_registry.common import LogicErrorType, proposer_box_name
+
 
 def test_subscribe_proposer_success(
     xgov_registry_client: XGovRegistryClient,
@@ -30,7 +25,7 @@ def test_subscribe_proposer_success(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposer_fee,
                 ),
             ),
             signer=random_account.signer,
@@ -39,9 +34,10 @@ def test_subscribe_proposer_success(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(random_account.address))]
+            boxes=[(0, proposer_box_name(random_account.address))],
         ),
     )
+
 
 def test_subscribe_proposer_already_proposer(
     xgov_registry_client: XGovRegistryClient,
@@ -58,7 +54,7 @@ def test_subscribe_proposer_already_proposer(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposer_fee,
                 ),
             ),
             signer=random_account.signer,
@@ -67,18 +63,18 @@ def test_subscribe_proposer_already_proposer(
             sender=random_account.address,
             signer=random_account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(random_account.address))]
+            boxes=[(0, proposer_box_name(random_account.address))],
         ),
     )
 
-    with pytest.raises(logicErrorType, match=err.ALREADY_PROPOSER):
+    with pytest.raises(LogicErrorType, match=err.ALREADY_PROPOSER):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
                         sender=random_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee
+                        amount=global_state.proposer_fee,
                     ),
                 ),
                 signer=random_account.signer,
@@ -87,10 +83,10 @@ def test_subscribe_proposer_already_proposer(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))],
             ),
         )
-    
+
 
 def test_subscribe_proposer_wrong_recipient(
     xgov_registry_client: XGovRegistryClient,
@@ -101,14 +97,14 @@ def test_subscribe_proposer_wrong_recipient(
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logicErrorType, match=err.WRONG_RECEIVER):
+    with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
                         sender=random_account.address,
                         receiver=random_account.address,
-                        amount=global_state.proposer_fee
+                        amount=global_state.proposer_fee,
                     ),
                 ),
                 signer=random_account.signer,
@@ -117,9 +113,10 @@ def test_subscribe_proposer_wrong_recipient(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))],
             ),
         )
+
 
 def test_subscribe_proposer_wrong_amount(
     xgov_registry_client: XGovRegistryClient,
@@ -129,14 +126,14 @@ def test_subscribe_proposer_wrong_amount(
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
+    with pytest.raises(LogicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
                         sender=random_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=100
+                        amount=100,
                     ),
                 ),
                 signer=random_account.signer,
@@ -145,6 +142,6 @@ def test_subscribe_proposer_wrong_amount(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))]
+                boxes=[(0, proposer_box_name(random_account.address))],
             ),
         )

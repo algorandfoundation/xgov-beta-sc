@@ -1,32 +1,32 @@
 import typing as t
 
 from algopy import (
-    ARC4Contract,
+    Account,
     Application,
+    ARC4Contract,
+    BoxMap,
+    Global,
+    GlobalState,
     StateTotals,
     Txn,
     UInt64,
     arc4,
-    itxn,
-    subroutine,
-    BoxMap,
-    gtxn,
-    Global,
-    op,
-    GlobalState,
     compile_contract,
-    Account,
+    gtxn,
+    itxn,
+    op,
+    subroutine,
 )
 
 import smart_contracts.errors.std_errors as err
-from . import config as cfg
-from . import types as typ
-from ..proposal import types as ptyp
 
+from ..common import types as ptyp
+from ..proposal import config as pcfg
 from ..proposal import enums as penm
 from ..proposal_mock import contract as proposal_contract
-from ..proposal import config as pcfg
-from ..proposal import types as ptyp
+from . import config as cfg
+from . import types as typ
+
 
 class XGovRegistry(
     ARC4Contract,
@@ -50,43 +50,83 @@ class XGovRegistry(
         self.xgov_reviewer = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_REVIEWER)
 
         self.kyc_provider = GlobalState(arc4.Address(), key=cfg.GS_KEY_KYC_PROVIDER)
-        self.committee_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER)
-        self.committee_publisher = GlobalState(arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER)
-        
+        self.committee_manager = GlobalState(
+            arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
+        )
+        self.committee_publisher = GlobalState(
+            arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER
+        )
+
         self.xgov_min_balance = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_MIN_BALANCE)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
         self.proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_FEE)
-        self.proposal_publishing_bps = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
-        self.proposal_commitment_bps = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
-        
-        self.min_requested_amount = GlobalState(UInt64(), key=cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
+        self.proposal_publishing_bps = GlobalState(
+            UInt64(), key=cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS
+        )
+        self.proposal_commitment_bps = GlobalState(
+            UInt64(), key=cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS
+        )
 
-        self.max_requested_amount_small = GlobalState(UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
-        self.max_requested_amount_medium = GlobalState(UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
-        self.max_requested_amount_large = GlobalState(UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
-        
-        self.discussion_duration_small = GlobalState(UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
-        self.discussion_duration_medium = GlobalState(UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
-        self.discussion_duration_large = GlobalState(UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
-        self.discussion_duration_xlarge = GlobalState(UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_XLARGE)
-        
-        self.voting_duration_small = GlobalState(UInt64(), key=cfg.GS_KEY_VOTING_DURATION_SMALL)
-        self.voting_duration_medium = GlobalState(UInt64(), key=cfg.GS_KEY_VOTING_DURATION_MEDIUM)
-        self.voting_duration_large = GlobalState(UInt64(), key=cfg.GS_KEY_VOTING_DURATION_LARGE)
-        self.voting_duration_xlarge = GlobalState(UInt64(), key=cfg.GS_KEY_VOTING_DURATION_XLARGE)
-        
-        self.cool_down_duration = GlobalState(UInt64(), key=cfg.GS_KEY_COOL_DOWN_DURATION)
-        
+        self.min_requested_amount = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MIN_REQUESTED_AMOUNT
+        )
+
+        self.max_requested_amount_small = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL
+        )
+        self.max_requested_amount_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM
+        )
+        self.max_requested_amount_large = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE
+        )
+
+        self.discussion_duration_small = GlobalState(
+            UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_SMALL
+        )
+        self.discussion_duration_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM
+        )
+        self.discussion_duration_large = GlobalState(
+            UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_LARGE
+        )
+        self.discussion_duration_xlarge = GlobalState(
+            UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_XLARGE
+        )
+
+        self.voting_duration_small = GlobalState(
+            UInt64(), key=cfg.GS_KEY_VOTING_DURATION_SMALL
+        )
+        self.voting_duration_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_VOTING_DURATION_MEDIUM
+        )
+        self.voting_duration_large = GlobalState(
+            UInt64(), key=cfg.GS_KEY_VOTING_DURATION_LARGE
+        )
+        self.voting_duration_xlarge = GlobalState(
+            UInt64(), key=cfg.GS_KEY_VOTING_DURATION_XLARGE
+        )
+
+        self.cool_down_duration = GlobalState(
+            UInt64(), key=cfg.GS_KEY_COOL_DOWN_DURATION
+        )
+
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
         self.quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM)
         self.quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_LARGE)
-        
-        self.weighted_quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
-        self.weighted_quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
-        self.weighted_quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
-        
+
+        self.weighted_quorum_small = GlobalState(
+            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_SMALL
+        )
+        self.weighted_quorum_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM
+        )
+        self.weighted_quorum_large = GlobalState(
+            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_LARGE
+        )
+
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
-        
+
         self.committee_id = GlobalState(ptyp.CommitteeId, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
@@ -94,13 +134,17 @@ class XGovRegistry(
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
         # boxes
-        self.xgov_box = BoxMap(Account, arc4.Address, key_prefix=cfg.XGOV_BOX_MAP_PREFIX)
-        self.proposer_box = BoxMap(Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX)
+        self.xgov_box = BoxMap(
+            Account, arc4.Address, key_prefix=cfg.XGOV_BOX_MAP_PREFIX
+        )
+        self.proposer_box = BoxMap(
+            Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
+        )
 
     @subroutine
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value.native
-    
+
     @subroutine
     def is_xgov_committee_manager(self) -> bool:
         return Txn.sender == self.committee_manager.value.native
@@ -108,11 +152,14 @@ class XGovRegistry(
     @subroutine
     def no_pending_proposals(self) -> bool:
         return self.pending_proposals.value == 0
-    
+
     @subroutine
     def is_proposal(self, proposal_id: arc4.UInt64) -> bool:
-        return Application(proposal_id.native).creator == Global.current_application_address
-    
+        return (
+            Application(proposal_id.native).creator
+            == Global.current_application_address
+        )
+
     @subroutine
     def disburse_funds(self, recipient: arc4.Address, amount: UInt64) -> None:
         # Transfer the funds to the receiver
@@ -128,8 +175,8 @@ class XGovRegistry(
     @subroutine
     def valid_kyc(self, address: Account) -> bool:
         return (
-            self.proposer_box[address].kyc_status
-            and self.proposer_box[address].kyc_expiring > Global.latest_timestamp
+            self.proposer_box[address].kyc_status.native
+            and self.proposer_box[address].kyc_expiring.native > Global.latest_timestamp
         )
 
     @arc4.abimethod(create="require")
@@ -228,7 +275,7 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
-        
+
         self.xgov_min_balance.value = config.xgov_min_balance.native
         self.proposer_fee.value = config.proposer_fee.native
         self.proposal_fee.value = config.proposal_fee.native
@@ -238,7 +285,7 @@ class XGovRegistry(
         self.max_requested_amount_small.value = config.max_requested_amount[0].native
         self.max_requested_amount_medium.value = config.max_requested_amount[1].native
         self.max_requested_amount_large.value = config.max_requested_amount[2].native
-        
+
         self.discussion_duration_small.value = config.discussion_duration[0].native
         self.discussion_duration_medium.value = config.discussion_duration[1].native
         self.discussion_duration_large.value = config.discussion_duration[2].native
@@ -248,13 +295,13 @@ class XGovRegistry(
         self.voting_duration_medium.value = config.voting_duration[1].native
         self.voting_duration_large.value = config.voting_duration[2].native
         self.voting_duration_xlarge.value = config.voting_duration[3].native
-        
+
         self.cool_down_duration.value = config.cool_down_duration.native
-        
+
         self.quorum_small.value = config.quorum[0].native
         self.quorum_medium.value = config.quorum[1].native
         self.quorum_large.value = config.quorum[2].native
-        
+
         self.weighted_quorum_small.value = config.weighted_quorum[0].native
         self.weighted_quorum_medium.value = config.weighted_quorum[1].native
         self.weighted_quorum_large.value = config.weighted_quorum[2].native
@@ -283,9 +330,11 @@ class XGovRegistry(
             err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the xgov_min_balance global state key
         """
 
-        assert not Txn.sender in self.xgov_box, err.ALREADY_XGOV
+        assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
         # check payment
-        assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
+        assert (
+            payment.receiver == Global.current_application_address
+        ), err.WRONG_RECEIVER
         assert payment.amount == self.xgov_min_balance.value, err.WRONG_PAYMENT_AMOUNT
 
         # create box
@@ -315,7 +364,9 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod()
-    def set_voting_account(self, xgov_address: arc4.Address, voting_address: arc4.Address) -> None:
+    def set_voting_account(
+        self, xgov_address: arc4.Address, voting_address: arc4.Address
+    ) -> None:
         """Sets the voting account for the XGov
 
         Args:
@@ -331,7 +382,9 @@ class XGovRegistry(
         assert exists, err.UNAUTHORIZED
 
         # Check that the sender is either the xgov or the voting address
-        assert Txn.sender == old_voting_address or Txn.sender == xgov_address, err.UNAUTHORIZED
+        assert (
+            Txn.sender == old_voting_address or Txn.sender == xgov_address
+        ), err.UNAUTHORIZED
 
         # Update the voting account in the xGov box
         self.xgov_box[xgov_address.native] = voting_address
@@ -349,19 +402,23 @@ class XGovRegistry(
             err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the proposer_fee global state key
         """
 
-        assert not Txn.sender in self.proposer_box, err.ALREADY_PROPOSER
+        assert Txn.sender not in self.proposer_box, err.ALREADY_PROPOSER
         # check fee
-        assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
+        assert (
+            payment.receiver == Global.current_application_address
+        ), err.WRONG_RECEIVER
         assert payment.amount == self.proposer_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
-            active_proposal=arc4.Bool(False),
-            kyc_status=arc4.Bool(False),
+            active_proposal=arc4.Bool(False),  # noqa: FBT003
+            kyc_status=arc4.Bool(False),  # noqa: FBT003
             kyc_expiring=arc4.UInt64(0),
         )
 
     @arc4.abimethod()
-    def set_proposer_kyc(self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64) -> None:
+    def set_proposer_kyc(
+        self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
+    ) -> None:
         """Sets a proposer's KYC status
 
         Args:
@@ -383,15 +440,12 @@ class XGovRegistry(
         self.proposer_box[proposer.native] = typ.ProposerBoxValue(
             active_proposal=active_proposal,
             kyc_status=kyc_status,
-            kyc_expiring=kyc_expiring
+            kyc_expiring=kyc_expiring,
         )
 
     @arc4.abimethod()
     def declare_committee(
-        self,
-        id: ptyp.CommitteeId,
-        size: arc4.UInt64,
-        votes: arc4.UInt64
+        self, cid: ptyp.CommitteeId, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """Sets the committee details
 
@@ -406,7 +460,7 @@ class XGovRegistry(
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
 
-        self.committee_id.value = id.copy()
+        self.committee_id.value = cid.copy()
         self.committee_members.value = size.native
         self.committee_votes.value = votes.native
 
@@ -421,7 +475,6 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not a proposer
             err.ALREADY_ACTIVE_PROPOSAL: If the proposer already has an active proposal
             err.INVALID_KYC: If the proposer does not have valid KYC
-            err.EXPIRED_KYC: If the proposers KYC is expired
             err.INSUFFICIENT_FEE: If the fee for the current transaction doesnt cover the inner transaction fees
             err.WRONG_RECEIVER: If the recipient is not the registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount doesnt match the proposal fee
@@ -431,35 +484,37 @@ class XGovRegistry(
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
 
         # Check if the proposer already has an active proposal
-        assert not self.proposer_box[Txn.sender].active_proposal, err.ALREADY_ACTIVE_PROPOSAL
+        assert not self.proposer_box[
+            Txn.sender
+        ].active_proposal, err.ALREADY_ACTIVE_PROPOSAL
         assert self.valid_kyc(Txn.sender), err.INVALID_KYC
 
         assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
 
         # Ensure the transaction has the correct payment
-        assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
+        assert (
+            payment.receiver == Global.current_application_address
+        ), err.WRONG_RECEIVER
         assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # Create the Proposal App
         # TODO: replace the proposal mock contract with the real one
         compiled = compile_contract(proposal_contract.ProposalMock)
-        
-        proposal_app = (
-            arc4.abi_call(
-                proposal_contract.ProposalMock.create,
-                Txn.sender,
-                approval_program=compiled.approval_program,
-                clear_state_program=compiled.clear_state_program,
-                global_num_bytes=pcfg.GLOBAL_BYTES,
-                global_num_uint=pcfg.GLOBAL_UINTS,
-                local_num_bytes=pcfg.LOCAL_BYTES,
-                local_num_uint=pcfg.LOCAL_UINTS,
-                fee=0
-            ).created_app
-        )
+
+        proposal_app = arc4.abi_call(
+            proposal_contract.ProposalMock.create,
+            Txn.sender,
+            approval_program=compiled.approval_program,
+            clear_state_program=compiled.clear_state_program,
+            global_num_bytes=pcfg.GLOBAL_BYTES,
+            global_num_uint=pcfg.GLOBAL_UINTS,
+            local_num_bytes=pcfg.LOCAL_BYTES,
+            local_num_uint=pcfg.LOCAL_UINTS,
+            fee=0,
+        ).created_app
 
         # Update proposer state
-        self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)
+        self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
         # Transfer funds to the new Proposal App
         itxn.Payment(
@@ -479,14 +534,13 @@ class XGovRegistry(
 
         Args:
             proposal_id (arc4.UInt64): The application id of the approved proposal
-            
+
         Raises:
             err.UNAUTHORIZED: If the sender is not the xgov_payor
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.PROPOSAL_IS_NOT_APPROVED: If the proposals status is not Approved
             err.WRONG_PROPOSER: If the proposer on the proposal is not found
             err.INVALID_KYC: If the proposer is not KYC'd
-            err.EXPIRED_KYC: If the proposers KYC is expired
             err.INSUFFICIENT_TREASURY_FUNDS: If the registry does not have enough funds for the disbursement
         """
 
@@ -497,25 +551,32 @@ class XGovRegistry(
         assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        status, status_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_STATUS)
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(proposal_id.native, pcfg.GS_KEY_PROPOSER)
+        status, status_exists = op.AppGlobal.get_ex_uint64(
+            proposal_id.native, pcfg.GS_KEY_STATUS
+        )
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
+            proposal_id.native, pcfg.GS_KEY_PROPOSER
+        )
         proposer = arc4.Address(proposer_bytes)
-        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT)
+        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
+            proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
+        )
         # Verify the proposal is in the approved state
         assert status == UInt64(penm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
 
         assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
-        
+
         assert self.valid_kyc(proposer.native), err.INVALID_KYC
 
         # Verify sufficient funds are available
-        assert self.outstanding_funds.value >= requested_amount, err.INSUFFICIENT_TREASURY_FUNDS
+        assert (
+            self.outstanding_funds.value >= requested_amount
+        ), err.INSUFFICIENT_TREASURY_FUNDS
 
         self.disburse_funds(proposer, requested_amount)
-        
+
         arc4.abi_call(
-            proposal_contract.ProposalMock.release_funds,
-            app_id=proposal_id.native
+            proposal_contract.ProposalMock.release_funds, app_id=proposal_id.native
         )
 
         # Decrement pending proposals count
@@ -523,7 +584,9 @@ class XGovRegistry(
         self.pending_proposals.value -= 1
 
         # Update proposer's active proposal status
-        self.proposer_box[proposer.native].active_proposal = arc4.Bool(False)
+        self.proposer_box[proposer.native].active_proposal = arc4.Bool(
+            False  # noqa: FBT003
+        )
 
     @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
@@ -531,13 +594,14 @@ class XGovRegistry(
 
         Args:
             payment (gtxn.PaymentTransaction): the deposit transaction
-            
+
         Raises:
-            err.UNAUTHORIZED: If the sender is not the XGov manager
             err.WRONG_RECEIVER: If the recipient is not the treasury
         """
 
-        assert payment.receiver == Global.current_application_address, err.WRONG_RECEIVER
+        assert (
+            payment.receiver == Global.current_application_address
+        ), err.WRONG_RECEIVER
         self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()
@@ -546,7 +610,7 @@ class XGovRegistry(
 
         Args:
             amount (UInt64): the amount to remove
-            
+
         Raises:
             err.UNAUTHORIZED: If the sender is not the XGov manager
             err.INSUFFICIENT_FUNDS: If the requested amount is greater than the outstanding funds available
@@ -557,7 +621,7 @@ class XGovRegistry(
         assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
         self.outstanding_funds.value -= amount
-        
+
         itxn.Payment(
             receiver=self.xgov_manager.value.native,
             amount=amount,
@@ -612,5 +676,5 @@ class XGovRegistry(
             pending_proposals=arc4.UInt64(self.pending_proposals.value),
             committee_id=self.committee_id.value.copy(),
             committee_members=arc4.UInt64(self.committee_members.value),
-            committee_votes=arc4.UInt64(self.committee_votes.value)
+            committee_votes=arc4.UInt64(self.committee_votes.value),
         )

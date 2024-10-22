@@ -1,25 +1,23 @@
 import pytest
+from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils import TransactionParameters
-
 from smart_contracts.errors import std_errors as err
-
 from tests.xgov_registry.common import (
-    assert_committee,
-    logicErrorType,
     COMMITTEE_ID,
     COMMITTEE_SIZE,
     COMMITTEE_VOTES,
+    LogicErrorType,
+    assert_committee,
 )
 
+
 def test_declare_committee_success(
-    xgov_registry_client: XGovRegistryClient,
-    committee_manager: AddressAndSigner
+    xgov_registry_client: XGovRegistryClient, committee_manager: AddressAndSigner
 ) -> None:
     xgov_registry_client.declare_committee(
-        id=COMMITTEE_ID,
+        cid=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -29,7 +27,7 @@ def test_declare_committee_success(
     )
 
     global_state = xgov_registry_client.get_global_state()
-    
+
     assert_committee(
         global_state=global_state,
         committee_id=COMMITTEE_ID,
@@ -39,12 +37,11 @@ def test_declare_committee_success(
 
 
 def test_declare_committee_not_manager(
-    xgov_registry_client: XGovRegistryClient,
-    random_account: AddressAndSigner
+    xgov_registry_client: XGovRegistryClient, random_account: AddressAndSigner
 ) -> None:
-    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.declare_committee(
-            id=COMMITTEE_ID,
+            cid=COMMITTEE_ID,
             size=COMMITTEE_SIZE,
             votes=COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(

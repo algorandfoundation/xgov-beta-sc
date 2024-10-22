@@ -6,16 +6,14 @@ from algopy import (
     GlobalState,
     StateTotals,
     String,
-    Txn,
     UInt64,
     arc4,
 )
 
-import smart_contracts.errors.std_errors as err
-
+from ..common import types as typ
 from ..proposal import config as prop_cfg
 from ..proposal import enums as enm
-from ..proposal import types as typ
+
 
 class ProposalMock(
     ARC4Contract,
@@ -118,8 +116,10 @@ class ProposalMock(
         self.requested_amount.value = requested_amount
 
     @arc4.abimethod()
-    def set_committee_details(self, id: typ.CommitteeId, size: UInt64, votes: UInt64) -> None:
-        self.committee_id.value = id.copy()
+    def set_committee_details(
+        self, cid: typ.CommitteeId, size: UInt64, votes: UInt64
+    ) -> None:
+        self.committee_id.value = cid.copy()
         self.committee_members.value = size
         self.committee_votes.value = votes
 

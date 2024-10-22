@@ -1,66 +1,66 @@
 import pytest
-
 from algokit_utils import (
+    CreateTransactionParameters,
     EnsureBalanceParameters,
+    TransactionParameters,
     ensure_funded,
 )
-from algokit_utils.models import Account
-from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.config import config
+from algokit_utils.models import Account
+from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryClient,
-    XGovRegistryConfig
+    XGovRegistryConfig,
 )
-from smart_contracts.artifacts.xgov_subscriber_app_mock.client import XGovSubscriberAppMockClient
-
+from smart_contracts.artifacts.xgov_subscriber_app_mock.client import (
+    XGovSubscriberAppMockClient,
+)
 from smart_contracts.proposal import enums as enm
-
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-
 from tests.proposal.common import INITIAL_FUNDS
 from tests.xgov_registry.common import (
     COMMITTEE_ID,
     COMMITTEE_SIZE,
     COMMITTEE_VOTES,
-    xgov_box_name,
-    proposer_box_name,
-    XGOV_MIN_BALANCE,
-    PROPOSER_FEE,
+    COOL_DOWN_DURATION,
+    DEPOSIT_AMOUNT,
+    DISCUSSION_DURATION_LARGE,
+    DISCUSSION_DURATION_MEDIUM,
+    DISCUSSION_DURATION_SMALL,
+    DISCUSSION_DURATION_XLARGE,
+    MAX_REQUESTED_AMOUNT_LARGE,
+    MAX_REQUESTED_AMOUNT_MEDIUM,
+    MAX_REQUESTED_AMOUNT_SMALL,
+    MIN_REQUESTED_AMOUNT,
+    PROPOSAL_COMMITTMENT_BPS,
     PROPOSAL_FEE,
     PROPOSAL_PUBLISHING_BPS,
-    PROPOSAL_COMMITTMENT_BPS,
-    MIN_REQUESTED_AMOUNT,
-    MAX_REQUESTED_AMOUNT_SMALL,
-    MAX_REQUESTED_AMOUNT_MEDIUM,
-    MAX_REQUESTED_AMOUNT_LARGE,
-    DISCUSSION_DURATION_SMALL,
-    DISCUSSION_DURATION_MEDIUM,
-    DISCUSSION_DURATION_LARGE,
-    DISCUSSION_DURATION_XLARGE,
-    VOTING_DURATION_SMALL,
-    VOTING_DURATION_MEDIUM,
-    VOTING_DURATION_LARGE,
-    VOTING_DURATION_XLARGE,
-    COOL_DOWN_DURATION,
-    QUORUM_SMALL,
+    PROPOSER_FEE,
     QUORUM_MEDIUM,
+    QUORUM_SMALL,
     QURUM_LARGE,
-    WEIGHTED_QUORUM_SMALL,
-    WEIGHTED_QUORUM_MEDIUM,
+    VOTING_DURATION_LARGE,
+    VOTING_DURATION_MEDIUM,
+    VOTING_DURATION_SMALL,
+    VOTING_DURATION_XLARGE,
     WEIGHTED_QUORUM_LARGE,
-    DEPOSIT_AMOUNT
+    WEIGHTED_QUORUM_MEDIUM,
+    WEIGHTED_QUORUM_SMALL,
+    XGOV_MIN_BALANCE,
+    proposer_box_name,
+    xgov_box_name,
 )
+
 
 @pytest.fixture(scope="function")
 def committee_manager(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account
+    deployer: Account,
 ) -> AddressAndSigner:
     account = algorand_client.account.random()
 
@@ -71,7 +71,7 @@ def committee_manager(
             min_spending_balance_micro_algos=INITIAL_FUNDS,
         ),
     )
-    
+
     xgov_registry_client.set_committee_manager(
         manager=account.address,
         transaction_parameters=TransactionParameters(
@@ -82,11 +82,12 @@ def committee_manager(
 
     return account
 
+
 @pytest.fixture(scope="function")
 def xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,
-    xgov_registry_config: XGovRegistryConfig
+    xgov_registry_config: XGovRegistryConfig,
 ) -> XGovRegistryClient:
     config.configure(
         debug=True,
@@ -104,10 +105,8 @@ def xgov_registry_client(
     )
 
     client.create_create(
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+        transaction_parameters=CreateTransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -122,18 +121,14 @@ def xgov_registry_client(
     client.set_payor(
         payor=deployer.address,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
     client.set_committee_manager(
         manager=deployer.address,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -141,9 +136,7 @@ def xgov_registry_client(
     client.config_xgov_registry(
         config=xgov_registry_config,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -153,7 +146,7 @@ def xgov_registry_client(
                 PayParams(
                     sender=deployer.address,
                     receiver=client.app_address,
-                    amount=10_000_001
+                    amount=10_000_001,
                 ),
             ),
             signer=deployer.signer,
@@ -175,12 +168,13 @@ def xgov_registry_client(
     )
 
     return client
+
 
 @pytest.fixture(scope="function")
 def funded_xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,
-    xgov_registry_config: XGovRegistryConfig
+    xgov_registry_config: XGovRegistryConfig,
 ) -> XGovRegistryClient:
     config.configure(
         debug=True,
@@ -198,10 +192,8 @@ def funded_xgov_registry_client(
     )
 
     client.create_create(
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+        transaction_parameters=CreateTransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -216,18 +208,14 @@ def funded_xgov_registry_client(
     client.set_payor(
         payor=deployer.address,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
     client.set_committee_manager(
         manager=deployer.address,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -235,9 +223,7 @@ def funded_xgov_registry_client(
     client.config_xgov_registry(
         config=xgov_registry_config,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -247,7 +233,7 @@ def funded_xgov_registry_client(
                 PayParams(
                     sender=deployer.address,
                     receiver=client.app_address,
-                    amount=10_000_001
+                    amount=10_000_001,
                 ),
             ),
             signer=deployer.signer,
@@ -274,7 +260,7 @@ def funded_xgov_registry_client(
                 PayParams(
                     sender=deployer.address,
                     receiver=client.app_address,
-                    amount=DEPOSIT_AMOUNT
+                    amount=DEPOSIT_AMOUNT,
                 ),
             ),
             signer=deployer.signer,
@@ -287,6 +273,7 @@ def funded_xgov_registry_client(
     )
 
     return client
+
 
 @pytest.fixture(scope="function")
 def xgov_registry_config() -> XGovRegistryConfig:
@@ -324,13 +311,13 @@ def xgov_registry_config() -> XGovRegistryConfig:
             WEIGHTED_QUORUM_SMALL,
             WEIGHTED_QUORUM_MEDIUM,
             WEIGHTED_QUORUM_LARGE,
-        ]
+        ],
     )
+
 
 @pytest.fixture(scope="function")
 def xgov(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient
+    xgov_registry_client: XGovRegistryClient, algorand_client: AlgorandClient
 ) -> AddressAndSigner:
     account = algorand_client.account.random()
 
@@ -354,7 +341,7 @@ def xgov(
                 PayParams(
                     sender=account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance
+                    amount=global_state.xgov_min_balance,
                 ),
             ),
             signer=account.signer,
@@ -363,11 +350,12 @@ def xgov(
             sender=account.address,
             signer=account.signer,
             suggested_params=sp,
-            boxes=[(0, xgov_box_name(account.address))]
+            boxes=[(0, xgov_box_name(account.address))],
         ),
     )
 
     return account
+
 
 @pytest.fixture(scope="function")
 def proposer(
@@ -394,7 +382,7 @@ def proposer(
                 PayParams(
                     sender=account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee
+                    amount=global_state.proposer_fee,
                 ),
             ),
             signer=account.signer,
@@ -403,7 +391,7 @@ def proposer(
             sender=account.address,
             signer=account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(account.address))]
+            boxes=[(0, proposer_box_name(account.address))],
         ),
     )
 
@@ -415,11 +403,12 @@ def proposer(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(account.address))]
+            boxes=[(0, proposer_box_name(account.address))],
         ),
     )
 
     return account
+
 
 @pytest.fixture(scope="function")
 def random_account(algorand_client: AlgorandClient) -> AddressAndSigner:
@@ -433,6 +422,7 @@ def random_account(algorand_client: AlgorandClient) -> AddressAndSigner:
         ),
     )
     return account
+
 
 @pytest.fixture(scope="function")
 def proposal_mock_client(
@@ -451,7 +441,7 @@ def proposal_mock_client(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
+                    amount=global_state.proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -460,18 +450,19 @@ def proposal_mock_client(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
     proposal_mock_app_id = open_proposal_response.return_value
-    
+
     proposal_mock_client = ProposalMockClient(
         algorand_client.client.algod,
         app_id=proposal_mock_app_id,
     )
 
     return proposal_mock_client
+
 
 @pytest.fixture(scope="function")
 def approved_proposal_mock_client(
@@ -490,7 +481,7 @@ def approved_proposal_mock_client(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
+                    amount=global_state.proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -499,12 +490,12 @@ def approved_proposal_mock_client(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
     proposal_mock_app_id = open_proposal_response.return_value
-    
+
     proposal_mock_client = ProposalMockClient(
         algorand_client.client.algod,
         app_id=proposal_mock_app_id,
@@ -532,7 +523,7 @@ def approved_proposal_mock_client(
     )
 
     proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
+        cid=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -562,7 +553,7 @@ def voting_proposal_mock_client(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
+                    amount=global_state.proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -571,12 +562,12 @@ def voting_proposal_mock_client(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
     proposal_mock_app_id = open_proposal_response.return_value
-    
+
     proposal_mock_client = ProposalMockClient(
         algorand_client.client.algod,
         app_id=proposal_mock_app_id,
@@ -604,7 +595,7 @@ def voting_proposal_mock_client(
     )
 
     proposal_mock_client.set_committee_details(
-        id=COMMITTEE_ID,
+        cid=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -638,10 +629,8 @@ def xgov_subscriber_app(
     )
 
     client.create_bare(
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp
+        transaction_parameters=CreateTransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 

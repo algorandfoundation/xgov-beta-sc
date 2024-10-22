@@ -1,7 +1,8 @@
 import algokit_utils
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 
+from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from tests.xgov_registry.common import assert_registry_global_state
+
 
 def test_deploy_registry(
     xgov_registry_client: XGovRegistryClient,

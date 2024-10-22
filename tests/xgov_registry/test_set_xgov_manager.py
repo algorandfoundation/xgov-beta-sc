@@ -1,17 +1,13 @@
 import pytest
-
-from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algokit_utils.models import Account
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import (
-    xgov_box_name,
-    logicErrorType
-)
+from tests.xgov_registry.common import LogicErrorType, xgov_box_name
+
 
 def test_set_xgov_manager_success(
     xgov_registry_client: XGovRegistryClient,
@@ -28,7 +24,7 @@ def test_set_xgov_manager_success(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
-            boxes=[(0, xgov_box_name(deployer.address))]
+            boxes=[(0, xgov_box_name(deployer.address))],
         ),
     )
 
@@ -41,13 +37,13 @@ def test_set_xgov_manager_not_manager(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_xgov_manager(
             manager=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))]
+                boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )

@@ -15,6 +15,7 @@ from ..common.types import CommitteeId
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
+
 class XgovRegistryMock(
     ARC4Contract,
     state_totals=StateTotals(

@@ -1,20 +1,21 @@
 from algopy import (
+    Application,
     ARC4Contract,
+    Global,
     StateTotals,
     Txn,
-    arc4,
     UInt64,
+    arc4,
     itxn,
-    Application,
-    Global,
     op,
 )
 
-from ..xgov_registry import contract as registry_contract
-
 import smart_contracts.errors.std_errors as err
-from . import config as mock_cfg
+
 from ..xgov_registry import config as rcfg
+from ..xgov_registry import contract as registry_contract
+from . import config as mock_cfg
+
 
 class XGovSubscriberAppMock(
     ARC4Contract,
@@ -23,12 +24,14 @@ class XGovSubscriberAppMock(
         global_uints=mock_cfg.GLOBAL_UINTS,
         local_bytes=mock_cfg.LOCAL_BYTES,
         local_uints=mock_cfg.LOCAL_UINTS,
-    )
+    ),
 ):
-    
+
     def __init__(self) -> None:
         # Preconditions
-        assert Txn.global_num_byte_slice == mock_cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
+        assert (
+            Txn.global_num_byte_slice == mock_cfg.GLOBAL_BYTES
+        ), err.WRONG_GLOBAL_BYTES
         assert Txn.global_num_uint == mock_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
         assert Txn.local_num_byte_slice == mock_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == mock_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
@@ -36,7 +39,9 @@ class XGovSubscriberAppMock(
     @arc4.abimethod()
     def subscribe_xgov(self, app_id: UInt64) -> None:
 
-        xgov_min_balance, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE)
+        xgov_min_balance, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
+            app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE
+        )
 
         payment = itxn.Payment(
             receiver=Application(app_id).address,
@@ -46,7 +51,7 @@ class XGovSubscriberAppMock(
         arc4.abi_call(
             registry_contract.XGovRegistry.subscribe_xgov,
             payment,
-            app_id=app_id
+            app_id=app_id,
         )
 
     @arc4.abimethod()
@@ -54,5 +59,5 @@ class XGovSubscriberAppMock(
         arc4.abi_call(
             registry_contract.XGovRegistry.unsubscribe_xgov,
             app_id=app_id,
-            fee=(Global.min_txn_fee * 2)
+            fee=(Global.min_txn_fee * 2),
         )

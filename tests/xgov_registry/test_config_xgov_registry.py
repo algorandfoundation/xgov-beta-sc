@@ -1,30 +1,27 @@
 import pytest
-
-from algokit_utils.models import Account
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
+from algokit_utils.models import Account
+from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
 from smart_contracts.artifacts.xgov_registry.client import (
     XGovRegistryClient,
-    XGovRegistryConfig
+    XGovRegistryConfig,
 )
-
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
-    proposer_box_name,
+    LogicErrorType,
     assert_registry_config,
-    logicErrorType
+    proposer_box_name,
 )
 
-from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 def test_config_xgov_registry_success(
     xgov_registry_client: XGovRegistryClient,
     deployer: Account,
-    xgov_registry_config: XGovRegistryConfig
+    xgov_registry_config: XGovRegistryConfig,
 ) -> None:
     # Call the config_xgov_registry method
     xgov_registry_client.config_xgov_registry(
@@ -65,12 +62,13 @@ def test_config_xgov_registry_success(
         weighted_quorum_large=xgov_registry_config.weighted_quorum[2],
     )
 
+
 def test_config_xgov_registry_not_manager(
     xgov_registry_client: XGovRegistryClient,
     random_account: AddressAndSigner,
-    xgov_registry_config: XGovRegistryConfig
+    xgov_registry_config: XGovRegistryConfig,
 ) -> None:
-    with pytest.raises(logicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(
@@ -79,6 +77,7 @@ def test_config_xgov_registry_not_manager(
             ),
         )
 
+
 def test_config_xgov_registry_pending_proposals(
     algorand_client: AlgorandClient,
     xgov_registry_client: XGovRegistryClient,
@@ -86,7 +85,7 @@ def test_config_xgov_registry_pending_proposals(
     deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
-    
+
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
@@ -98,7 +97,7 @@ def test_config_xgov_registry_pending_proposals(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee
+                    amount=global_state.proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -107,11 +106,11 @@ def test_config_xgov_registry_pending_proposals(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))]
+            boxes=[(0, proposer_box_name(proposer.address))],
         ),
     )
 
-    with pytest.raises(logicErrorType, match=err.NO_PENDING_PROPOSALS):
+    with pytest.raises(LogicErrorType, match=err.NO_PENDING_PROPOSALS):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(

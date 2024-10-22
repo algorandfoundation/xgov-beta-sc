@@ -1,5 +1,5 @@
 #pragma version 10
 
-smart_contracts.xgov_registry.contract.XgovRegistry.clear_state_program:
+smart_contracts.xgov_registry.contract.XGovRegistry.clear_state_program:
     int 1
     return

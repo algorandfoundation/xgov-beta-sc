@@ -2,7 +2,8 @@ import typing as t
 
 from algopy import arc4
 
-from ..proposal import types as ptyp
+from ..common import types as ptyp
+
 
 class TypedGlobalState(arc4.Struct):
     xgov_manager: arc4.Address
@@ -28,6 +29,7 @@ class TypedGlobalState(arc4.Struct):
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
 
+
 class XGovRegistryConfig(arc4.Struct):
     xgov_min_balance: arc4.UInt64
     proposer_fee: arc4.UInt64
@@ -41,6 +43,7 @@ class XGovRegistryConfig(arc4.Struct):
     cool_down_duration: arc4.UInt64
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
+
 
 class ProposerBoxValue(arc4.Struct):
     active_proposal: arc4.Bool

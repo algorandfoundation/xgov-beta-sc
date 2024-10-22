@@ -1,27 +1,20 @@
 from typing import Type
 
 from algokit_utils import LogicError
-from algokit_utils.models import Account
 from algokit_utils.beta.account_manager import (
+    AccountTransactionSigner,
     AddressAndSigner,
-    AccountTransactionSigner
 )
-from smart_contracts.artifacts.xgov_registry.client import (
-    GlobalState,
-    TypedGlobalState
-)
+from algokit_utils.models import Account
+from algosdk.encoding import decode_address, encode_address
 
+from smart_contracts.artifacts.xgov_registry.client import GlobalState, TypedGlobalState
 from smart_contracts.xgov_registry.config import (
-    XGOV_BOX_MAP_PREFIX,
     PROPOSER_BOX_MAP_PREFIX,
+    XGOV_BOX_MAP_PREFIX,
 )
 
-from algosdk.encoding import (
-    encode_address,
-    decode_address
-)
-
-logicErrorType: Type[LogicError] = LogicError
+LogicErrorType: Type[LogicError] = LogicError
 
 XGOV_MIN_BALANCE = 1_000_000
 PROPOSER_FEE = 10_000_000
@@ -54,21 +47,58 @@ WEIGHTED_QUORUM_SMALL = 200
 WEIGHTED_QUORUM_MEDIUM = 300
 WEIGHTED_QUORUM_LARGE = 400
 
-COMMITTEE_ID = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+COMMITTEE_ID: tuple[
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+    int,
+] = (0,) * 32
 COMMITTEE_SIZE = 10
 COMMITTEE_VOTES = 100
 
 DEPOSIT_AMOUNT = 10_000_000
 
+
 def xgov_box_name(address: str) -> bytes:
-    return XGOV_BOX_MAP_PREFIX + decode_address(address)
+    return bytes(XGOV_BOX_MAP_PREFIX + decode_address(address))  # type: ignore
+
 
 def proposer_box_name(address: str) -> bytes:
-    return PROPOSER_BOX_MAP_PREFIX + decode_address(address)
+    return PROPOSER_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
 
-def AddressAndSignerFromAccount(acc: Account) -> AddressAndSigner:
+
+def address_and_signer_from_account(acc: Account) -> AddressAndSigner:
     signer = AccountTransactionSigner(acc.private_key)
     return AddressAndSigner(address=acc.address, signer=signer)
+
 
 def assert_registry_global_state(
     global_state: GlobalState,
@@ -77,12 +107,14 @@ def assert_registry_global_state(
 ) -> None:
     assert encode_address(global_state.xgov_manager.as_bytes) == manager_address  # type: ignore
 
+
 def assert_registry_payor(
     global_state: GlobalState,
     *,
     payor_address: str,
 ) -> None:
     assert encode_address(global_state.xgov_payor.as_bytes) == payor_address  # type: ignore
+
 
 def assert_registry_config(
     global_state: GlobalState,
@@ -135,21 +167,53 @@ def assert_registry_config(
     assert global_state.weighted_quorum_medium == weighted_quorum_medium
     assert global_state.weighted_quorum_large == weighted_quorum_large
 
+
 def assert_committee(
     global_state: GlobalState,
     *,
-    committee_id: list[int],
+    committee_id: tuple[
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+        int,
+    ],
     committee_size: int,
-    committee_votes: int
+    committee_votes: int,
 ) -> None:
     assert global_state.committee_id.as_bytes == bytes(committee_id)
     assert global_state.committee_members == committee_size
     assert global_state.committee_votes == committee_votes
 
-def assert_get_state(
-    global_state: GlobalState,
-    get_state: TypedGlobalState
-) -> None:
+
+def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> None:
     assert global_state.xgov_min_balance == get_state.xgov_min_balance
     assert global_state.proposal_publishing_bps == get_state.proposal_publishing_bps
     assert global_state.proposal_commitment_bps == get_state.proposal_commitment_bps
