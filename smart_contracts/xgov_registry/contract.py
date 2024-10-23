@@ -206,20 +206,6 @@ class XGovRegistry(
         self.xgov_manager.value = manager
 
     @arc4.abimethod()
-    def set_kyc_provider(self, provider: arc4.Address) -> None:
-        """Sets the KYC provider.
-
-        Args:
-            provider (arc4.Address): Address of the new provider
-
-        Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
-        """
-
-        assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.kyc_provider.value = provider
-
-    @arc4.abimethod()
     def set_payor(self, payor: arc4.Address) -> None:
         """Sets the XGov payor.
 
@@ -232,6 +218,34 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.xgov_payor.value = payor
+
+    @arc4.abimethod()
+    def set_xgov_reviewer(self, reviewer: arc4.Address) -> None:
+        """Sets the XGov Reviwer.
+
+        Args:
+            reviewer (arc4.Address): Address of the new reviewer
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current XGov manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.xgov_reviewer.value = reviewer
+
+    @arc4.abimethod()
+    def set_kyc_provider(self, provider: arc4.Address) -> None:
+        """Sets the KYC provider.
+
+        Args:
+            provider (arc4.Address): Address of the new provider
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current XGov manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.kyc_provider.value = provider
 
     @arc4.abimethod()
     def set_committee_manager(self, manager: arc4.Address) -> None:
