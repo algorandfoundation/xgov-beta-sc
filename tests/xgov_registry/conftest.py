@@ -43,6 +43,7 @@ from tests.xgov_registry.common import (
     QUORUM_MEDIUM,
     QUORUM_SMALL,
     QURUM_LARGE,
+    STALE_PROPOSAL_DURATION,
     VOTING_DURATION_LARGE,
     VOTING_DURATION_MEDIUM,
     VOTING_DURATION_SMALL,
@@ -302,6 +303,7 @@ def xgov_registry_config() -> XGovRegistryConfig:
             VOTING_DURATION_XLARGE,
         ],
         cool_down_duration=COOL_DOWN_DURATION,
+        stale_proposal_duration=STALE_PROPOSAL_DURATION,
         quorum=[
             QUORUM_SMALL,
             QUORUM_MEDIUM,

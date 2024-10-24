@@ -110,6 +110,9 @@ class XGovRegistry(
         self.cool_down_duration = GlobalState(
             UInt64(), key=cfg.GS_KEY_COOL_DOWN_DURATION
         )
+        self.stale_proposal_duration = GlobalState(
+            UInt64(), key=cfg.GS_KEY_STALE_PROPOSAL_DURATION
+        )
 
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
         self.quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM)
@@ -676,6 +679,7 @@ class XGovRegistry(
                 arc4.UInt64(self.voting_duration_xlarge.value),
             ),
             cool_down_duration=arc4.UInt64(self.cool_down_duration.value),
+            stale_proposal_duration=arc4.UInt64(self.stale_proposal_duration.value),
             quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.quorum_small.value),
                 arc4.UInt64(self.quorum_medium.value),

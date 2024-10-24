@@ -38,6 +38,7 @@ VOTING_DURATION_LARGE = 259200
 VOTING_DURATION_XLARGE = 345600
 
 COOL_DOWN_DURATION = 86400
+STALE_PROPOSAL_DURATION = 86400 * 14
 
 QUORUM_SMALL = 100
 QUORUM_MEDIUM = 200
@@ -47,40 +48,7 @@ WEIGHTED_QUORUM_SMALL = 200
 WEIGHTED_QUORUM_MEDIUM = 300
 WEIGHTED_QUORUM_LARGE = 400
 
-COMMITTEE_ID: tuple[
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-    int,
-] = (0,) * 32
+COMMITTEE_ID = bytes(32)
 COMMITTEE_SIZE = 10
 COMMITTEE_VOTES = 100
 
@@ -171,44 +139,11 @@ def assert_registry_config(
 def assert_committee(
     global_state: GlobalState,
     *,
-    committee_id: tuple[
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-        int,
-    ],
+    committee_id: bytes,
     committee_size: int,
     committee_votes: int,
 ) -> None:
-    assert global_state.committee_id.as_bytes == bytes(committee_id)
+    assert global_state.committee_id.as_bytes == committee_id
     assert global_state.committee_members == committee_size
     assert global_state.committee_votes == committee_votes
 
@@ -231,6 +166,7 @@ def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> 
     assert global_state.voting_duration_large == get_state.voting_duration[2]
     assert global_state.voting_duration_xlarge == get_state.voting_duration[3]
     assert global_state.cool_down_duration == get_state.cool_down_duration
+    assert global_state.stale_proposal_duration == get_state.stale_proposal_duration
     assert global_state.quorum_small == get_state.quorum[0]
     assert global_state.quorum_medium == get_state.quorum[1]
     assert global_state.quorum_large == get_state.quorum[2]
