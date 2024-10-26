@@ -68,6 +68,10 @@ def test_open_proposal_success(
         ),
     )
 
+    after_global_state = xgov_registry_client.get_global_state()
+
+    assert after_global_state.pending_proposals == (global_state.pending_proposals + 1)
+
 
 def test_open_proposal_not_a_proposer(
     xgov_registry_client: XGovRegistryClient,

@@ -6,7 +6,7 @@ from algokit_utils.models import Account
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
+from tests.xgov_registry.common import LogicErrorType, decode_address
 
 
 def test_set_kyc_provider_success(
@@ -26,6 +26,10 @@ def test_set_kyc_provider_success(
             suggested_params=sp,
         ),
     )
+
+    global_state = xgov_registry_client.get_global_state()
+
+    assert global_state.kyc_provider.as_bytes == decode_address(random_account.address)  # type: ignore
 
 
 def test_set_kyc_provider_not_manager(

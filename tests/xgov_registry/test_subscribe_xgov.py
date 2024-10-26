@@ -1,8 +1,11 @@
+import base64
+
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
+from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
@@ -20,6 +23,10 @@ def test_subscribe_xgov_success(
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
+
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -39,6 +46,23 @@ def test_subscribe_xgov_success(
             boxes=[(0, xgov_box_name(random_account.address))],
         ),
     )
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] + global_state.xgov_min_balance) == after_info["amount"]  # type: ignore
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(random_account.address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("address")
+    voting_address = box_abi.decode(box_value)  # type: ignore
+
+    assert random_account.address == voting_address  # type: ignore
 
 
 def test_app_subscribe_xgov_success(

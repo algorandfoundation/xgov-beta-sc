@@ -30,6 +30,12 @@ def test_pay_grant_proposal_success(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
+    proposal_global_state = approved_proposal_mock_client.get_global_state()
+
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
     # payout
     xgov_registry_client.pay_grant_proposal(
         proposal_id=approved_proposal_mock_client.app_id,
@@ -42,6 +48,12 @@ def test_pay_grant_proposal_success(
             accounts=[(proposer.address)],
         ),
     )
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] - proposal_global_state.requested_amount) == after_info["amount"]  # type: ignore
 
 
 def test_pay_grant_proposal_not_payor(
@@ -102,6 +114,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
         )
 
 
+# TODO: Change to `_not_milestone`
 def test_pay_grant_proposal_not_approved(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,

@@ -3,6 +3,7 @@ from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
+from algosdk import error
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
@@ -42,6 +43,10 @@ def test_unsubscribe_xgov_success(
 
     sp.min_fee *= 2  # type: ignore
 
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
     xgov_registry_client.unsubscribe_xgov(
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
@@ -50,6 +55,18 @@ def test_unsubscribe_xgov_success(
             boxes=[(0, xgov_box_name(random_account.address))],
         ),
     )
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] - global_state.xgov_min_balance) == after_info["amount"]  # type: ignore
+
+    with pytest.raises(error.AlgodHTTPError):  # type: ignore
+        xgov_registry_client.algod_client.application_box_by_name(
+            application_id=xgov_registry_client.app_id,
+            box_name=xgov_box_name(random_account.address),
+        )
 
 
 def test_app_subscribe_xgov_success(

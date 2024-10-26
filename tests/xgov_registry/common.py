@@ -54,6 +54,8 @@ COMMITTEE_VOTES = 100
 
 DEPOSIT_AMOUNT = 10_000_000
 
+KYC_EXPIRATION = 18446744073709551615
+
 
 def xgov_box_name(address: str) -> bytes:
     return bytes(XGOV_BOX_MAP_PREFIX + decode_address(address))  # type: ignore
