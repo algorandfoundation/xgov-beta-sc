@@ -505,7 +505,7 @@ create_empty_proposal:
     itxn_field GlobalNumByteSlice
     byte base64 CoEBQw==
     itxn_field ClearStateProgramPages
-    byte base64 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
+    byte base64 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
     itxn_field ApprovalProgramPages
     // smart_contracts/xgov_registry_mock/contract.py:110
     // Proposal,
@@ -537,7 +537,7 @@ set_proposal_commitment_bps:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:125
     // self.proposal_commitment_bps.value = commitment_bps
-    byte 0x70726f706f73616c5f636f6d6d69746d656e74
+    byte 0x70726f706f73616c5f636f6d6d69746d656e745f627073
     frame_dig -1
     app_global_put
     retsub
@@ -551,7 +551,7 @@ set_min_requested_amount:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:136
     // self.min_requested_amount.value = min_requested_amount
-    byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74
+    byte 0x6d696e5f7265717565737465645f616d6f756e74
     frame_dig -1
     app_global_put
     retsub
@@ -565,7 +565,7 @@ set_max_requested_amount_small:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:147
     // self.max_requested_amount_small.value = max_requested_amount
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c
+    byte 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
     frame_dig -1
     app_global_put
     retsub
@@ -579,7 +579,7 @@ set_max_requested_amount_medium:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:158
     // self.max_requested_amount_medium.value = max_requested_amount
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
     frame_dig -1
     app_global_put
     retsub
@@ -593,7 +593,7 @@ set_max_requested_amount_large:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:169
     // self.max_requested_amount_large.value = max_requested_amount
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
     frame_dig -1
     app_global_put
     retsub
@@ -607,7 +607,7 @@ set_publishing_fee:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:180
     // self.publishing_fee_bps.value = publishing_fee_bps
-    byte 0x636f6d6d69747465655f7075626c697368696e675f627073
+    byte 0x70726f706f73616c5f7075626c697368696e675f627073
     frame_dig -1
     app_global_put
     retsub
@@ -773,7 +773,7 @@ __init__:
     assert // Wrong Local UInts allocation
     // smart_contracts/xgov_registry_mock/contract.py:39
     // key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
-    byte 0x70726f706f73616c5f636f6d6d69746d656e74
+    byte 0x70726f706f73616c5f636f6d6d69746d656e745f627073
     // smart_contracts/xgov_registry_mock/contract.py:38
     // UInt64(mock_cfg.PROPOSAL_COMMITMENT_BPS),
     int 100
@@ -785,7 +785,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:43
     // key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
-    byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74
+    byte 0x6d696e5f7265717565737465645f616d6f756e74
     // smart_contracts/xgov_registry_mock/contract.py:42
     // UInt64(mock_cfg.MIN_REQUESTED_AMOUNT),
     int 10000000000
@@ -797,7 +797,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:47
     // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL,
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c
+    byte 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
     // smart_contracts/xgov_registry_mock/contract.py:46
     // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_SMALL),
     int 50000000000
@@ -809,7 +809,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:51
     // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM,
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
     // smart_contracts/xgov_registry_mock/contract.py:50
     // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_MEDIUM),
     int 250000000000
@@ -821,7 +821,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:55
     // key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
     // smart_contracts/xgov_registry_mock/contract.py:54
     // UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
     int 500000000000
@@ -832,15 +832,15 @@ __init__:
     // )
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:59
-    // key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
-    byte 0x636f6d6d69747465655f7075626c697368696e675f627073
+    // key=reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS,
+    byte 0x70726f706f73616c5f7075626c697368696e675f627073
     // smart_contracts/xgov_registry_mock/contract.py:58
     // UInt64(mock_cfg.PUBLISHING_FEE_BPS),
     int 500
     // smart_contracts/xgov_registry_mock/contract.py:57-60
     // self.publishing_fee_bps = GlobalState(
     //     UInt64(mock_cfg.PUBLISHING_FEE_BPS),
-    //     key=reg_cfg.GS_KEY_PUBLISHING_FEE_BPS,
+    //     key=reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS,
     // )
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:63

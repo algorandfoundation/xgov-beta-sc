@@ -385,7 +385,7 @@ submit_input_validation_bool_merge@4:
     assert // Wrong Funding Type
     // smart_contracts/proposal/contract.py:232
     // Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
-    byte 0x6d696e696d756d5f7265717565737465645f616d6f756e74
+    byte 0x6d696e5f7265717565737465645f616d6f756e74
     // smart_contracts/proposal/contract.py:231-233
     // min_requested_amount = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
@@ -393,7 +393,7 @@ submit_input_validation_bool_merge@4:
     callsub get_uint_from_registry_config
     // smart_contracts/proposal/contract.py:235
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6c61726765
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
     // smart_contracts/proposal/contract.py:234-236
     // max_requested_amount_large = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
@@ -517,7 +517,7 @@ get_expected_locked_amount:
     proto 1 1
     // smart_contracts/proposal/contract.py:254
     // Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
-    byte 0x70726f706f73616c5f636f6d6d69746d656e74
+    byte 0x70726f706f73616c5f636f6d6d69746d656e745f627073
     // smart_contracts/proposal/contract.py:253-255
     // self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
@@ -562,7 +562,7 @@ set_category:
     proto 1 0
     // smart_contracts/proposal/contract.py:273
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f736d616c6c
+    byte 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
     // smart_contracts/proposal/contract.py:272-274
     // max_requested_amount_small = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
@@ -570,7 +570,7 @@ set_category:
     callsub get_uint_from_registry_config
     // smart_contracts/proposal/contract.py:276
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
-    byte 0x6d6178696d756d5f7265717565737465645f616d6f756e745f6d656469756d
+    byte 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
     // smart_contracts/proposal/contract.py:275-277
     // max_requested_amount_medium = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
@@ -806,11 +806,11 @@ finalize:
     // )
     callsub get_uint_from_registry_config
     // smart_contracts/proposal/contract.py:450
-    // Bytes(reg_cfg.GS_KEY_PUBLISHING_FEE_BPS)
-    byte 0x636f6d6d69747465655f7075626c697368696e675f627073
+    // Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
+    byte 0x70726f706f73616c5f7075626c697368696e675f627073
     // smart_contracts/proposal/contract.py:449-451
     // publishing_fee_bps = self.get_uint_from_registry_config(
-    //     Bytes(reg_cfg.GS_KEY_PUBLISHING_FEE_BPS)
+    //     Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
     // )
     callsub get_uint_from_registry_config
     // smart_contracts/proposal/contract.py:453-461
