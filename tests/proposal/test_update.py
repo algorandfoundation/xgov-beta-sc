@@ -2,8 +2,6 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algosdk.atomic_transaction_composer import TransactionWithSigner
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
@@ -11,17 +9,13 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.constants import (
     TITLE_MAX_BYTES,
 )
-from smart_contracts.proposal.enums import (
-    CATEGORY_SMALL,
-    FUNDING_PROACTIVE,
-    STATUS_DRAFT,
-)
 from tests.proposal.common import (
     LOCKED_AMOUNT,
-    REQUESTED_AMOUNT,
     assert_account_balance,
-    assert_proposal_global_state,
+    assert_draft_proposal_global_state,
+    assert_empty_proposal_global_state,
     logic_error_type,
+    submit_proposal,
 )
 
 # TODO add tests for update on other statuses
@@ -33,26 +27,9 @@ def test_update_success(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     proposal_client.update(
@@ -67,17 +44,12 @@ def test_update_success(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal",
         cid=b"\x02" * 59,
-        status=STATUS_DRAFT,
-        category=CATEGORY_SMALL,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(
@@ -93,26 +65,9 @@ def test_update_twice(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     proposal_client.update(
@@ -136,17 +91,12 @@ def test_update_twice(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal 2",
         cid=b"\x03" * 59,
-        status=STATUS_DRAFT,
-        category=CATEGORY_SMALL,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        registry_app_id=xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(
@@ -163,26 +113,9 @@ def test_update_not_proposer(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
@@ -198,16 +131,9 @@ def test_update_not_proposer(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer_address=proposer.address,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        status=STATUS_DRAFT,
-        category=CATEGORY_SMALL,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
         registry_app_id=xgov_registry_mock_client.app_id,
     )
 
@@ -238,10 +164,8 @@ def test_update_empty_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
-        global_state,
-        proposer_address=proposer.address,
-        registry_app_id=xgov_registry_mock_client.app_id,
+    assert_empty_proposal_global_state(
+        global_state, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -257,26 +181,9 @@ def test_update_wrong_title_1(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
@@ -292,16 +199,9 @@ def test_update_wrong_title_1(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer_address=proposer.address,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        status=STATUS_DRAFT,
-        category=CATEGORY_SMALL,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
         registry_app_id=xgov_registry_mock_client.app_id,
     )
 
@@ -318,26 +218,9 @@ def test_update_wrong_title_2(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
@@ -353,16 +236,9 @@ def test_update_wrong_title_2(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer_address=proposer.address,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        status=STATUS_DRAFT,
-        category=CATEGORY_SMALL,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
         registry_app_id=xgov_registry_mock_client.app_id,
     )
 
