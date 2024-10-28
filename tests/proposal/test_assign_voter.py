@@ -2,30 +2,21 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.encoding import decode_address
 
 from smart_contracts.artifacts.proposal.client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
-from smart_contracts.proposal.enums import (
-    CATEGORY_SMALL,
-    FUNDING_PROACTIVE,
-    STATUS_DRAFT,
-    STATUS_FINAL,
-    STATUS_VOTING,
-)
 from tests.proposal.common import (
-    DEFAULT_COMMITTEE_ID,
-    DEFAULT_COMMITTEE_MEMBERS,
-    DEFAULT_COMMITTEE_VOTES,
     LOCKED_AMOUNT,
-    REQUESTED_AMOUNT,
     assert_account_balance,
-    assert_proposal_global_state,
+    assert_boxes,
+    assert_draft_proposal_global_state,
+    assert_empty_proposal_global_state,
+    assert_final_proposal_global_state,
+    assert_voting_proposal_global_state,
+    get_voter_box_key,
     logic_error_type,
+    submit_proposal,
 )
 
 # TODO add tests for assign_voter on other statuses
@@ -39,26 +30,9 @@ def test_assign_voter_success(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -83,6 +57,8 @@ def test_assign_voter_success(
         discussion_duration=discussion_duration
     )  # restore
 
+    voter_box_key = get_voter_box_key(committee_member.address)
+
     proposal_client.assign_voter(
         voter=committee_member.address,
         voting_power=10,
@@ -93,8 +69,7 @@ def test_assign_voter_success(
             boxes=[
                 (
                     0,
-                    VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                    + decode_address(committee_member.address),  # type: ignore
+                    voter_box_key,
                 )
             ],
             suggested_params=sp,
@@ -103,22 +78,18 @@ def test_assign_voter_success(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_final_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_FINAL,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
+        registry_app_id=xgov_registry_mock_client.app_id,
         voters_count=1,
         assigned_votes=10,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[(voter_box_key, "AAAAAAAAAAoA")],
     )
 
 
@@ -130,26 +101,9 @@ def test_assign_voter_assign_all_voters(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -185,8 +139,7 @@ def test_assign_voter_assign_all_voters(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -195,22 +148,22 @@ def test_assign_voter_assign_all_voters(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_voting_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_VOTING,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_count=len(committee_members),
-        assigned_votes=10 * len(committee_members),
+        registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[
+            (
+                get_voter_box_key(committee_member.address),
+                "AAAAAAAAAAoA",
+            )
+            for committee_member in committee_members
+        ],
     )
 
 
@@ -222,26 +175,9 @@ def test_assign_voter_not_committee_publisher(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -277,8 +213,7 @@ def test_assign_voter_not_committee_publisher(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -287,20 +222,16 @@ def test_assign_voter_not_committee_publisher(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_final_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_FINAL,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
+        registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[],  # no voter boxes
     )
 
 
@@ -312,26 +243,9 @@ def test_assign_voter_voter_already_assigned(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -356,6 +270,8 @@ def test_assign_voter_voter_already_assigned(
         discussion_duration=discussion_duration
     )  # restore
 
+    voter_box_key = get_voter_box_key(committee_member.address)
+
     proposal_client.assign_voter(
         voter=committee_member.address,
         voting_power=10,
@@ -366,8 +282,7 @@ def test_assign_voter_voter_already_assigned(
             boxes=[
                 (
                     0,
-                    VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                    + decode_address(committee_member.address),  # type: ignore
+                    voter_box_key,
                 )
             ],
             suggested_params=sp,
@@ -385,8 +300,7 @@ def test_assign_voter_voter_already_assigned(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        voter_box_key,
                     )
                 ],
                 suggested_params=sp,
@@ -396,22 +310,18 @@ def test_assign_voter_voter_already_assigned(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_final_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_FINAL,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
+        registry_app_id=xgov_registry_mock_client.app_id,
         voters_count=1,
         assigned_votes=10,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[(voter_box_key, "AAAAAAAAAAoA")],
     )
 
 
@@ -437,8 +347,7 @@ def test_assign_voter_empty_proposal(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -447,10 +356,16 @@ def test_assign_voter_empty_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
-        global_state=global_state,
+    assert_empty_proposal_global_state(
+        global_state,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[],  # no voter box
     )
 
 
@@ -462,26 +377,9 @@ def test_assign_voter_draft_proposal(
     committee_publisher: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -498,8 +396,7 @@ def test_assign_voter_draft_proposal(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -508,23 +405,22 @@ def test_assign_voter_draft_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_DRAFT,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
     )
 
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
         LOCKED_AMOUNT,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[],  # no voter box
     )
 
 
@@ -536,26 +432,9 @@ def test_assign_voter_voting_power_mismatch(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -591,8 +470,7 @@ def test_assign_voter_voting_power_mismatch(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -610,8 +488,7 @@ def test_assign_voter_voting_power_mismatch(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_members[-1].address),  # type: ignore
+                        get_voter_box_key(committee_members[-1].address),
                     )
                 ],
                 suggested_params=sp,
@@ -620,22 +497,24 @@ def test_assign_voter_voting_power_mismatch(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_final_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_FINAL,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
+        registry_app_id=xgov_registry_mock_client.app_id,
         voters_count=len(committee_members[:-1]),
         assigned_votes=10 * len(committee_members[:-1]),
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[
+            (
+                get_voter_box_key(committee_member.address),
+                "AAAAAAAAAAoA",
+            )
+            for committee_member in committee_members[:-1]
+        ],
     )
 
 
@@ -647,26 +526,9 @@ def test_assign_voter_voting_open(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    proposal_client.submit(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=LOCKED_AMOUNT,
-                )
-            ),
-            signer=proposer.signer,
-        ),
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
     sp = algorand_client.get_suggested_params()
@@ -702,8 +564,7 @@ def test_assign_voter_voting_open(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(committee_member.address),  # type: ignore
+                        get_voter_box_key(committee_member.address),
                     )
                 ],
                 suggested_params=sp,
@@ -721,8 +582,7 @@ def test_assign_voter_voting_open(
                 boxes=[
                     (
                         0,
-                        VOTER_BOX_KEY_PREFIX.encode()  # type: ignore
-                        + decode_address(proposer.address),  # type: ignore
+                        get_voter_box_key(proposer.address),
                     )
                 ],
                 suggested_params=sp,
@@ -731,20 +591,20 @@ def test_assign_voter_voting_open(
 
     global_state = proposal_client.get_global_state()
 
-    assert_proposal_global_state(
+    assert_voting_proposal_global_state(
         global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
-        status=STATUS_VOTING,
-        title="Test Proposal",
-        cid=b"\x01" * 59,
-        funding_type=FUNDING_PROACTIVE,
-        requested_amount=REQUESTED_AMOUNT,
-        locked_amount=LOCKED_AMOUNT,
-        category=CATEGORY_SMALL,
-        committee_id=DEFAULT_COMMITTEE_ID,
-        committee_members=DEFAULT_COMMITTEE_MEMBERS,
-        committee_votes=DEFAULT_COMMITTEE_VOTES,
-        voters_count=len(committee_members),
-        assigned_votes=10 * len(committee_members),
+        registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[
+            (
+                get_voter_box_key(committee_member.address),
+                "AAAAAAAAAAoA",
+            )
+            for committee_member in committee_members
+        ],
     )
