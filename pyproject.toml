@@ -17,7 +17,7 @@ black = {extras = ["d"], version = "^24.8.0"}
 ruff = "^0.6.8"
 mypy = "^1.11.2"
 pytest = "^8.3.3"
-pytest-cov = "^5.0.0"
+pytest-cov = "^6.0.0"
 pytest-sugar = "^1.0.0"
 pip-audit = "^2.7.3"
 pre-commit = "^3.8.0"
