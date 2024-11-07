@@ -1,0 +1,1085 @@
+{
+  "version": 3,
+  "sources": [
+    "../../proposal_mock/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AA2BA;;;AAIgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;AADe;AADvB;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADuB;AAD/B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;;AA5ER;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAAA;AAiFK;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAjFL;;;AAiFK;;;AAAA;AAAA;AAWA;;AAAA;AAAA;AAAA;;AAAA;AA5FL;;;AAAA;AA4FK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AAhGL;;;AAAA;AAgGK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AApGL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAoGK;;;AAAA;AAAA;AAQA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AA5GL;AAAA;AAiFA;;;AAQQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAIQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.approval_program",
+      "params": {},
+      "block": "smart_contracts.proposal_mock.contract.ProposalMock.approval_program",
+      "stack_in": [],
+      "op": "intcblock 0 1"
+    },
+    "5": {
+      "op": "bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573"
+    },
+    "104": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "106": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "109": {
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.__init__",
+      "op": "callsub __init__"
+    },
+    "112": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.__puya_arc4_router__",
+      "op": "callsub __puya_arc4_router__",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "115": {
+      "op": "return",
+      "stack_out": []
+    },
+    "116": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.__init__",
+      "params": {},
+      "block": "__init__",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "119": {
+      "op": "bytec_1 // 0x70726f706f736572"
+    },
+    "120": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "0x70726f706f736572",
+        "new_state_value%0#0"
+      ],
+      "stack_out": [
+        "0x70726f706f736572",
+        "new_state_value%0#0"
+      ]
+    },
+    "122": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "123": {
+      "op": "bytec_2 // 0x72656769737472795f6170705f6964",
+      "defined_out": [
+        "0x72656769737472795f6170705f6964"
+      ],
+      "stack_out": [
+        "0x72656769737472795f6170705f6964"
+      ]
+    },
+    "124": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "0x72656769737472795f6170705f6964"
+      ],
+      "stack_out": [
+        "0x72656769737472795f6170705f6964",
+        "0"
+      ]
+    },
+    "125": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "126": {
+      "op": "pushbytes 0x7469746c65",
+      "defined_out": [
+        "0x7469746c65"
+      ],
+      "stack_out": [
+        "0x7469746c65"
+      ]
+    },
+    "133": {
+      "op": "bytec_0 // \"\"",
+      "defined_out": [
+        "\"\"",
+        "0x7469746c65"
+      ],
+      "stack_out": [
+        "0x7469746c65",
+        "\"\""
+      ]
+    },
+    "134": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "135": {
+      "op": "pushbytes 0x636964",
+      "defined_out": [
+        "0x636964"
+      ],
+      "stack_out": [
+        "0x636964"
+      ]
+    },
+    "140": {
+      "op": "bytec_0 // 0x",
+      "defined_out": [
+        "0x",
+        "0x636964"
+      ],
+      "stack_out": [
+        "0x636964",
+        "0x"
+      ]
+    },
+    "141": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "142": {
+      "op": "pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
+      "defined_out": [
+        "0x7375626d697373696f6e5f74696d657374616d70"
+      ],
+      "stack_out": [
+        "0x7375626d697373696f6e5f74696d657374616d70"
+      ]
+    },
+    "164": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x7375626d697373696f6e5f74696d657374616d70",
+        "0"
+      ]
+    },
+    "165": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "166": {
+      "op": "pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
+      "defined_out": [
+        "0x66696e616c697a6174696f6e5f74696d657374616d70"
+      ],
+      "stack_out": [
+        "0x66696e616c697a6174696f6e5f74696d657374616d70"
+      ]
+    },
+    "190": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x66696e616c697a6174696f6e5f74696d657374616d70",
+        "0"
+      ]
+    },
+    "191": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "192": {
+      "op": "bytec_3 // 0x737461747573",
+      "defined_out": [
+        "0x737461747573"
+      ],
+      "stack_out": [
+        "0x737461747573"
+      ]
+    },
+    "193": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x737461747573",
+        "0"
+      ]
+    },
+    "194": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "195": {
+      "op": "pushbytes 0x63617465676f7279",
+      "defined_out": [
+        "0x63617465676f7279"
+      ],
+      "stack_out": [
+        "0x63617465676f7279"
+      ]
+    },
+    "205": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x63617465676f7279",
+        "0"
+      ]
+    },
+    "206": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "207": {
+      "op": "pushbytes 0x66756e64696e675f74797065",
+      "defined_out": [
+        "0x66756e64696e675f74797065"
+      ],
+      "stack_out": [
+        "0x66756e64696e675f74797065"
+      ]
+    },
+    "221": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x66756e64696e675f74797065",
+        "0"
+      ]
+    },
+    "222": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "223": {
+      "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
+      "defined_out": [
+        "0x7265717565737465645f616d6f756e74"
+      ],
+      "stack_out": [
+        "0x7265717565737465645f616d6f756e74"
+      ]
+    },
+    "225": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x7265717565737465645f616d6f756e74",
+        "0"
+      ]
+    },
+    "226": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "227": {
+      "op": "pushbytes 0x6c6f636b65645f616d6f756e74",
+      "defined_out": [
+        "0x6c6f636b65645f616d6f756e74"
+      ],
+      "stack_out": [
+        "0x6c6f636b65645f616d6f756e74"
+      ]
+    },
+    "242": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x6c6f636b65645f616d6f756e74",
+        "0"
+      ]
+    },
+    "243": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "244": {
+      "op": "bytec 5 // 0x636f6d6d69747465655f6964",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964"
+      ]
+    },
+    "246": {
+      "op": "bytec_0 // 0x",
+      "stack_out": [
+        "0x636f6d6d69747465655f6964",
+        "0x"
+      ]
+    },
+    "247": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "248": {
+      "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ]
+    },
+    "250": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "0"
+      ]
+    },
+    "251": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "252": {
+      "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ]
+    },
+    "254": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "0"
+      ]
+    },
+    "255": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "256": {
+      "op": "pushbytes 0x766f7465645f6d656d62657273",
+      "defined_out": [
+        "0x766f7465645f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x766f7465645f6d656d62657273"
+      ]
+    },
+    "271": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x766f7465645f6d656d62657273",
+        "0"
+      ]
+    },
+    "272": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "273": {
+      "op": "pushbytes 0x617070726f76616c73",
+      "defined_out": [
+        "0x617070726f76616c73"
+      ],
+      "stack_out": [
+        "0x617070726f76616c73"
+      ]
+    },
+    "284": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x617070726f76616c73",
+        "0"
+      ]
+    },
+    "285": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "286": {
+      "op": "pushbytes 0x72656a656374696f6e73",
+      "defined_out": [
+        "0x72656a656374696f6e73"
+      ],
+      "stack_out": [
+        "0x72656a656374696f6e73"
+      ]
+    },
+    "298": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x72656a656374696f6e73",
+        "0"
+      ]
+    },
+    "299": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "300": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "301": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.__puya_arc4_router__",
+      "params": {},
+      "block": "__puya_arc4_router__",
+      "stack_in": [],
+      "op": "proto 0 1"
+    },
+    "304": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "306": {
+      "op": "bz __puya_arc4_router___after_if_else@10",
+      "stack_out": []
+    },
+    "309": {
+      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\""
+    },
+    "336": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create(address)void)",
+        "Method(release_funds()void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
+        "Method(set_requested_amount(uint64)void)",
+        "Method(set_status(uint64)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(create(address)void)",
+        "Method(set_status(uint64)void)",
+        "Method(set_requested_amount(uint64)void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
+        "Method(release_funds()void)",
+        "tmp%2#0"
+      ]
+    },
+    "339": {
+      "op": "match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6",
+      "stack_out": []
+    },
+    "351": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "352": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "353": {
+      "block": "__puya_arc4_router___create_route@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "355": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "356": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "357": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "359": {
+      "op": "!",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "360": {
+      "op": "assert // is creating",
+      "stack_out": []
+    },
+    "361": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "364": {
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.create",
+      "op": "callsub create",
+      "stack_out": []
+    },
+    "367": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "368": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "369": {
+      "block": "__puya_arc4_router___set_status_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "371": {
+      "op": "!",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "372": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "373": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "375": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "376": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%12#0"
+      ],
+      "stack_out": [
+        "tmp%12#0"
+      ]
+    },
+    "379": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "380": {
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
+      "op": "callsub set_status",
+      "stack_out": []
+    },
+    "383": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "384": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "385": {
+      "block": "__puya_arc4_router___set_requested_amount_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "387": {
+      "op": "!",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "388": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "389": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "391": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "392": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "tmp%18#0"
+      ]
+    },
+    "395": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "396": {
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
+      "op": "callsub set_requested_amount",
+      "stack_out": []
+    },
+    "399": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "400": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "401": {
+      "block": "__puya_arc4_router___set_committee_details_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "403": {
+      "op": "!",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "404": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "405": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "tmp%22#0"
+      ]
+    },
+    "407": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "408": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%24#0"
+      ],
+      "stack_out": [
+        "tmp%24#0"
+      ]
+    },
+    "411": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%25#0"
+      ]
+    },
+    "414": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%26#0"
+      ]
+    },
+    "415": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%26#0",
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%26#0",
+        "tmp%27#0"
+      ]
+    },
+    "418": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%24#0",
+        "tmp%26#0",
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%24#0",
+        "tmp%26#0",
+        "tmp%28#0"
+      ]
+    },
+    "419": {
+      "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
+      "op": "callsub set_committee_details",
+      "stack_out": []
+    },
+    "422": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "423": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "424": {
+      "block": "__puya_arc4_router___release_funds_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "426": {
+      "op": "!",
+      "defined_out": [
+        "tmp%30#0"
+      ],
+      "stack_out": [
+        "tmp%30#0"
+      ]
+    },
+    "427": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "428": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "430": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "431": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "432": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "433": {
+      "block": "__puya_arc4_router___after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "434": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "435": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.create",
+      "params": {
+        "proposer#0": "bytes"
+      },
+      "block": "create",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "438": {
+      "op": "bytec_1 // 0x70726f706f736572",
+      "defined_out": [
+        "0x70726f706f736572"
+      ],
+      "stack_out": [
+        "0x70726f706f736572"
+      ]
+    },
+    "439": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x70726f706f736572",
+        "proposer#0 (copy)"
+      ],
+      "stack_out": [
+        "0x70726f706f736572",
+        "proposer#0 (copy)"
+      ]
+    },
+    "441": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "442": {
+      "op": "bytec_2 // 0x72656769737472795f6170705f6964"
+    },
+    "443": {
+      "op": "global CallerApplicationID",
+      "defined_out": [
+        "0x72656769737472795f6170705f6964",
+        "new_state_value%0#0"
+      ],
+      "stack_out": [
+        "0x72656769737472795f6170705f6964",
+        "new_state_value%0#0"
+      ]
+    },
+    "445": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "446": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "447": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
+      "params": {
+        "status#0": "uint64"
+      },
+      "block": "set_status",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "450": {
+      "op": "bytec_3 // 0x737461747573",
+      "defined_out": [
+        "0x737461747573"
+      ],
+      "stack_out": [
+        "0x737461747573"
+      ]
+    },
+    "451": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x737461747573",
+        "status#0 (copy)"
+      ],
+      "stack_out": [
+        "0x737461747573",
+        "status#0 (copy)"
+      ]
+    },
+    "453": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "454": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "455": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
+      "params": {
+        "requested_amount#0": "uint64"
+      },
+      "block": "set_requested_amount",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "458": {
+      "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
+      "defined_out": [
+        "0x7265717565737465645f616d6f756e74"
+      ],
+      "stack_out": [
+        "0x7265717565737465645f616d6f756e74"
+      ]
+    },
+    "460": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x7265717565737465645f616d6f756e74",
+        "requested_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "0x7265717565737465645f616d6f756e74",
+        "requested_amount#0 (copy)"
+      ]
+    },
+    "462": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "463": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "464": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
+      "params": {
+        "cid#0": "bytes",
+        "size#0": "uint64",
+        "votes#0": "uint64"
+      },
+      "block": "set_committee_details",
+      "stack_in": [],
+      "op": "proto 3 0"
+    },
+    "467": {
+      "op": "bytec 5 // 0x636f6d6d69747465655f6964",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964"
+      ]
+    },
+    "469": {
+      "op": "frame_dig -3",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964",
+        "cid#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964",
+        "cid#0 (copy)"
+      ]
+    },
+    "471": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "472": {
+      "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ]
+    },
+    "474": {
+      "op": "frame_dig -2",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "size#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "size#0 (copy)"
+      ]
+    },
+    "476": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "477": {
+      "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ]
+    },
+    "479": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "votes#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "votes#0 (copy)"
+      ]
+    },
+    "481": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "482": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}
