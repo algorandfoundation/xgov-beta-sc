@@ -1,0 +1,681 @@
+{
+  "version": 3,
+  "sources": [
+    "../../xgov_subscriber_app_mock/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;AA6BA;;;AAGY;;AAAA;AADJ;AAGO;;AAAA;AAAP;AACO;;AAAA;AAAP;AACO;;AAAA;AAAP;;AAjBR;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;AAAA;AAmBK;;AAAA;AAAA;AAAA;;AAAA;AAnBL;;;AAAA;AAmBK;;;AAAA;AAAA;AAkBA;;AAAA;AAAA;AAAA;;AAAA;AArCL;;;AAAA;AAqCK;;;AAAA;AAAA;AArCL;;AAAA;;;;;;;;;AAAA;AAAA;AAmBA;;;AAGoD;;AAChC;;;;;;;;;;;;;;;;;;AADgC;AAAA;AAK/B;;AAAA;;AAAA;AAIb;;;;;AALU;;;AAAA;;;AAKV;;;;;AAAA;;;;;;;;AAAA;;;AAAA;;;AAAA;;AAMR;;;AAEQ;AAGS;;AAAqB;;AAArB;;;;;AAHT;;;;;;;;AAAA;;;;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program",
+      "params": {},
+      "block": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program",
+      "stack_in": [],
+      "op": "intcblock 0 1 6"
+    },
+    "6": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "8": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "11": {
+      "callsub": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.__init__",
+      "op": "callsub __init__"
+    },
+    "14": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "callsub": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.__puya_arc4_router__",
+      "op": "callsub __puya_arc4_router__",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "17": {
+      "op": "return",
+      "stack_out": []
+    },
+    "18": {
+      "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.__init__",
+      "params": {},
+      "block": "__init__",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "21": {
+      "op": "txn GlobalNumByteSlice",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "23": {
+      "op": "!",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "24": {
+      "op": "assert // Wrong Global Bytes allocation",
+      "stack_out": []
+    },
+    "25": {
+      "op": "txn GlobalNumUint",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "27": {
+      "op": "!",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "28": {
+      "op": "assert // Wrong Global UInts allocation",
+      "stack_out": []
+    },
+    "29": {
+      "op": "txn LocalNumByteSlice",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "31": {
+      "op": "!",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "32": {
+      "op": "assert // Wrong Local Bytes allocation",
+      "stack_out": []
+    },
+    "33": {
+      "op": "txn LocalNumUint",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "35": {
+      "op": "!",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "36": {
+      "op": "assert // Wrong Local UInts allocation",
+      "stack_out": []
+    },
+    "37": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "38": {
+      "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.__puya_arc4_router__",
+      "params": {},
+      "block": "__puya_arc4_router__",
+      "stack_in": [],
+      "op": "proto 0 1"
+    },
+    "41": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "43": {
+      "op": "bz __puya_arc4_router___bare_routing@6",
+      "stack_out": []
+    },
+    "46": {
+      "op": "pushbytess 0xd5e8532a 0x5a2a3f16 // method \"subscribe_xgov(uint64)void\", method \"unsubscribe_xgov(uint64)void\""
+    },
+    "58": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(subscribe_xgov(uint64)void)",
+        "Method(unsubscribe_xgov(uint64)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(subscribe_xgov(uint64)void)",
+        "Method(unsubscribe_xgov(uint64)void)",
+        "tmp%2#0"
+      ]
+    },
+    "61": {
+      "op": "match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3",
+      "stack_out": []
+    },
+    "67": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "68": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "69": {
+      "block": "__puya_arc4_router___subscribe_xgov_route@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "71": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "72": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "73": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "75": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "76": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "79": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "80": {
+      "callsub": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov",
+      "op": "callsub subscribe_xgov",
+      "stack_out": []
+    },
+    "83": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "84": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "85": {
+      "block": "__puya_arc4_router___unsubscribe_xgov_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "87": {
+      "op": "!",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "88": {
+      "op": "assert // OnCompletion is NoOp",
+      "stack_out": []
+    },
+    "89": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "91": {
+      "op": "assert // is not creating",
+      "stack_out": []
+    },
+    "92": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "95": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "96": {
+      "callsub": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.unsubscribe_xgov",
+      "op": "callsub unsubscribe_xgov",
+      "stack_out": []
+    },
+    "99": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "100": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "101": {
+      "block": "__puya_arc4_router___bare_routing@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "103": {
+      "op": "bnz __puya_arc4_router___after_if_else@10",
+      "stack_out": []
+    },
+    "106": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "108": {
+      "op": "!",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "109": {
+      "op": "assert // is creating",
+      "stack_out": []
+    },
+    "110": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "111": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "112": {
+      "block": "__puya_arc4_router___after_if_else@10",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "113": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "114": {
+      "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov",
+      "params": {
+        "app_id#0": "uint64"
+      },
+      "block": "subscribe_xgov",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "117": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "app_id#0 (copy)"
+      ],
+      "stack_out": [
+        "app_id#0 (copy)"
+      ]
+    },
+    "119": {
+      "op": "pushbytes 0x78676f765f6d696e5f62616c616e6365",
+      "defined_out": [
+        "0x78676f765f6d696e5f62616c616e6365",
+        "app_id#0 (copy)"
+      ],
+      "stack_out": [
+        "app_id#0 (copy)",
+        "0x78676f765f6d696e5f62616c616e6365"
+      ]
+    },
+    "137": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "xgov_min_balance#0",
+        "xgov_min_balance_exists#0"
+      ],
+      "stack_out": [
+        "xgov_min_balance#0",
+        "xgov_min_balance_exists#0"
+      ]
+    },
+    "138": {
+      "op": "pop",
+      "stack_out": [
+        "xgov_min_balance#0"
+      ]
+    },
+    "139": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "xgov_min_balance#0",
+        "app_id#0 (copy)"
+      ]
+    },
+    "141": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "value%0#0",
+        "xgov_min_balance#0"
+      ],
+      "stack_out": [
+        "xgov_min_balance#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "143": {
+      "op": "assert // application exists",
+      "stack_out": [
+        "xgov_min_balance#0",
+        "value%0#0"
+      ]
+    },
+    "144": {
+      "op": "itxn_begin"
+    },
+    "145": {
+      "op": "itxn_field Receiver"
+    },
+    "147": {
+      "op": "itxn_field Amount",
+      "stack_out": []
+    },
+    "149": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "pay"
+      ],
+      "stack_out": [
+        "pay"
+      ]
+    },
+    "150": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "152": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "153": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "155": {
+      "op": "itxn_next"
+    },
+    "156": {
+      "op": "frame_dig -1",
+      "stack_out": [
+        "app_id#0 (copy)"
+      ]
+    },
+    "158": {
+      "op": "itxn_field ApplicationID",
+      "stack_out": []
+    },
+    "160": {
+      "op": "pushbytes 0x195715ea // method \"subscribe_xgov(pay)void\"",
+      "defined_out": [
+        "Method(subscribe_xgov(pay)void)"
+      ],
+      "stack_out": [
+        "Method(subscribe_xgov(pay)void)"
+      ]
+    },
+    "166": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": []
+    },
+    "168": {
+      "op": "intc_2 // appl",
+      "defined_out": [
+        "appl"
+      ],
+      "stack_out": [
+        "appl"
+      ]
+    },
+    "169": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "171": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "172": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "174": {
+      "op": "itxn_submit"
+    },
+    "175": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "176": {
+      "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.unsubscribe_xgov",
+      "params": {
+        "app_id#0": "uint64"
+      },
+      "block": "unsubscribe_xgov",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "179": {
+      "op": "itxn_begin"
+    },
+    "180": {
+      "op": "global MinTxnFee",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "182": {
+      "op": "pushint 2 // 2",
+      "defined_out": [
+        "2",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "2"
+      ]
+    },
+    "184": {
+      "op": "*",
+      "defined_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ]
+    },
+    "185": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "app_id#0 (copy)",
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0",
+        "app_id#0 (copy)"
+      ]
+    },
+    "187": {
+      "op": "itxn_field ApplicationID",
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ]
+    },
+    "189": {
+      "op": "pushbytes 0xdf39fdb9 // method \"unsubscribe_xgov()void\"",
+      "defined_out": [
+        "Method(unsubscribe_xgov()void)",
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0",
+        "Method(unsubscribe_xgov()void)"
+      ]
+    },
+    "195": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ]
+    },
+    "197": {
+      "op": "intc_2 // appl",
+      "defined_out": [
+        "appl",
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ],
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0",
+        "appl"
+      ]
+    },
+    "198": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "inner_txn_params%0%%param_Fee_idx_0#0"
+      ]
+    },
+    "200": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "202": {
+      "op": "itxn_submit"
+    },
+    "203": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}
