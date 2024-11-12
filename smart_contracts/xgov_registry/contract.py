@@ -362,23 +362,13 @@ class XGovRegistry(
         """Unsubscribes the sender from being an xGov
 
         Raises:
-            err.INSUFFICIENT_FEE: If the fee won't cover the inner transaction MBR refund
             err.UNAUTHORIZED: If the sender is not currently an xGov
         """
 
-        # ensure they covered the itxn fee
-        assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
         assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
         del self.xgov_box[Txn.sender]
-
-        # refund
-        itxn.Payment(
-            receiver=Txn.sender,
-            amount=self.xgov_fee.value,
-            fee=0,
-        ).submit()
 
     @arc4.abimethod()
     def set_voting_account(

@@ -332,10 +332,6 @@ def xgov(
     )
 
     global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    print(global_state.xgov_fee)
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -351,7 +347,6 @@ def xgov(
         transaction_parameters=TransactionParameters(
             sender=account.address,
             signer=account.signer,
-            suggested_params=sp,
             boxes=[(0, xgov_box_name(account.address))],
         ),
     )
