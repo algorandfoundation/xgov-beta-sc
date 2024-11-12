@@ -153,7 +153,7 @@ class Proposal(
         maximum_voting_duration = self.get_voting_duration(self.category.value)
 
         assert (
-            voting_duration > maximum_voting_duration  # voting period has ended
+            voting_duration >= maximum_voting_duration  # voting period has ended
             or self.voted_members.value
             == self.committee_members.value  # all committee members have voted
         ), err.VOTING_ONGOING
