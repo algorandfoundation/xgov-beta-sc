@@ -51,7 +51,7 @@ from tests.xgov_registry.common import (
     WEIGHTED_QUORUM_LARGE,
     WEIGHTED_QUORUM_MEDIUM,
     WEIGHTED_QUORUM_SMALL,
-    XGOV_MIN_BALANCE,
+    XGOV_FEE,
     proposer_box_name,
     xgov_box_name,
 )
@@ -279,7 +279,7 @@ def funded_xgov_registry_client(
 @pytest.fixture(scope="function")
 def xgov_registry_config() -> XGovRegistryConfig:
     return XGovRegistryConfig(
-        xgov_min_balance=XGOV_MIN_BALANCE,
+        xgov_fee=XGOV_FEE,
         proposer_fee=PROPOSER_FEE,
         proposal_fee=PROPOSAL_FEE,
         proposal_publishing_bps=PROPOSAL_PUBLISHING_BPS,
@@ -335,7 +335,7 @@ def xgov(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    print(global_state.xgov_min_balance)
+    print(global_state.xgov_fee)
 
     xgov_registry_client.subscribe_xgov(
         payment=TransactionWithSigner(
@@ -343,7 +343,7 @@ def xgov(
                 PayParams(
                     sender=account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance,
+                    amount=global_state.xgov_fee,
                 ),
             ),
             signer=account.signer,

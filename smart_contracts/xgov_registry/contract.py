@@ -57,7 +57,7 @@ class XGovRegistry(
             arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER
         )
 
-        self.xgov_min_balance = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_MIN_BALANCE)
+        self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
         self.proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_FEE)
         self.proposal_publishing_bps = GlobalState(
@@ -184,25 +184,25 @@ class XGovRegistry(
 
     @arc4.abimethod(create="require")
     def create(self) -> None:
-        """Create the xgov registry.
+        """Create the xGov Registry.
 
         Args:
-            manager (arc4.Address): Address of the manager
-            payor (arc4.Address): Address of the payor
-            committee_manager (arc4.Address): Address of the committee manager
+            manager (arc4.Address): Address of the xGov Manager
+            payor (arc4.Address): Address of the xGov Payor
+            committee_manager (arc4.Address): Address of the xGov Committee Manager
         """
 
         self.xgov_manager.value = arc4.Address(Txn.sender)
 
     @arc4.abimethod()
     def set_xgov_manager(self, manager: arc4.Address) -> None:
-        """Sets the XGov manager.
+        """Sets the xGov Manager.
 
         Args:
-            manager (arc4.Address): Address of the new manager
+            manager (arc4.Address): Address of the new xGov Manager
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -210,13 +210,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_payor(self, payor: arc4.Address) -> None:
-        """Sets the XGov payor.
+        """Sets the xGov Payor.
 
         Args:
-            payor (arc4.Address): Address of the new payor
+            payor (arc4.Address): Address of the new xGov Payor
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -224,13 +224,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_xgov_reviewer(self, reviewer: arc4.Address) -> None:
-        """Sets the XGov Reviwer.
+        """Sets the xGov Reviewer.
 
         Args:
-            reviewer (arc4.Address): Address of the new reviewer
+            reviewer (arc4.Address): Address of the new xGov Reviewer
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -241,10 +241,10 @@ class XGovRegistry(
         """Sets the KYC provider.
 
         Args:
-            provider (arc4.Address): Address of the new provider
+            provider (arc4.Address): Address of the new KYC Provider
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -252,13 +252,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_committee_manager(self, manager: arc4.Address) -> None:
-        """Sets the committee manager.
+        """Sets the Committee Manager.
 
         Args:
-            manager (arc4.Address): Address of the new manager
+            manager (arc4.Address): Address of the new xGov Manager
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -266,13 +266,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_committee_publisher(self, publisher: arc4.Address) -> None:
-        """Sets the committee publisher.
+        """Sets the Committee Publisher.
 
         Args:
-            publisher (arc4.Address): Address of the new publisher
+            publisher (arc4.Address): Address of the new Committee Publisher
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -280,20 +280,20 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
-        """Sets the configurable global state keys of the registry.
+        """Sets the configuration of the xGov Registry.
 
         Args:
             config (arc4.Struct): Configuration class containing the field data
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
             err.NO_PENDING_PROPOSALS: If there are currently pending proposals
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
-        self.xgov_min_balance.value = config.xgov_min_balance.native
+        self.xgov_fee.value = config.xgov_fee.native
         self.proposer_fee.value = config.proposer_fee.native
         self.proposal_fee.value = config.proposal_fee.native
         self.proposal_publishing_bps.value = config.proposal_publishing_bps.native
@@ -325,10 +325,10 @@ class XGovRegistry(
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
-        """Updates the registry contract
+        """Updates the xGov Registry contract
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the current XGov manager
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
             err.NO_PENDING_PROPOSALS: If there are currently pending proposals
         """
 
@@ -336,15 +336,15 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov(self, payment: gtxn.PaymentTransaction) -> None:
-        """Subscribes the sender to being an XGov
+        """Subscribes the sender to being an xGov
 
         Args:
-            payment (gtxn.PaymentTransaction): The payment transaction covering the signup MBR
+            payment (gtxn.PaymentTransaction): The payment transaction covering the signup fee
 
         Raises:
-            err.ALREADY_XGOV: If the sender is already an XGov
-            err.WRONG_RECEIVER: If the recipient is not the registry address
-            err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the xgov_min_balance global state key
+            err.ALREADY_XGOV: If the sender is already an xGov
+            err.WRONG_RECEIVER: If the recipient is not the xGov Registry address
+            err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the xgov_fee global state key
         """
 
         assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
@@ -352,18 +352,18 @@ class XGovRegistry(
         assert (
             payment.receiver == Global.current_application_address
         ), err.WRONG_RECEIVER
-        assert payment.amount == self.xgov_min_balance.value, err.WRONG_PAYMENT_AMOUNT
+        assert payment.amount == self.xgov_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # create box
         self.xgov_box[Txn.sender] = arc4.Address(Txn.sender)
 
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
-        """Unsubscribes the sender from being an XGov
+        """Unsubscribes the sender from being an xGov
 
         Raises:
-            err.INSUFFICIENT_FEE: If the fee wont cover the inner transaction MBR refund
-            err.UNAUTHORIZED: If the sender is not currently an XGov
+            err.INSUFFICIENT_FEE: If the fee won't cover the inner transaction MBR refund
+            err.UNAUTHORIZED: If the sender is not currently an xGov
         """
 
         # ensure they covered the itxn fee
@@ -376,7 +376,7 @@ class XGovRegistry(
         # refund
         itxn.Payment(
             receiver=Txn.sender,
-            amount=self.xgov_min_balance.value,
+            amount=self.xgov_fee.value,
             fee=0,
         ).submit()
 
@@ -384,13 +384,13 @@ class XGovRegistry(
     def set_voting_account(
         self, xgov_address: arc4.Address, voting_address: arc4.Address
     ) -> None:
-        """Sets the voting account for the XGov
+        """Sets the voting address for the xGov
 
         Args:
             voting_address (arc4.Address): The voting account address to delegate voting power to
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not currently an XGov
+            err.UNAUTHORIZED: If the sender is not currently an xGov
             err.VOTING_ADDRESS_MUST_BE_DIFFERENT: If the new voting account is the same as currently set
         """
 
@@ -408,14 +408,14 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
-        """Subscribes the sender to being an proposer
+        """Subscribes the sender to being a Proposer
 
         Args:
             payment (gtxn.PaymentTransaction): The payment transaction covering the proposer fee
 
         Raises:
-            err.ALREADY_PROPOSER: If the sender is already a proposer
-            err.WRONG_RECEIVER: If the recipient is not the registry address
+            err.ALREADY_PROPOSER: If the sender is already a Proposer
+            err.WRONG_RECEIVER: If the recipient is not the xGov Registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the proposer_fee global state key
         """
 
@@ -439,13 +439,13 @@ class XGovRegistry(
         """Sets a proposer's KYC status
 
         Args:
-            proposer (arc4.Address): The address of the proposer
-            kyc_status (arc4.Bool): The new status of the proposer
+            proposer (arc4.Address): The address of the Proposer
+            kyc_status (arc4.Bool): The new status of the Proposer
             kyc_expiring (arc4.UInt64): The expiration date as a unix timestamp of the time the KYC expires
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the KYC Provider
-            err.PROPOSER_DOES_NOT_EXIST: If the referenced address is not a proposer
+            err.PROPOSER_DOES_NOT_EXIST: If the referenced address is not a Proposer
         """
 
         # check if kyc provider
@@ -464,15 +464,15 @@ class XGovRegistry(
     def declare_committee(
         self, cid: ptyp.CommitteeId, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
-        """Sets the committee details
+        """Sets the xGov Committee in charge
 
         Args:
-            id (ptyp.CommitteeId): The id of the commitee
-            size (arc4.UInt64): The size of the committee
-            votes (arc4.UInt64): The voting power of the committee
+            id (ptyp.CommitteeId): The ID of the xGov Committee
+            size (arc4.UInt64): The size of the xGov Committee
+            votes (arc4.UInt64): The voting power of the xGov Committee
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the XGov manager
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
         """
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
@@ -486,15 +486,15 @@ class XGovRegistry(
         """Creates a new Proposal
 
         Args:
-            payment (gtxn.PaymentTransaction): payment for covering the proposal fee & child contract MBR
+            payment (gtxn.PaymentTransaction): payment for covering the proposal fee (includes child contract MBR)
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not a proposer
+            err.UNAUTHORIZED: If the sender is not a Proposer
             err.ALREADY_ACTIVE_PROPOSAL: If the proposer already has an active proposal
-            err.INVALID_KYC: If the proposer does not have valid KYC
-            err.INSUFFICIENT_FEE: If the fee for the current transaction doesnt cover the inner transaction fees
-            err.WRONG_RECEIVER: If the recipient is not the registry address
-            err.WRONG_PAYMENT_AMOUNT: If the payment amount doesnt match the proposal fee
+            err.INVALID_KYC: If the Proposer does not have valid KYC
+            err.INSUFFICIENT_FEE: If the fee for the current transaction doesn't cover the inner transaction fees
+            err.WRONG_RECEIVER: If the recipient is not the xGov Registry address
+            err.WRONG_PAYMENT_AMOUNT: If the payment amount doesn't match the proposal fee
         """
 
         # Check if the caller is a registered proposer
@@ -550,15 +550,15 @@ class XGovRegistry(
         """Disburses the funds for an approved proposal
 
         Args:
-            proposal_id (arc4.UInt64): The application id of the approved proposal
+            proposal_id (arc4.UInt64): The application ID of the approved proposal
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xgov_payor
+            err.UNAUTHORIZED: If the sender is not the xGov Payor
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
-            err.PROPOSAL_IS_NOT_APPROVED: If the proposals status is not Approved
-            err.WRONG_PROPOSER: If the proposer on the proposal is not found
-            err.INVALID_KYC: If the proposer is not KYC'd
-            err.INSUFFICIENT_TREASURY_FUNDS: If the registry does not have enough funds for the disbursement
+            err.PROPOSAL_IS_NOT_APPROVED: If the proposal status is not approved
+            err.WRONG_PROPOSER: If the Proposer on the proposal is not found
+            err.INVALID_KYC: If the Proposer KYC is invalid or expired
+            err.INSUFFICIENT_TREASURY_FUNDS: If the xGov Registry does not have enough funds for the disbursement
         """
 
         # Verify the caller is the xGov Payor
@@ -608,13 +608,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
-        """Tracks deposits to the treasury
+        """Tracks deposits to the xGov Treasury (xGov Registry Account)
 
         Args:
             payment (gtxn.PaymentTransaction): the deposit transaction
 
         Raises:
-            err.WRONG_RECEIVER: If the recipient is not the treasury
+            err.WRONG_RECEIVER: If the recipient is not the xGov Treasury (xGov Registry Account)
         """
 
         assert (
@@ -624,13 +624,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def withdraw_funds(self, amount: UInt64) -> None:
-        """Remove funds from the treasury
+        """Remove funds from the xGov Treasury (xGov Registry Account)
 
         Args:
             amount (UInt64): the amount to remove
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the XGov manager
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
             err.INSUFFICIENT_FUNDS: If the requested amount is greater than the outstanding funds available
             err.INSUFFICIENT_FEE: If the fee is not enough to cover the inner transaction to send the funds back
         """
@@ -648,7 +648,7 @@ class XGovRegistry(
 
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.TypedGlobalState:
-        """Returns the global state of the applicaton"""
+        """Returns the xGov Registry state"""
 
         return typ.TypedGlobalState(
             xgov_manager=self.xgov_manager.value,
@@ -656,7 +656,7 @@ class XGovRegistry(
             kyc_provider=self.kyc_provider.value,
             committee_manager=self.committee_manager.value,
             committee_publisher=self.committee_publisher.value,
-            xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+            xgov_fee=arc4.UInt64(self.xgov_fee.value),
             proposer_fee=arc4.UInt64(self.proposer_fee.value),
             proposal_fee=arc4.UInt64(self.proposal_fee.value),
             proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),

@@ -34,7 +34,7 @@ def test_subscribe_xgov_success(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance,
+                    amount=global_state.xgov_fee,
                 ),
             ),
             signer=random_account.signer,
@@ -51,7 +51,7 @@ def test_subscribe_xgov_success(
         xgov_registry_client.app_address,
     )
 
-    assert (before_info["amount"] + global_state.xgov_min_balance) == after_info["amount"]  # type: ignore
+    assert (before_info["amount"] + global_state.xgov_fee) == after_info["amount"]  # type: ignore
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,

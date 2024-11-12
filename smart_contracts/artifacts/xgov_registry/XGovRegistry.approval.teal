@@ -2,7 +2,7 @@
 
 smart_contracts.xgov_registry.contract.XGovRegistry.approval_program:
     intcblock 0 1 30 2
-    bytecblock 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x78676f765f6d696e5f62616c616e6365 0x70726f706f73616c5f666565 0x78 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x70726f706f7365725f666565 0x00 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
+    bytecblock 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x78676f765f666565 0x70726f706f73616c5f666565 0x78 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x70726f706f7365725f666565 0x00 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
     txn ApplicationID
     bnz main_after_if_else@2
     callsub __init__
@@ -80,8 +80,8 @@ __init__:
     // )
     app_global_put
     // smart_contracts/xgov_registry/contract.py:60
-    // self.xgov_min_balance = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_MIN_BALANCE)
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    // self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
+    bytec 4 // 0x78676f765f666565
     intc_0 // 0
     app_global_put
     // smart_contracts/xgov_registry/contract.py:61
@@ -986,11 +986,11 @@ config_xgov_registry:
     callsub no_pending_proposals
     assert // Cannot perform operation with pending proposals
     // smart_contracts/xgov_registry/contract.py:296
-    // self.xgov_min_balance.value = config.xgov_min_balance.native
+    // self.xgov_fee.value = config.xgov_fee.native
     frame_dig -1
     extract 0 8 // on error: Index access is out of bounds
     btoi
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 4 // 0x78676f765f666565
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:297
@@ -1234,13 +1234,13 @@ subscribe_xgov:
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
     // smart_contracts/xgov_registry/contract.py:355
-    // assert payment.amount == self.xgov_min_balance.value, err.WRONG_PAYMENT_AMOUNT
+    // assert payment.amount == self.xgov_fee.value, err.WRONG_PAYMENT_AMOUNT
     frame_dig -1
     gtxns Amount
     intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 4 // 0x78676f765f666565
     app_global_get_ex
-    assert // check self.xgov_min_balance exists
+    assert // check self.xgov_fee exists
     ==
     assert // Wrong payment amount
     // smart_contracts/xgov_registry/contract.py:357-358
@@ -1289,7 +1289,7 @@ unsubscribe_xgov:
     // # refund
     // itxn.Payment(
     //     receiver=Txn.sender,
-    //     amount=self.xgov_min_balance.value,
+    //     amount=self.xgov_fee.value,
     //     fee=0,
     // ).submit()
     itxn_begin
@@ -1297,11 +1297,11 @@ unsubscribe_xgov:
     // receiver=Txn.sender,
     txn Sender
     // smart_contracts/xgov_registry/contract.py:379
-    // amount=self.xgov_min_balance.value,
+    // amount=self.xgov_fee.value,
     intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 4 // 0x78676f765f666565
     app_global_get_ex
-    assert // check self.xgov_min_balance exists
+    assert // check self.xgov_fee exists
     itxn_field Amount
     itxn_field Receiver
     // smart_contracts/xgov_registry/contract.py:376-377
@@ -1317,7 +1317,7 @@ unsubscribe_xgov:
     // # refund
     // itxn.Payment(
     //     receiver=Txn.sender,
-    //     amount=self.xgov_min_balance.value,
+    //     amount=self.xgov_fee.value,
     //     fee=0,
     // ).submit()
     itxn_submit
@@ -2195,11 +2195,11 @@ get_state:
     app_global_get_ex
     assert // check self.committee_publisher exists
     // smart_contracts/xgov_registry/contract.py:659
-    // xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+    // xgov_fee=arc4.UInt64(self.xgov_fee.value),
     intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 4 // 0x78676f765f666565
     app_global_get_ex
-    assert // check self.xgov_min_balance exists
+    assert // check self.xgov_fee exists
     itob
     // smart_contracts/xgov_registry/contract.py:660
     // proposer_fee=arc4.UInt64(self.proposer_fee.value),
@@ -2468,7 +2468,7 @@ get_state:
     //     kyc_provider=self.kyc_provider.value,
     //     committee_manager=self.committee_manager.value,
     //     committee_publisher=self.committee_publisher.value,
-    //     xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+    //     xgov_fee=arc4.UInt64(self.xgov_fee.value),
     //     proposer_fee=arc4.UInt64(self.proposer_fee.value),
     //     proposal_fee=arc4.UInt64(self.proposal_fee.value),
     //     proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),

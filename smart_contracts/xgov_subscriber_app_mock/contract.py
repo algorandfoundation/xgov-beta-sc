@@ -39,13 +39,13 @@ class XGovSubscriberAppMock(
     @arc4.abimethod()
     def subscribe_xgov(self, app_id: UInt64) -> None:
 
-        xgov_min_balance, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
-            app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE
+        xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
+            app_id, rcfg.GS_KEY_XGOV_FEE
         )
 
         payment = itxn.Payment(
             receiver=Application(app_id).address,
-            amount=xgov_min_balance,
+            amount=xgov_fee,
         )
 
         arc4.abi_call(

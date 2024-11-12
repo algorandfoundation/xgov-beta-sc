@@ -28,7 +28,7 @@ def test_unsubscribe_xgov_success(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance,
+                    amount=global_state.xgov_fee,
                 ),
             ),
             signer=random_account.signer,
@@ -60,7 +60,7 @@ def test_unsubscribe_xgov_success(
         xgov_registry_client.app_address,
     )
 
-    assert (before_info["amount"] - global_state.xgov_min_balance) == after_info["amount"]  # type: ignore
+    assert (before_info["amount"] - global_state.xgov_fee) == after_info["amount"]  # type: ignore
 
     with pytest.raises(error.AlgodHTTPError):  # type: ignore
         xgov_registry_client.algod_client.application_box_by_name(
@@ -125,7 +125,7 @@ def test_unsubscribe_xgov_wrong_fee(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_min_balance,
+                    amount=global_state.xgov_fee,
                 ),
             ),
             signer=random_account.signer,

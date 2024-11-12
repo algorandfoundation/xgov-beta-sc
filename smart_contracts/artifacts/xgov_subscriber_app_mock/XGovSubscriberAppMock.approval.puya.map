@@ -3,7 +3,7 @@
   "sources": [
     "../../xgov_subscriber_app_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;AA6BA;;;AAGY;;AAAA;AADJ;AAGO;;AAAA;AAAP;AACO;;AAAA;AAAP;AACO;;AAAA;AAAP;;AAjBR;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;AAAA;AAmBK;;AAAA;AAAA;AAAA;;AAAA;AAnBL;;;AAAA;AAmBK;;;AAAA;AAAA;AAkBA;;AAAA;AAAA;AAAA;;AAAA;AArCL;;;AAAA;AAqCK;;;AAAA;AAAA;AArCL;;AAAA;;;;;;;;;AAAA;AAAA;AAmBA;;;AAGoD;;AAChC;;;;;;;;;;;;;;;;;;AADgC;AAAA;AAK/B;;AAAA;;AAAA;AAIb;;;;;AALU;;;AAAA;;;AAKV;;;;;AAAA;;;;;;;;AAAA;;;AAAA;;;AAAA;;AAMR;;;AAEQ;AAGS;;AAAqB;;AAArB;;;;;AAHT;;;;;;;;AAAA;;;;;AAAA;",
+  "mappings": ";;;;;;;;;;;;;;;;;;AA6BA;;;AAGY;;AAAA;AADJ;AAGO;;AAAA;AAAP;AACO;;AAAA;AAAP;AACO;;AAAA;AAAP;;AAjBR;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;AAAA;AAmBK;;AAAA;AAAA;AAAA;;AAAA;AAnBL;;;AAAA;AAmBK;;;AAAA;AAAA;AAkBA;;AAAA;AAAA;AAAA;;AAAA;AArCL;;;AAAA;AAqCK;;;AAAA;AAAA;AArCL;;AAAA;;;;;;;;;AAAA;AAAA;AAmBA;;;AAGoD;;AAChC;;;;;;;;;;AADgC;AAAA;AAK/B;;AAAA;;AAAA;AAIb;;;;;AALU;;;AAAA;;;AAKV;;;;;AAAA;;;;;;;;AAAA;;;AAAA;;;AAAA;;AAMR;;;AAEQ;AAGS;;AAAqB;;AAArB;;;;;AAHT;;;;;;;;AAAA;;;;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -428,17 +428,17 @@
       ]
     },
     "119": {
-      "op": "pushbytes 0x78676f765f6d696e5f62616c616e6365",
+      "op": "pushbytes 0x78676f765f666565",
       "defined_out": [
-        "0x78676f765f6d696e5f62616c616e6365",
+        "0x78676f765f666565",
         "app_id#0 (copy)"
       ],
       "stack_out": [
         "app_id#0 (copy)",
-        "0x78676f765f6d696e5f62616c616e6365"
+        "0x78676f765f666565"
       ]
     },
-    "137": {
+    "129": {
       "op": "app_global_get_ex",
       "defined_out": [
         "xgov_min_balance#0",
@@ -449,20 +449,20 @@
         "xgov_min_balance_exists#0"
       ]
     },
-    "138": {
+    "130": {
       "op": "pop",
       "stack_out": [
         "xgov_min_balance#0"
       ]
     },
-    "139": {
+    "131": {
       "op": "frame_dig -1",
       "stack_out": [
         "xgov_min_balance#0",
         "app_id#0 (copy)"
       ]
     },
-    "141": {
+    "133": {
       "op": "app_params_get AppAddress",
       "defined_out": [
         "check%0#0",
@@ -475,24 +475,24 @@
         "check%0#0"
       ]
     },
-    "143": {
+    "135": {
       "op": "assert // application exists",
       "stack_out": [
         "xgov_min_balance#0",
         "value%0#0"
       ]
     },
-    "144": {
+    "136": {
       "op": "itxn_begin"
     },
-    "145": {
+    "137": {
       "op": "itxn_field Receiver"
     },
-    "147": {
+    "139": {
       "op": "itxn_field Amount",
       "stack_out": []
     },
-    "149": {
+    "141": {
       "op": "intc_1 // pay",
       "defined_out": [
         "pay"
@@ -501,11 +501,11 @@
         "pay"
       ]
     },
-    "150": {
+    "142": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "152": {
+    "144": {
       "op": "intc_0 // 0",
       "defined_out": [
         "0"
@@ -514,24 +514,24 @@
         "0"
       ]
     },
-    "153": {
+    "145": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "155": {
+    "147": {
       "op": "itxn_next"
     },
-    "156": {
+    "148": {
       "op": "frame_dig -1",
       "stack_out": [
         "app_id#0 (copy)"
       ]
     },
-    "158": {
+    "150": {
       "op": "itxn_field ApplicationID",
       "stack_out": []
     },
-    "160": {
+    "152": {
       "op": "pushbytes 0x195715ea // method \"subscribe_xgov(pay)void\"",
       "defined_out": [
         "Method(subscribe_xgov(pay)void)"
@@ -540,11 +540,11 @@
         "Method(subscribe_xgov(pay)void)"
       ]
     },
-    "166": {
+    "158": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "168": {
+    "160": {
       "op": "intc_2 // appl",
       "defined_out": [
         "appl"
@@ -553,28 +553,28 @@
         "appl"
       ]
     },
-    "169": {
+    "161": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "171": {
+    "163": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0"
       ]
     },
-    "172": {
+    "164": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "174": {
+    "166": {
       "op": "itxn_submit"
     },
-    "175": {
+    "167": {
       "retsub": true,
       "op": "retsub"
     },
-    "176": {
+    "168": {
       "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.unsubscribe_xgov",
       "params": {
         "app_id#0": "uint64"
@@ -583,10 +583,10 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "179": {
+    "171": {
       "op": "itxn_begin"
     },
-    "180": {
+    "172": {
       "op": "global MinTxnFee",
       "defined_out": [
         "tmp%0#0"
@@ -595,7 +595,7 @@
         "tmp%0#0"
       ]
     },
-    "182": {
+    "174": {
       "op": "pushint 2 // 2",
       "defined_out": [
         "2",
@@ -606,7 +606,7 @@
         "2"
       ]
     },
-    "184": {
+    "176": {
       "op": "*",
       "defined_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
@@ -615,7 +615,7 @@
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "185": {
+    "177": {
       "op": "frame_dig -1",
       "defined_out": [
         "app_id#0 (copy)",
@@ -626,13 +626,13 @@
         "app_id#0 (copy)"
       ]
     },
-    "187": {
+    "179": {
       "op": "itxn_field ApplicationID",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "189": {
+    "181": {
       "op": "pushbytes 0xdf39fdb9 // method \"unsubscribe_xgov()void\"",
       "defined_out": [
         "Method(unsubscribe_xgov()void)",
@@ -643,13 +643,13 @@
         "Method(unsubscribe_xgov()void)"
       ]
     },
-    "195": {
+    "187": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "197": {
+    "189": {
       "op": "intc_2 // appl",
       "defined_out": [
         "appl",
@@ -660,20 +660,20 @@
         "appl"
       ]
     },
-    "198": {
+    "190": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "200": {
+    "192": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "202": {
+    "194": {
       "op": "itxn_submit"
     },
-    "203": {
+    "195": {
       "retsub": true,
       "op": "retsub"
     }
