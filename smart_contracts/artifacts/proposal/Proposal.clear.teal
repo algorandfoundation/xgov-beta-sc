@@ -1,5 +1,5 @@
 #pragma version 10
 
 smart_contracts.proposal.contract.Proposal.clear_state_program:
-    pushint 1 // 1
+    int 1
     return

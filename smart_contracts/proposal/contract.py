@@ -127,10 +127,36 @@ class Proposal(
         )
 
         self.voters = BoxMap(
-            arc4.Address, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
+            Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
         )
         self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
+
+    @subroutine
+    def vote_check_authorization(self) -> None:
+        assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
+
+        assert Txn.sender in self.voters and self.voters[Txn.sender].voted == arc4.Bool(
+            False  # noqa: FBT003
+        ), err.UNAUTHORIZED
+
+        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
+        maximum_voting_duration = self.get_voting_duration(self.category.value)
+
+        assert voting_duration <= maximum_voting_duration, err.VOTING_PERIOD_EXPIRED
+
+    @subroutine
+    def scrutiny_check_authorization(self) -> None:
+        assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
+
+        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
+        maximum_voting_duration = self.get_voting_duration(self.category.value)
+
+        assert (
+            voting_duration > maximum_voting_duration  # voting period has ended
+            or self.voted_members.value
+            == self.committee_members.value  # all committee members have voted
+        ), err.VOTING_ONGOING
 
     @subroutine
     def assign_voter_check_authorization(self) -> None:
@@ -138,8 +164,11 @@ class Proposal(
         assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
-    def assign_voter_input_validation(self, voter: arc4.Address) -> None:
-        assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
+    def assign_voter_input_validation(
+        self, voter: arc4.Address, voting_power: UInt64
+    ) -> None:
+        assert voter.native not in self.voters, err.VOTER_ALREADY_ASSIGNED
+        assert voting_power > 0, err.INVALID_VOTING_POWER
 
     @subroutine
     def get_discussion_duration(self, category: UInt64) -> UInt64:
@@ -154,6 +183,51 @@ class Proposal(
         else:
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
+            )
+
+    @subroutine
+    def get_voting_duration(self, category: UInt64) -> UInt64:
+        if category == enm.CATEGORY_SMALL:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
+            )
+        elif category == enm.CATEGORY_MEDIUM:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM)
+            )
+        else:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_VOTING_DURATION_LARGE)
+            )
+
+    @subroutine
+    def get_quorum(self, category: UInt64) -> UInt64:
+        if category == enm.CATEGORY_SMALL:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
+            )
+        elif category == enm.CATEGORY_MEDIUM:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_QUORUM_MEDIUM)
+            )
+        else:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
+            )
+
+    @subroutine
+    def get_weighted_quorum(self, category: UInt64) -> UInt64:
+        if category == enm.CATEGORY_SMALL:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
+            )
+        elif category == enm.CATEGORY_MEDIUM:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
+            )
+        else:
+            return self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
             )
 
     @subroutine
@@ -348,6 +422,7 @@ class Proposal(
             requested_amount (UInt64): Requested amount in microAlgos
 
         Raises:
+            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
@@ -429,6 +504,7 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
+            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.TOO_EARLY: If the proposal is finalized before the minimum time
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
@@ -470,16 +546,18 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
             err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
+            err.INVALID_VOTING_POWER: If the voting power is not within the limits
             err.VOTING_POWER_MISMATCH: If the total voting power does not match the committee votes
 
         """
         self.assign_voter_check_authorization()
 
-        self.assign_voter_input_validation(voter)
+        self.assign_voter_input_validation(voter, voting_power)
 
-        self.voters[voter] = typ.VoterBox(
+        self.voters[voter.native] = typ.VoterBox(
             votes=arc4.UInt64(voting_power),
             voted=arc4.Bool(False),  # noqa: FBT003
         )
@@ -493,3 +571,82 @@ class Proposal(
             ), err.VOTING_POWER_MISMATCH
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
+
+    @arc4.abimethod()
+    def vote(self, vote: arc4.String) -> None:
+        """Vote on the proposal.
+
+        Args:
+            vote (arc4.String): Vote value
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not a voter (or has already voted)
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
+            err.VOTING_PERIOD_EXPIRED: If the voting period has expired
+            err.WRONG_VOTE_VALUE: If the vote value is not within the limits
+
+        """
+        self.vote_check_authorization()
+
+        voter_box = self.voters[Txn.sender].copy()
+        self.voters[Txn.sender] = typ.VoterBox(
+            votes=voter_box.votes,
+            voted=arc4.Bool(True),  # noqa: FBT003
+        )
+
+        self.voted_members.value += UInt64(1)
+
+        match vote:
+            case "Approve":
+                self.approvals.value += voter_box.votes.native
+            case "Reject":
+                self.rejections.value += voter_box.votes.native
+            case "Null":
+                self.nulls.value += voter_box.votes.native
+            case _:
+                assert arc4.Bool(False), err.WRONG_VOTE_VALUE  # noqa: FBT003
+
+    @arc4.abimethod()
+    def scrutiny(self) -> None:
+        """Scrutinize the proposal.
+
+        Raises:
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.VOTING_ONGOING: If the voting period is still ongoing
+
+        """
+        self.scrutiny_check_authorization()
+
+        # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
+        # Null votes affect this quorum.
+        quorum_bps = self.get_quorum(self.category.value)
+        minimum_voters_required = self.relative_to_absolute_amount(
+            self.committee_members.value, quorum_bps
+        )
+
+        # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
+        # Null votes affect this quorum.
+        weighted_quorum_bps = self.get_weighted_quorum(self.category.value)
+        total_votes = self.approvals.value + self.rejections.value + self.nulls.value
+        minimum_votes_required = self.relative_to_absolute_amount(
+            self.committee_votes.value, weighted_quorum_bps
+        )
+
+        if (
+            self.voted_members.value >= minimum_voters_required
+            and total_votes >= minimum_votes_required
+            # The relative majority of Approved over Rejected votes is reached.
+            # Null votes do not affect the relative majority.
+            and self.approvals.value > self.rejections.value
+        ):
+            self.status.value = UInt64(enm.STATUS_APPROVED)
+        else:
+            self.status.value = UInt64(enm.STATUS_REJECTED)
+            itxn.Payment(
+                receiver=self.proposer.value.native,
+                amount=self.locked_amount.value,
+                fee=UInt64(0),  # enforces the sender to pay the fee
+            ).submit()
+            self.locked_amount.value = UInt64(0)

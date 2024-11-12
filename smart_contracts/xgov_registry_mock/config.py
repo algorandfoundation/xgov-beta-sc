@@ -2,7 +2,7 @@ from typing import Final
 
 # State Schema
 GLOBAL_BYTES: Final[int] = 2
-GLOBAL_UINTS: Final[int] = 12
+GLOBAL_UINTS: Final[int] = 21
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -23,3 +23,12 @@ PROPOSAL_FEE: Final[int] = 100_000_000  # amount in microAlgos
 COMMITTEE_ID: Final[bytes] = b""
 COMMITTEE_MEMBERS: Final[int] = 0
 COMMITTEE_VOTES: Final[int] = 0
+VOTING_DURATION_SMALL: Final[int] = 604_800  # 1 week in seconds
+VOTING_DURATION_MEDIUM: Final[int] = 1_209_600  # 2 weeks in seconds
+VOTING_DURATION_LARGE: Final[int] = 1_814_400  # 3 weeks in seconds
+QUORUM_SMALL_BPS: Final[int] = 1_000
+QUORUM_MEDIUM_BPS: Final[int] = 1_500
+QUORUM_LARGE_BPS: Final[int] = 2_000
+WEIGHTED_QUORUM_SMALL_BPS: Final[int] = 2_000
+WEIGHTED_QUORUM_MEDIUM_BPS: Final[int] = 3_000
+WEIGHTED_QUORUM_LARGE_BPS: Final[int] = 4_000

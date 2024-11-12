@@ -8,6 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMock
 from smart_contracts.errors import std_errors as err
 from tests.proposal.common import (
     LOCKED_AMOUNT,
+    PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
@@ -53,7 +54,9 @@ def test_drop_success(
         global_state, proposer.address, xgov_registry_mock_client.app_id
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+    assert_account_balance(
+        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+    )
 
     assert_account_balance(
         algorand_client,
@@ -108,7 +111,9 @@ def test_drop_twice(
         global_state, proposer.address, xgov_registry_mock_client.app_id
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+    assert_account_balance(
+        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+    )
 
     assert_account_balance(
         algorand_client,
@@ -149,7 +154,9 @@ def test_drop_empty_proposal(
         global_state, proposer.address, xgov_registry_mock_client.app_id
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+    assert_account_balance(
+        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+    )
 
     assert_account_balance(
         algorand_client, proposer.address, proposer_balance_before_drop  # type: ignore
@@ -190,4 +197,8 @@ def test_drop_not_proposer(
         registry_app_id=xgov_registry_mock_client.app_id,
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+    )

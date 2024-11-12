@@ -1,0 +1,2360 @@
+{
+  "success": false,
+  "error": null,
+  "result": [
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"unprotected-deletable\", Impact: High, Confidence: High\nDescription: Unprotected Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-deletable-application\n",
+      "check": "unprotected-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid deletable applications.\n- Add access controls to the vulnerable method.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"unprotected-updatable\", Impact: High, Confidence: High\nDescription: Unprotected Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-updatable-application\n",
+      "check": "unprotected-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid upgradable applications.\n- Add access controls to the vulnerable method.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-account\", Impact: High, Confidence: High\nDescription: Missing CloseRemainderTo field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-closeremainderto-field-validation\n",
+      "check": "can-close-account",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `CloseRemainderTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"can-close-asset\", Impact: High, Confidence: High\nDescription: Missing AssetCloseTo Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-assetcloseto-field-validation\n",
+      "check": "can-close-asset",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `AssetCloseTo` field in the LogicSig.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"is-deletable\", Impact: High, Confidence: High\nDescription: Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#deletable-application\n",
+      "check": "is-deletable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `DeleteApplication` type application calls.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"is-updatable\", Impact: High, Confidence: High\nDescription: Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#upgradable-application\n",
+      "check": "is-updatable",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Do not approve `UpdateApplication` type application calls.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 14,
+      "description": "\nCheck: \"missing-fee-check\", Impact: High, Confidence: High\nDescription: Missing Fee Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-fee-field-validation\n",
+      "check": "missing-fee-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `Fee` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 7 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "35: int 0",
+              "36: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 8 -> 18 -> 9 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "38: __puya_arc4_router___create_route@2:",
+              "41: txn OnCompletion",
+              "42: !",
+              "43: assert",
+              "44: txn ApplicationID",
+              "45: !",
+              "46: assert",
+              "57: txna ApplicationArgs 1",
+              "60: callsub create"
+            ],
+            [
+              "172: create:",
+              "176: proto 1 0",
+              "179: byte 0x70726f706f736572",
+              "180: frame_dig -1",
+              "181: app_global_put",
+              "184: byte 0x72656769737472795f6170705f6964",
+              "185: global CallerApplicationID",
+              "186: app_global_put",
+              "187: retsub"
+            ],
+            [
+              "61: int 1",
+              "62: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 10 -> 19 -> 11 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "64: __puya_arc4_router___set_status_route@3:",
+              "67: txn OnCompletion",
+              "68: !",
+              "69: assert",
+              "70: txn ApplicationID",
+              "71: assert",
+              "82: txna ApplicationArgs 1",
+              "83: btoi",
+              "86: callsub set_status"
+            ],
+            [
+              "191: set_status:",
+              "195: proto 1 0",
+              "198: byte 0x737461747573",
+              "199: frame_dig -1",
+              "200: app_global_put",
+              "201: retsub"
+            ],
+            [
+              "87: int 1",
+              "88: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 12 -> 20 -> 13 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "90: __puya_arc4_router___set_requested_amount_route@4:",
+              "93: txn OnCompletion",
+              "94: !",
+              "95: assert",
+              "96: txn ApplicationID",
+              "97: assert",
+              "108: txna ApplicationArgs 1",
+              "109: btoi",
+              "112: callsub set_requested_amount"
+            ],
+            [
+              "205: set_requested_amount:",
+              "209: proto 1 0",
+              "212: byte 0x7265717565737465645f616d6f756e74",
+              "213: frame_dig -1",
+              "214: app_global_put",
+              "215: retsub"
+            ],
+            [
+              "113: int 1",
+              "114: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 14 -> 21 -> 15 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "116: __puya_arc4_router___set_committee_details_route@5:",
+              "119: txn OnCompletion",
+              "120: !",
+              "121: assert",
+              "122: txn ApplicationID",
+              "123: assert",
+              "134: txna ApplicationArgs 1",
+              "135: txna ApplicationArgs 2",
+              "136: btoi",
+              "137: txna ApplicationArgs 3",
+              "138: btoi",
+              "141: callsub set_committee_details"
+            ],
+            [
+              "219: set_committee_details:",
+              "225: proto 3 0",
+              "228: byte 0x636f6d6d69747465655f6964",
+              "229: frame_dig -3",
+              "230: app_global_put",
+              "233: byte 0x636f6d6d69747465655f6d656d62657273",
+              "234: frame_dig -2",
+              "235: app_global_put",
+              "238: byte 0x636f6d6d69747465655f766f746573",
+              "239: frame_dig -1",
+              "240: app_global_put",
+              "241: retsub"
+            ],
+            [
+              "142: int 1",
+              "143: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 16 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "145: __puya_arc4_router___release_funds_route@6:",
+              "148: txn OnCompletion",
+              "149: !",
+              "150: assert",
+              "151: txn ApplicationID",
+              "152: assert",
+              "153: int 1",
+              "154: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 17 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "156: __puya_arc4_router___after_if_else@10:",
+              "167: int 0",
+              "168: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 7 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "35: int 0",
+              "36: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 8 -> 18 -> 9 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "38: __puya_arc4_router___create_route@2:",
+              "41: txn OnCompletion",
+              "42: !",
+              "43: assert",
+              "44: txn ApplicationID",
+              "45: !",
+              "46: assert",
+              "57: txna ApplicationArgs 1",
+              "60: callsub create"
+            ],
+            [
+              "172: create:",
+              "176: proto 1 0",
+              "179: byte 0x70726f706f736572",
+              "180: frame_dig -1",
+              "181: app_global_put",
+              "184: byte 0x72656769737472795f6170705f6964",
+              "185: global CallerApplicationID",
+              "186: app_global_put",
+              "187: retsub"
+            ],
+            [
+              "61: int 1",
+              "62: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 10 -> 19 -> 11 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "64: __puya_arc4_router___set_status_route@3:",
+              "67: txn OnCompletion",
+              "68: !",
+              "69: assert",
+              "70: txn ApplicationID",
+              "71: assert",
+              "82: txna ApplicationArgs 1",
+              "83: btoi",
+              "86: callsub set_status"
+            ],
+            [
+              "191: set_status:",
+              "195: proto 1 0",
+              "198: byte 0x737461747573",
+              "199: frame_dig -1",
+              "200: app_global_put",
+              "201: retsub"
+            ],
+            [
+              "87: int 1",
+              "88: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 12 -> 20 -> 13 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "90: __puya_arc4_router___set_requested_amount_route@4:",
+              "93: txn OnCompletion",
+              "94: !",
+              "95: assert",
+              "96: txn ApplicationID",
+              "97: assert",
+              "108: txna ApplicationArgs 1",
+              "109: btoi",
+              "112: callsub set_requested_amount"
+            ],
+            [
+              "205: set_requested_amount:",
+              "209: proto 1 0",
+              "212: byte 0x7265717565737465645f616d6f756e74",
+              "213: frame_dig -1",
+              "214: app_global_put",
+              "215: retsub"
+            ],
+            [
+              "113: int 1",
+              "114: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 14 -> 21 -> 15 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "116: __puya_arc4_router___set_committee_details_route@5:",
+              "119: txn OnCompletion",
+              "120: !",
+              "121: assert",
+              "122: txn ApplicationID",
+              "123: assert",
+              "134: txna ApplicationArgs 1",
+              "135: txna ApplicationArgs 2",
+              "136: btoi",
+              "137: txna ApplicationArgs 3",
+              "138: btoi",
+              "141: callsub set_committee_details"
+            ],
+            [
+              "219: set_committee_details:",
+              "225: proto 3 0",
+              "228: byte 0x636f6d6d69747465655f6964",
+              "229: frame_dig -3",
+              "230: app_global_put",
+              "233: byte 0x636f6d6d69747465655f6d656d62657273",
+              "234: frame_dig -2",
+              "235: app_global_put",
+              "238: byte 0x636f6d6d69747465655f766f746573",
+              "239: frame_dig -1",
+              "240: app_global_put",
+              "241: retsub"
+            ],
+            [
+              "142: int 1",
+              "143: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 16 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "145: __puya_arc4_router___release_funds_route@6:",
+              "148: txn OnCompletion",
+              "149: !",
+              "150: assert",
+              "151: txn ApplicationID",
+              "152: assert",
+              "153: int 1",
+              "154: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 17 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "156: __puya_arc4_router___after_if_else@10:",
+              "167: int 0",
+              "168: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 0,
+      "description": "\nCheck: \"group-size-check\", Impact: High, Confidence: High\nDescription: Usage of absolute indexes without validating GroupSize\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-groupsize-validation\n",
+      "check": "group-size-check",
+      "impact": "High",
+      "confidence": "High",
+      "help": "- Avoid using absolute indexes. Validate GroupSize if used.\n- Favor using ARC-4 ABI and relative indexes for group transactions.",
+      "paths": []
+    },
+    {
+      "type": "ExecutionPaths",
+      "count": 14,
+      "description": "\nCheck: \"rekey-to\", Impact: High, Confidence: High\nDescription: Rekeyable Logic Signatures\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#rekeyable-logicsig\n",
+      "check": "rekey-to",
+      "impact": "High",
+      "confidence": "High",
+      "help": "Validate `RekeyTo` field in the LogicSig.",
+      "paths": [
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 7 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "35: int 0",
+              "36: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 8 -> 18 -> 9 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "38: __puya_arc4_router___create_route@2:",
+              "41: txn OnCompletion",
+              "42: !",
+              "43: assert",
+              "44: txn ApplicationID",
+              "45: !",
+              "46: assert",
+              "57: txna ApplicationArgs 1",
+              "60: callsub create"
+            ],
+            [
+              "172: create:",
+              "176: proto 1 0",
+              "179: byte 0x70726f706f736572",
+              "180: frame_dig -1",
+              "181: app_global_put",
+              "184: byte 0x72656769737472795f6170705f6964",
+              "185: global CallerApplicationID",
+              "186: app_global_put",
+              "187: retsub"
+            ],
+            [
+              "61: int 1",
+              "62: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 10 -> 19 -> 11 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "64: __puya_arc4_router___set_status_route@3:",
+              "67: txn OnCompletion",
+              "68: !",
+              "69: assert",
+              "70: txn ApplicationID",
+              "71: assert",
+              "82: txna ApplicationArgs 1",
+              "83: btoi",
+              "86: callsub set_status"
+            ],
+            [
+              "191: set_status:",
+              "195: proto 1 0",
+              "198: byte 0x737461747573",
+              "199: frame_dig -1",
+              "200: app_global_put",
+              "201: retsub"
+            ],
+            [
+              "87: int 1",
+              "88: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 12 -> 20 -> 13 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "90: __puya_arc4_router___set_requested_amount_route@4:",
+              "93: txn OnCompletion",
+              "94: !",
+              "95: assert",
+              "96: txn ApplicationID",
+              "97: assert",
+              "108: txna ApplicationArgs 1",
+              "109: btoi",
+              "112: callsub set_requested_amount"
+            ],
+            [
+              "205: set_requested_amount:",
+              "209: proto 1 0",
+              "212: byte 0x7265717565737465645f616d6f756e74",
+              "213: frame_dig -1",
+              "214: app_global_put",
+              "215: retsub"
+            ],
+            [
+              "113: int 1",
+              "114: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 14 -> 21 -> 15 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "116: __puya_arc4_router___set_committee_details_route@5:",
+              "119: txn OnCompletion",
+              "120: !",
+              "121: assert",
+              "122: txn ApplicationID",
+              "123: assert",
+              "134: txna ApplicationArgs 1",
+              "135: txna ApplicationArgs 2",
+              "136: btoi",
+              "137: txna ApplicationArgs 3",
+              "138: btoi",
+              "141: callsub set_committee_details"
+            ],
+            [
+              "219: set_committee_details:",
+              "225: proto 3 0",
+              "228: byte 0x636f6d6d69747465655f6964",
+              "229: frame_dig -3",
+              "230: app_global_put",
+              "233: byte 0x636f6d6d69747465655f6d656d62657273",
+              "234: frame_dig -2",
+              "235: app_global_put",
+              "238: byte 0x636f6d6d69747465655f766f746573",
+              "239: frame_dig -1",
+              "240: app_global_put",
+              "241: retsub"
+            ],
+            [
+              "142: int 1",
+              "143: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 6 -> 16 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "145: __puya_arc4_router___release_funds_route@6:",
+              "148: txn OnCompletion",
+              "149: !",
+              "150: assert",
+              "151: txn ApplicationID",
+              "152: assert",
+              "153: int 1",
+              "154: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 22 -> 3 -> 5 -> 17 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "6: callsub __init__"
+            ],
+            [
+              "245: __init__:",
+              "248: proto 0 0",
+              "251: byte 0x70726f706f736572",
+              "254: global ZeroAddress",
+              "260: app_global_put",
+              "263: byte 0x72656769737472795f6170705f6964",
+              "266: int 0",
+              "272: app_global_put",
+              "275: byte 0x7469746c65",
+              "278: byte \"\"",
+              "284: app_global_put",
+              "287: byte 0x636964",
+              "290: byte 0x",
+              "296: app_global_put",
+              "299: byte 0x7375626d697373696f6e5f74696d657374616d70",
+              "302: int 0",
+              "308: app_global_put",
+              "311: byte 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "314: int 0",
+              "320: app_global_put",
+              "323: byte 0x737461747573",
+              "326: int 0",
+              "332: app_global_put",
+              "335: byte 0x63617465676f7279",
+              "338: int 0",
+              "344: app_global_put",
+              "347: byte 0x66756e64696e675f74797065",
+              "350: int 0",
+              "356: app_global_put",
+              "359: byte 0x7265717565737465645f616d6f756e74",
+              "362: int 0",
+              "368: app_global_put",
+              "371: byte 0x6c6f636b65645f616d6f756e74",
+              "374: int 0",
+              "380: app_global_put",
+              "383: byte 0x636f6d6d69747465655f6964",
+              "386: byte 0x",
+              "392: app_global_put",
+              "395: byte 0x636f6d6d69747465655f6d656d62657273",
+              "398: int 0",
+              "404: app_global_put",
+              "407: byte 0x636f6d6d69747465655f766f746573",
+              "410: int 0",
+              "416: app_global_put",
+              "419: byte 0x766f7465645f6d656d62657273",
+              "422: int 0",
+              "428: app_global_put",
+              "431: byte 0x617070726f76616c73",
+              "434: int 0",
+              "440: app_global_put",
+              "443: byte 0x72656a656374696f6e73",
+              "446: int 0",
+              "452: app_global_put",
+              "453: retsub"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "156: __puya_arc4_router___after_if_else@10:",
+              "167: int 0",
+              "168: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 7 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "35: int 0",
+              "36: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 8 -> 18 -> 9 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "38: __puya_arc4_router___create_route@2:",
+              "41: txn OnCompletion",
+              "42: !",
+              "43: assert",
+              "44: txn ApplicationID",
+              "45: !",
+              "46: assert",
+              "57: txna ApplicationArgs 1",
+              "60: callsub create"
+            ],
+            [
+              "172: create:",
+              "176: proto 1 0",
+              "179: byte 0x70726f706f736572",
+              "180: frame_dig -1",
+              "181: app_global_put",
+              "184: byte 0x72656769737472795f6170705f6964",
+              "185: global CallerApplicationID",
+              "186: app_global_put",
+              "187: retsub"
+            ],
+            [
+              "61: int 1",
+              "62: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 10 -> 19 -> 11 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "64: __puya_arc4_router___set_status_route@3:",
+              "67: txn OnCompletion",
+              "68: !",
+              "69: assert",
+              "70: txn ApplicationID",
+              "71: assert",
+              "82: txna ApplicationArgs 1",
+              "83: btoi",
+              "86: callsub set_status"
+            ],
+            [
+              "191: set_status:",
+              "195: proto 1 0",
+              "198: byte 0x737461747573",
+              "199: frame_dig -1",
+              "200: app_global_put",
+              "201: retsub"
+            ],
+            [
+              "87: int 1",
+              "88: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 12 -> 20 -> 13 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "90: __puya_arc4_router___set_requested_amount_route@4:",
+              "93: txn OnCompletion",
+              "94: !",
+              "95: assert",
+              "96: txn ApplicationID",
+              "97: assert",
+              "108: txna ApplicationArgs 1",
+              "109: btoi",
+              "112: callsub set_requested_amount"
+            ],
+            [
+              "205: set_requested_amount:",
+              "209: proto 1 0",
+              "212: byte 0x7265717565737465645f616d6f756e74",
+              "213: frame_dig -1",
+              "214: app_global_put",
+              "215: retsub"
+            ],
+            [
+              "113: int 1",
+              "114: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 14 -> 21 -> 15 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "116: __puya_arc4_router___set_committee_details_route@5:",
+              "119: txn OnCompletion",
+              "120: !",
+              "121: assert",
+              "122: txn ApplicationID",
+              "123: assert",
+              "134: txna ApplicationArgs 1",
+              "135: txna ApplicationArgs 2",
+              "136: btoi",
+              "137: txna ApplicationArgs 3",
+              "138: btoi",
+              "141: callsub set_committee_details"
+            ],
+            [
+              "219: set_committee_details:",
+              "225: proto 3 0",
+              "228: byte 0x636f6d6d69747465655f6964",
+              "229: frame_dig -3",
+              "230: app_global_put",
+              "233: byte 0x636f6d6d69747465655f6d656d62657273",
+              "234: frame_dig -2",
+              "235: app_global_put",
+              "238: byte 0x636f6d6d69747465655f766f746573",
+              "239: frame_dig -1",
+              "240: app_global_put",
+              "241: retsub"
+            ],
+            [
+              "142: int 1",
+              "143: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 6 -> 16 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "28: method create(address)void",
+              "29: method set_status(uint64)void",
+              "30: method set_requested_amount(uint64)void",
+              "31: method set_committee_details(byte[32],uint64,uint64)void",
+              "32: method release_funds()void",
+              "33: txna ApplicationArgs 0",
+              "34: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+            ],
+            [
+              "145: __puya_arc4_router___release_funds_route@6:",
+              "148: txn OnCompletion",
+              "149: !",
+              "150: assert",
+              "151: txn ApplicationID",
+              "152: assert",
+              "153: int 1",
+              "154: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 5 -> 17 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: txn ApplicationID",
+              "5: bnz main_entrypoint@2"
+            ],
+            [
+              "8: main_entrypoint@2:",
+              "9: callsub __puya_arc4_router__"
+            ],
+            [
+              "14: __puya_arc4_router__:",
+              "25: proto 0 1",
+              "26: txn NumAppArgs",
+              "27: bz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "156: __puya_arc4_router___after_if_else@10:",
+              "167: int 0",
+              "168: retsub"
+            ],
+            [
+              "10: return"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

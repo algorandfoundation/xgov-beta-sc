@@ -8,7 +8,7 @@ from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.encoding import decode_address, encode_address
 
 from smart_contracts.artifacts.proposal.client import GlobalState, ProposalClient
-from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
+from smart_contracts.proposal.config import PROPOSAL_MBR, VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.constants import (
     BPS,
 )
@@ -17,14 +17,17 @@ from smart_contracts.proposal.enums import (
     CATEGORY_SMALL,
     FUNDING_NULL,
     FUNDING_PROACTIVE,
+    STATUS_APPROVED,
     STATUS_DRAFT,
     STATUS_EMPTY,
     STATUS_FINAL,
+    STATUS_REJECTED,
     STATUS_VOTING,
 )
 from smart_contracts.xgov_registry_mock.config import (
     MIN_REQUESTED_AMOUNT,
     PROPOSAL_COMMITMENT_BPS,
+    PROPOSAL_FEE,
 )
 
 
@@ -38,6 +41,7 @@ def get_locked_amount(requested_amount: int) -> int:
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
+PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 PROPOSAL_TITLE = "Test Proposal"
 PROPOSAL_CID = b"\x01" * 59
 
@@ -46,8 +50,8 @@ logic_error_type: Type[LogicError] = LogicError
 INITIAL_FUNDS = 10_000_000_000
 
 DEFAULT_COMMITTEE_ID = b"\x01" * 32
-DEFAULT_COMMITTEE_MEMBERS = 10
-DEFAULT_COMMITTEE_VOTES = 100
+DEFAULT_COMMITTEE_MEMBERS = 20
+DEFAULT_COMMITTEE_VOTES = 200
 
 
 def assert_proposal_global_state(
@@ -55,9 +59,9 @@ def assert_proposal_global_state(
     *,
     proposer_address: str,
     registry_app_id: int,
+    status: int = STATUS_EMPTY,
     title: str = "",
     cid: bytes = b"",
-    status: int = STATUS_EMPTY,
     category: int = CATEGORY_NULL,
     funding_type: int = FUNDING_NULL,
     requested_amount: int = 0,
@@ -72,8 +76,6 @@ def assert_proposal_global_state(
     assigned_votes: int = 0,
     voters_count: int = 0,
     milestone_approved: bool = False,
-    # approvers: int = 0,
-    # rejectors: int = 0,
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
@@ -94,8 +96,6 @@ def assert_proposal_global_state(
     assert global_state.assigned_votes == assigned_votes
     assert global_state.voters_count == voters_count
     assert global_state.milestone_approved == milestone_approved
-    # assert global_state.approvers == approvers
-    # assert global_state.rejectors == rejectors
 
     if status == STATUS_EMPTY:
         assert global_state.submission_ts == 0
@@ -113,6 +113,72 @@ def assert_proposal_global_state(
         assert global_state.vote_open_ts == 0
 
 
+def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type: ignore
+    # Define common parameters that are shared across statuses
+    common_defaults = {
+        "title": PROPOSAL_TITLE,
+        "cid": PROPOSAL_CID,
+        "funding_type": FUNDING_PROACTIVE,
+        "requested_amount": REQUESTED_AMOUNT,
+        "locked_amount": LOCKED_AMOUNT,
+        "category": CATEGORY_SMALL,
+    }
+
+    # Define common committee-related defaults used in multiple statuses
+    committee_defaults = {
+        "committee_id": DEFAULT_COMMITTEE_ID,
+        "committee_members": DEFAULT_COMMITTEE_MEMBERS,
+        "committee_votes": DEFAULT_COMMITTEE_VOTES,
+    }
+
+    # Define common voter-related defaults used in multiple statuses
+    voter_defaults = {
+        "voters_count": DEFAULT_COMMITTEE_MEMBERS,
+        "assigned_votes": 10 * DEFAULT_COMMITTEE_MEMBERS,
+    }
+
+    # Specific status defaults, with shared defaults included where needed
+    status_defaults = {
+        STATUS_DRAFT: {"status": STATUS_DRAFT},
+        STATUS_FINAL: {"status": STATUS_FINAL, **committee_defaults},
+        STATUS_VOTING: {
+            "status": STATUS_VOTING,
+            **committee_defaults,
+            **voter_defaults,
+        },
+        STATUS_APPROVED: {
+            "status": STATUS_APPROVED,
+            **committee_defaults,
+            **voter_defaults,
+        },
+        STATUS_REJECTED: {
+            "status": STATUS_REJECTED,
+            **committee_defaults,
+            **voter_defaults,
+            "locked_amount": 0,
+        },
+    }.get(status, {})
+
+    # Combine all defaults and apply overrides, with overrides taking precedence
+    return {**common_defaults, **status_defaults, **overrides}  # type: ignore
+
+
+def assert_proposal_with_status(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    status: int,
+    **overrides,  # noqa: ANN003
+) -> None:
+    params = get_default_params_for_status(status, overrides)  # type: ignore
+    assert_proposal_global_state(
+        global_state,
+        proposer_address=proposer_address,
+        registry_app_id=registry_app_id,
+        **params,  # type: ignore
+    )
+
+
 def assert_empty_proposal_global_state(
     global_state: GlobalState, proposer_address: str, registry_app_id: int
 ) -> None:
@@ -121,113 +187,58 @@ def assert_empty_proposal_global_state(
     )
 
 
-def assert_draft_proposal_global_state(
+def assert_draft_proposal_global_state(  # type: ignore
     global_state: GlobalState,
-    *,
     proposer_address: str,
     registry_app_id: int,
-    title: str = PROPOSAL_TITLE,
-    cid: bytes = PROPOSAL_CID,
-    funding_type: int = FUNDING_PROACTIVE,
-    requested_amount: int = REQUESTED_AMOUNT,
-    locked_amount: int = LOCKED_AMOUNT,
-    category: int = CATEGORY_SMALL,
+    **kwargs,  # noqa: ANN003
 ) -> None:
-    assert_proposal_global_state(
-        global_state,
-        proposer_address=proposer_address,
-        registry_app_id=registry_app_id,
-        status=STATUS_DRAFT,
-        title=title,
-        cid=cid,
-        funding_type=funding_type,
-        requested_amount=requested_amount,
-        locked_amount=locked_amount,
-        category=category,
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_DRAFT, **kwargs  # type: ignore
     )
 
 
-def assert_final_proposal_global_state(
+def assert_voting_proposal_global_state(  # type: ignore
     global_state: GlobalState,
-    *,
     proposer_address: str,
     registry_app_id: int,
-    title: str = PROPOSAL_TITLE,
-    cid: bytes = PROPOSAL_CID,
-    funding_type: int = FUNDING_PROACTIVE,
-    requested_amount: int = REQUESTED_AMOUNT,
-    locked_amount: int = LOCKED_AMOUNT,
-    category: int = CATEGORY_SMALL,
-    committee_id: bytes = DEFAULT_COMMITTEE_ID,
-    committee_members: int = DEFAULT_COMMITTEE_MEMBERS,
-    committee_votes: int = DEFAULT_COMMITTEE_VOTES,
-    voters_count: int = 0,
-    assigned_votes: int = 0,
+    **kwargs,  # noqa: ANN003
 ) -> None:
-    assert_proposal_global_state(
-        global_state,
-        proposer_address=proposer_address,
-        registry_app_id=registry_app_id,
-        status=STATUS_FINAL,
-        title=title,
-        cid=cid,
-        funding_type=funding_type,
-        requested_amount=requested_amount,
-        locked_amount=locked_amount,
-        category=category,
-        committee_id=committee_id,
-        committee_members=committee_members,
-        committee_votes=committee_votes,
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_VOTING, **kwargs  # type: ignore
     )
 
 
-def assert_voting_proposal_global_state(
+def assert_approved_proposal_global_state(  # type: ignore
     global_state: GlobalState,
-    *,
     proposer_address: str,
     registry_app_id: int,
-    title: str = PROPOSAL_TITLE,
-    cid: bytes = PROPOSAL_CID,
-    funding_type: int = FUNDING_PROACTIVE,
-    requested_amount: int = REQUESTED_AMOUNT,
-    locked_amount: int = LOCKED_AMOUNT,
-    category: int = CATEGORY_SMALL,
-    committee_id: bytes = DEFAULT_COMMITTEE_ID,
-    committee_members: int = DEFAULT_COMMITTEE_MEMBERS,
-    committee_votes: int = DEFAULT_COMMITTEE_VOTES,
-    voters_count: int = DEFAULT_COMMITTEE_MEMBERS,
-    assigned_votes: int = 10 * DEFAULT_COMMITTEE_MEMBERS,
-    approvals: int = 0,
-    rejections: int = 0,
-    nulls: int = 0,
-    voted_members: int = 0,
-    # approvers: int = 0,
-    # rejectors: int = 0,
+    **kwargs,  # noqa: ANN003
 ) -> None:
-    assert_proposal_global_state(
-        global_state,
-        proposer_address=proposer_address,
-        registry_app_id=registry_app_id,
-        status=STATUS_VOTING,
-        title=title,
-        cid=cid,
-        funding_type=funding_type,
-        requested_amount=requested_amount,
-        locked_amount=locked_amount,
-        category=category,
-        committee_id=committee_id,
-        committee_members=committee_members,
-        committee_votes=committee_votes,
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
-        approvals=approvals,
-        rejections=rejections,
-        nulls=nulls,
-        voted_members=voted_members,
-        # approvers=approvers,
-        # rejectors=rejectors,
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_APPROVED, **kwargs  # type: ignore
+    )
+
+
+def assert_rejected_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_REJECTED, **kwargs  # type: ignore
+    )
+
+
+def assert_final_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_FINAL, **kwargs  # type: ignore
     )
 
 

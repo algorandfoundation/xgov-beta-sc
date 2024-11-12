@@ -6,12 +6,14 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
+    itxn,
 )
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
 from ..common.types import CommitteeId
+from ..proposal import config as prop_cfg
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
@@ -90,6 +92,42 @@ class XgovRegistryMock(
             UInt64(mock_cfg.COMMITTEE_VOTES),
             key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
+        self.voting_duration_small = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_SMALL),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_SMALL,
+        )
+        self.voting_duration_medium = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_MEDIUM),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM,
+        )
+        self.voting_duration_large = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_LARGE),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_LARGE,
+        )
+        self.quorum_small = GlobalState(
+            UInt64(mock_cfg.QUORUM_SMALL_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_SMALL,
+        )
+        self.quorum_medium = GlobalState(
+            UInt64(mock_cfg.QUORUM_MEDIUM_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_MEDIUM,
+        )
+        self.quorum_large = GlobalState(
+            UInt64(mock_cfg.QUORUM_LARGE_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_LARGE,
+        )
+        self.weighted_quorum_small = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_SMALL_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL,
+        )
+        self.weighted_quorum_medium = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_MEDIUM_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM,
+        )
+        self.weighted_quorum_large = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_LARGE_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
+        )
 
     @arc4.abimethod()
     def create_empty_proposal(
@@ -110,6 +148,12 @@ class XgovRegistryMock(
             Proposal,
             proposer,
         )
+
+        itxn.Payment(
+            receiver=res.created_app.address,
+            amount=self.proposal_fee.value - prop_cfg.PROPOSAL_MBR,
+            fee=0,
+        ).submit()
 
         return res.created_app.id
 
@@ -274,3 +318,102 @@ class XgovRegistryMock(
 
         """
         self.committee_votes.value = committee_votes
+
+    @arc4.abimethod()
+    def set_voting_duration_small(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for small proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_small.value = voting_duration
+
+    @arc4.abimethod()
+    def set_voting_duration_medium(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for medium proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_medium.value = voting_duration
+
+    @arc4.abimethod()
+    def set_voting_duration_large(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for large proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_large.value = voting_duration
+
+    @arc4.abimethod()
+    def set_quorum_small(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for small proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_small.value = quorum
+
+    @arc4.abimethod()
+    def set_quorum_medium(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for medium proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_medium.value = quorum
+
+    @arc4.abimethod()
+    def set_quorum_large(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for large proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_large.value = quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_small(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for small proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_small.value = weighted_quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_medium(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for medium proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_medium.value = weighted_quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_large(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for large proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_large.value = weighted_quorum

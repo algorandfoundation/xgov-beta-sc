@@ -11,6 +11,7 @@ from tests.proposal.common import (
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
     LOCKED_AMOUNT,
+    PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
@@ -125,7 +126,11 @@ def test_finalize_not_proposer(
         proposer_address=proposer.address,
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+    )
 
 
 def test_finalize_empty_proposal(
@@ -254,7 +259,11 @@ def test_finalize_too_early(
         proposer_address=proposer.address,
     )
 
-    assert_account_balance(algorand_client, proposal_client.app_address, LOCKED_AMOUNT)
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+    )
 
 
 def test_finalize_wrong_committee_id(
