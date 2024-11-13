@@ -1,8 +1,8 @@
 #pragma version 10
 
 smart_contracts.xgov_registry.contract.XGovRegistry.approval_program:
-    intcblock 0 1 30 2
-    bytecblock 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x78676f765f6d696e5f62616c616e6365 0x70726f706f73616c5f666565 0x78 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x70726f706f7365725f666565 0x00 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
+    intcblock 0 1 30 6
+    bytecblock 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x70726f706f73616c5f666565 0x78 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x78676f765f666565 0x70726f706f7365725f666565 0x00 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
     txn ApplicationID
     bnz main_after_if_else@2
     callsub __init__
@@ -48,7 +48,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry/contract.py:49
     // self.xgov_payor = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_PAYOR)
-    bytec 7 // 0x78676f765f7061796f72
+    bytec 6 // 0x78676f765f7061796f72
     global ZeroAddress
     app_global_put
     // smart_contracts/xgov_registry/contract.py:50
@@ -58,12 +58,12 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry/contract.py:52
     // self.kyc_provider = GlobalState(arc4.Address(), key=cfg.GS_KEY_KYC_PROVIDER)
-    bytec 8 // 0x6b79635f70726f7669646572
+    bytec 7 // 0x6b79635f70726f7669646572
     global ZeroAddress
     app_global_put
     // smart_contracts/xgov_registry/contract.py:54
     // arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
-    bytec 9 // 0x636f6d6d69747465655f6d616e61676572
+    bytec 8 // 0x636f6d6d69747465655f6d616e61676572
     global ZeroAddress
     // smart_contracts/xgov_registry/contract.py:53-55
     // self.committee_manager = GlobalState(
@@ -80,8 +80,8 @@ __init__:
     // )
     app_global_put
     // smart_contracts/xgov_registry/contract.py:60
-    // self.xgov_min_balance = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_MIN_BALANCE)
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    // self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
+    bytec 9 // 0x78676f765f666565
     intc_0 // 0
     app_global_put
     // smart_contracts/xgov_registry/contract.py:61
@@ -91,7 +91,7 @@ __init__:
     app_global_put
     // smart_contracts/xgov_registry/contract.py:62
     // self.proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_FEE)
-    bytec 5 // 0x70726f706f73616c5f666565
+    bytec 4 // 0x70726f706f73616c5f666565
     intc_0 // 0
     app_global_put
     // smart_contracts/xgov_registry/contract.py:64
@@ -570,7 +570,7 @@ __puya_arc4_router___unsubscribe_xgov_route@12:
     retsub
 
 __puya_arc4_router___set_voting_account_route@13:
-    // smart_contracts/xgov_registry/contract.py:383
+    // smart_contracts/xgov_registry/contract.py:373
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -589,14 +589,14 @@ __puya_arc4_router___set_voting_account_route@13:
     // ):
     txna ApplicationArgs 1
     txna ApplicationArgs 2
-    // smart_contracts/xgov_registry/contract.py:383
+    // smart_contracts/xgov_registry/contract.py:373
     // @arc4.abimethod()
     callsub set_voting_account
     intc_1 // 1
     retsub
 
 __puya_arc4_router___subscribe_proposer_route@14:
-    // smart_contracts/xgov_registry/contract.py:409
+    // smart_contracts/xgov_registry/contract.py:399
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -621,14 +621,14 @@ __puya_arc4_router___subscribe_proposer_route@14:
     intc_1 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/xgov_registry/contract.py:409
+    // smart_contracts/xgov_registry/contract.py:399
     // @arc4.abimethod()
     callsub subscribe_proposer
     intc_1 // 1
     retsub
 
 __puya_arc4_router___set_proposer_kyc_route@15:
-    // smart_contracts/xgov_registry/contract.py:435
+    // smart_contracts/xgov_registry/contract.py:425
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -648,14 +648,14 @@ __puya_arc4_router___set_proposer_kyc_route@15:
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     txna ApplicationArgs 3
-    // smart_contracts/xgov_registry/contract.py:435
+    // smart_contracts/xgov_registry/contract.py:425
     // @arc4.abimethod()
     callsub set_proposer_kyc
     intc_1 // 1
     retsub
 
 __puya_arc4_router___declare_committee_route@16:
-    // smart_contracts/xgov_registry/contract.py:463
+    // smart_contracts/xgov_registry/contract.py:453
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -675,14 +675,14 @@ __puya_arc4_router___declare_committee_route@16:
     txna ApplicationArgs 1
     txna ApplicationArgs 2
     txna ApplicationArgs 3
-    // smart_contracts/xgov_registry/contract.py:463
+    // smart_contracts/xgov_registry/contract.py:453
     // @arc4.abimethod()
     callsub declare_committee
     intc_1 // 1
     retsub
 
 __puya_arc4_router___open_proposal_route@17:
-    // smart_contracts/xgov_registry/contract.py:484
+    // smart_contracts/xgov_registry/contract.py:474
     // @arc4.abimethod
     txn OnCompletion
     !
@@ -707,7 +707,7 @@ __puya_arc4_router___open_proposal_route@17:
     intc_1 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/xgov_registry/contract.py:484
+    // smart_contracts/xgov_registry/contract.py:474
     // @arc4.abimethod
     callsub open_proposal
     itob
@@ -719,7 +719,7 @@ __puya_arc4_router___open_proposal_route@17:
     retsub
 
 __puya_arc4_router___pay_grant_proposal_route@18:
-    // smart_contracts/xgov_registry/contract.py:548
+    // smart_contracts/xgov_registry/contract.py:538
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -737,14 +737,14 @@ __puya_arc4_router___pay_grant_proposal_route@18:
     //     ),
     // ):
     txna ApplicationArgs 1
-    // smart_contracts/xgov_registry/contract.py:548
+    // smart_contracts/xgov_registry/contract.py:538
     // @arc4.abimethod()
     callsub pay_grant_proposal
     intc_1 // 1
     retsub
 
 __puya_arc4_router___deposit_funds_route@19:
-    // smart_contracts/xgov_registry/contract.py:609
+    // smart_contracts/xgov_registry/contract.py:599
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -769,14 +769,14 @@ __puya_arc4_router___deposit_funds_route@19:
     intc_1 // pay
     ==
     assert // transaction type is pay
-    // smart_contracts/xgov_registry/contract.py:609
+    // smart_contracts/xgov_registry/contract.py:599
     // @arc4.abimethod()
     callsub deposit_funds
     intc_1 // 1
     retsub
 
 __puya_arc4_router___withdraw_funds_route@20:
-    // smart_contracts/xgov_registry/contract.py:625
+    // smart_contracts/xgov_registry/contract.py:615
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -795,14 +795,14 @@ __puya_arc4_router___withdraw_funds_route@20:
     // ):
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/xgov_registry/contract.py:625
+    // smart_contracts/xgov_registry/contract.py:615
     // @arc4.abimethod()
     callsub withdraw_funds
     intc_1 // 1
     retsub
 
 __puya_arc4_router___get_state_route@21:
-    // smart_contracts/xgov_registry/contract.py:649
+    // smart_contracts/xgov_registry/contract.py:639
     // @arc4.abimethod(readonly=True)
     txn OnCompletion
     !
@@ -893,7 +893,7 @@ set_payor:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:223
     // self.xgov_payor.value = payor
-    bytec 7 // 0x78676f765f7061796f72
+    bytec 6 // 0x78676f765f7061796f72
     frame_dig -1
     app_global_put
     retsub
@@ -929,7 +929,7 @@ set_kyc_provider:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:251
     // self.kyc_provider.value = provider
-    bytec 8 // 0x6b79635f70726f7669646572
+    bytec 7 // 0x6b79635f70726f7669646572
     frame_dig -1
     app_global_put
     retsub
@@ -947,7 +947,7 @@ set_committee_manager:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:265
     // self.committee_manager.value = manager
-    bytec 9 // 0x636f6d6d69747465655f6d616e61676572
+    bytec 8 // 0x636f6d6d69747465655f6d616e61676572
     frame_dig -1
     app_global_put
     retsub
@@ -986,11 +986,11 @@ config_xgov_registry:
     callsub no_pending_proposals
     assert // Cannot perform operation with pending proposals
     // smart_contracts/xgov_registry/contract.py:296
-    // self.xgov_min_balance.value = config.xgov_min_balance.native
+    // self.xgov_fee.value = config.xgov_fee.native
     frame_dig -1
     extract 0 8 // on error: Index access is out of bounds
     btoi
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 9 // 0x78676f765f666565
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:297
@@ -1006,7 +1006,7 @@ config_xgov_registry:
     frame_dig -1
     extract 16 8 // on error: Index access is out of bounds
     btoi
-    bytec 5 // 0x70726f706f73616c5f666565
+    bytec 4 // 0x70726f706f73616c5f666565
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:299
@@ -1214,7 +1214,7 @@ subscribe_xgov:
     proto 1 0
     // smart_contracts/xgov_registry/contract.py:350
     // assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
-    bytec 6 // 0x78
+    bytec 5 // 0x78
     txn Sender
     concat
     box_len
@@ -1234,19 +1234,19 @@ subscribe_xgov:
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
     // smart_contracts/xgov_registry/contract.py:355
-    // assert payment.amount == self.xgov_min_balance.value, err.WRONG_PAYMENT_AMOUNT
+    // assert payment.amount == self.xgov_fee.value, err.WRONG_PAYMENT_AMOUNT
     frame_dig -1
     gtxns Amount
     intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 9 // 0x78676f765f666565
     app_global_get_ex
-    assert // check self.xgov_min_balance exists
+    assert // check self.xgov_fee exists
     ==
     assert // Wrong payment amount
     // smart_contracts/xgov_registry/contract.py:357-358
     // # create box
     // self.xgov_box[Txn.sender] = arc4.Address(Txn.sender)
-    bytec 6 // 0x78
+    bytec 5 // 0x78
     txn Sender
     concat
     txn Sender
@@ -1260,90 +1260,45 @@ unsubscribe_xgov:
     // @arc4.abimethod()
     // def unsubscribe_xgov(self) -> None:
     proto 0 0
-    // smart_contracts/xgov_registry/contract.py:369-370
-    // # ensure they covered the itxn fee
-    // assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
-    txn Fee
-    global MinTxnFee
-    intc_3 // 2
-    *
-    >=
-    assert // Insufficient fee
-    // smart_contracts/xgov_registry/contract.py:371
+    // smart_contracts/xgov_registry/contract.py:368
     // assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
-    bytec 6 // 0x78
+    bytec 5 // 0x78
     txn Sender
     concat
     box_len
     bury 1
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:373-374
+    // smart_contracts/xgov_registry/contract.py:370-371
     // # delete box
     // del self.xgov_box[Txn.sender]
-    bytec 6 // 0x78
+    bytec 5 // 0x78
     txn Sender
     concat
     box_del
     pop
-    // smart_contracts/xgov_registry/contract.py:376-381
-    // # refund
-    // itxn.Payment(
-    //     receiver=Txn.sender,
-    //     amount=self.xgov_min_balance.value,
-    //     fee=0,
-    // ).submit()
-    itxn_begin
-    // smart_contracts/xgov_registry/contract.py:378
-    // receiver=Txn.sender,
-    txn Sender
-    // smart_contracts/xgov_registry/contract.py:379
-    // amount=self.xgov_min_balance.value,
-    intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
-    app_global_get_ex
-    assert // check self.xgov_min_balance exists
-    itxn_field Amount
-    itxn_field Receiver
-    // smart_contracts/xgov_registry/contract.py:376-377
-    // # refund
-    // itxn.Payment(
-    intc_1 // pay
-    itxn_field TypeEnum
-    // smart_contracts/xgov_registry/contract.py:380
-    // fee=0,
-    intc_0 // 0
-    itxn_field Fee
-    // smart_contracts/xgov_registry/contract.py:376-381
-    // # refund
-    // itxn.Payment(
-    //     receiver=Txn.sender,
-    //     amount=self.xgov_min_balance.value,
-    //     fee=0,
-    // ).submit()
-    itxn_submit
     retsub
 
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.set_voting_account(xgov_address: bytes, voting_address: bytes) -> void:
 set_voting_account:
-    // smart_contracts/xgov_registry/contract.py:383-386
+    // smart_contracts/xgov_registry/contract.py:373-376
     // @arc4.abimethod()
     // def set_voting_account(
     //     self, xgov_address: arc4.Address, voting_address: arc4.Address
     // ) -> None:
     proto 2 0
-    // smart_contracts/xgov_registry/contract.py:397-398
+    // smart_contracts/xgov_registry/contract.py:387-388
     // # Check if the sender is an xGov member
     // old_voting_address, exists = self.xgov_box.maybe(xgov_address.native)
-    bytec 6 // 0x78
+    bytec 5 // 0x78
     frame_dig -2
     concat
     dup
     box_get
-    // smart_contracts/xgov_registry/contract.py:399
+    // smart_contracts/xgov_registry/contract.py:389
     // assert exists, err.UNAUTHORIZED
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:403
+    // smart_contracts/xgov_registry/contract.py:393
     // Txn.sender == old_voting_address or Txn.sender == xgov_address
     txn Sender
     ==
@@ -1361,13 +1316,13 @@ set_voting_account_bool_false@3:
     intc_0 // 0
 
 set_voting_account_bool_merge@4:
-    // smart_contracts/xgov_registry/contract.py:401-404
+    // smart_contracts/xgov_registry/contract.py:391-394
     // # Check that the sender is either the xgov or the voting address
     // assert (
     //     Txn.sender == old_voting_address or Txn.sender == xgov_address
     // ), err.UNAUTHORIZED
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:406-407
+    // smart_contracts/xgov_registry/contract.py:396-397
     // # Update the voting account in the xGov box
     // self.xgov_box[xgov_address.native] = voting_address
     frame_dig 0
@@ -1378,11 +1333,11 @@ set_voting_account_bool_merge@4:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.subscribe_proposer(payment: uint64) -> void:
 subscribe_proposer:
-    // smart_contracts/xgov_registry/contract.py:409-410
+    // smart_contracts/xgov_registry/contract.py:399-400
     // @arc4.abimethod()
     // def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
     proto 1 0
-    // smart_contracts/xgov_registry/contract.py:422
+    // smart_contracts/xgov_registry/contract.py:412
     // assert Txn.sender not in self.proposer_box, err.ALREADY_PROPOSER
     bytec_1 // 0x70
     txn Sender
@@ -1391,19 +1346,19 @@ subscribe_proposer:
     bury 1
     !
     assert // Already a proposer
-    // smart_contracts/xgov_registry/contract.py:425
+    // smart_contracts/xgov_registry/contract.py:415
     // payment.receiver == Global.current_application_address
     frame_dig -1
     gtxns Receiver
     global CurrentApplicationAddress
     ==
-    // smart_contracts/xgov_registry/contract.py:423-426
+    // smart_contracts/xgov_registry/contract.py:413-416
     // # check fee
     // assert (
     //     payment.receiver == Global.current_application_address
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
-    // smart_contracts/xgov_registry/contract.py:427
+    // smart_contracts/xgov_registry/contract.py:417
     // assert payment.amount == self.proposer_fee.value, err.WRONG_PAYMENT_AMOUNT
     frame_dig -1
     gtxns Amount
@@ -1413,12 +1368,12 @@ subscribe_proposer:
     assert // check self.proposer_fee exists
     ==
     assert // Wrong payment amount
-    // smart_contracts/xgov_registry/contract.py:429
+    // smart_contracts/xgov_registry/contract.py:419
     // self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
     bytec_1 // 0x70
     txn Sender
     concat
-    // smart_contracts/xgov_registry/contract.py:429-433
+    // smart_contracts/xgov_registry/contract.py:419-423
     // self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
     //     active_proposal=arc4.Bool(False),  # noqa: FBT003
     //     kyc_status=arc4.Bool(False),  # noqa: FBT003
@@ -1431,23 +1386,23 @@ subscribe_proposer:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.set_proposer_kyc(proposer: bytes, kyc_status: bytes, kyc_expiring: bytes) -> void:
 set_proposer_kyc:
-    // smart_contracts/xgov_registry/contract.py:435-438
+    // smart_contracts/xgov_registry/contract.py:425-428
     // @arc4.abimethod()
     // def set_proposer_kyc(
     //     self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
     // ) -> None:
     proto 3 0
-    // smart_contracts/xgov_registry/contract.py:451-452
+    // smart_contracts/xgov_registry/contract.py:441-442
     // # check if kyc provider
     // assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
     txn Sender
     intc_0 // 0
-    bytec 8 // 0x6b79635f70726f7669646572
+    bytec 7 // 0x6b79635f70726f7669646572
     app_global_get_ex
     assert // check self.kyc_provider exists
     ==
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:453
+    // smart_contracts/xgov_registry/contract.py:443
     // assert proposer.native in self.proposer_box, err.PROPOSER_DOES_NOT_EXIST
     bytec_1 // 0x70
     frame_dig -3
@@ -1456,7 +1411,7 @@ set_proposer_kyc:
     box_len
     bury 1
     assert // Proposer does not exist
-    // smart_contracts/xgov_registry/contract.py:455
+    // smart_contracts/xgov_registry/contract.py:445
     // active_proposal = self.proposer_box[proposer.native].copy().active_proposal
     dup
     box_get
@@ -1467,7 +1422,7 @@ set_proposer_kyc:
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/xgov_registry/contract.py:457-461
+    // smart_contracts/xgov_registry/contract.py:447-451
     // self.proposer_box[proposer.native] = typ.ProposerBoxValue(
     //     active_proposal=active_proposal,
     //     kyc_status=kyc_status,
@@ -1487,29 +1442,29 @@ set_proposer_kyc:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.declare_committee(cid: bytes, size: bytes, votes: bytes) -> void:
 declare_committee:
-    // smart_contracts/xgov_registry/contract.py:463-466
+    // smart_contracts/xgov_registry/contract.py:453-456
     // @arc4.abimethod()
     // def declare_committee(
     //     self, cid: ptyp.CommitteeId, size: arc4.UInt64, votes: arc4.UInt64
     // ) -> None:
     proto 3 0
-    // smart_contracts/xgov_registry/contract.py:478
+    // smart_contracts/xgov_registry/contract.py:468
     // assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
     callsub is_xgov_committee_manager
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:480
+    // smart_contracts/xgov_registry/contract.py:470
     // self.committee_id.value = cid.copy()
     bytec 39 // 0x636f6d6d69747465655f6964
     frame_dig -3
     app_global_put
-    // smart_contracts/xgov_registry/contract.py:481
+    // smart_contracts/xgov_registry/contract.py:471
     // self.committee_members.value = size.native
     frame_dig -2
     btoi
     bytec 33 // 0x636f6d6d69747465655f6d656d62657273
     swap
     app_global_put
-    // smart_contracts/xgov_registry/contract.py:482
+    // smart_contracts/xgov_registry/contract.py:472
     // self.committee_votes.value = votes.native
     frame_dig -1
     btoi
@@ -1529,7 +1484,7 @@ is_xgov_committee_manager:
     // return Txn.sender == self.committee_manager.value.native
     txn Sender
     intc_0 // 0
-    bytec 9 // 0x636f6d6d69747465655f6d616e61676572
+    bytec 8 // 0x636f6d6d69747465655f6d616e61676572
     app_global_get_ex
     assert // check self.committee_manager exists
     ==
@@ -1538,11 +1493,11 @@ is_xgov_committee_manager:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.open_proposal(payment: uint64) -> uint64:
 open_proposal:
-    // smart_contracts/xgov_registry/contract.py:484-485
+    // smart_contracts/xgov_registry/contract.py:474-475
     // @arc4.abimethod
     // def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
     proto 1 1
-    // smart_contracts/xgov_registry/contract.py:500-501
+    // smart_contracts/xgov_registry/contract.py:490-491
     // # Check if the caller is a registered proposer
     // assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
     bytec_1 // 0x70
@@ -1551,14 +1506,14 @@ open_proposal:
     box_len
     bury 1
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:503-504
+    // smart_contracts/xgov_registry/contract.py:493-494
     // # Check if the proposer already has an active proposal
     // assert not self.proposer_box[
     bytec_1 // 0x70
-    // smart_contracts/xgov_registry/contract.py:505
+    // smart_contracts/xgov_registry/contract.py:495
     // Txn.sender
     txn Sender
-    // smart_contracts/xgov_registry/contract.py:503-506
+    // smart_contracts/xgov_registry/contract.py:493-496
     // # Check if the proposer already has an active proposal
     // assert not self.proposer_box[
     //     Txn.sender
@@ -1575,12 +1530,12 @@ open_proposal:
     bytec 11 // 0x00
     ==
     assert // Proposer already has an active proposal
-    // smart_contracts/xgov_registry/contract.py:507
+    // smart_contracts/xgov_registry/contract.py:497
     // assert self.valid_kyc(Txn.sender), err.INVALID_KYC
     txn Sender
     callsub valid_kyc
     assert // Invalid KYC
-    // smart_contracts/xgov_registry/contract.py:509
+    // smart_contracts/xgov_registry/contract.py:499
     // assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
     txn Fee
     global MinTxnFee
@@ -1588,29 +1543,29 @@ open_proposal:
     *
     >=
     assert // Insufficient fee
-    // smart_contracts/xgov_registry/contract.py:513
+    // smart_contracts/xgov_registry/contract.py:503
     // payment.receiver == Global.current_application_address
     frame_dig -1
     gtxns Receiver
     global CurrentApplicationAddress
     ==
-    // smart_contracts/xgov_registry/contract.py:511-514
+    // smart_contracts/xgov_registry/contract.py:501-504
     // # Ensure the transaction has the correct payment
     // assert (
     //     payment.receiver == Global.current_application_address
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
-    // smart_contracts/xgov_registry/contract.py:515
+    // smart_contracts/xgov_registry/contract.py:505
     // assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
     frame_dig -1
     gtxns Amount
     intc_0 // 0
-    bytec 5 // 0x70726f706f73616c5f666565
+    bytec 4 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
     ==
     assert // Wrong payment amount
-    // smart_contracts/xgov_registry/contract.py:521-531
+    // smart_contracts/xgov_registry/contract.py:511-521
     // proposal_app = arc4.abi_call(
     //     proposal_contract.ProposalMock.create,
     //     Txn.sender,
@@ -1623,18 +1578,18 @@ open_proposal:
     //     fee=0,
     // ).created_app
     itxn_begin
-    // smart_contracts/xgov_registry/contract.py:523
+    // smart_contracts/xgov_registry/contract.py:513
     // Txn.sender,
     txn Sender
-    // smart_contracts/xgov_registry/contract.py:527
+    // smart_contracts/xgov_registry/contract.py:517
     // global_num_uint=pcfg.GLOBAL_UINTS,
     pushint 18 // 18
     itxn_field GlobalNumUint
-    // smart_contracts/xgov_registry/contract.py:526
+    // smart_contracts/xgov_registry/contract.py:516
     // global_num_bytes=pcfg.GLOBAL_BYTES,
     pushint 5 // 5
     itxn_field GlobalNumByteSlice
-    // smart_contracts/xgov_registry/contract.py:517-519
+    // smart_contracts/xgov_registry/contract.py:507-509
     // # Create the Proposal App
     // # TODO: replace the proposal mock contract with the real one
     // compiled = compile_contract(proposal_contract.ProposalMock)
@@ -1642,7 +1597,7 @@ open_proposal:
     itxn_field ClearStateProgramPages
     pushbytes base64(CiACAAEmCAAIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkBnN0YXR1cxByZXF1ZXN0ZWRfYW1vdW50DGNvbW1pdHRlZV9pZBFjb21taXR0ZWVfbWVtYmVycw9jb21taXR0ZWVfdm90ZXMxGEAAA4gABIgAukOKAAApMgNnKiJngAV0aXRsZShngANjaWQoZ4AUc3VibWlzc2lvbl90aW1lc3RhbXAiZ4AWZmluYWxpemF0aW9uX3RpbWVzdGFtcCJnKyJngAhjYXRlZ29yeSJngAxmdW5kaW5nX3R5cGUiZycEImeADWxvY2tlZF9hbW91bnQiZycFKGcnBiJnJwciZ4ANdm90ZWRfbWVtYmVycyJngAlhcHByb3ZhbHMiZ4AKcmVqZWN0aW9ucyJniYoAATEbQQB8ggUEzGlOqgQTlMw8BNN5ElMEAlqYBATpSkRNNhoAjgUAAgASACIAMgBJIokxGRREMRgURDYaAYgARCOJMRkURDEYRDYaAReIAEAjiTEZFEQxGEQ2GgEXiAA4I4kxGRREMRhENhoBNhoCFzYaAxeIACojiTEZFEQxGEQjiSKJigEAKYv/ZyoyDWeJigEAK4v/Z4mKAQAnBIv/Z4mKAwAnBYv9ZycGi/5nJweL/2eJ)
     itxn_field ApprovalProgramPages
-    // smart_contracts/xgov_registry/contract.py:521-531
+    // smart_contracts/xgov_registry/contract.py:511-521
     // proposal_app = arc4.abi_call(
     //     proposal_contract.ProposalMock.create,
     //     Txn.sender,
@@ -1657,13 +1612,13 @@ open_proposal:
     pushbytes 0xcc694eaa // method "create(address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry/contract.py:530
+    // smart_contracts/xgov_registry/contract.py:520
     // fee=0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry/contract.py:521-531
+    // smart_contracts/xgov_registry/contract.py:511-521
     // proposal_app = arc4.abi_call(
     //     proposal_contract.ProposalMock.create,
     //     Txn.sender,
@@ -1677,7 +1632,7 @@ open_proposal:
     // ).created_app
     itxn_submit
     itxn CreatedApplicationID
-    // smart_contracts/xgov_registry/contract.py:533-534
+    // smart_contracts/xgov_registry/contract.py:523-524
     // # Update proposer state
     // self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
     bytec_1 // 0x70
@@ -1693,7 +1648,7 @@ open_proposal:
     concat
     swap
     box_put
-    // smart_contracts/xgov_registry/contract.py:536-541
+    // smart_contracts/xgov_registry/contract.py:526-531
     // # Transfer funds to the new Proposal App
     // itxn.Payment(
     //     receiver=proposal_app.address,
@@ -1701,31 +1656,31 @@ open_proposal:
     //     fee=0,
     // ).submit()
     itxn_begin
-    // smart_contracts/xgov_registry/contract.py:538
+    // smart_contracts/xgov_registry/contract.py:528
     // receiver=proposal_app.address,
     dup
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/xgov_registry/contract.py:539
+    // smart_contracts/xgov_registry/contract.py:529
     // amount=self.proposal_fee.value - pcfg.PROPOSAL_MBR,
     intc_0 // 0
-    bytec 5 // 0x70726f706f73616c5f666565
+    bytec 4 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
     pushint 963000 // 963000
     -
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/xgov_registry/contract.py:536-537
+    // smart_contracts/xgov_registry/contract.py:526-527
     // # Transfer funds to the new Proposal App
     // itxn.Payment(
     intc_1 // pay
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry/contract.py:540
+    // smart_contracts/xgov_registry/contract.py:530
     // fee=0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry/contract.py:536-541
+    // smart_contracts/xgov_registry/contract.py:526-531
     // # Transfer funds to the new Proposal App
     // itxn.Payment(
     //     receiver=proposal_app.address,
@@ -1733,7 +1688,7 @@ open_proposal:
     //     fee=0,
     // ).submit()
     itxn_submit
-    // smart_contracts/xgov_registry/contract.py:543-544
+    // smart_contracts/xgov_registry/contract.py:533-534
     // # Increment pending proposals
     // self.pending_proposals.value += 1
     intc_0 // 0
@@ -1745,7 +1700,7 @@ open_proposal:
     bytec_2 // 0x70656e64696e675f70726f706f73616c73
     swap
     app_global_put
-    // smart_contracts/xgov_registry/contract.py:546
+    // smart_contracts/xgov_registry/contract.py:536
     // return proposal_app.id
     retsub
 
@@ -1807,40 +1762,40 @@ valid_kyc_bool_merge@4:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.pay_grant_proposal(proposal_id: bytes) -> void:
 pay_grant_proposal:
-    // smart_contracts/xgov_registry/contract.py:548-549
+    // smart_contracts/xgov_registry/contract.py:538-539
     // @arc4.abimethod()
     // def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
     proto 1 0
-    // smart_contracts/xgov_registry/contract.py:564-565
+    // smart_contracts/xgov_registry/contract.py:554-555
     // # Verify the caller is the xGov Payor
     // assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
     txn Sender
     intc_0 // 0
-    bytec 7 // 0x78676f765f7061796f72
+    bytec 6 // 0x78676f765f7061796f72
     app_global_get_ex
     assert // check self.xgov_payor exists
     ==
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:567-568
+    // smart_contracts/xgov_registry/contract.py:557-558
     // # Verify proposal_id is a genuine proposal created by this registry
     // assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
     frame_dig -1
     callsub is_proposal
     assert // Invalid proposal
-    // smart_contracts/xgov_registry/contract.py:572
+    // smart_contracts/xgov_registry/contract.py:562
     // proposal_id.native, pcfg.GS_KEY_STATUS
     frame_dig -1
     btoi
-    // smart_contracts/xgov_registry/contract.py:570-573
+    // smart_contracts/xgov_registry/contract.py:560-563
     // # Read proposal state directly from the Proposal App's global state
     // status, status_exists = op.AppGlobal.get_ex_uint64(
     //     proposal_id.native, pcfg.GS_KEY_STATUS
     // )
     dup
-    // smart_contracts/xgov_registry/contract.py:572
+    // smart_contracts/xgov_registry/contract.py:562
     // proposal_id.native, pcfg.GS_KEY_STATUS
     pushbytes 0x737461747573
-    // smart_contracts/xgov_registry/contract.py:570-573
+    // smart_contracts/xgov_registry/contract.py:560-563
     // # Read proposal state directly from the Proposal App's global state
     // status, status_exists = op.AppGlobal.get_ex_uint64(
     //     proposal_id.native, pcfg.GS_KEY_STATUS
@@ -1848,43 +1803,43 @@ pay_grant_proposal:
     app_global_get_ex
     pop
     swap
-    // smart_contracts/xgov_registry/contract.py:574-576
+    // smart_contracts/xgov_registry/contract.py:564-566
     // proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
     //     proposal_id.native, pcfg.GS_KEY_PROPOSER
     // )
     dup
-    // smart_contracts/xgov_registry/contract.py:575
+    // smart_contracts/xgov_registry/contract.py:565
     // proposal_id.native, pcfg.GS_KEY_PROPOSER
     pushbytes 0x70726f706f736572
-    // smart_contracts/xgov_registry/contract.py:574-576
+    // smart_contracts/xgov_registry/contract.py:564-566
     // proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
     //     proposal_id.native, pcfg.GS_KEY_PROPOSER
     // )
     app_global_get_ex
     pop
-    // smart_contracts/xgov_registry/contract.py:577
+    // smart_contracts/xgov_registry/contract.py:567
     // proposer = arc4.Address(proposer_bytes)
     dup
     len
     pushint 32 // 32
     ==
     assert // Address length is 32 bytes
-    // smart_contracts/xgov_registry/contract.py:578-580
+    // smart_contracts/xgov_registry/contract.py:568-570
     // requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
     //     proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
     // )
     dig 1
-    // smart_contracts/xgov_registry/contract.py:579
+    // smart_contracts/xgov_registry/contract.py:569
     // proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
     pushbytes 0x7265717565737465645f616d6f756e74
-    // smart_contracts/xgov_registry/contract.py:578-580
+    // smart_contracts/xgov_registry/contract.py:568-570
     // requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
     //     proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
     // )
     app_global_get_ex
     pop
     cover 2
-    // smart_contracts/xgov_registry/contract.py:581-583
+    // smart_contracts/xgov_registry/contract.py:571-573
     // # Verify the proposal is in the approved state
     // # TODO: Switch to STATUS_MILESTONE
     // assert status == UInt64(penm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
@@ -1892,7 +1847,7 @@ pay_grant_proposal:
     intc_2 // 30
     ==
     assert // Proposal is not approved
-    // smart_contracts/xgov_registry/contract.py:585
+    // smart_contracts/xgov_registry/contract.py:575
     // assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
     bytec_1 // 0x70
     dig 1
@@ -1901,12 +1856,12 @@ pay_grant_proposal:
     box_len
     bury 1
     assert // Wrong proposer
-    // smart_contracts/xgov_registry/contract.py:587
+    // smart_contracts/xgov_registry/contract.py:577
     // assert self.valid_kyc(proposer.native), err.INVALID_KYC
     dig 1
     callsub valid_kyc
     assert // Invalid KYC
-    // smart_contracts/xgov_registry/contract.py:591
+    // smart_contracts/xgov_registry/contract.py:581
     // self.outstanding_funds.value >= requested_amount
     intc_0 // 0
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
@@ -1914,18 +1869,18 @@ pay_grant_proposal:
     assert // check self.outstanding_funds exists
     dig 4
     >=
-    // smart_contracts/xgov_registry/contract.py:589-592
+    // smart_contracts/xgov_registry/contract.py:579-582
     // # Verify sufficient funds are available
     // assert (
     //     self.outstanding_funds.value >= requested_amount
     // ), err.INSUFFICIENT_TREASURY_FUNDS
     assert // Insufficient treasury funds
-    // smart_contracts/xgov_registry/contract.py:594
+    // smart_contracts/xgov_registry/contract.py:584
     // self.disburse_funds(proposer, requested_amount)
     swap
     uncover 3
     callsub disburse_funds
-    // smart_contracts/xgov_registry/contract.py:596-598
+    // smart_contracts/xgov_registry/contract.py:586-588
     // arc4.abi_call(
     //     proposal_contract.ProposalMock.release_funds, app_id=proposal_id.native
     // )
@@ -1934,12 +1889,12 @@ pay_grant_proposal:
     itxn_field ApplicationID
     pushbytes 0xe94a444d // method "release_funds()void"
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/xgov_registry/contract.py:600-602
+    // smart_contracts/xgov_registry/contract.py:590-592
     // # Decrement pending proposals count
     // # TODO: might happen on decommission as well
     // self.pending_proposals.value -= 1
@@ -1952,13 +1907,13 @@ pay_grant_proposal:
     bytec_2 // 0x70656e64696e675f70726f706f73616c73
     swap
     app_global_put
-    // smart_contracts/xgov_registry/contract.py:604-605
+    // smart_contracts/xgov_registry/contract.py:594-595
     // # Update proposer's active proposal status
     // self.proposer_box[proposer.native].active_proposal = arc4.Bool(
     dup
     box_get
     assert // check self.proposer_box entry exists
-    // smart_contracts/xgov_registry/contract.py:604-607
+    // smart_contracts/xgov_registry/contract.py:594-597
     // # Update proposer's active proposal status
     // self.proposer_box[proposer.native].active_proposal = arc4.Bool(
     //     False  # noqa: FBT003
@@ -2056,22 +2011,22 @@ disburse_funds:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.deposit_funds(payment: uint64) -> void:
 deposit_funds:
-    // smart_contracts/xgov_registry/contract.py:609-610
+    // smart_contracts/xgov_registry/contract.py:599-600
     // @arc4.abimethod()
     // def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
     proto 1 0
-    // smart_contracts/xgov_registry/contract.py:621
+    // smart_contracts/xgov_registry/contract.py:611
     // payment.receiver == Global.current_application_address
     frame_dig -1
     gtxns Receiver
     global CurrentApplicationAddress
     ==
-    // smart_contracts/xgov_registry/contract.py:620-622
+    // smart_contracts/xgov_registry/contract.py:610-612
     // assert (
     //     payment.receiver == Global.current_application_address
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
-    // smart_contracts/xgov_registry/contract.py:623
+    // smart_contracts/xgov_registry/contract.py:613
     // self.outstanding_funds.value += payment.amount
     intc_0 // 0
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
@@ -2088,15 +2043,15 @@ deposit_funds:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.withdraw_funds(amount: uint64) -> void:
 withdraw_funds:
-    // smart_contracts/xgov_registry/contract.py:625-626
+    // smart_contracts/xgov_registry/contract.py:615-616
     // @arc4.abimethod()
     // def withdraw_funds(self, amount: UInt64) -> None:
     proto 1 0
-    // smart_contracts/xgov_registry/contract.py:638
+    // smart_contracts/xgov_registry/contract.py:628
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
     assert // Unauthorized
-    // smart_contracts/xgov_registry/contract.py:639
+    // smart_contracts/xgov_registry/contract.py:629
     // assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
     intc_0 // 0
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
@@ -2105,15 +2060,15 @@ withdraw_funds:
     frame_dig -1
     >=
     assert // Insufficient funds
-    // smart_contracts/xgov_registry/contract.py:640
+    // smart_contracts/xgov_registry/contract.py:630
     // assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
     txn Fee
     global MinTxnFee
-    intc_3 // 2
+    pushint 2 // 2
     *
     >=
     assert // Insufficient fee
-    // smart_contracts/xgov_registry/contract.py:641
+    // smart_contracts/xgov_registry/contract.py:631
     // self.outstanding_funds.value -= amount
     intc_0 // 0
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
@@ -2124,14 +2079,14 @@ withdraw_funds:
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
     swap
     app_global_put
-    // smart_contracts/xgov_registry/contract.py:643-647
+    // smart_contracts/xgov_registry/contract.py:633-637
     // itxn.Payment(
     //     receiver=self.xgov_manager.value.native,
     //     amount=amount,
     //     fee=0,
     // ).submit()
     itxn_begin
-    // smart_contracts/xgov_registry/contract.py:644
+    // smart_contracts/xgov_registry/contract.py:634
     // receiver=self.xgov_manager.value.native,
     intc_0 // 0
     bytec_3 // 0x78676f765f6d616e61676572
@@ -2140,15 +2095,15 @@ withdraw_funds:
     frame_dig -1
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/xgov_registry/contract.py:643
+    // smart_contracts/xgov_registry/contract.py:633
     // itxn.Payment(
     intc_1 // pay
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry/contract.py:646
+    // smart_contracts/xgov_registry/contract.py:636
     // fee=0,
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry/contract.py:643-647
+    // smart_contracts/xgov_registry/contract.py:633-637
     // itxn.Payment(
     //     receiver=self.xgov_manager.value.native,
     //     amount=amount,
@@ -2160,104 +2115,104 @@ withdraw_funds:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.get_state() -> bytes:
 get_state:
-    // smart_contracts/xgov_registry/contract.py:649-650
+    // smart_contracts/xgov_registry/contract.py:639-640
     // @arc4.abimethod(readonly=True)
     // def get_state(self) -> typ.TypedGlobalState:
     proto 0 1
-    // smart_contracts/xgov_registry/contract.py:654
+    // smart_contracts/xgov_registry/contract.py:644
     // xgov_manager=self.xgov_manager.value,
     intc_0 // 0
     bytec_3 // 0x78676f765f6d616e61676572
     app_global_get_ex
     assert // check self.xgov_manager exists
-    // smart_contracts/xgov_registry/contract.py:655
+    // smart_contracts/xgov_registry/contract.py:645
     // xgov_payor=self.xgov_payor.value,
     intc_0 // 0
-    bytec 7 // 0x78676f765f7061796f72
+    bytec 6 // 0x78676f765f7061796f72
     app_global_get_ex
     assert // check self.xgov_payor exists
-    // smart_contracts/xgov_registry/contract.py:656
+    // smart_contracts/xgov_registry/contract.py:646
     // kyc_provider=self.kyc_provider.value,
     intc_0 // 0
-    bytec 8 // 0x6b79635f70726f7669646572
+    bytec 7 // 0x6b79635f70726f7669646572
     app_global_get_ex
     assert // check self.kyc_provider exists
-    // smart_contracts/xgov_registry/contract.py:657
+    // smart_contracts/xgov_registry/contract.py:647
     // committee_manager=self.committee_manager.value,
     intc_0 // 0
-    bytec 9 // 0x636f6d6d69747465655f6d616e61676572
+    bytec 8 // 0x636f6d6d69747465655f6d616e61676572
     app_global_get_ex
     assert // check self.committee_manager exists
-    // smart_contracts/xgov_registry/contract.py:658
+    // smart_contracts/xgov_registry/contract.py:648
     // committee_publisher=self.committee_publisher.value,
     intc_0 // 0
     bytec 12 // 0x636f6d6d69747465655f7075626c6973686572
     app_global_get_ex
     assert // check self.committee_publisher exists
-    // smart_contracts/xgov_registry/contract.py:659
-    // xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+    // smart_contracts/xgov_registry/contract.py:649
+    // xgov_fee=arc4.UInt64(self.xgov_fee.value),
     intc_0 // 0
-    bytec 4 // 0x78676f765f6d696e5f62616c616e6365
+    bytec 9 // 0x78676f765f666565
     app_global_get_ex
-    assert // check self.xgov_min_balance exists
+    assert // check self.xgov_fee exists
     itob
-    // smart_contracts/xgov_registry/contract.py:660
+    // smart_contracts/xgov_registry/contract.py:650
     // proposer_fee=arc4.UInt64(self.proposer_fee.value),
     intc_0 // 0
     bytec 10 // 0x70726f706f7365725f666565
     app_global_get_ex
     assert // check self.proposer_fee exists
     itob
-    // smart_contracts/xgov_registry/contract.py:661
+    // smart_contracts/xgov_registry/contract.py:651
     // proposal_fee=arc4.UInt64(self.proposal_fee.value),
     intc_0 // 0
-    bytec 5 // 0x70726f706f73616c5f666565
+    bytec 4 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
     itob
-    // smart_contracts/xgov_registry/contract.py:662
+    // smart_contracts/xgov_registry/contract.py:652
     // proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),
     intc_0 // 0
     bytec 13 // 0x70726f706f73616c5f7075626c697368696e675f627073
     app_global_get_ex
     assert // check self.proposal_publishing_bps exists
     itob
-    // smart_contracts/xgov_registry/contract.py:663
+    // smart_contracts/xgov_registry/contract.py:653
     // proposal_commitment_bps=arc4.UInt64(self.proposal_commitment_bps.value),
     intc_0 // 0
     bytec 14 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073
     app_global_get_ex
     assert // check self.proposal_commitment_bps exists
     itob
-    // smart_contracts/xgov_registry/contract.py:664
+    // smart_contracts/xgov_registry/contract.py:654
     // min_requested_amount=arc4.UInt64(self.min_requested_amount.value),
     intc_0 // 0
     bytec 36 // 0x6d696e5f7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.min_requested_amount exists
     itob
-    // smart_contracts/xgov_registry/contract.py:666
+    // smart_contracts/xgov_registry/contract.py:656
     // arc4.UInt64(self.max_requested_amount_small.value),
     intc_0 // 0
     bytec 15 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
     app_global_get_ex
     assert // check self.max_requested_amount_small exists
     itob
-    // smart_contracts/xgov_registry/contract.py:667
+    // smart_contracts/xgov_registry/contract.py:657
     // arc4.UInt64(self.max_requested_amount_medium.value),
     intc_0 // 0
     bytec 16 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
     app_global_get_ex
     assert // check self.max_requested_amount_medium exists
     itob
-    // smart_contracts/xgov_registry/contract.py:668
+    // smart_contracts/xgov_registry/contract.py:658
     // arc4.UInt64(self.max_requested_amount_large.value),
     intc_0 // 0
     bytec 17 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
     app_global_get_ex
     assert // check self.max_requested_amount_large exists
     itob
-    // smart_contracts/xgov_registry/contract.py:665-669
+    // smart_contracts/xgov_registry/contract.py:655-659
     // max_requested_amount=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
     //     arc4.UInt64(self.max_requested_amount_small.value),
     //     arc4.UInt64(self.max_requested_amount_medium.value),
@@ -2267,35 +2222,35 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/xgov_registry/contract.py:671
+    // smart_contracts/xgov_registry/contract.py:661
     // arc4.UInt64(self.discussion_duration_small.value),
     intc_0 // 0
     bytec 18 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
     app_global_get_ex
     assert // check self.discussion_duration_small exists
     itob
-    // smart_contracts/xgov_registry/contract.py:672
+    // smart_contracts/xgov_registry/contract.py:662
     // arc4.UInt64(self.discussion_duration_medium.value),
     intc_0 // 0
     bytec 19 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
     app_global_get_ex
     assert // check self.discussion_duration_medium exists
     itob
-    // smart_contracts/xgov_registry/contract.py:673
+    // smart_contracts/xgov_registry/contract.py:663
     // arc4.UInt64(self.discussion_duration_large.value),
     intc_0 // 0
     bytec 20 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
     app_global_get_ex
     assert // check self.discussion_duration_large exists
     itob
-    // smart_contracts/xgov_registry/contract.py:674
+    // smart_contracts/xgov_registry/contract.py:664
     // arc4.UInt64(self.discussion_duration_xlarge.value),
     intc_0 // 0
     bytec 21 // 0x64697363757373696f6e5f6475726174696f6e5f786c61726765
     app_global_get_ex
     assert // check self.discussion_duration_xlarge exists
     itob
-    // smart_contracts/xgov_registry/contract.py:670-675
+    // smart_contracts/xgov_registry/contract.py:660-665
     // discussion_duration=arc4.StaticArray[arc4.UInt64, t.Literal[4]](
     //     arc4.UInt64(self.discussion_duration_small.value),
     //     arc4.UInt64(self.discussion_duration_medium.value),
@@ -2309,35 +2264,35 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/xgov_registry/contract.py:677
+    // smart_contracts/xgov_registry/contract.py:667
     // arc4.UInt64(self.voting_duration_small.value),
     intc_0 // 0
     bytec 22 // 0x766f74696e675f6475726174696f6e5f736d616c6c
     app_global_get_ex
     assert // check self.voting_duration_small exists
     itob
-    // smart_contracts/xgov_registry/contract.py:678
+    // smart_contracts/xgov_registry/contract.py:668
     // arc4.UInt64(self.voting_duration_medium.value),
     intc_0 // 0
     bytec 23 // 0x766f74696e675f6475726174696f6e5f6d656469756d
     app_global_get_ex
     assert // check self.voting_duration_medium exists
     itob
-    // smart_contracts/xgov_registry/contract.py:679
+    // smart_contracts/xgov_registry/contract.py:669
     // arc4.UInt64(self.voting_duration_large.value),
     intc_0 // 0
     bytec 24 // 0x766f74696e675f6475726174696f6e5f6c61726765
     app_global_get_ex
     assert // check self.voting_duration_large exists
     itob
-    // smart_contracts/xgov_registry/contract.py:680
+    // smart_contracts/xgov_registry/contract.py:670
     // arc4.UInt64(self.voting_duration_xlarge.value),
     intc_0 // 0
     bytec 25 // 0x766f74696e675f6475726174696f6e5f786c61726765
     app_global_get_ex
     assert // check self.voting_duration_xlarge exists
     itob
-    // smart_contracts/xgov_registry/contract.py:676-681
+    // smart_contracts/xgov_registry/contract.py:666-671
     // voting_duration=arc4.StaticArray[arc4.UInt64, t.Literal[4]](
     //     arc4.UInt64(self.voting_duration_small.value),
     //     arc4.UInt64(self.voting_duration_medium.value),
@@ -2351,42 +2306,42 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/xgov_registry/contract.py:682
+    // smart_contracts/xgov_registry/contract.py:672
     // cool_down_duration=arc4.UInt64(self.cool_down_duration.value),
     intc_0 // 0
     bytec 26 // 0x636f6f6c5f646f776e5f6475726174696f6e
     app_global_get_ex
     assert // check self.cool_down_duration exists
     itob
-    // smart_contracts/xgov_registry/contract.py:683
+    // smart_contracts/xgov_registry/contract.py:673
     // stale_proposal_duration=arc4.UInt64(self.stale_proposal_duration.value),
     intc_0 // 0
     bytec 37 // 0x7374616c655f70726f706f73616c5f6475726174696f6e
     app_global_get_ex
     assert // check self.stale_proposal_duration exists
     itob
-    // smart_contracts/xgov_registry/contract.py:685
+    // smart_contracts/xgov_registry/contract.py:675
     // arc4.UInt64(self.quorum_small.value),
     intc_0 // 0
     bytec 27 // 0x71756f72756d5f736d616c6c
     app_global_get_ex
     assert // check self.quorum_small exists
     itob
-    // smart_contracts/xgov_registry/contract.py:686
+    // smart_contracts/xgov_registry/contract.py:676
     // arc4.UInt64(self.quorum_medium.value),
     intc_0 // 0
     bytec 28 // 0x71756f72756d5f6d656469756d
     app_global_get_ex
     assert // check self.quorum_medium exists
     itob
-    // smart_contracts/xgov_registry/contract.py:687
+    // smart_contracts/xgov_registry/contract.py:677
     // arc4.UInt64(self.quorum_large.value),
     intc_0 // 0
     bytec 29 // 0x71756f72756d5f6c61726765
     app_global_get_ex
     assert // check self.quorum_large exists
     itob
-    // smart_contracts/xgov_registry/contract.py:684-688
+    // smart_contracts/xgov_registry/contract.py:674-678
     // quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
     //     arc4.UInt64(self.quorum_small.value),
     //     arc4.UInt64(self.quorum_medium.value),
@@ -2396,28 +2351,28 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/xgov_registry/contract.py:690
+    // smart_contracts/xgov_registry/contract.py:680
     // arc4.UInt64(self.weighted_quorum_small.value),
     intc_0 // 0
     bytec 30 // 0x77656967687465645f71756f72756d5f736d616c6c
     app_global_get_ex
     assert // check self.weighted_quorum_small exists
     itob
-    // smart_contracts/xgov_registry/contract.py:691
+    // smart_contracts/xgov_registry/contract.py:681
     // arc4.UInt64(self.weighted_quorum_medium.value),
     intc_0 // 0
     bytec 31 // 0x77656967687465645f71756f72756d5f6d656469756d
     app_global_get_ex
     assert // check self.weighted_quorum_medium exists
     itob
-    // smart_contracts/xgov_registry/contract.py:692
+    // smart_contracts/xgov_registry/contract.py:682
     // arc4.UInt64(self.weighted_quorum_large.value),
     intc_0 // 0
     bytec 32 // 0x77656967687465645f71756f72756d5f6c61726765
     app_global_get_ex
     assert // check self.weighted_quorum_large exists
     itob
-    // smart_contracts/xgov_registry/contract.py:689-693
+    // smart_contracts/xgov_registry/contract.py:679-683
     // weighted_quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
     //     arc4.UInt64(self.weighted_quorum_small.value),
     //     arc4.UInt64(self.weighted_quorum_medium.value),
@@ -2427,48 +2382,48 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/xgov_registry/contract.py:694
+    // smart_contracts/xgov_registry/contract.py:684
     // outstanding_funds=arc4.UInt64(self.outstanding_funds.value),
     intc_0 // 0
     bytec_0 // 0x6f75747374616e64696e675f66756e6473
     app_global_get_ex
     assert // check self.outstanding_funds exists
     itob
-    // smart_contracts/xgov_registry/contract.py:695
+    // smart_contracts/xgov_registry/contract.py:685
     // pending_proposals=arc4.UInt64(self.pending_proposals.value),
     intc_0 // 0
     bytec_2 // 0x70656e64696e675f70726f706f73616c73
     app_global_get_ex
     assert // check self.pending_proposals exists
     itob
-    // smart_contracts/xgov_registry/contract.py:696
+    // smart_contracts/xgov_registry/contract.py:686
     // committee_id=self.committee_id.value.copy(),
     intc_0 // 0
     bytec 39 // 0x636f6d6d69747465655f6964
     app_global_get_ex
     assert // check self.committee_id exists
-    // smart_contracts/xgov_registry/contract.py:697
+    // smart_contracts/xgov_registry/contract.py:687
     // committee_members=arc4.UInt64(self.committee_members.value),
     intc_0 // 0
     bytec 33 // 0x636f6d6d69747465655f6d656d62657273
     app_global_get_ex
     assert // check self.committee_members exists
     itob
-    // smart_contracts/xgov_registry/contract.py:698
+    // smart_contracts/xgov_registry/contract.py:688
     // committee_votes=arc4.UInt64(self.committee_votes.value),
     intc_0 // 0
     bytec 34 // 0x636f6d6d69747465655f766f746573
     app_global_get_ex
     assert // check self.committee_votes exists
     itob
-    // smart_contracts/xgov_registry/contract.py:653-699
+    // smart_contracts/xgov_registry/contract.py:643-689
     // return typ.TypedGlobalState(
     //     xgov_manager=self.xgov_manager.value,
     //     xgov_payor=self.xgov_payor.value,
     //     kyc_provider=self.kyc_provider.value,
     //     committee_manager=self.committee_manager.value,
     //     committee_publisher=self.committee_publisher.value,
-    //     xgov_min_balance=arc4.UInt64(self.xgov_min_balance.value),
+    //     xgov_fee=arc4.UInt64(self.xgov_fee.value),
     //     proposer_fee=arc4.UInt64(self.proposer_fee.value),
     //     proposal_fee=arc4.UInt64(self.proposal_fee.value),
     //     proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),

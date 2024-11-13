@@ -158,16 +158,16 @@ subscribe_xgov:
     // def subscribe_xgov(self, app_id: UInt64) -> None:
     proto 1 0
     // smart_contracts/xgov_subscriber_app_mock/contract.py:42-44
-    // xgov_min_balance, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
-    //     app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE
+    // xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
+    //     app_id, rcfg.GS_KEY_XGOV_FEE
     // )
     frame_dig -1
     // smart_contracts/xgov_subscriber_app_mock/contract.py:43
-    // app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE
-    pushbytes 0x78676f765f6d696e5f62616c616e6365
+    // app_id, rcfg.GS_KEY_XGOV_FEE
+    pushbytes 0x78676f765f666565
     // smart_contracts/xgov_subscriber_app_mock/contract.py:42-44
-    // xgov_min_balance, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
-    //     app_id, rcfg.GS_KEY_XGOV_MIN_BALANCE
+    // xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
+    //     app_id, rcfg.GS_KEY_XGOV_FEE
     // )
     app_global_get_ex
     pop
