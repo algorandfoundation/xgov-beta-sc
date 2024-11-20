@@ -17,6 +17,8 @@ def test_unsubscribe_xgov_success(
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
 ) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+
     xgov_registry_client.unsubscribe_xgov(
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
@@ -24,6 +26,10 @@ def test_unsubscribe_xgov_success(
             boxes=[(0, xgov_box_name(xgov.address))],
         ),
     )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    assert (before_global_state.xgovs - 1) == after_global_state.xgovs  # type: ignore
 
     with pytest.raises(error.AlgodHTTPError):  # type: ignore
         xgov_registry_client.algod_client.application_box_by_name(
