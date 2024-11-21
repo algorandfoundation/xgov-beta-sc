@@ -54,7 +54,7 @@ def test_subscribe_xgov_success(
     )
 
     assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
-    assert (before_global_state.xgovs + 1) == after_global_state.xgovs  # type: ignore
+    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,

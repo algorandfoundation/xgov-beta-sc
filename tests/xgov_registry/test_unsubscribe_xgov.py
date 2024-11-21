@@ -29,7 +29,7 @@ def test_unsubscribe_xgov_success(
 
     after_global_state = xgov_registry_client.get_global_state()
 
-    assert (before_global_state.xgovs - 1) == after_global_state.xgovs  # type: ignore
+    assert (before_global_state.xgovs - 1) == after_global_state.xgovs
 
     with pytest.raises(error.AlgodHTTPError):  # type: ignore
         xgov_registry_client.algod_client.application_box_by_name(
