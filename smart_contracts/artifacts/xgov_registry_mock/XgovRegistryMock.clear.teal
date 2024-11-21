@@ -1,5 +1,5 @@
 #pragma version 10
 
 smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_state_program:
-    int 1
+    pushint 1 // 1
     return

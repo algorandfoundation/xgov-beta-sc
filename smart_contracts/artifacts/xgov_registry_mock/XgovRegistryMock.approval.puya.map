@@ -1,0 +1,2541 @@
+{
+  "version": 3,
+  "sources": [
+    "../../xgov_registry_mock/contract.py"
+  ],
+  "mappings": "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;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACF;;;;;;;;;;;;AADE;;;;AAAA;;;AAAA;;;AAKN;AAER;;;AASQ;AAAA;;AAAA;;AAER;;;AASQ;AAAA;;AAAA;;AAER;;;AASQ;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;AAAA;;AAAA;;AAER;;;AAMQ;AAAiD;;AAAjD;;AAER;;;AASQ;;AAAA;;AAAA;;AAER;;;AASQ;;AAAA;;AAAA;",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program",
+      "params": {},
+      "block": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.approval_program",
+      "stack_in": [],
+      "op": "intcblock 1 0"
+    },
+    "5": {
+      "op": "bytecblock 0x636f6d6d69747465655f6964 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x70726f706f73616c5f7075626c697368696e675f627073 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f666565 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573"
+    },
+    "317": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "319": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "322": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__init__",
+      "op": "callsub __init__"
+    },
+    "325": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__puya_arc4_router__",
+      "op": "callsub __puya_arc4_router__",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "328": {
+      "op": "return",
+      "stack_out": []
+    },
+    "329": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__init__",
+      "params": {},
+      "block": "__init__",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "332": {
+      "op": "txn GlobalNumByteSlice",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "334": {
+      "op": "pushint 2 // 2",
+      "defined_out": [
+        "2",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "2"
+      ]
+    },
+    "336": {
+      "op": "==",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "337": {
+      "error": "Wrong Global Bytes allocation",
+      "op": "assert // Wrong Global Bytes allocation",
+      "stack_out": []
+    },
+    "338": {
+      "op": "txn GlobalNumUint",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "340": {
+      "op": "pushint 12 // 12",
+      "defined_out": [
+        "12",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0",
+        "12"
+      ]
+    },
+    "342": {
+      "op": "==",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "343": {
+      "error": "Wrong Global UInts allocation",
+      "op": "assert // Wrong Global UInts allocation",
+      "stack_out": []
+    },
+    "344": {
+      "op": "txn LocalNumByteSlice",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "346": {
+      "op": "!",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "347": {
+      "error": "Wrong Local Bytes allocation",
+      "op": "assert // Wrong Local Bytes allocation",
+      "stack_out": []
+    },
+    "348": {
+      "op": "txn LocalNumUint",
+      "defined_out": [
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "tmp%6#0"
+      ]
+    },
+    "350": {
+      "op": "!",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "351": {
+      "error": "Wrong Local UInts allocation",
+      "op": "assert // Wrong Local UInts allocation",
+      "stack_out": []
+    },
+    "352": {
+      "op": "bytec_1 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+      "defined_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
+      ]
+    },
+    "353": {
+      "op": "pushint 100 // 100",
+      "defined_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+        "100"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+        "100"
+      ]
+    },
+    "355": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "356": {
+      "op": "bytec_2 // 0x6d696e5f7265717565737465645f616d6f756e74",
+      "defined_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74"
+      ],
+      "stack_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74"
+      ]
+    },
+    "357": {
+      "op": "pushint 10000000000 // 10000000000",
+      "defined_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74",
+        "10000000000"
+      ],
+      "stack_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74",
+        "10000000000"
+      ]
+    },
+    "363": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "364": {
+      "op": "bytec_3 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
+      ]
+    },
+    "365": {
+      "op": "pushint 50000000000 // 50000000000",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+        "50000000000"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+        "50000000000"
+      ]
+    },
+    "372": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "373": {
+      "op": "bytec 4 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
+      ]
+    },
+    "375": {
+      "op": "pushint 250000000000 // 250000000000",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+        "250000000000"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+        "250000000000"
+      ]
+    },
+    "382": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "383": {
+      "op": "bytec 5 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
+      ]
+    },
+    "385": {
+      "op": "pushint 500000000000 // 500000000000",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+        "500000000000"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+        "500000000000"
+      ]
+    },
+    "392": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "393": {
+      "op": "bytec 6 // 0x70726f706f73616c5f7075626c697368696e675f627073",
+      "defined_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073"
+      ]
+    },
+    "395": {
+      "op": "pushint 500 // 500",
+      "defined_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073",
+        "500"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073",
+        "500"
+      ]
+    },
+    "398": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "399": {
+      "op": "bytec 7 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
+      ]
+    },
+    "401": {
+      "op": "pushint 604800 // 604800",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+        "604800"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+        "604800"
+      ]
+    },
+    "405": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "406": {
+      "op": "bytec 8 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
+      ]
+    },
+    "408": {
+      "op": "pushint 1209600 // 1209600",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+        "1209600"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+        "1209600"
+      ]
+    },
+    "412": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "413": {
+      "op": "bytec 9 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
+      ]
+    },
+    "415": {
+      "op": "pushint 1814400 // 1814400",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+        "1814400"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+        "1814400"
+      ]
+    },
+    "419": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "420": {
+      "op": "bytec 10 // 0x636f6d6d69747465655f7075626c6973686572",
+      "defined_out": [
+        "0x636f6d6d69747465655f7075626c6973686572"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f7075626c6973686572"
+      ]
+    },
+    "422": {
+      "op": "pushbytes base32(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) // addr AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+      "defined_out": [
+        "0x636f6d6d69747465655f7075626c6973686572",
+        "Address(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f7075626c6973686572",
+        "Address(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ)"
+      ]
+    },
+    "456": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "457": {
+      "op": "bytec 11 // 0x70726f706f73616c5f666565",
+      "defined_out": [
+        "0x70726f706f73616c5f666565"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f666565"
+      ]
+    },
+    "459": {
+      "op": "pushint 100000000 // 100000000",
+      "defined_out": [
+        "0x70726f706f73616c5f666565",
+        "100000000"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f666565",
+        "100000000"
+      ]
+    },
+    "464": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "465": {
+      "op": "bytec_0 // 0x636f6d6d69747465655f6964",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964"
+      ]
+    },
+    "466": {
+      "op": "pushbytes 0x",
+      "defined_out": [
+        "0x",
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964",
+        "0x"
+      ]
+    },
+    "468": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "469": {
+      "op": "bytec 12 // 0x636f6d6d69747465655f6d656d62657273",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ]
+    },
+    "471": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0",
+        "0x636f6d6d69747465655f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "0"
+      ]
+    },
+    "472": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "473": {
+      "op": "bytec 13 // 0x636f6d6d69747465655f766f746573",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ]
+    },
+    "475": {
+      "op": "intc_1 // 0",
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "0"
+      ]
+    },
+    "476": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "477": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "478": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.__puya_arc4_router__",
+      "params": {},
+      "block": "__puya_arc4_router__",
+      "stack_in": [],
+      "op": "proto 0 1"
+    },
+    "481": {
+      "op": "txn NumAppArgs",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "483": {
+      "op": "bz __puya_arc4_router___bare_routing@20",
+      "stack_out": []
+    },
+    "486": {
+      "op": "pushbytess 0xc386b03f 0x6811eb76 0x37235b22 0xbbc72d1b 0xd17676d9 0x7cd79aad 0x77152d58 0x29dfd021 0x34a5dc55 0xbb0db011 0xaa348d0d 0x97f1e857 0x504c31b9 0x56ad1c6f 0xf83579fd 0x520e1f64 // method \"create_empty_proposal(address)uint64\", method \"set_proposal_commitment_bps(uint64)void\", method \"set_min_requested_amount(uint64)void\", method \"set_max_requested_amount_small(uint64)void\", method \"set_max_requested_amount_medium(uint64)void\", method \"set_max_requested_amount_large(uint64)void\", method \"set_publishing_fee(uint64)void\", method \"set_discussion_duration_small(uint64)void\", method \"set_discussion_duration_medium(uint64)void\", method \"set_discussion_duration_large(uint64)void\", method \"set_committee_publisher(address)void\", method \"set_proposal_fee(uint64)void\", method \"set_committee_id(byte[32])void\", method \"clear_committee_id()void\", method \"set_committee_members(uint64)void\", method \"set_committee_votes(uint64)void\""
+    },
+    "568": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(clear_committee_id()void)",
+        "Method(create_empty_proposal(address)uint64)",
+        "Method(set_committee_id(byte[32])void)",
+        "Method(set_committee_members(uint64)void)",
+        "Method(set_committee_publisher(address)void)",
+        "Method(set_committee_votes(uint64)void)",
+        "Method(set_discussion_duration_large(uint64)void)",
+        "Method(set_discussion_duration_medium(uint64)void)",
+        "Method(set_discussion_duration_small(uint64)void)",
+        "Method(set_max_requested_amount_large(uint64)void)",
+        "Method(set_max_requested_amount_medium(uint64)void)",
+        "Method(set_max_requested_amount_small(uint64)void)",
+        "Method(set_min_requested_amount(uint64)void)",
+        "Method(set_proposal_commitment_bps(uint64)void)",
+        "Method(set_proposal_fee(uint64)void)",
+        "Method(set_publishing_fee(uint64)void)",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "Method(create_empty_proposal(address)uint64)",
+        "Method(set_proposal_commitment_bps(uint64)void)",
+        "Method(set_min_requested_amount(uint64)void)",
+        "Method(set_max_requested_amount_small(uint64)void)",
+        "Method(set_max_requested_amount_medium(uint64)void)",
+        "Method(set_max_requested_amount_large(uint64)void)",
+        "Method(set_publishing_fee(uint64)void)",
+        "Method(set_discussion_duration_small(uint64)void)",
+        "Method(set_discussion_duration_medium(uint64)void)",
+        "Method(set_discussion_duration_large(uint64)void)",
+        "Method(set_committee_publisher(address)void)",
+        "Method(set_proposal_fee(uint64)void)",
+        "Method(set_committee_id(byte[32])void)",
+        "Method(clear_committee_id()void)",
+        "Method(set_committee_members(uint64)void)",
+        "Method(set_committee_votes(uint64)void)",
+        "tmp%2#0"
+      ]
+    },
+    "571": {
+      "op": "match __puya_arc4_router___create_empty_proposal_route@2 __puya_arc4_router___set_proposal_commitment_bps_route@3 __puya_arc4_router___set_min_requested_amount_route@4 __puya_arc4_router___set_max_requested_amount_small_route@5 __puya_arc4_router___set_max_requested_amount_medium_route@6 __puya_arc4_router___set_max_requested_amount_large_route@7 __puya_arc4_router___set_publishing_fee_route@8 __puya_arc4_router___set_discussion_duration_small_route@9 __puya_arc4_router___set_discussion_duration_medium_route@10 __puya_arc4_router___set_discussion_duration_large_route@11 __puya_arc4_router___set_committee_publisher_route@12 __puya_arc4_router___set_proposal_fee_route@13 __puya_arc4_router___set_committee_id_route@14 __puya_arc4_router___clear_committee_id_route@15 __puya_arc4_router___set_committee_members_route@16 __puya_arc4_router___set_committee_votes_route@17",
+      "stack_out": []
+    },
+    "605": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "606": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "607": {
+      "block": "__puya_arc4_router___create_empty_proposal_route@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "609": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "610": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "611": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "613": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "614": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%7#0"
+      ],
+      "stack_out": [
+        "tmp%7#0"
+      ]
+    },
+    "617": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal",
+      "op": "callsub create_empty_proposal",
+      "defined_out": [
+        "to_encode%0#0"
+      ],
+      "stack_out": [
+        "to_encode%0#0"
+      ]
+    },
+    "620": {
+      "op": "itob",
+      "defined_out": [
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0"
+      ]
+    },
+    "621": {
+      "op": "pushbytes 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "627": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "val_as_bytes%0#0"
+      ]
+    },
+    "628": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%8#0"
+      ],
+      "stack_out": [
+        "tmp%8#0"
+      ]
+    },
+    "629": {
+      "op": "log",
+      "stack_out": []
+    },
+    "630": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "631": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "632": {
+      "block": "__puya_arc4_router___set_proposal_commitment_bps_route@3",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "634": {
+      "op": "!",
+      "defined_out": [
+        "tmp%10#0"
+      ],
+      "stack_out": [
+        "tmp%10#0"
+      ]
+    },
+    "635": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "636": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%11#0"
+      ],
+      "stack_out": [
+        "tmp%11#0"
+      ]
+    },
+    "638": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "639": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%13#0"
+      ],
+      "stack_out": [
+        "tmp%13#0"
+      ]
+    },
+    "642": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%14#0"
+      ],
+      "stack_out": [
+        "tmp%14#0"
+      ]
+    },
+    "643": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_commitment_bps",
+      "op": "callsub set_proposal_commitment_bps",
+      "stack_out": []
+    },
+    "646": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "647": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "648": {
+      "block": "__puya_arc4_router___set_min_requested_amount_route@4",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%15#0"
+      ],
+      "stack_out": [
+        "tmp%15#0"
+      ]
+    },
+    "650": {
+      "op": "!",
+      "defined_out": [
+        "tmp%16#0"
+      ],
+      "stack_out": [
+        "tmp%16#0"
+      ]
+    },
+    "651": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "652": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "tmp%17#0"
+      ]
+    },
+    "654": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "655": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%19#0"
+      ],
+      "stack_out": [
+        "tmp%19#0"
+      ]
+    },
+    "658": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%20#0"
+      ],
+      "stack_out": [
+        "tmp%20#0"
+      ]
+    },
+    "659": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_min_requested_amount",
+      "op": "callsub set_min_requested_amount",
+      "stack_out": []
+    },
+    "662": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "663": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "664": {
+      "block": "__puya_arc4_router___set_max_requested_amount_small_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%21#0"
+      ],
+      "stack_out": [
+        "tmp%21#0"
+      ]
+    },
+    "666": {
+      "op": "!",
+      "defined_out": [
+        "tmp%22#0"
+      ],
+      "stack_out": [
+        "tmp%22#0"
+      ]
+    },
+    "667": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "668": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%23#0"
+      ],
+      "stack_out": [
+        "tmp%23#0"
+      ]
+    },
+    "670": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "671": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%25#0"
+      ],
+      "stack_out": [
+        "tmp%25#0"
+      ]
+    },
+    "674": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%26#0"
+      ],
+      "stack_out": [
+        "tmp%26#0"
+      ]
+    },
+    "675": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_small",
+      "op": "callsub set_max_requested_amount_small",
+      "stack_out": []
+    },
+    "678": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "679": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "680": {
+      "block": "__puya_arc4_router___set_max_requested_amount_medium_route@6",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%27#0"
+      ],
+      "stack_out": [
+        "tmp%27#0"
+      ]
+    },
+    "682": {
+      "op": "!",
+      "defined_out": [
+        "tmp%28#0"
+      ],
+      "stack_out": [
+        "tmp%28#0"
+      ]
+    },
+    "683": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "684": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%29#0"
+      ],
+      "stack_out": [
+        "tmp%29#0"
+      ]
+    },
+    "686": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "687": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%31#0"
+      ],
+      "stack_out": [
+        "tmp%31#0"
+      ]
+    },
+    "690": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%32#0"
+      ],
+      "stack_out": [
+        "tmp%32#0"
+      ]
+    },
+    "691": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_medium",
+      "op": "callsub set_max_requested_amount_medium",
+      "stack_out": []
+    },
+    "694": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "695": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "696": {
+      "block": "__puya_arc4_router___set_max_requested_amount_large_route@7",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%33#0"
+      ],
+      "stack_out": [
+        "tmp%33#0"
+      ]
+    },
+    "698": {
+      "op": "!",
+      "defined_out": [
+        "tmp%34#0"
+      ],
+      "stack_out": [
+        "tmp%34#0"
+      ]
+    },
+    "699": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "700": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%35#0"
+      ],
+      "stack_out": [
+        "tmp%35#0"
+      ]
+    },
+    "702": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "703": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%37#0"
+      ],
+      "stack_out": [
+        "tmp%37#0"
+      ]
+    },
+    "706": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%38#0"
+      ],
+      "stack_out": [
+        "tmp%38#0"
+      ]
+    },
+    "707": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_large",
+      "op": "callsub set_max_requested_amount_large",
+      "stack_out": []
+    },
+    "710": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "711": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "712": {
+      "block": "__puya_arc4_router___set_publishing_fee_route@8",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%39#0"
+      ],
+      "stack_out": [
+        "tmp%39#0"
+      ]
+    },
+    "714": {
+      "op": "!",
+      "defined_out": [
+        "tmp%40#0"
+      ],
+      "stack_out": [
+        "tmp%40#0"
+      ]
+    },
+    "715": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "716": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%41#0"
+      ],
+      "stack_out": [
+        "tmp%41#0"
+      ]
+    },
+    "718": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "719": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%43#0"
+      ],
+      "stack_out": [
+        "tmp%43#0"
+      ]
+    },
+    "722": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%44#0"
+      ],
+      "stack_out": [
+        "tmp%44#0"
+      ]
+    },
+    "723": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee",
+      "op": "callsub set_publishing_fee",
+      "stack_out": []
+    },
+    "726": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "727": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "728": {
+      "block": "__puya_arc4_router___set_discussion_duration_small_route@9",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%45#0"
+      ],
+      "stack_out": [
+        "tmp%45#0"
+      ]
+    },
+    "730": {
+      "op": "!",
+      "defined_out": [
+        "tmp%46#0"
+      ],
+      "stack_out": [
+        "tmp%46#0"
+      ]
+    },
+    "731": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "732": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%47#0"
+      ],
+      "stack_out": [
+        "tmp%47#0"
+      ]
+    },
+    "734": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "735": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%49#0"
+      ],
+      "stack_out": [
+        "tmp%49#0"
+      ]
+    },
+    "738": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%50#0"
+      ],
+      "stack_out": [
+        "tmp%50#0"
+      ]
+    },
+    "739": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_small",
+      "op": "callsub set_discussion_duration_small",
+      "stack_out": []
+    },
+    "742": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "743": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "744": {
+      "block": "__puya_arc4_router___set_discussion_duration_medium_route@10",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%51#0"
+      ],
+      "stack_out": [
+        "tmp%51#0"
+      ]
+    },
+    "746": {
+      "op": "!",
+      "defined_out": [
+        "tmp%52#0"
+      ],
+      "stack_out": [
+        "tmp%52#0"
+      ]
+    },
+    "747": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "748": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%53#0"
+      ],
+      "stack_out": [
+        "tmp%53#0"
+      ]
+    },
+    "750": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "751": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%55#0"
+      ],
+      "stack_out": [
+        "tmp%55#0"
+      ]
+    },
+    "754": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%56#0"
+      ],
+      "stack_out": [
+        "tmp%56#0"
+      ]
+    },
+    "755": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_medium",
+      "op": "callsub set_discussion_duration_medium",
+      "stack_out": []
+    },
+    "758": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "759": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "760": {
+      "block": "__puya_arc4_router___set_discussion_duration_large_route@11",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%57#0"
+      ],
+      "stack_out": [
+        "tmp%57#0"
+      ]
+    },
+    "762": {
+      "op": "!",
+      "defined_out": [
+        "tmp%58#0"
+      ],
+      "stack_out": [
+        "tmp%58#0"
+      ]
+    },
+    "763": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "764": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%59#0"
+      ],
+      "stack_out": [
+        "tmp%59#0"
+      ]
+    },
+    "766": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "767": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%61#0"
+      ],
+      "stack_out": [
+        "tmp%61#0"
+      ]
+    },
+    "770": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%62#0"
+      ],
+      "stack_out": [
+        "tmp%62#0"
+      ]
+    },
+    "771": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_large",
+      "op": "callsub set_discussion_duration_large",
+      "stack_out": []
+    },
+    "774": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "775": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "776": {
+      "block": "__puya_arc4_router___set_committee_publisher_route@12",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%63#0"
+      ],
+      "stack_out": [
+        "tmp%63#0"
+      ]
+    },
+    "778": {
+      "op": "!",
+      "defined_out": [
+        "tmp%64#0"
+      ],
+      "stack_out": [
+        "tmp%64#0"
+      ]
+    },
+    "779": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "780": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%65#0"
+      ],
+      "stack_out": [
+        "tmp%65#0"
+      ]
+    },
+    "782": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "783": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%67#0"
+      ],
+      "stack_out": [
+        "tmp%67#0"
+      ]
+    },
+    "786": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_publisher",
+      "op": "callsub set_committee_publisher",
+      "stack_out": []
+    },
+    "789": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "790": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "791": {
+      "block": "__puya_arc4_router___set_proposal_fee_route@13",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%68#0"
+      ],
+      "stack_out": [
+        "tmp%68#0"
+      ]
+    },
+    "793": {
+      "op": "!",
+      "defined_out": [
+        "tmp%69#0"
+      ],
+      "stack_out": [
+        "tmp%69#0"
+      ]
+    },
+    "794": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "795": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%70#0"
+      ],
+      "stack_out": [
+        "tmp%70#0"
+      ]
+    },
+    "797": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "798": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%72#0"
+      ],
+      "stack_out": [
+        "tmp%72#0"
+      ]
+    },
+    "801": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%73#0"
+      ],
+      "stack_out": [
+        "tmp%73#0"
+      ]
+    },
+    "802": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_fee",
+      "op": "callsub set_proposal_fee",
+      "stack_out": []
+    },
+    "805": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "806": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "807": {
+      "block": "__puya_arc4_router___set_committee_id_route@14",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%74#0"
+      ],
+      "stack_out": [
+        "tmp%74#0"
+      ]
+    },
+    "809": {
+      "op": "!",
+      "defined_out": [
+        "tmp%75#0"
+      ],
+      "stack_out": [
+        "tmp%75#0"
+      ]
+    },
+    "810": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "811": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%76#0"
+      ],
+      "stack_out": [
+        "tmp%76#0"
+      ]
+    },
+    "813": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "814": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%78#0"
+      ],
+      "stack_out": [
+        "tmp%78#0"
+      ]
+    },
+    "817": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_id",
+      "op": "callsub set_committee_id",
+      "stack_out": []
+    },
+    "820": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "821": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "822": {
+      "block": "__puya_arc4_router___clear_committee_id_route@15",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%79#0"
+      ],
+      "stack_out": [
+        "tmp%79#0"
+      ]
+    },
+    "824": {
+      "op": "!",
+      "defined_out": [
+        "tmp%80#0"
+      ],
+      "stack_out": [
+        "tmp%80#0"
+      ]
+    },
+    "825": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "826": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%81#0"
+      ],
+      "stack_out": [
+        "tmp%81#0"
+      ]
+    },
+    "828": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "829": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id",
+      "op": "callsub clear_committee_id"
+    },
+    "832": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "833": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "834": {
+      "block": "__puya_arc4_router___set_committee_members_route@16",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%83#0"
+      ],
+      "stack_out": [
+        "tmp%83#0"
+      ]
+    },
+    "836": {
+      "op": "!",
+      "defined_out": [
+        "tmp%84#0"
+      ],
+      "stack_out": [
+        "tmp%84#0"
+      ]
+    },
+    "837": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "838": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%85#0"
+      ],
+      "stack_out": [
+        "tmp%85#0"
+      ]
+    },
+    "840": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "841": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%87#0"
+      ],
+      "stack_out": [
+        "tmp%87#0"
+      ]
+    },
+    "844": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%88#0"
+      ],
+      "stack_out": [
+        "tmp%88#0"
+      ]
+    },
+    "845": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_members",
+      "op": "callsub set_committee_members",
+      "stack_out": []
+    },
+    "848": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "849": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "850": {
+      "block": "__puya_arc4_router___set_committee_votes_route@17",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%89#0"
+      ],
+      "stack_out": [
+        "tmp%89#0"
+      ]
+    },
+    "852": {
+      "op": "!",
+      "defined_out": [
+        "tmp%90#0"
+      ],
+      "stack_out": [
+        "tmp%90#0"
+      ]
+    },
+    "853": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "854": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%91#0"
+      ],
+      "stack_out": [
+        "tmp%91#0"
+      ]
+    },
+    "856": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "857": {
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%93#0"
+      ],
+      "stack_out": [
+        "tmp%93#0"
+      ]
+    },
+    "860": {
+      "op": "btoi",
+      "defined_out": [
+        "tmp%94#0"
+      ],
+      "stack_out": [
+        "tmp%94#0"
+      ]
+    },
+    "861": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_votes",
+      "op": "callsub set_committee_votes",
+      "stack_out": []
+    },
+    "864": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "865": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "866": {
+      "block": "__puya_arc4_router___bare_routing@20",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%95#0"
+      ],
+      "stack_out": [
+        "tmp%95#0"
+      ]
+    },
+    "868": {
+      "op": "bnz __puya_arc4_router___after_if_else@24",
+      "stack_out": []
+    },
+    "871": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%96#0"
+      ],
+      "stack_out": [
+        "tmp%96#0"
+      ]
+    },
+    "873": {
+      "op": "!",
+      "defined_out": [
+        "tmp%97#0"
+      ],
+      "stack_out": [
+        "tmp%97#0"
+      ]
+    },
+    "874": {
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
+      "stack_out": []
+    },
+    "875": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "876": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "877": {
+      "block": "__puya_arc4_router___after_if_else@24",
+      "stack_in": [],
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "878": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "879": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal",
+      "params": {
+        "proposer#0": "bytes"
+      },
+      "block": "create_empty_proposal",
+      "stack_in": [],
+      "op": "proto 1 1"
+    },
+    "882": {
+      "op": "itxn_begin"
+    },
+    "883": {
+      "op": "pushint 18 // 18",
+      "defined_out": [
+        "18"
+      ],
+      "stack_out": [
+        "18"
+      ]
+    },
+    "885": {
+      "op": "itxn_field GlobalNumUint",
+      "stack_out": []
+    },
+    "887": {
+      "op": "pushint 5 // 5",
+      "defined_out": [
+        "5"
+      ],
+      "stack_out": [
+        "5"
+      ]
+    },
+    "889": {
+      "op": "itxn_field GlobalNumByteSlice",
+      "stack_out": []
+    },
+    "891": {
+      "op": "pushbytes base64(CoEBQw==)",
+      "defined_out": [
+        "CoEBQw=="
+      ],
+      "stack_out": [
+        "CoEBQw=="
+      ]
+    },
+    "897": {
+      "op": "itxn_field ClearStateProgramPages",
+      "stack_out": []
+    },
+    "899": {
+      "op": "pushbytes base64(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)",
+      "defined_out": [
+        "CiAEAAEKFCYTBnN0YXR1cwAIY2F0ZWdvcnkIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkBXRpdGxlA2NpZBRzdWJtaXNzaW9uX3RpbWVzdGFtcA1sb2NrZWRfYW1vdW50EWNvbW1pdHRlZV9tZW1iZXJzD2NvbW1pdHRlZV92b3Rlcwx2b3RlcnNfY291bnQOYXNzaWduZWRfdm90ZXMMZnVuZGluZ190eXBlEHJlcXVlc3RlZF9hbW91bnQMY29tbWl0dGVlX2lkFmZpbmFsaXphdGlvbl90aW1lc3RhbXAWdm90ZV9vcGVuaW5nX3RpbWVzdGFtcBNjb21taXR0ZWVfcHVibGlzaGVyMRhAAAOIAASIAKZDigAAMTWBBRJEMTSBEhJEMTcURDE2FEQrMgNnJwQiZycFKWcnBilnJwciZycQImcnESJnKCJnKiJnJw0iZycOImcnCCJnJw8pZycJImcnCiJngA12b3RlZF9tZW1iZXJzImeACWFwcHJvdmFscyJngApyZWplY3Rpb25zImeABW51bGxzImeAEm1pbGVzdG9uZV9hcHByb3ZlZCJnJwsiZycMImeJigABMRtBAKqCBgTMaU6qBG7LuBMEQ/N9+gRfzf3uBCPYt84EdOZVfjYaAI4GAAIAEgA5AE4AWgBmIokxGRREMRgURDYaAYgAayOJMRkURDEYRDEWIwlJOBAjEkQ2GgFXAgA2GgI2GgMXNhoEF4gAVCOJMRkURDEYRDYaAVcCADYaAogB1yOJMRkURDEYRIgB9COJMRkURDEYRIgCMSOJMRkURDEYRDYaATYaAheIAz4jiSKJigEAMg1EK4v/ZycEMg1niYoFAIgAP4v8i/2L/ov/iABNjP2L+4v/iADIJwWL/GcnBov9Z4v/iAENJw2L/mcnDov/Z4v/iADLJwhMZycHMgdnKCRniYoAAIgACEQiKGVEFESJigABIitlRDEAEomKBAGL/Iv9iABbjP2L/iQSQAAHi/4lEkEABCNCAAEiRIAUbWluX3JlcXVlc3RlZF9hbW91bnSIAD6AGm1heF9yZXF1ZXN0ZWRfYW1vdW50X2xhcmdliAAfi/9PAg9Ei/8PRIv9iYoCAYv+FYF7DkSL/ikTRIv/iYoBASInBGVEi/9lRImKAgCL/4gAGSIrZUSL/jgAEkSL/jgHMgoSRIv+OAgSRImKAQGAF3Byb3Bvc2FsX2NvbW1pdG1lbnRfYnBziP+zi/9MiAABiYoCAYv+i/8LgZBOComKAQCAGm1heF9yZXF1ZXN0ZWRfYW1vdW50X3NtYWxsiP99gBttYXhfcmVxdWVzdGVkX2Ftb3VudF9tZWRpdW2I/11Mi/8PQQAGKiRnQgASi/+LAA5BAAYqJWdCAAQqgSFniYoCAIgAFIv+i/+I/x6M/ycFi/5nJwaL/2eJigAAiP6bRCIoZUQkEkSJigAAiAA0sSIrZUQiJwhlRLIIsgcjshAisgGzJwUpZycGKWcqImcnDSJnJw4iZycIImcnByJnKCJniYoAAIj+UkQiKGVEJBJEiYoAAIgAVYgA4SglZycQMgdngAxwcm9wb3NhbF9mZWWI/qmAF3Byb3Bvc2FsX3B1Ymxpc2hpbmdfYnBziP6NsScSiADPSRWBIBJETgKI/tCyCLIHI7IQIrIBs4mKAACI/ehEIihlRCQSRDIHIicHZUQJIiplRIgAAw9EiYoBAYv/JBJBAB+AGWRpc2N1c3Npb25fZHVyYXRpb25fc21hbGyI/iiJi/8lEkEAIIAaZGlzY3Vzc2lvbl9kdXJhdGlvbl9tZWRpdW2I/gGJgBlkaXNjdXNzaW9uX2R1cmF0aW9uX2xhcmdliP3iiYoAACcPiAAhSSkTRCcJiP3QSUQnCoj9yUlEJw9PA2cnCU8CZycKTGeJigEBIicEZUSL/2VEiYoCAIgAT4v+iABri/8WgAEAUIABVov+UEy/IicLZUQjCCcLTGciJwxlRIv/CCcMTGciJwtlRCInCWVEEkEAFSInDGVEIicKZUQSRCiBGWcnETIHZ4mKAACIAAlEIihlRCUSRImKAAExACcSiP+FSRWBIBJEEomKAQCAAVaL/1C9RQEURIk="
+      ],
+      "stack_out": [
+        "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"
+      ]
+    },
+    "2485": {
+      "op": "itxn_field ApprovalProgramPages",
+      "stack_out": []
+    },
+    "2487": {
+      "op": "pushbytes 0xcc694eaa // method \"create(address)void\"",
+      "defined_out": [
+        "Method(create(address)void)"
+      ],
+      "stack_out": [
+        "Method(create(address)void)"
+      ]
+    },
+    "2493": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": []
+    },
+    "2495": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "proposer#0 (copy)"
+      ],
+      "stack_out": [
+        "proposer#0 (copy)"
+      ]
+    },
+    "2497": {
+      "op": "itxn_field ApplicationArgs",
+      "stack_out": []
+    },
+    "2499": {
+      "op": "pushint 6 // appl",
+      "defined_out": [
+        "appl"
+      ],
+      "stack_out": [
+        "appl"
+      ]
+    },
+    "2501": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": []
+    },
+    "2503": {
+      "op": "intc_1 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "2504": {
+      "op": "itxn_field Fee",
+      "stack_out": []
+    },
+    "2506": {
+      "op": "itxn_submit"
+    },
+    "2507": {
+      "op": "itxn CreatedApplicationID",
+      "defined_out": [
+        "res.CreatedApplicationID#0"
+      ],
+      "stack_out": [
+        "res.CreatedApplicationID#0"
+      ]
+    },
+    "2509": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2510": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_commitment_bps",
+      "params": {
+        "commitment_bps#0": "uint64"
+      },
+      "block": "set_proposal_commitment_bps",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2513": {
+      "op": "bytec_1 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+      "defined_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
+      ]
+    },
+    "2514": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+        "commitment_bps#0 (copy)"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+        "commitment_bps#0 (copy)"
+      ]
+    },
+    "2516": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2517": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2518": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_min_requested_amount",
+      "params": {
+        "min_requested_amount#0": "uint64"
+      },
+      "block": "set_min_requested_amount",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2521": {
+      "op": "bytec_2 // 0x6d696e5f7265717565737465645f616d6f756e74",
+      "defined_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74"
+      ],
+      "stack_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74"
+      ]
+    },
+    "2522": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74",
+        "min_requested_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "0x6d696e5f7265717565737465645f616d6f756e74",
+        "min_requested_amount#0 (copy)"
+      ]
+    },
+    "2524": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2525": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2526": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_small",
+      "params": {
+        "max_requested_amount#0": "uint64"
+      },
+      "block": "set_max_requested_amount_small",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2529": {
+      "op": "bytec_3 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
+      ]
+    },
+    "2530": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+        "max_requested_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+        "max_requested_amount#0 (copy)"
+      ]
+    },
+    "2532": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2533": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2534": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_medium",
+      "params": {
+        "max_requested_amount#0": "uint64"
+      },
+      "block": "set_max_requested_amount_medium",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2537": {
+      "op": "bytec 4 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
+      ]
+    },
+    "2539": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+        "max_requested_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+        "max_requested_amount#0 (copy)"
+      ]
+    },
+    "2541": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2542": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2543": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_large",
+      "params": {
+        "max_requested_amount#0": "uint64"
+      },
+      "block": "set_max_requested_amount_large",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2546": {
+      "op": "bytec 5 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
+      ]
+    },
+    "2548": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+        "max_requested_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+        "max_requested_amount#0 (copy)"
+      ]
+    },
+    "2550": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2551": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2552": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee",
+      "params": {
+        "publishing_fee_bps#0": "uint64"
+      },
+      "block": "set_publishing_fee",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2555": {
+      "op": "bytec 6 // 0x70726f706f73616c5f7075626c697368696e675f627073",
+      "defined_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073"
+      ]
+    },
+    "2557": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073",
+        "publishing_fee_bps#0 (copy)"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f7075626c697368696e675f627073",
+        "publishing_fee_bps#0 (copy)"
+      ]
+    },
+    "2559": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2560": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2561": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_small",
+      "params": {
+        "discussion_duration#0": "uint64"
+      },
+      "block": "set_discussion_duration_small",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2564": {
+      "op": "bytec 7 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
+      ]
+    },
+    "2566": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+        "discussion_duration#0 (copy)"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+        "discussion_duration#0 (copy)"
+      ]
+    },
+    "2568": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2569": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2570": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_medium",
+      "params": {
+        "discussion_duration#0": "uint64"
+      },
+      "block": "set_discussion_duration_medium",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2573": {
+      "op": "bytec 8 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
+      ]
+    },
+    "2575": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+        "discussion_duration#0 (copy)"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+        "discussion_duration#0 (copy)"
+      ]
+    },
+    "2577": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2578": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2579": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_large",
+      "params": {
+        "discussion_duration#0": "uint64"
+      },
+      "block": "set_discussion_duration_large",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2582": {
+      "op": "bytec 9 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
+      ]
+    },
+    "2584": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+        "discussion_duration#0 (copy)"
+      ],
+      "stack_out": [
+        "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+        "discussion_duration#0 (copy)"
+      ]
+    },
+    "2586": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2587": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2588": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_publisher",
+      "params": {
+        "committee_publisher#0": "bytes"
+      },
+      "block": "set_committee_publisher",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2591": {
+      "op": "bytec 10 // 0x636f6d6d69747465655f7075626c6973686572",
+      "defined_out": [
+        "0x636f6d6d69747465655f7075626c6973686572"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f7075626c6973686572"
+      ]
+    },
+    "2593": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x636f6d6d69747465655f7075626c6973686572",
+        "committee_publisher#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f7075626c6973686572",
+        "committee_publisher#0 (copy)"
+      ]
+    },
+    "2595": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2596": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2597": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_fee",
+      "params": {
+        "proposal_fee#0": "uint64"
+      },
+      "block": "set_proposal_fee",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2600": {
+      "op": "bytec 11 // 0x70726f706f73616c5f666565",
+      "defined_out": [
+        "0x70726f706f73616c5f666565"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f666565"
+      ]
+    },
+    "2602": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x70726f706f73616c5f666565",
+        "proposal_fee#0 (copy)"
+      ],
+      "stack_out": [
+        "0x70726f706f73616c5f666565",
+        "proposal_fee#0 (copy)"
+      ]
+    },
+    "2604": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2605": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2606": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_id",
+      "params": {
+        "committee_id#0": "bytes"
+      },
+      "block": "set_committee_id",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2609": {
+      "op": "bytec_0 // 0x636f6d6d69747465655f6964",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964"
+      ]
+    },
+    "2610": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964",
+        "committee_id#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964",
+        "committee_id#0 (copy)"
+      ]
+    },
+    "2612": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2613": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2614": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id",
+      "params": {},
+      "block": "clear_committee_id",
+      "stack_in": [],
+      "op": "proto 0 0"
+    },
+    "2617": {
+      "op": "bytec_0 // 0x636f6d6d69747465655f6964",
+      "defined_out": [
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964"
+      ]
+    },
+    "2618": {
+      "op": "pushbytes 0x",
+      "defined_out": [
+        "0x",
+        "0x636f6d6d69747465655f6964"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6964",
+        "0x"
+      ]
+    },
+    "2620": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2621": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2622": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_members",
+      "params": {
+        "committee_members#0": "uint64"
+      },
+      "block": "set_committee_members",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2625": {
+      "op": "bytec 12 // 0x636f6d6d69747465655f6d656d62657273",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273"
+      ]
+    },
+    "2627": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "committee_members#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f6d656d62657273",
+        "committee_members#0 (copy)"
+      ]
+    },
+    "2629": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2630": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "2631": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_votes",
+      "params": {
+        "committee_votes#0": "uint64"
+      },
+      "block": "set_committee_votes",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "2634": {
+      "op": "bytec 13 // 0x636f6d6d69747465655f766f746573",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573"
+      ]
+    },
+    "2636": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "committee_votes#0 (copy)"
+      ],
+      "stack_out": [
+        "0x636f6d6d69747465655f766f746573",
+        "committee_votes#0 (copy)"
+      ]
+    },
+    "2638": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "2639": {
+      "retsub": true,
+      "op": "retsub"
+    }
+  }
+}
