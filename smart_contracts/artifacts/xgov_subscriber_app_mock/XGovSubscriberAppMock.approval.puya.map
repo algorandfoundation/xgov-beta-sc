@@ -72,6 +72,7 @@
       ]
     },
     "24": {
+      "error": "Wrong Global Bytes allocation",
       "op": "assert // Wrong Global Bytes allocation",
       "stack_out": []
     },
@@ -94,6 +95,7 @@
       ]
     },
     "28": {
+      "error": "Wrong Global UInts allocation",
       "op": "assert // Wrong Global UInts allocation",
       "stack_out": []
     },
@@ -116,6 +118,7 @@
       ]
     },
     "32": {
+      "error": "Wrong Local Bytes allocation",
       "op": "assert // Wrong Local Bytes allocation",
       "stack_out": []
     },
@@ -138,6 +141,7 @@
       ]
     },
     "36": {
+      "error": "Wrong Local UInts allocation",
       "op": "assert // Wrong Local UInts allocation",
       "stack_out": []
     },
@@ -219,7 +223,8 @@
       ]
     },
     "72": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "73": {
@@ -232,7 +237,8 @@
       ]
     },
     "75": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "76": {
@@ -292,7 +298,8 @@
       ]
     },
     "88": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "89": {
@@ -305,7 +312,8 @@
       ]
     },
     "91": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "92": {
@@ -378,7 +386,8 @@
       ]
     },
     "109": {
-      "op": "assert // is creating",
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
       "stack_out": []
     },
     "110": {
@@ -476,6 +485,7 @@
       ]
     },
     "135": {
+      "error": "application exists",
       "op": "assert // application exists",
       "stack_out": [
         "xgov_fee#0",

@@ -58,6 +58,7 @@ class XGovRegistry(
         )
 
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
+        self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
         self.proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_FEE)
         self.proposal_publishing_bps = GlobalState(
@@ -356,6 +357,7 @@ class XGovRegistry(
 
         # create box
         self.xgov_box[Txn.sender] = arc4.Address(Txn.sender)
+        self.xgovs.value += 1
 
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
@@ -369,6 +371,7 @@ class XGovRegistry(
 
         # delete box
         del self.xgov_box[Txn.sender]
+        self.xgovs.value -= 1
 
     @arc4.abimethod()
     def set_voting_account(

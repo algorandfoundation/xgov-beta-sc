@@ -21,7 +21,7 @@ def test_subscribe_xgov_success(
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
+    before_global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
 
     before_info = xgov_registry_client.algod_client.account_info(
@@ -34,7 +34,7 @@ def test_subscribe_xgov_success(
                 PayParams(
                     sender=random_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.xgov_fee,
+                    amount=before_global_state.xgov_fee,
                 ),
             ),
             signer=random_account.signer,
@@ -47,11 +47,14 @@ def test_subscribe_xgov_success(
         ),
     )
 
+    after_global_state = xgov_registry_client.get_global_state()
+
     after_info = xgov_registry_client.algod_client.account_info(
         xgov_registry_client.app_address,
     )
 
-    assert (before_info["amount"] + global_state.xgov_fee) == after_info["amount"]  # type: ignore
+    assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
+    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,

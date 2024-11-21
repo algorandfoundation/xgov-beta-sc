@@ -490,7 +490,8 @@
       ]
     },
     "356": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "357": {
@@ -512,7 +513,8 @@
       ]
     },
     "360": {
-      "op": "assert // is creating",
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
       "stack_out": []
     },
     "361": {
@@ -563,7 +565,8 @@
       ]
     },
     "372": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "373": {
@@ -576,7 +579,8 @@
       ]
     },
     "375": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "376": {
@@ -636,7 +640,8 @@
       ]
     },
     "388": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "389": {
@@ -649,7 +654,8 @@
       ]
     },
     "391": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "392": {
@@ -709,7 +715,8 @@
       ]
     },
     "404": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "405": {
@@ -722,7 +729,8 @@
       ]
     },
     "407": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "408": {
@@ -821,7 +829,8 @@
       ]
     },
     "427": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "428": {
@@ -834,7 +843,8 @@
       ]
     },
     "430": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "431": {
