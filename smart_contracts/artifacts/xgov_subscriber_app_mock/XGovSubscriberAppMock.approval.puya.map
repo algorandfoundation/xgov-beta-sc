@@ -554,12 +554,12 @@
       "stack_out": []
     },
     "155": {
-      "op": "pushbytes 0x2254162a // method \"subscribe_xgov(pay,address)void\"",
+      "op": "pushbytes 0xa082cef8 // method \"subscribe_xgov(address,pay)void\"",
       "defined_out": [
-        "Method(subscribe_xgov(pay,address)void)"
+        "Method(subscribe_xgov(address,pay)void)"
       ],
       "stack_out": [
-        "Method(subscribe_xgov(pay,address)void)"
+        "Method(subscribe_xgov(address,pay)void)"
       ]
     },
     "161": {

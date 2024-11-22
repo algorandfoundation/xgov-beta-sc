@@ -337,11 +337,12 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov(
-        self, payment: gtxn.PaymentTransaction, voting_address: arc4.Address
+        self, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
     ) -> None:
         """Subscribes the sender to being an xGov
 
         Args:
+            voting_address (arc4.Address): The address of the voting account for the xgov
             payment (gtxn.PaymentTransaction): The payment transaction covering the signup fee
 
         Raises:
@@ -362,24 +363,27 @@ class XGovRegistry(
         self.xgovs.value += 1
 
     @arc4.abimethod()
-    def unsubscribe_xgov(self, xgov: arc4.Address) -> None:
-        """Unsubscribes the sender from being an xGov
+    def unsubscribe_xgov(self, xgov_address: arc4.Address) -> None:
+        """Unsubscribes the designated address from being an xGov
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov to unsubscribe
 
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov
         """
 
         # ensure the provided address is an xgov
-        assert xgov.native in self.xgov_box, err.UNAUTHORIZED
+        assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
         # get the voting address
-        voting_address = self.xgov_box[xgov.native].native
+        voting_address = self.xgov_box[xgov_address.native].native
         # ensure the sender is the xgov or the voting address
         assert (
-            xgov.native == Txn.sender or voting_address == Txn.sender
+            xgov_address.native == Txn.sender or voting_address == Txn.sender
         ), err.UNAUTHORIZED
 
         # delete box
-        del self.xgov_box[xgov.native]
+        del self.xgov_box[xgov_address.native]
         self.xgovs.value -= 1
 
     @arc4.abimethod()

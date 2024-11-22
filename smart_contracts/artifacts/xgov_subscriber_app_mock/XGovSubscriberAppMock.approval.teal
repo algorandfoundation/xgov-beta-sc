@@ -180,8 +180,8 @@ subscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:51-56
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.subscribe_xgov,
-    //     payment,
     //     voting_address,
+    //     payment,
     //     app_id=app_id,
     // )
     itxn_begin
@@ -196,14 +196,14 @@ subscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:51-56
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.subscribe_xgov,
-    //     payment,
     //     voting_address,
+    //     payment,
     //     app_id=app_id,
     // )
     itxn_next
     frame_dig -2
     itxn_field ApplicationID
-    pushbytes 0x2254162a // method "subscribe_xgov(pay,address)void"
+    pushbytes 0xa082cef8 // method "subscribe_xgov(address,pay)void"
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs

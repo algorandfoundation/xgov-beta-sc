@@ -50,8 +50,8 @@ class XGovSubscriberAppMock(
 
         arc4.abi_call(
             registry_contract.XGovRegistry.subscribe_xgov,
-            payment,
             voting_address,
+            payment,
             app_id=app_id,
         )
 

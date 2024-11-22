@@ -29,6 +29,7 @@ def test_subscribe_xgov_success(
     )
 
     xgov_registry_client.subscribe_xgov(
+        voting_address=random_account.address,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -39,7 +40,6 @@ def test_subscribe_xgov_success(
             ),
             signer=random_account.signer,
         ),
-        voting_address=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,
@@ -106,6 +106,7 @@ def test_subscribe_xgov_already_xgov(
 
     with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
         xgov_registry_client.subscribe_xgov(
+            voting_address=xgov.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -116,7 +117,6 @@ def test_subscribe_xgov_already_xgov(
                 ),
                 signer=xgov.signer,
             ),
-            voting_address=xgov.address,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
@@ -136,6 +136,7 @@ def test_subscribe_xgov_wrong_recipient(
 
     with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
         xgov_registry_client.subscribe_xgov(
+            voting_address=random_account.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -146,7 +147,6 @@ def test_subscribe_xgov_wrong_recipient(
                 ),
                 signer=random_account.signer,
             ),
-            voting_address=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
@@ -165,6 +165,7 @@ def test_subscribe_xgov_wrong_amount(
 
     with pytest.raises(LogicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
         xgov_registry_client.subscribe_xgov(
+            voting_address=random_account.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -175,7 +176,6 @@ def test_subscribe_xgov_wrong_amount(
                 ),
                 signer=random_account.signer,
             ),
-            voting_address=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,

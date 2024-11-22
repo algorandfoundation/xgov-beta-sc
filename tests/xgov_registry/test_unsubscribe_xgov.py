@@ -20,7 +20,7 @@ def test_unsubscribe_xgov_success(
     before_global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.unsubscribe_xgov(
-        xgov=xgov.address,
+        xgov_address=xgov.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
@@ -87,7 +87,7 @@ def test_unsubscribe_xgov_not_an_xgov(
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.unsubscribe_xgov(
-            xgov=random_account.address,
+            xgov_address=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
