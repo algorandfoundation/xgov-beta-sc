@@ -37,7 +37,7 @@ class XGovSubscriberAppMock(
         assert Txn.local_num_uint == mock_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
     @arc4.abimethod()
-    def subscribe_xgov(self, app_id: UInt64) -> None:
+    def subscribe_xgov(self, app_id: UInt64, voting_address: arc4.Address) -> None:
 
         xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
             app_id, rcfg.GS_KEY_XGOV_FEE
@@ -51,6 +51,7 @@ class XGovSubscriberAppMock(
         arc4.abi_call(
             registry_contract.XGovRegistry.subscribe_xgov,
             payment,
+            voting_address,
             app_id=app_id,
         )
 
@@ -58,6 +59,7 @@ class XGovSubscriberAppMock(
     def unsubscribe_xgov(self, app_id: UInt64) -> None:
         arc4.abi_call(
             registry_contract.XGovRegistry.unsubscribe_xgov,
+            arc4.Address(Global.current_application_address),
             app_id=app_id,
             fee=(Global.min_txn_fee * 2),
         )

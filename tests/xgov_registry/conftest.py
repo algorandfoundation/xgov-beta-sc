@@ -344,6 +344,7 @@ def xgov(
             ),
             signer=account.signer,
         ),
+        voting_address=account.address,
         transaction_parameters=TransactionParameters(
             sender=account.address,
             signer=account.signer,

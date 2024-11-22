@@ -39,6 +39,7 @@ def test_subscribe_xgov_success(
             ),
             signer=random_account.signer,
         ),
+        voting_address=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,
@@ -79,6 +80,7 @@ def test_app_subscribe_xgov_success(
 
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,
+        voting_address=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,
@@ -114,6 +116,7 @@ def test_subscribe_xgov_already_xgov(
                 ),
                 signer=xgov.signer,
             ),
+            voting_address=xgov.address,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
@@ -143,6 +146,7 @@ def test_subscribe_xgov_wrong_recipient(
                 ),
                 signer=random_account.signer,
             ),
+            voting_address=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
@@ -171,6 +175,7 @@ def test_subscribe_xgov_wrong_amount(
                 ),
                 signer=random_account.signer,
             ),
+            voting_address=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
