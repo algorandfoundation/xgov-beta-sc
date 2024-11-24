@@ -59,7 +59,7 @@ __puya_arc4_router__:
     proto 0 1
     txn NumAppArgs
     bz __puya_arc4_router___bare_routing@6
-    pushbytess 0xd5e8532a 0x5a2a3f16 // method "subscribe_xgov(uint64)void", method "unsubscribe_xgov(uint64)void"
+    pushbytess 0x42317b4f 0x5a2a3f16 // method "subscribe_xgov(uint64,address)void", method "unsubscribe_xgov(uint64)void"
     txna ApplicationArgs 0
     match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3
     intc_0 // 0
@@ -85,6 +85,7 @@ __puya_arc4_router___subscribe_xgov_route@2:
     // ):
     txna ApplicationArgs 1
     btoi
+    txna ApplicationArgs 2
     // smart_contracts/xgov_subscriber_app_mock/contract.py:39
     // @arc4.abimethod()
     callsub subscribe_xgov
@@ -92,7 +93,7 @@ __puya_arc4_router___subscribe_xgov_route@2:
     retsub
 
 __puya_arc4_router___unsubscribe_xgov_route@3:
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:57
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:58
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -111,7 +112,7 @@ __puya_arc4_router___unsubscribe_xgov_route@3:
     // ):
     txna ApplicationArgs 1
     btoi
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:57
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:58
     // @arc4.abimethod()
     callsub unsubscribe_xgov
     intc_1 // 1
@@ -151,17 +152,17 @@ __puya_arc4_router___after_if_else@10:
     retsub
 
 
-// smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov(app_id: uint64) -> void:
+// smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov(app_id: uint64, voting_address: bytes) -> void:
 subscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:39-40
     // @arc4.abimethod()
-    // def subscribe_xgov(self, app_id: UInt64) -> None:
-    proto 1 0
+    // def subscribe_xgov(self, app_id: UInt64, voting_address: arc4.Address) -> None:
+    proto 2 0
     // smart_contracts/xgov_subscriber_app_mock/contract.py:42-44
     // xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
     //     app_id, rcfg.GS_KEY_XGOV_FEE
     // )
-    frame_dig -1
+    frame_dig -2
     // smart_contracts/xgov_subscriber_app_mock/contract.py:43
     // app_id, rcfg.GS_KEY_XGOV_FEE
     pushbytes 0x78676f765f666565
@@ -173,12 +174,13 @@ subscribe_xgov:
     pop
     // smart_contracts/xgov_subscriber_app_mock/contract.py:47
     // receiver=Application(app_id).address,
-    frame_dig -1
+    frame_dig -2
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:51-55
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:51-56
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.subscribe_xgov,
+    //     voting_address,
     //     payment,
     //     app_id=app_id,
     // )
@@ -191,16 +193,19 @@ subscribe_xgov:
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:51-55
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:51-56
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.subscribe_xgov,
+    //     voting_address,
     //     payment,
     //     app_id=app_id,
     // )
     itxn_next
-    frame_dig -1
+    frame_dig -2
     itxn_field ApplicationID
-    pushbytes 0x195715ea // method "subscribe_xgov(pay)void"
+    pushbytes 0xa082cef8 // method "subscribe_xgov(address,pay)void"
+    itxn_field ApplicationArgs
+    frame_dig -1
     itxn_field ApplicationArgs
     intc_2 // appl
     itxn_field TypeEnum
@@ -212,31 +217,37 @@ subscribe_xgov:
 
 // smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.unsubscribe_xgov(app_id: uint64) -> void:
 unsubscribe_xgov:
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:57-58
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:58-59
     // @arc4.abimethod()
     // def unsubscribe_xgov(self, app_id: UInt64) -> None:
     proto 1 0
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:59-63
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:60-65
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
+    //     arc4.Address(Global.current_application_address),
     //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
     itxn_begin
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:62
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:64
     // fee=(Global.min_txn_fee * 2),
     global MinTxnFee
     pushint 2 // 2
     *
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:62
+    // arc4.Address(Global.current_application_address),
+    global CurrentApplicationAddress
     frame_dig -1
     itxn_field ApplicationID
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:59-63
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:60-65
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
+    //     arc4.Address(Global.current_application_address),
     //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
-    pushbytes 0xdf39fdb9 // method "unsubscribe_xgov()void"
+    pushbytes 0x76725559 // method "unsubscribe_xgov(address)void"
+    itxn_field ApplicationArgs
     itxn_field ApplicationArgs
     intc_2 // appl
     itxn_field TypeEnum
