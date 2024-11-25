@@ -250,10 +250,10 @@ __puya_arc4_router___create_route@2:
     // @arc4.abimethod(create="require")
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
     !
-    assert // can only call when creating
+    assert // is creating
     // smart_contracts/proposal_mock/contract.py:18-26
     // class ProposalMock(
     //     ARC4Contract,
@@ -276,9 +276,9 @@ __puya_arc4_router___set_status_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal_mock/contract.py:18-26
     // class ProposalMock(
     //     ARC4Contract,
@@ -302,9 +302,9 @@ __puya_arc4_router___set_requested_amount_route@4:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal_mock/contract.py:18-26
     // class ProposalMock(
     //     ARC4Contract,
@@ -328,9 +328,9 @@ __puya_arc4_router___set_committee_details_route@5:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal_mock/contract.py:18-26
     // class ProposalMock(
     //     ARC4Contract,
@@ -357,9 +357,9 @@ __puya_arc4_router___release_funds_route@6:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     intc_1 // 1
     retsub
 
