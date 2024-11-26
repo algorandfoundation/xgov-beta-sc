@@ -11,6 +11,7 @@ from algosdk.encoding import decode_address, encode_address
 from smart_contracts.artifacts.xgov_registry.client import GlobalState, TypedGlobalState
 from smart_contracts.xgov_registry.config import (
     PROPOSER_BOX_MAP_PREFIX,
+    REQUEST_BOX_MAP_PREFIX,
     XGOV_BOX_MAP_PREFIX,
 )
 
@@ -58,7 +59,11 @@ KYC_EXPIRATION = 18446744073709551615
 
 
 def xgov_box_name(address: str) -> bytes:
-    return bytes(XGOV_BOX_MAP_PREFIX + decode_address(address))  # type: ignore
+    return XGOV_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
+
+
+def request_box_name(rid: int) -> bytes:
+    return REQUEST_BOX_MAP_PREFIX + rid.to_bytes(8, "big")
 
 
 def proposer_box_name(address: str) -> bytes:

@@ -10,7 +10,7 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, xgov_box_name
+from tests.xgov_registry.common import LogicErrorType, request_box_name, xgov_box_name
 
 
 def test_request_subscribe_xgov_success(
@@ -40,7 +40,7 @@ def test_request_subscribe_xgov_success(
             signer=deployer.signer,
             boxes=[
                 (0, xgov_box_name(xgov_subscriber_app.app_address)),
-                (0, global_state.request_id.to_bytes(8, "big")),
+                (0, request_box_name(global_state.request_id)),
             ],
             foreign_apps=[xgov_subscriber_app.app_id],
         ),
@@ -77,7 +77,7 @@ def test_request_subscribe_xgov_already_xgov(
                 suggested_params=sp,
                 boxes=[
                     (0, xgov_box_name(app_xgov.app_address)),
-                    (0, global_state.request_id.to_bytes(8, "big")),
+                    (0, request_box_name(global_state.request_id)),
                 ],
                 foreign_apps=[app_xgov.app_id],
             ),
@@ -114,7 +114,7 @@ def test_request_subscribe_xgov_wrong_recipient(
                 suggested_params=sp,
                 boxes=[
                     (0, xgov_box_name(xgov_subscriber_app.app_address)),
-                    (0, global_state.request_id.to_bytes(8, "big")),
+                    (0, request_box_name(global_state.request_id)),
                 ],
                 foreign_apps=[xgov_subscriber_app.app_id],
             ),
@@ -151,7 +151,7 @@ def test_request_subscribe_xgov_wrong_amount(
                 suggested_params=sp,
                 boxes=[
                     (0, xgov_box_name(xgov_subscriber_app.app_address)),
-                    (0, global_state.request_id.to_bytes(8, "big")),
+                    (0, request_box_name(global_state.request_id)),
                 ],
                 foreign_apps=[xgov_subscriber_app.app_id],
             ),

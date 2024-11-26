@@ -2,6 +2,7 @@ import base64
 
 import pytest
 from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
@@ -30,7 +31,8 @@ def test_subscribe_xgov_app_success(
     )
 
     xgov_registry_client.subscribe_xgov_app(
-        app=xgov_subscriber_app.app_id,
+        app_id=xgov_subscriber_app.app_id,
+        voting_address=deployer.address,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -71,6 +73,39 @@ def test_subscribe_xgov_app_success(
     assert deployer.address == voting_address  # type: ignore
 
 
+def test_subscribe_xgov_app_not_creator(
+    random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    algorand_client: AlgorandClient,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+        xgov_registry_client.subscribe_xgov_app(
+            app_id=xgov_subscriber_app.app_id,
+            voting_address=random_account.address,
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.xgov_fee,
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, xgov_box_name(xgov_subscriber_app.app_address))],
+                foreign_apps=[xgov_subscriber_app.app_id],
+            ),
+        )
+
+
 def test_subscribe_xgov_app_already_xgov(
     deployer: Account,
     xgov_registry_client: XGovRegistryClient,
@@ -82,7 +117,8 @@ def test_subscribe_xgov_app_already_xgov(
 
     with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
         xgov_registry_client.subscribe_xgov_app(
-            app=app_xgov.app_id,
+            app_id=app_xgov.app_id,
+            voting_address=deployer.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -114,7 +150,8 @@ def test_subscribe_xgov_app_wrong_recipient(
 
     with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
         xgov_registry_client.subscribe_xgov_app(
-            app=xgov_subscriber_app.app_id,
+            app_id=xgov_subscriber_app.app_id,
+            voting_address=deployer.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
@@ -145,7 +182,8 @@ def test_subscribe_xgov_app_wrong_amount(
 
     with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
         xgov_registry_client.subscribe_xgov_app(
-            app=xgov_subscriber_app.app_id,
+            app_id=xgov_subscriber_app.app_id,
+            voting_address=deployer.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(

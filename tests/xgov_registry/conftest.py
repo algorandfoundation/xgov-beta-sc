@@ -53,6 +53,7 @@ from tests.xgov_registry.common import (
     WEIGHTED_QUORUM_SMALL,
     XGOV_FEE,
     proposer_box_name,
+    request_box_name,
     xgov_box_name,
 )
 
@@ -668,7 +669,8 @@ def app_xgov(
     sp = algorand_client.get_suggested_params()
 
     xgov_registry_client.subscribe_xgov_app(
-        app=xgov_subscriber_app.app_id,
+        app_id=xgov_subscriber_app.app_id,
+        voting_address=deployer.address,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -719,7 +721,7 @@ def app_xgov_subscribe_requested(
             signer=deployer.signer,
             boxes=[
                 (0, xgov_box_name(xgov_subscriber_app.app_address)),
-                (0, global_state.request_id.to_bytes(8, "big")),
+                (0, request_box_name(global_state.request_id)),
             ],
             foreign_apps=[xgov_subscriber_app.app_id],
         ),

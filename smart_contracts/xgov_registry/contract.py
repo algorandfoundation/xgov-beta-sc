@@ -148,7 +148,9 @@ class XGovRegistry(
         )
 
         self.request_box = BoxMap(
-            UInt64, typ.XGovSubscribeRequestBoxValue, key_prefix=b""
+            UInt64,
+            typ.XGovSubscribeRequestBoxValue,
+            key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
         )
 
         self.proposer_box = BoxMap(
@@ -419,12 +421,16 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov_app(
-        self, app: arc4.UInt64, payment: gtxn.PaymentTransaction
+        self,
+        app_id: arc4.UInt64,
+        voting_address: arc4.Address,
+        payment: gtxn.PaymentTransaction,
     ) -> None:
-        """Subscribes the sender to being an xGov
+        """Subscribes the app to being an xGov
 
         Args:
-            app (arc4.UInt64): The id of the application to subscribe
+            app_id (arc4.UInt64): The id of the application to subscribe
+            voting_address (arc4.Address): The address of the voting account for the xgov
             payment (gtxn.PaymentTransaction): The payment transaction covering the signup fee
 
         Raises:
@@ -433,8 +439,8 @@ class XGovRegistry(
             err.INVALID_PAYMENT: If the payment transaction is the wrong amount or to the wrong account
         """
 
-        app_creator = Application(app.native).creator
-        app_address = Application(app.native).address
+        app_creator = Application(app_id.native).creator
+        app_address = Application(app_id.native).address
 
         # sender must be the creator of the app
         assert Txn.sender == app_creator, err.UNAUTHORIZED
@@ -443,11 +449,11 @@ class XGovRegistry(
         # check payment
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
-        self.xgov_box[app_address] = arc4.Address(app_creator)
+        self.xgov_box[app_address] = voting_address
         self.xgovs.value += 1
 
     @arc4.abimethod()
-    def unsubscribe_xgov_app(self, app: arc4.UInt64) -> None:
+    def unsubscribe_xgov_app(self, app_id: arc4.UInt64) -> None:
         """Unsubscribes the designated app from being an xGov
 
         Args:
@@ -457,13 +463,17 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not currently an xGov or the sender is not the app creator
         """
 
-        app_creator = Application(app.native).creator
-        app_address = Application(app.native).address
+        app_creator = Application(app_id.native).creator
+        app_address = Application(app_id.native).address
 
         # ensure the provided app is an xgov
         assert app_address in self.xgov_box, err.UNAUTHORIZED
-        # ensure the sender is the app creator
-        assert app_creator == Txn.sender, err.UNAUTHORIZED
+        # get the voting address
+        voting_address = self.xgov_box[app_address].native
+        # ensure the sender is the app creator or the voting address
+        assert (
+            app_creator == Txn.sender or voting_address == Txn.sender
+        ), err.UNAUTHORIZED
 
         # delete box
         del self.xgov_box[app_address]
@@ -509,7 +519,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def approve_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
-        """Approves a request to subscribe to the xGov
+        """Approves a request to subscribe to xGov
 
         Args:
             request_id (arc4.UInt64): The ID of the request to approve
@@ -525,6 +535,22 @@ class XGovRegistry(
         # create the xgov
         self.xgov_box[request.xgov_addr.native] = request.owner_addr
         self.xgovs.value += 1
+        # delete the request
+        del self.request_box[request_id.native]
+
+    @arc4.abimethod()
+    def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+        """Rejects a request to subscribe to xGov
+
+        Args:
+            request_id (arc4.UInt64): The ID of the request to reject
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
         # delete the request
         del self.request_box[request_id.native]
 
