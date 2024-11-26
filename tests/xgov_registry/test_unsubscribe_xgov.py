@@ -14,7 +14,6 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 def test_unsubscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()

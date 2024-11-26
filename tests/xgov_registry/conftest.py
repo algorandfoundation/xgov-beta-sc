@@ -119,6 +119,13 @@ def xgov_registry_client(
         ),
     )
 
+    client.set_xgov_subscriber(
+        subscriber=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
     client.set_payor(
         payor=deployer.address,
         transaction_parameters=TransactionParameters(
@@ -203,6 +210,13 @@ def funded_xgov_registry_client(
         EnsureBalanceParameters(
             account_to_fund=client.app_address,
             min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+
+    client.set_xgov_subscriber(
+        subscriber=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
@@ -641,3 +655,74 @@ def xgov_subscriber_app(
     )
 
     return client
+
+
+@pytest.fixture(scope="function")
+def app_xgov(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    deployer: Account,
+) -> XGovSubscriberAppMockClient:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    xgov_registry_client.subscribe_xgov_app(
+        app=xgov_subscriber_app.app_id,
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.xgov_fee,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            boxes=[(0, xgov_box_name(xgov_subscriber_app.app_address))],
+            foreign_apps=[xgov_subscriber_app.app_id],
+        ),
+    )
+
+    return xgov_subscriber_app
+
+
+@pytest.fixture(scope="function")
+def app_xgov_subscribe_requested(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    deployer: Account,
+) -> XGovSubscriberAppMockClient:
+    global_state = xgov_registry_client.get_global_state()
+
+    xgov_registry_client.request_subscribe_xgov(
+        xgov_address=xgov_subscriber_app.app_address,
+        owner_address=deployer.address,
+        relation_type=0,
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.xgov_fee,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            boxes=[
+                (0, xgov_box_name(xgov_subscriber_app.app_address)),
+                (0, global_state.request_id.to_bytes(8, "big")),
+            ],
+            foreign_apps=[xgov_subscriber_app.app_id],
+        ),
+    )
+
+    return xgov_subscriber_app

@@ -31,6 +31,7 @@ MISSING_CONFIG = "Missing Config"
 
 PENDING_PROPOSALS = "Pending proposals"
 WRONG_PAYMENT_AMOUNT = "Wrong payment amount"
+INVALID_PAYMENT = "Invalid payment"
 INSUFFICIENT_FUNDS = "Insufficient funds"
 
 ALREADY_ACTIVE_PROPOSAL = "Proposer already has an active proposal"
