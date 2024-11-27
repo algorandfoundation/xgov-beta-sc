@@ -1,8 +1,8 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 7
-GLOBAL_UINTS: Final[int] = 30
+GLOBAL_BYTES: Final[int] = 8
+GLOBAL_UINTS: Final[int] = 31
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -42,9 +42,11 @@ GS_KEY_WEIGHTED_QUORUM_MEDIUM: Final[bytes] = b"weighted_quorum_medium"
 GS_KEY_WEIGHTED_QUORUM_LARGE: Final[bytes] = b"weighted_quorum_large"
 GS_KEY_OUTSTANDING_FUNDS: Final[bytes] = b"outstanding_funds"
 GS_KEY_PENDING_PROPOSALS: Final[bytes] = b"pending_proposals"
+GS_KEY_REQUEST_ID: Final[bytes] = b"request_id"
 GS_KEY_COMMITTEE_ID: Final[bytes] = b"committee_id"
 GS_KEY_COMMITTEE_MEMBERS: Final[bytes] = b"committee_members"
 GS_KEY_COMMITTEE_VOTES: Final[bytes] = b"committee_votes"
 
 XGOV_BOX_MAP_PREFIX: Final[bytes] = b"x"
+REQUEST_BOX_MAP_PREFIX: Final[bytes] = b"r"
 PROPOSER_BOX_MAP_PREFIX: Final[bytes] = b"p"

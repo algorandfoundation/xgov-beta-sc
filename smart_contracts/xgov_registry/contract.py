@@ -46,6 +46,9 @@ class XGovRegistry(
 
         # Initialize global state variables
         self.xgov_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_MANAGER)
+        self.xgov_subscriber = GlobalState(
+            arc4.Address(), key=cfg.GS_KEY_XGOV_SUBSCRIBER
+        )
         self.xgov_payor = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_PAYOR)
         self.xgov_reviewer = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_REVIEWER)
 
@@ -137,10 +140,19 @@ class XGovRegistry(
 
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
+        self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
+
         # boxes
         self.xgov_box = BoxMap(
             Account, arc4.Address, key_prefix=cfg.XGOV_BOX_MAP_PREFIX
         )
+
+        self.request_box = BoxMap(
+            UInt64,
+            typ.XGovSubscribeRequestBoxValue,
+            key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
+        )
+
         self.proposer_box = BoxMap(
             Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
         )
@@ -148,6 +160,10 @@ class XGovRegistry(
     @subroutine
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value.native
+
+    @subroutine
+    def is_xgov_subscriber(self) -> bool:
+        return Txn.sender == self.xgov_subscriber.value.native
 
     @subroutine
     def is_xgov_committee_manager(self) -> bool:
@@ -175,6 +191,13 @@ class XGovRegistry(
 
         # Update the outstanding funds
         self.outstanding_funds.value -= amount
+
+    @subroutine
+    def valid_xgov_payment(self, payment: gtxn.PaymentTransaction) -> bool:
+        return (
+            payment.receiver == Global.current_application_address
+            and payment.amount == self.xgov_fee.value
+        )
 
     @subroutine
     def valid_kyc(self, address: Account) -> bool:
@@ -236,6 +259,20 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         self.xgov_reviewer.value = reviewer
+
+    @arc4.abimethod()
+    def set_xgov_subscriber(self, subscriber: arc4.Address) -> None:
+        """Sets the xGov Subscriber.
+
+        Args:
+            subscriber (arc4.Address): Address of the new xGov Subscriber
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.xgov_subscriber.value = subscriber
 
     @arc4.abimethod()
     def set_kyc_provider(self, provider: arc4.Address) -> None:
@@ -347,16 +384,12 @@ class XGovRegistry(
 
         Raises:
             err.ALREADY_XGOV: If the sender is already an xGov
-            err.WRONG_RECEIVER: If the recipient is not the xGov Registry address
-            err.WRONG_PAYMENT_AMOUNT: If the payment transaction is not equal to the xgov_fee global state key
+            err.INVALID_PAYMENT: If the payment transaction is the wrong amount or to the wrong account
         """
 
         assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
         # check payment
-        assert (
-            payment.receiver == Global.current_application_address
-        ), err.WRONG_RECEIVER
-        assert payment.amount == self.xgov_fee.value, err.WRONG_PAYMENT_AMOUNT
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create box
         self.xgov_box[Txn.sender] = voting_address
@@ -385,6 +418,141 @@ class XGovRegistry(
         # delete box
         del self.xgov_box[xgov_address.native]
         self.xgovs.value -= 1
+
+    @arc4.abimethod()
+    def subscribe_xgov_app(
+        self,
+        app_id: arc4.UInt64,
+        voting_address: arc4.Address,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        """Subscribes the app to being an xGov
+
+        Args:
+            app_id (arc4.UInt64): The id of the application to subscribe
+            voting_address (arc4.Address): The address of the voting account for the xgov
+            payment (gtxn.PaymentTransaction): The payment transaction covering the signup fee
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the creator of the app
+            err.ALREADY_XGOV: If the app is already an xGov
+            err.INVALID_PAYMENT: If the payment transaction is the wrong amount or to the wrong account
+        """
+
+        app_creator = Application(app_id.native).creator
+        app_address = Application(app_id.native).address
+
+        # sender must be the creator of the app
+        assert Txn.sender == app_creator, err.UNAUTHORIZED
+        # ensure the app is not already an xgov
+        assert app_address not in self.xgov_box, err.ALREADY_XGOV
+        # check payment
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
+
+        self.xgov_box[app_address] = voting_address
+        self.xgovs.value += 1
+
+    @arc4.abimethod()
+    def unsubscribe_xgov_app(self, app_id: arc4.UInt64) -> None:
+        """Unsubscribes the designated app from being an xGov
+
+        Args:
+            app (arc4.UInt64): The id of the application to unsubscribe
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not currently an xGov or the sender is not the app creator
+        """
+
+        app_creator = Application(app_id.native).creator
+        app_address = Application(app_id.native).address
+
+        # ensure the provided app is an xgov
+        assert app_address in self.xgov_box, err.UNAUTHORIZED
+        # get the voting address
+        voting_address = self.xgov_box[app_address].native
+        # ensure the sender is the app creator or the voting address
+        assert (
+            app_creator == Txn.sender or voting_address == Txn.sender
+        ), err.UNAUTHORIZED
+
+        # delete box
+        del self.xgov_box[app_address]
+        self.xgovs.value -= 1
+
+    @arc4.abimethod()
+    def request_subscribe_xgov(
+        self,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        """Requests to subscribe to the xGov
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov
+            owner_address (arc4.Address): The address of the owner / voting address
+            relation_type (arc4.UInt64): The type of relationship enum
+            payment (gtxn.PaymentTransaction): The payment transaction covering the xgov signup fee
+
+        Raises:
+            err.ALREADY_XGOV: If the sender is already an xGov
+            err.INVALID_PAYMENT: If the payment transaction is the wrong amount or to the wrong account
+        """
+
+        # ensure the xgov_address is not already an xgov
+        assert xgov_address.native not in self.xgov_box, err.ALREADY_XGOV
+
+        # check payment
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
+
+        # create request box
+        rid = self.request_id.value
+        self.request_box[rid] = typ.XGovSubscribeRequestBoxValue(
+            xgov_addr=xgov_address,
+            owner_addr=owner_address,
+            relation_type=relation_type,
+        )
+
+        # increment request id
+        self.request_id.value += 1
+
+    @arc4.abimethod()
+    def approve_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+        """Approves a request to subscribe to xGov
+
+        Args:
+            request_id (arc4.UInt64): The ID of the request to approve
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # get the request
+        request = self.request_box[request_id.native].copy()
+        # create the xgov
+        self.xgov_box[request.xgov_addr.native] = request.owner_addr
+        self.xgovs.value += 1
+        # delete the request
+        del self.request_box[request_id.native]
+
+    @arc4.abimethod()
+    def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+        """Rejects a request to subscribe to xGov
+
+        Args:
+            request_id (arc4.UInt64): The ID of the request to reject
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # delete the request
+        del self.request_box[request_id.native]
 
     @arc4.abimethod()
     def set_voting_account(

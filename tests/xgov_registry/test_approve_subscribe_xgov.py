@@ -1,0 +1,83 @@
+import base64
+
+import pytest
+from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
+from algokit_utils.beta.algorand_client import AlgorandClient
+from algokit_utils.models import Account
+from algosdk import abi
+
+from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_subscriber_app_mock.client import (
+    XGovSubscriberAppMockClient,
+)
+from smart_contracts.errors import std_errors as err
+from tests.xgov_registry.common import LogicErrorType, request_box_name, xgov_box_name
+
+
+def test_approve_subscribe_xgov_success(
+    deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
+    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
+    algorand_client: AlgorandClient,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    request_id = before_global_state.request_id - 1
+
+    xgov_registry_client.approve_subscribe_xgov(
+        request_id=request_id,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            boxes=[
+                (0, request_box_name(request_id)),
+                (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
+            ],
+            foreign_apps=[app_xgov_subscribe_requested.app_id],
+        ),
+    )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(app_xgov_subscribe_requested.app_address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("address")
+    voting_address = box_abi.decode(box_value)  # type: ignore
+
+    assert deployer.address == voting_address  # type: ignore
+
+
+def test_approve_subscribe_xgov_not_subscriber(
+    random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
+    algorand_client: AlgorandClient,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    request_id = before_global_state.request_id - 1
+
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+        xgov_registry_client.approve_subscribe_xgov(
+            request_id=request_id,
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[
+                    (0, request_box_name(request_id)),
+                    (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
+                ],
+                foreign_apps=[app_xgov_subscribe_requested.app_id],
+            ),
+        )

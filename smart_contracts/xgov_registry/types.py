@@ -47,6 +47,12 @@ class XGovRegistryConfig(arc4.Struct):
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
 
 
+class XGovSubscribeRequestBoxValue(arc4.Struct):
+    xgov_addr: arc4.Address
+    owner_addr: arc4.Address
+    relation_type: arc4.UInt64
+
+
 class ProposerBoxValue(arc4.Struct):
     active_proposal: arc4.Bool
     kyc_status: arc4.Bool
