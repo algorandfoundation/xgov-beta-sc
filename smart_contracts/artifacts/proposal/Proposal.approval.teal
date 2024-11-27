@@ -323,10 +323,10 @@ __puya_arc4_router___create_route@2:
     // @arc4.abimethod(create="require")
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
     !
-    assert // can only call when creating
+    assert // is creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -349,9 +349,9 @@ __puya_arc4_router___submit_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -388,9 +388,9 @@ __puya_arc4_router___update_route@4:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -415,9 +415,9 @@ __puya_arc4_router___drop_route@5:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     callsub drop
     intc_1 // 1
     retsub
@@ -427,9 +427,9 @@ __puya_arc4_router___finalize_route@6:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     callsub finalize
     intc_1 // 1
     retsub
@@ -439,9 +439,9 @@ __puya_arc4_router___assign_voter_route@7:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -640,7 +640,7 @@ submit_input_validation:
     // smart_contracts/proposal/contract.py:227-228
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
-    bnz submit_input_validation_bool_true@4
+    bnz submit_input_validation_bool_true@2
     // smart_contracts/proposal/contract.py:228
     // or funding_type == enm.FUNDING_RETROACTIVE
     frame_dig -2
@@ -649,16 +649,16 @@ submit_input_validation:
     // smart_contracts/proposal/contract.py:227-228
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
-    bz submit_input_validation_bool_false@5
+    bz submit_input_validation_bool_false@3
 
-submit_input_validation_bool_true@4:
+submit_input_validation_bool_true@2:
     intc_1 // 1
-    b submit_input_validation_bool_merge@6
+    b submit_input_validation_bool_merge@4
 
-submit_input_validation_bool_false@5:
+submit_input_validation_bool_false@3:
     intc_0 // 0
 
-submit_input_validation_bool_merge@6:
+submit_input_validation_bool_merge@4:
     // smart_contracts/proposal/contract.py:226-229
     // assert (
     //     funding_type == enm.FUNDING_PROACTIVE

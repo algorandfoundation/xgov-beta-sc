@@ -70,9 +70,9 @@ __puya_arc4_router___subscribe_xgov_route@2:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/xgov_subscriber_app_mock/contract.py:20-28
     // class XGovSubscriberAppMock(
     //     ARC4Contract,
@@ -97,9 +97,9 @@ __puya_arc4_router___unsubscribe_xgov_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion is NoOp
     txn ApplicationID
-    assert // can only call when not creating
+    assert // is not creating
     // smart_contracts/xgov_subscriber_app_mock/contract.py:20-28
     // class XGovSubscriberAppMock(
     //     ARC4Contract,
@@ -133,7 +133,7 @@ __puya_arc4_router___bare_routing@6:
     bnz __puya_arc4_router___after_if_else@10
     txn ApplicationID
     !
-    assert // can only call when creating
+    assert // is creating
     intc_1 // 1
     retsub
 
