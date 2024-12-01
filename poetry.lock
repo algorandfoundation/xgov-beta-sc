@@ -151,12 +151,12 @@ algokit-utils = ">=2.3.0,<3.0.0"
 
 [[package]]
 name = "algokit-utils"
-version = "2.3.2"
+version = "2.4.0"
 description = "Utilities for Algorand development for use by AlgoKit"
 optional = false
 python-versions = "<4.0,>=3.10"
 files = [
-    {file = "algokit_utils-2.3.2-py3-none-any.whl", hash = "sha256:0d35e947634a29c5da8fc78fb7c725aa9b249f01cd607c2edfac1eee2ce92e08"},
+    {file = "algokit_utils-2.4.0-py3-none-any.whl", hash = "sha256:acf1f6ea7be59b3bfcc425d54f416d07270ddbd79452c1111f427f43f78fa7dd"},
 ]
 
 [package.dependencies]
@@ -2304,4 +2304,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "140210a77d53b929af7d913da8fe70534405a42399cfefb23f44444a389c67ad"
+content-hash = "46a8f206a492c9ff2de6207dbac0453936c496dd28a3e79c5544bab406b22ee8"
