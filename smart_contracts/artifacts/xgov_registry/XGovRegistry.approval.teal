@@ -2,7 +2,7 @@
 
 smart_contracts.xgov_registry.contract.XGovRegistry.approval_program:
     intcblock 0 1 6 32
-    bytecblock 0x78676f7673 0x6f75747374616e64696e675f66756e6473 0x70 0x78 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x70726f706f73616c5f666565 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x78676f765f666565 0x70726f706f7365725f666565 0x726571756573745f6964 0x00 0x78676f765f73756273637269626572 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x72 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
+    bytecblock 0x78676f7673 0x6f75747374616e64696e675f66756e6473 0x78 0x70 0x70656e64696e675f70726f706f73616c73 0x78676f765f6d616e61676572 0x70726f706f73616c5f666565 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x78676f765f666565 0x70726f706f7365725f666565 0x726571756573745f6964 0x00 0x78676f765f73756273637269626572 0x636f6d6d69747465655f7075626c6973686572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x636f6f6c5f646f776e5f6475726174696f6e 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x72 0x78676f765f7265766965776572 0x6d696e5f7265717565737465645f616d6f756e74 0x7374616c655f70726f706f73616c5f6475726174696f6e 0x151f7c75 0x636f6d6d69747465655f6964
     txn ApplicationID
     bnz main_after_if_else@2
     callsub __init__
@@ -348,10 +348,10 @@ __puya_arc4_router___create_route@2:
     // @arc4.abimethod(create="require")
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
     !
-    assert // is creating
+    assert // can only call when creating
     callsub create
     intc_1 // 1
     retsub
@@ -361,9 +361,9 @@ __puya_arc4_router___set_xgov_manager_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -386,9 +386,9 @@ __puya_arc4_router___set_payor_route@4:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -411,9 +411,9 @@ __puya_arc4_router___set_xgov_reviewer_route@5:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -436,9 +436,9 @@ __puya_arc4_router___set_xgov_subscriber_route@6:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -461,9 +461,9 @@ __puya_arc4_router___set_kyc_provider_route@7:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -486,9 +486,9 @@ __puya_arc4_router___set_committee_manager_route@8:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -511,9 +511,9 @@ __puya_arc4_router___set_committee_publisher_route@9:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -536,9 +536,9 @@ __puya_arc4_router___config_xgov_registry_route@10:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -562,9 +562,9 @@ __puya_arc4_router___update_xgov_registry_route@11:
     txn OnCompletion
     pushint 4 // UpdateApplication
     ==
-    assert // OnCompletion is UpdateApplication
+    assert // OnCompletion is not UpdateApplication
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub update_xgov_registry
     intc_1 // 1
     retsub
@@ -574,9 +574,9 @@ __puya_arc4_router___subscribe_xgov_route@12:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -607,9 +607,9 @@ __puya_arc4_router___unsubscribe_xgov_route@13:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -632,9 +632,9 @@ __puya_arc4_router___subscribe_xgov_app_route@14:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -666,9 +666,9 @@ __puya_arc4_router___unsubscribe_xgov_app_route@15:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -691,9 +691,9 @@ __puya_arc4_router___request_subscribe_xgov_route@16:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -726,9 +726,9 @@ __puya_arc4_router___approve_subscribe_xgov_route@17:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -751,9 +751,9 @@ __puya_arc4_router___reject_subscribe_xgov_route@18:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -776,9 +776,9 @@ __puya_arc4_router___set_voting_account_route@19:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -802,9 +802,9 @@ __puya_arc4_router___subscribe_proposer_route@20:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -834,9 +834,9 @@ __puya_arc4_router___set_proposer_kyc_route@21:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -861,9 +861,9 @@ __puya_arc4_router___declare_committee_route@22:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -888,9 +888,9 @@ __puya_arc4_router___open_proposal_route@23:
     // @arc4.abimethod
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -925,9 +925,9 @@ __puya_arc4_router___pay_grant_proposal_route@24:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -950,9 +950,9 @@ __puya_arc4_router___deposit_funds_route@25:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -982,9 +982,9 @@ __puya_arc4_router___withdraw_funds_route@26:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry/contract.py:31-39
     // class XGovRegistry(
     //     ARC4Contract,
@@ -1008,9 +1008,9 @@ __puya_arc4_router___get_state_route@27:
     // @arc4.abimethod(readonly=True)
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub get_state
     bytec 42 // 0x151f7c75
     swap
@@ -1436,7 +1436,7 @@ subscribe_xgov:
     proto 2 0
     // smart_contracts/xgov_registry/contract.py:390
     // assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     txn Sender
     concat
     box_len
@@ -1452,7 +1452,7 @@ subscribe_xgov:
     // smart_contracts/xgov_registry/contract.py:394-395
     // # create box
     // self.xgov_box[Txn.sender] = voting_address
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     txn Sender
     concat
     frame_dig -2
@@ -1524,7 +1524,7 @@ unsubscribe_xgov:
     // smart_contracts/xgov_registry/contract.py:409-410
     // # ensure the provided address is an xgov
     // assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     frame_dig -1
     concat
     dupn 2
@@ -1614,7 +1614,7 @@ subscribe_xgov_app:
     // smart_contracts/xgov_registry/contract.py:447-448
     // # ensure the app is not already an xgov
     // assert app_address not in self.xgov_box, err.ALREADY_XGOV
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     swap
     concat
     dup
@@ -1667,7 +1667,7 @@ unsubscribe_xgov_app:
     // smart_contracts/xgov_registry/contract.py:469-470
     // # ensure the provided app is an xgov
     // assert app_address in self.xgov_box, err.UNAUTHORIZED
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     swap
     concat
     dup
@@ -1742,7 +1742,7 @@ request_subscribe_xgov:
     // smart_contracts/xgov_registry/contract.py:503-504
     // # ensure the xgov_address is not already an xgov
     // assert xgov_address.native not in self.xgov_box, err.ALREADY_XGOV
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     frame_dig -4
     concat
     box_len
@@ -1830,7 +1830,7 @@ approve_subscribe_xgov:
     // self.xgov_box[request.xgov_addr.native] = request.owner_addr
     dup
     extract 0 32 // on error: Index access is out of bounds
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     swap
     concat
     swap
@@ -1907,7 +1907,7 @@ set_voting_account:
     // smart_contracts/xgov_registry/contract.py:571-572
     // # Check if the sender is an xGov member
     // old_voting_address, exists = self.xgov_box.maybe(xgov_address.native)
-    bytec_3 // 0x78
+    bytec_2 // 0x78
     frame_dig -2
     concat
     dup
@@ -1956,7 +1956,7 @@ subscribe_proposer:
     proto 1 0
     // smart_contracts/xgov_registry/contract.py:596
     // assert Txn.sender not in self.proposer_box, err.ALREADY_PROPOSER
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     txn Sender
     concat
     box_len
@@ -1987,7 +1987,7 @@ subscribe_proposer:
     assert // Wrong payment amount
     // smart_contracts/xgov_registry/contract.py:603
     // self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     txn Sender
     concat
     // smart_contracts/xgov_registry/contract.py:603-607
@@ -2021,7 +2021,7 @@ set_proposer_kyc:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:627
     // assert proposer.native in self.proposer_box, err.PROPOSER_DOES_NOT_EXIST
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     frame_dig -3
     concat
     dup
@@ -2117,7 +2117,7 @@ open_proposal:
     // smart_contracts/xgov_registry/contract.py:674-675
     // # Check if the caller is a registered proposer
     // assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     txn Sender
     concat
     box_len
@@ -2126,7 +2126,7 @@ open_proposal:
     // smart_contracts/xgov_registry/contract.py:677-678
     // # Check if the proposer already has an active proposal
     // assert not self.proposer_box[
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     // smart_contracts/xgov_registry/contract.py:679
     // Txn.sender
     txn Sender
@@ -2252,18 +2252,15 @@ open_proposal:
     // smart_contracts/xgov_registry/contract.py:707-708
     // # Update proposer state
     // self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     txn Sender
     concat
+    dup
     box_get
     assert // check self.proposer_box entry exists
     intc_0 // 0
     intc_1 // 1
     setbit
-    bytec_2 // 0x70
-    txn Sender
-    concat
-    swap
     box_put
     // smart_contracts/xgov_registry/contract.py:710-715
     // # Transfer funds to the new Proposal App
@@ -2330,7 +2327,7 @@ valid_kyc:
     proto 1 1
     // smart_contracts/xgov_registry/contract.py:205
     // self.proposer_box[address].kyc_status.native
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     frame_dig -1
     concat
     dup
@@ -2466,7 +2463,7 @@ pay_grant_proposal:
     assert // Proposal is not approved
     // smart_contracts/xgov_registry/contract.py:759
     // assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
-    bytec_2 // 0x70
+    bytec_3 // 0x70
     dig 1
     concat
     dup
