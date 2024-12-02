@@ -368,9 +368,9 @@ __puya_arc4_router___vote_route@7:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     intc_1 // 1
     retsub
 
