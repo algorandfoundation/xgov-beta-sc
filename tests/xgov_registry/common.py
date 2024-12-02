@@ -1,5 +1,3 @@
-from typing import Type
-
 from algokit_utils import LogicError
 from algokit_utils.beta.account_manager import (
     AccountTransactionSigner,
@@ -15,7 +13,7 @@ from smart_contracts.xgov_registry.config import (
     XGOV_BOX_MAP_PREFIX,
 )
 
-LogicErrorType: Type[LogicError] = LogicError
+LogicErrorType: type[LogicError] = LogicError
 
 XGOV_FEE = 1_000_000
 PROPOSER_FEE = 10_000_000
