@@ -238,10 +238,10 @@ __puya_arc4_router__:
     // ):
     proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___after_if_else@10
-    pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void"
+    bz __puya_arc4_router___after_if_else@11
+    pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0x3f189938 // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64,uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6
+    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7
     intc_0 // 0
     retsub
 
@@ -363,7 +363,18 @@ __puya_arc4_router___release_funds_route@6:
     intc_1 // 1
     retsub
 
-__puya_arc4_router___after_if_else@10:
+__puya_arc4_router___vote_route@7:
+    // smart_contracts/proposal_mock/contract.py:130
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is NoOp
+    txn ApplicationID
+    assert // is not creating
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router___after_if_else@11:
     // smart_contracts/proposal_mock/contract.py:18-26
     // class ProposalMock(
     //     ARC4Contract,
