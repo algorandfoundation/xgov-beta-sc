@@ -86,6 +86,7 @@
       ]
     },
     "287": {
+      "error": "Wrong Global Bytes allocation",
       "op": "assert // Wrong Global Bytes allocation",
       "stack_out": []
     },
@@ -119,6 +120,7 @@
       ]
     },
     "293": {
+      "error": "Wrong Global UInts allocation",
       "op": "assert // Wrong Global UInts allocation",
       "stack_out": []
     },
@@ -141,6 +143,7 @@
       ]
     },
     "297": {
+      "error": "Wrong Local Bytes allocation",
       "op": "assert // Wrong Local Bytes allocation",
       "stack_out": []
     },
@@ -163,6 +166,7 @@
       ]
     },
     "301": {
+      "error": "Wrong Local UInts allocation",
       "op": "assert // Wrong Local UInts allocation",
       "stack_out": []
     },
@@ -702,7 +706,8 @@
       ]
     },
     "506": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "507": {
@@ -724,7 +729,8 @@
       ]
     },
     "510": {
-      "op": "assert // is creating",
+      "error": "can only call when creating",
+      "op": "assert // can only call when creating",
       "stack_out": []
     },
     "511": {
@@ -775,7 +781,8 @@
       ]
     },
     "522": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "523": {
@@ -788,7 +795,8 @@
       ]
     },
     "525": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "526": {
@@ -867,6 +875,7 @@
       ]
     },
     "535": {
+      "error": "transaction type is pay",
       "op": "assert // transaction type is pay",
       "stack_out": [
         "gtxn_idx%0#0"
@@ -1007,7 +1016,8 @@
       ]
     },
     "561": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "562": {
@@ -1020,7 +1030,8 @@
       ]
     },
     "564": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "565": {
@@ -1091,7 +1102,8 @@
       ]
     },
     "582": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "583": {
@@ -1104,7 +1116,8 @@
       ]
     },
     "585": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "586": {
@@ -1145,7 +1158,8 @@
       ]
     },
     "594": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "595": {
@@ -1158,7 +1172,8 @@
       ]
     },
     "597": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "598": {
@@ -1199,7 +1214,8 @@
       ]
     },
     "606": {
-      "op": "assert // OnCompletion is NoOp",
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
     "607": {
@@ -1212,7 +1228,8 @@
       ]
     },
     "609": {
-      "op": "assert // is not creating",
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
       "stack_out": []
     },
     "610": {
@@ -1298,6 +1315,7 @@
       ]
     },
     "629": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -1640,6 +1658,7 @@
       ]
     },
     "715": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -1675,6 +1694,7 @@
       ]
     },
     "719": {
+      "error": "check self.status exists",
       "op": "assert // check self.status exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -1690,6 +1710,7 @@
       ]
     },
     "721": {
+      "error": "Wrong Proposal Status",
       "op": "assert // Wrong Proposal Status",
       "stack_out": []
     },
@@ -1736,6 +1757,7 @@
       ]
     },
     "729": {
+      "error": "check self.proposer exists",
       "op": "assert // check self.proposer exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -1841,7 +1863,7 @@
       ]
     },
     "750": {
-      "op": "bnz submit_input_validation_bool_true@2",
+      "op": "bnz submit_input_validation_bool_true@4",
       "stack_out": []
     },
     "753": {
@@ -1871,11 +1893,11 @@
       ]
     },
     "757": {
-      "op": "bz submit_input_validation_bool_false@3",
+      "op": "bz submit_input_validation_bool_false@5",
       "stack_out": []
     },
     "760": {
-      "block": "submit_input_validation_bool_true@2",
+      "block": "submit_input_validation_bool_true@4",
       "stack_in": [],
       "op": "intc_1 // 1",
       "defined_out": [
@@ -1886,10 +1908,10 @@
       ]
     },
     "761": {
-      "op": "b submit_input_validation_bool_merge@4"
+      "op": "b submit_input_validation_bool_merge@6"
     },
     "764": {
-      "block": "submit_input_validation_bool_false@3",
+      "block": "submit_input_validation_bool_false@5",
       "stack_in": [],
       "op": "intc_0 // 0",
       "defined_out": [
@@ -1900,10 +1922,11 @@
       ]
     },
     "765": {
-      "block": "submit_input_validation_bool_merge@4",
+      "block": "submit_input_validation_bool_merge@6",
       "stack_in": [
         "or_result%0#0"
       ],
+      "error": "Wrong Funding Type",
       "op": "assert // Wrong Funding Type",
       "defined_out": [],
       "stack_out": []
@@ -1983,6 +2006,7 @@
       ]
     },
     "827": {
+      "error": "Requested amount is less than the minimum requested amount",
       "op": "assert // Requested amount is less than the minimum requested amount",
       "stack_out": [
         "max_requested_amount_large#0"
@@ -2005,6 +2029,7 @@
       ]
     },
     "831": {
+      "error": "Requested amount is more than the maximum requested amount",
       "op": "assert // Requested amount is more than the maximum requested amount",
       "stack_out": []
     },
@@ -2070,6 +2095,7 @@
       ]
     },
     "844": {
+      "error": "Wrong Title length",
       "op": "assert // Wrong Title length",
       "stack_out": []
     },
@@ -2100,6 +2126,7 @@
       ]
     },
     "849": {
+      "error": "Wrong Title length",
       "op": "assert // Wrong Title length",
       "stack_out": []
     },
@@ -2157,6 +2184,7 @@
       ]
     },
     "860": {
+      "error": "check self.registry_app_id exists",
       "op": "assert // check self.registry_app_id exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -2185,6 +2213,7 @@
       ]
     },
     "864": {
+      "error": "Missing Config",
       "op": "assert // Missing Config",
       "stack_out": [
         "value#0"
@@ -2261,6 +2290,7 @@
       ]
     },
     "877": {
+      "error": "check self.proposer exists",
       "op": "assert // check self.proposer exists",
       "stack_out": [
         "expected_lock_amount#0",
@@ -2305,6 +2335,7 @@
       ]
     },
     "883": {
+      "error": "Wrong Sender",
       "op": "assert // Wrong Sender",
       "stack_out": [
         "expected_lock_amount#0"
@@ -2353,6 +2384,7 @@
       ]
     },
     "891": {
+      "error": "Wrong Receiver",
       "op": "assert // Wrong Receiver",
       "stack_out": [
         "expected_lock_amount#0"
@@ -2386,6 +2418,7 @@
       ]
     },
     "897": {
+      "error": "Locked amount is incorrect",
       "op": "assert // Locked amount is incorrect",
       "stack_out": []
     },
@@ -2867,6 +2900,7 @@
       ]
     },
     "1080": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -2902,6 +2936,7 @@
       ]
     },
     "1084": {
+      "error": "check self.status exists",
       "op": "assert // check self.status exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -2928,6 +2963,7 @@
       ]
     },
     "1087": {
+      "error": "Wrong Proposal Status",
       "op": "assert // Wrong Proposal Status",
       "stack_out": []
     },
@@ -2981,6 +3017,7 @@
       ]
     },
     "1099": {
+      "error": "check self.proposer exists",
       "op": "assert // check self.proposer exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -3020,6 +3057,7 @@
       ]
     },
     "1104": {
+      "error": "check self.locked_amount exists",
       "op": "assert // check self.locked_amount exists",
       "stack_out": [
         "maybe_value%0#0",
@@ -3249,6 +3287,7 @@
       ]
     },
     "1153": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -3284,6 +3323,7 @@
       ]
     },
     "1157": {
+      "error": "check self.status exists",
       "op": "assert // check self.status exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -3310,6 +3350,7 @@
       ]
     },
     "1160": {
+      "error": "Wrong Proposal Status",
       "op": "assert // Wrong Proposal Status",
       "stack_out": []
     },
@@ -3509,6 +3550,7 @@
       ]
     },
     "1235": {
+      "error": "Address length is 32 bytes",
       "op": "assert // Address length is 32 bytes",
       "stack_out": [
         "proposal_fee#0",
@@ -3597,6 +3639,7 @@
       ]
     },
     "1259": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -3632,6 +3675,7 @@
       ]
     },
     "1263": {
+      "error": "check self.status exists",
       "op": "assert // check self.status exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -3658,6 +3702,7 @@
       ]
     },
     "1266": {
+      "error": "Wrong Proposal Status",
       "op": "assert // Wrong Proposal Status",
       "stack_out": []
     },
@@ -3704,6 +3749,7 @@
       ]
     },
     "1273": {
+      "error": "check self.submission_ts exists",
       "op": "assert // check self.submission_ts exists",
       "stack_out": [
         "tmp%2#0",
@@ -3753,6 +3799,7 @@
       ]
     },
     "1278": {
+      "error": "check self.category exists",
       "op": "assert // check self.category exists",
       "stack_out": [
         "discussion_duration#0",
@@ -3781,6 +3828,7 @@
       ]
     },
     "1283": {
+      "error": "Too early",
       "op": "assert // Too early",
       "stack_out": []
     },
@@ -3998,6 +4046,7 @@
       ]
     },
     "1407": {
+      "error": "Empty Committee ID",
       "op": "assert // Empty Committee ID",
       "stack_out": [
         "committee_id#0"
@@ -4040,6 +4089,7 @@
       ]
     },
     "1414": {
+      "error": "Wrong Committee Members",
       "op": "assert // Wrong Committee Members",
       "stack_out": [
         "committee_id#0",
@@ -4089,6 +4139,7 @@
       ]
     },
     "1421": {
+      "error": "Wrong Committee Votes",
       "op": "assert // Wrong Committee Votes",
       "stack_out": [
         "committee_id#0",
@@ -4206,6 +4257,7 @@
       ]
     },
     "1444": {
+      "error": "check self.registry_app_id exists",
       "op": "assert // check self.registry_app_id exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -4234,6 +4286,7 @@
       ]
     },
     "1448": {
+      "error": "Missing Config",
       "op": "assert // Missing Config",
       "stack_out": [
         "value#0"
@@ -4382,6 +4435,7 @@
       ]
     },
     "1480": {
+      "error": "check self.voters_count exists",
       "op": "assert // check self.voters_count exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -4454,6 +4508,7 @@
       ]
     },
     "1491": {
+      "error": "check self.assigned_votes exists",
       "op": "assert // check self.assigned_votes exists",
       "stack_out": [
         "maybe_value%1#0"
@@ -4518,6 +4573,7 @@
       ]
     },
     "1503": {
+      "error": "check self.voters_count exists",
       "op": "assert // check self.voters_count exists",
       "stack_out": [
         "maybe_value%2#0"
@@ -4557,6 +4613,7 @@
       ]
     },
     "1508": {
+      "error": "check self.committee_members exists",
       "op": "assert // check self.committee_members exists",
       "stack_out": [
         "maybe_value%2#0",
@@ -4601,6 +4658,7 @@
       ]
     },
     "1517": {
+      "error": "check self.assigned_votes exists",
       "op": "assert // check self.assigned_votes exists",
       "stack_out": [
         "maybe_value%4#0"
@@ -4640,6 +4698,7 @@
       ]
     },
     "1522": {
+      "error": "check self.committee_votes exists",
       "op": "assert // check self.committee_votes exists",
       "stack_out": [
         "maybe_value%4#0",
@@ -4656,6 +4715,7 @@
       ]
     },
     "1524": {
+      "error": "Voting Power Mismatch",
       "op": "assert // Voting Power Mismatch",
       "stack_out": []
     },
@@ -4725,6 +4785,7 @@
       ]
     },
     "1541": {
+      "error": "Unauthorized",
       "op": "assert // Unauthorized",
       "stack_out": []
     },
@@ -4760,6 +4821,7 @@
       ]
     },
     "1545": {
+      "error": "check self.status exists",
       "op": "assert // check self.status exists",
       "stack_out": [
         "maybe_value%0#0"
@@ -4786,6 +4848,7 @@
       ]
     },
     "1548": {
+      "error": "Wrong Proposal Status",
       "op": "assert // Wrong Proposal Status",
       "stack_out": []
     },
@@ -4887,6 +4950,7 @@
       ]
     },
     "1565": {
+      "error": "Address length is 32 bytes",
       "op": "assert // Address length is 32 bytes",
       "stack_out": [
         "tmp%0#0",
@@ -4971,6 +5035,7 @@
       ]
     },
     "1581": {
+      "error": "Voter Already Assigned",
       "op": "assert // Voter Already Assigned",
       "stack_out": []
     },

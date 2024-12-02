@@ -1,5 +1,3 @@
-from typing import List, Tuple, Type
-
 from algokit_utils import LogicError, TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -41,7 +39,7 @@ LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 PROPOSAL_TITLE = "Test Proposal"
 PROPOSAL_CID = b"\x01" * 59
 
-logic_error_type: Type[LogicError] = LogicError
+logic_error_type: type[LogicError] = LogicError
 
 INITIAL_FUNDS = 10_000_000_000
 
@@ -242,7 +240,7 @@ def assert_account_balance(
 def assert_boxes(
     algorand_client: AlgorandClient,
     app_id: int,
-    expected_boxes: List[Tuple[bytes, str]],
+    expected_boxes: list[tuple[bytes, str]],
 ) -> None:
     if len(expected_boxes) == 0:
         assert algorand_client.client.algod.application_boxes(app_id) == {"boxes": []}
