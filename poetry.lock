@@ -166,12 +166,12 @@ py-algorand-sdk = ">=2.4.0,<3.0.0"
 
 [[package]]
 name = "algorand-python"
-version = "2.2.0"
+version = "2.3.0"
 description = "API for writing Algorand Python Smart contracts"
 optional = false
 python-versions = "<4.0,>=3.12"
 files = [
-    {file = "algorand_python-2.2.0-py3-none-any.whl", hash = "sha256:1f21baf8fbbe7daa0dbaba2eab559b6b8753b1dc41acdd1cd92f333037dd115d"},
+    {file = "algorand_python-2.3.0-py3-none-any.whl", hash = "sha256:3836a8292d6ed5a4beacec7482675e2f9e85dc5915bf2478fcb46186a1a1ef1a"},
 ]
 
 [[package]]
@@ -2304,4 +2304,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "1f0814883849fbdb5c12888b08c7742a23648dfdc31b5ae4452f6e9c2f89bb57"
+content-hash = "72596a29651a904216b07c53f25bb32c87492a217a91679cfe3ef8629059641e"
