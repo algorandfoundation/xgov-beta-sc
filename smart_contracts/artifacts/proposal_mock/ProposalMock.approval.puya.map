@@ -431,7 +431,7 @@
       "stack_out": []
     },
     "309": {
-      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0x3f189938 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64,uint64)void\""
+      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\""
     },
     "341": {
       "op": "txna ApplicationArgs 0",
@@ -441,7 +441,7 @@
         "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(set_requested_amount(uint64)void)",
         "Method(set_status(uint64)void)",
-        "Method(vote(address,uint64,uint64,uint64)void)",
+        "Method(vote(address,uint64,uint64)void)",
         "tmp%2#0"
       ],
       "stack_out": [
@@ -450,7 +450,7 @@
         "Method(set_requested_amount(uint64)void)",
         "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(release_funds()void)",
-        "Method(vote(address,uint64,uint64,uint64)void)",
+        "Method(vote(address,uint64,uint64)void)",
         "tmp%2#0"
       ]
     },

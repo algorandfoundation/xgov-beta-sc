@@ -133,6 +133,5 @@ class ProposalMock(
         xgov_address: arc4.Address,
         approval_votes: arc4.UInt64,
         rejection_votes: arc4.UInt64,
-        null_votes: arc4.UInt64,
     ) -> None:
         pass

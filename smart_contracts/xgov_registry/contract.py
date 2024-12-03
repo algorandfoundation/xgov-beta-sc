@@ -745,21 +745,11 @@ class XGovRegistry(
         # verify proposal id is genuine proposal
         assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
 
-        # Verify the proposal is in the approved state
+        # Verify the proposal is in the voting state
         status, status_exists = op.AppGlobal.get_ex_uint64(
             proposal_id.native, pcfg.GS_KEY_STATUS
         )
         assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
-
-        # verify their voting allocation is not more than allowed
-        # and allocate any remaining votes to null
-        vote_sum = approval_votes.native + rejection_votes.native
-        proposal_committee_votes, proposal_committee_votes_exists = (
-            op.AppGlobal.get_ex_uint64(proposal_id.native, pcfg.GS_KEY_COMMITTEE_VOTES)
-        )
-        assert vote_sum <= proposal_committee_votes, err.INVALID_VOTE
-        extra_null_votes = proposal_committee_votes - vote_sum
-        null_votes = extra_null_votes
 
         # make sure they're voting on behalf of an xgov
         voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -775,7 +765,6 @@ class XGovRegistry(
             xgov_address,
             approval_votes,
             rejection_votes,
-            arc4.UInt64(null_votes),
             app_id=proposal_id.native,
         )
 
