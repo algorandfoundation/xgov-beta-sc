@@ -720,6 +720,55 @@ class XGovRegistry(
         return proposal_app.id
 
     @arc4.abimethod()
+    def vote_proposal(
+        self,
+        proposal_id: arc4.UInt64,
+        xgov_address: arc4.Address,
+        approval_votes: arc4.UInt64,
+        rejection_votes: arc4.UInt64,
+    ) -> None:
+        """Votes on a proposal
+
+        Args:
+            proposal_id (arc4.UInt64): The application id of the proposal app being voted on
+            xgov_address: (arc4.Address): The address of the xgov being voted on behalf of
+            approval_votes: (arc4.UInt64): The number of approvals from the xgov allocated
+            rejection_votes: (arc4.UInt64): The number of rejections from the xgov allocated
+
+        Raises:
+            err.INVALID_VOTE: If the votes amount to more than the voting power of the committee
+            err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
+            err.UNAUTHORIZED: If the xgov_address is not an XGov
+            err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
+        """
+
+        # verify proposal id is genuine proposal
+        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+
+        # Verify the proposal is in the voting state
+        status, status_exists = op.AppGlobal.get_ex_uint64(
+            proposal_id.native, pcfg.GS_KEY_STATUS
+        )
+        assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
+
+        # make sure they're voting on behalf of an xgov
+        voting_address, exists = self.xgov_box.maybe(xgov_address.native)
+        assert exists, err.UNAUTHORIZED
+
+        # Verify the caller is using their voting address
+        assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
+
+        # Call the Proposal App to register the vote
+        # TODO: switch to Proposal contract
+        arc4.abi_call(
+            proposal_contract.ProposalMock.vote,
+            xgov_address,
+            approval_votes,
+            rejection_votes,
+            app_id=proposal_id.native,
+        )
+
+    @arc4.abimethod()
     def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
         """Disburses the funds for an approved proposal
 
