@@ -23,7 +23,7 @@ import smart_contracts.errors.std_errors as err
 from ..common import types as ptyp
 from ..proposal import config as pcfg
 from ..proposal import enums as penm
-from ..proposal_mock import contract as proposal_contract
+from ..proposal import contract as proposal_contract
 from . import config as cfg
 from . import types as typ
 
@@ -690,10 +690,10 @@ class XGovRegistry(
 
         # Create the Proposal App
         # TODO: replace the proposal mock contract with the real one
-        compiled = compile_contract(proposal_contract.ProposalMock)
+        compiled = compile_contract(proposal_contract.Proposal)
 
         proposal_app = arc4.abi_call(
-            proposal_contract.ProposalMock.create,
+            proposal_contract.Proposal.create,
             Txn.sender,
             approval_program=compiled.approval_program,
             clear_state_program=compiled.clear_state_program,
@@ -759,14 +759,14 @@ class XGovRegistry(
         assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
-        # TODO: switch to Proposal contract
-        arc4.abi_call(
-            proposal_contract.ProposalMock.vote,
-            xgov_address,
-            approval_votes,
-            rejection_votes,
-            app_id=proposal_id.native,
-        )
+        # TODO: uncomment when proposal contract is ready
+        # arc4.abi_call(
+        #     proposal_contract.Proposal.vote,
+        #     xgov_address,
+        #     approval_votes,
+        #     rejection_votes,
+        #     app_id=proposal_id.native,
+        # )
 
     @arc4.abimethod()
     def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -816,9 +816,10 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        arc4.abi_call(
-            proposal_contract.ProposalMock.release_funds, app_id=proposal_id.native
-        )
+        # TODO: uncomment when proposal contract is ready
+        # arc4.abi_call(
+        #     proposal_contract.Proposal.release_funds, app_id=proposal_id.native
+        # )
 
         # Decrement pending proposals count
         # TODO: might happen on decommission as well
