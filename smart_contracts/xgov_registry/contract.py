@@ -689,27 +689,28 @@ class XGovRegistry(
         assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # Create the Proposal App
-        # TODO: replace the proposal mock contract with the real one
-        compiled = compile_contract(proposal_contract.Proposal)
+        # compiled = compile_contract(proposal_contract.Proposal)
 
-        proposal_app = arc4.abi_call(
-            proposal_contract.Proposal.create,
-            Txn.sender,
-            approval_program=compiled.approval_program,
-            clear_state_program=compiled.clear_state_program,
-            global_num_bytes=pcfg.GLOBAL_BYTES,
-            global_num_uint=pcfg.GLOBAL_UINTS,
-            local_num_bytes=pcfg.LOCAL_BYTES,
-            local_num_uint=pcfg.LOCAL_UINTS,
-            fee=0,
-        ).created_app
+        # proposal_app = arc4.abi_call(
+        #     proposal_contract.Proposal.create,
+        #     Txn.sender,
+        #     approval_program=compiled.approval_program,
+        #     clear_state_program=compiled.clear_state_program,
+        #     global_num_bytes=pcfg.GLOBAL_BYTES,
+        #     global_num_uint=pcfg.GLOBAL_UINTS,
+        #     local_num_bytes=pcfg.LOCAL_BYTES,
+        #     local_num_uint=pcfg.LOCAL_UINTS,
+        #     fee=0,
+        # ).created_app
+
+        res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
 
         # Update proposer state
         self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
         # Transfer funds to the new Proposal App
         itxn.Payment(
-            receiver=proposal_app.address,
+            receiver=res.created_app.address,
             amount=self.proposal_fee.value - pcfg.PROPOSAL_MBR,
             fee=0,
         ).submit()
@@ -717,7 +718,7 @@ class XGovRegistry(
         # Increment pending proposals
         self.pending_proposals.value += 1
 
-        return proposal_app.id
+        return res.created_app.id
 
     @arc4.abimethod()
     def vote_proposal(
