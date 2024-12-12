@@ -31,8 +31,6 @@ def deploy(
     app_client.deploy(
         on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
         on_update=algokit_utils.OnUpdate.UpdateApp,
-        allow_update=True,
-        allow_delete=False,
         create_args=DeployCreate(args=CreateArgs()),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
     )
