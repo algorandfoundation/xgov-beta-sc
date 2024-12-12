@@ -8,8 +8,10 @@ from algokit_utils.beta.composer import PayParams
 from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
-from smart_contracts.artifacts.xgov_subscriber_app_mock.client import (
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
+from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err

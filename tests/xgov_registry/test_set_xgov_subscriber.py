@@ -4,7 +4,9 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import LogicErrorType, decode_address, xgov_box_name
 

@@ -1,7 +1,9 @@
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from tests.xgov_registry.common import (
     COMMITTEE_ID,
     COMMITTEE_SIZE,
