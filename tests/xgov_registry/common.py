@@ -6,7 +6,10 @@ from algokit_utils.beta.account_manager import (
 from algokit_utils.models import Account
 from algosdk.encoding import decode_address, encode_address
 
-from smart_contracts.artifacts.xgov_registry.client import GlobalState, TypedGlobalState
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GlobalState,
+    TypedGlobalState,
+)
 from smart_contracts.xgov_registry.config import (
     PROPOSER_BOX_MAP_PREFIX,
     REQUEST_BOX_MAP_PREFIX,

@@ -7,7 +7,9 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk import abi
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
     KYC_EXPIRATION,
