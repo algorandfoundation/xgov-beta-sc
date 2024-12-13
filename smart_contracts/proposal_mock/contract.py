@@ -4,7 +4,6 @@ from algopy import (
     ARC4Contract,
     Global,
     GlobalState,
-    StateTotals,
     String,
     UInt64,
     arc4,
@@ -15,18 +14,8 @@ from ..proposal import config as prop_cfg
 from ..proposal import enums as enm
 
 
-class ProposalMock(
-    ARC4Contract,
-    state_totals=StateTotals(
-        global_bytes=prop_cfg.GLOBAL_BYTES,
-        global_uints=prop_cfg.GLOBAL_UINTS,
-        local_bytes=prop_cfg.LOCAL_BYTES,
-        local_uints=prop_cfg.LOCAL_UINTS,
-    ),
-):
-
+class ProposalMock(ARC4Contract):
     def __init__(self) -> None:
-
         self.proposer = GlobalState(
             arc4.Address(),
             key=prop_cfg.GS_KEY_PROPOSER,
@@ -98,12 +87,6 @@ class ProposalMock(
 
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
-        """Create a new proposal.
-
-        Args:
-            proposer (arc4.Address): Address of the proposer
-        """
-
         self.proposer.value = proposer
         self.registry_app_id.value = Global.caller_application_id
 

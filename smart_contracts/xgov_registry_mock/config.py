@@ -1,10 +1,6 @@
 from typing import Final
 
-# State Schema
-GLOBAL_BYTES: Final[int] = 2
-GLOBAL_UINTS: Final[int] = 12
-LOCAL_BYTES: Final[int] = 0
-LOCAL_UINTS: Final[int] = 0
+# TODO: Remove this `config.py` and point directly to the main xGov Registry configuration file
 
 # Default values
 PROPOSAL_COMMITMENT_BPS: Final[int] = 100
