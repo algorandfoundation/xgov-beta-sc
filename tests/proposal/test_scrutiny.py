@@ -224,13 +224,22 @@ def test_scrutiny_voting_ongoing_2(
             ),
         )
 
-    proposal_client.vote(
-        vote="Approve",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[0].address,
+        approvals=10,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[0].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -300,13 +309,22 @@ def test_scrutiny_voting_ongoing_3(
         )
 
     for committee_member in committee_members[:-1]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -373,13 +391,22 @@ def test_scrutiny_twice(
         )
 
     for committee_member in committee_members:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -471,37 +498,64 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     num_of_rejections = 0
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -585,37 +639,64 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -699,37 +780,64 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     num_of_rejections = 9
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -814,37 +922,64 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     num_of_rejections = 0
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -930,37 +1065,64 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1046,37 +1208,64 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1162,37 +1351,64 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     num_of_rejections = 2
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1278,37 +1494,64 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     num_of_rejections = 10
 
     for committee_member in committee_members[:num_of_approvals]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1391,13 +1634,22 @@ def test_scrutiny_after_time_approve_small_1(
         )
 
     for committee_member in committee_members[:4]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1485,23 +1737,41 @@ def test_scrutiny_after_time_approve_small_2(
         )
 
     for committee_member in committee_members[:3]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Reject",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[4].address,
+        approvals=0,
+        rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[4].address,
             signer=committee_members[4].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[4].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[4].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -1590,33 +1860,60 @@ def test_scrutiny_after_time_approve_small_3(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Reject",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[4].address,
+        approvals=0,
+        rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[4].address,
             signer=committee_members[4].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[4].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[4].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
-    proposal_client.vote(
-        vote="Null",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[5].address,
+        approvals=0,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[5].address,
             signer=committee_members[5].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[5].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[5].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -1706,34 +2003,61 @@ def test_scrutiny_after_time_approve_small_4(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Reject",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[2].address,
+        approvals=0,
+        rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[2].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[2].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
     for committee_member in committee_members[3:-1]:
-        proposal_client.vote(
-            vote="Null",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -1823,24 +2147,42 @@ def test_scrutiny_after_time_approve_small_5(
         )
 
     for committee_member in committee_members[: len(committee_members) // 2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -2010,13 +2352,22 @@ def test_scrutiny_after_time_reject_small_2(
             ),
         )
 
-    proposal_client.vote(
-        vote="Reject",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[0].address,
+        approvals=0,
+        rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[0].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -2105,13 +2456,22 @@ def test_scrutiny_after_time_reject_small_3(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -2201,23 +2561,41 @@ def test_scrutiny_after_time_reject_small_4(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Approve",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[2].address,
+        approvals=10,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[2].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[2].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -2308,24 +2686,42 @@ def test_scrutiny_after_time_reject_small_5(
         )
 
     for committee_member in committee_members[: len(committee_members) // 2]:
-        proposal_client.vote(
-            vote="Reject",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=0,
+            rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -2415,13 +2811,22 @@ def test_scrutiny_after_time_reject_small_6(
             ),
         )
 
-    proposal_client.vote(
-        vote="Approve",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[0].address,
+        approvals=10,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[0].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -2511,13 +2916,22 @@ def test_scrutiny_after_time_reject_small_7(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -2607,13 +3021,22 @@ def test_scrutiny_after_time_reject_small_8(
         )
 
     for committee_member in committee_members[:3]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
@@ -2704,23 +3127,41 @@ def test_scrutiny_after_time_reject_small_9(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Reject",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[2].address,
+        approvals=0,
+        rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[2].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[2].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -2811,23 +3252,41 @@ def test_scrutiny_after_time_reject_small_10(
         )
 
     for committee_member in committee_members[:2]:
-        proposal_client.vote(
-            vote="Approve",
+        xgov_registry_mock_client.vote(
+            proposal_app=proposal_client.app_id,
+            voter=committee_member.address,
+            approvals=10,
+            rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, get_voter_box_key(committee_member.address))],
+                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                suggested_params=sp,
             ),
         )
 
-    proposal_client.vote(
-        vote="Null",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[2].address,
+        approvals=0,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[2].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[2].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 
@@ -2932,13 +3391,22 @@ def test_scrutiny_after_time_reject_small_11(
             ),
         )
 
-    proposal_client.vote(
-        vote="Approve",
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[0].address,
+        approvals=48,
+        rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, get_voter_box_key(committee_members[0].address))],
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
         ),
     )
 

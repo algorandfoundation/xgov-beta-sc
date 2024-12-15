@@ -133,24 +133,45 @@ class Proposal(
         self.assigned_votes = UInt64(0)
 
     @subroutine
-    def vote_check_authorization(self) -> None:
-        assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
+    def vote_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
 
-        assert Txn.sender in self.voters and self.voters[Txn.sender].voted == arc4.Bool(
-            False  # noqa: FBT003
-        ), err.UNAUTHORIZED
+        if self.status.value != enm.STATUS_VOTING:
+            return typ.Error("ERR:" + err.WRONG_PROPOSAL_STATUS)
 
         voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration = self.get_voting_duration(self.category.value)
+        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        if error != typ.Error(""):
+            return error
 
-        assert voting_duration <= maximum_voting_duration, err.VOTING_PERIOD_EXPIRED
+        if voting_duration > maximum_voting_duration:
+            return typ.Error("ERR:" + err.VOTING_PERIOD_EXPIRED)
+
+        return typ.Error("")
+
+    @subroutine
+    def vote_input_validation(
+        self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
+    ) -> typ.Error:
+        if voter.native not in self.voters:
+            return typ.Error("ERR:" + err.VOTER_NOT_FOUND)
+
+        voter_box = self.voters[voter.native].copy()
+        if voter_box.voted:
+            return typ.Error("ERR:" + err.VOTER_ALREADY_VOTED)
+
+        if approvals.native + rejections.native > voter_box.votes:
+            return typ.Error("ERR:" + err.VOTES_EXCEEDED)
+
+        return typ.Error("")
 
     @subroutine
     def scrutiny_check_authorization(self) -> None:
         assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
 
         voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration = self.get_voting_duration(self.category.value)
+        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        assert error == typ.Error(""), err.MISSING_CONFIG
 
         assert (
             voting_duration >= maximum_voting_duration  # voting period has ended
@@ -173,20 +194,22 @@ class Proposal(
     @subroutine
     def get_discussion_duration(self, category: UInt64) -> UInt64:
         if category == enm.CATEGORY_SMALL:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
             )
         elif category == enm.CATEGORY_MEDIUM:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
             )
         else:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
             )
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        return value
 
     @subroutine
-    def get_voting_duration(self, category: UInt64) -> UInt64:
+    def get_voting_duration(self, category: UInt64) -> tuple[UInt64, typ.Error]:
         if category == enm.CATEGORY_SMALL:
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
@@ -203,32 +226,36 @@ class Proposal(
     @subroutine
     def get_quorum(self, category: UInt64) -> UInt64:
         if category == enm.CATEGORY_SMALL:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
             )
         elif category == enm.CATEGORY_MEDIUM:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_MEDIUM)
             )
         else:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
             )
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        return value
 
     @subroutine
     def get_weighted_quorum(self, category: UInt64) -> UInt64:
         if category == enm.CATEGORY_SMALL:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
             )
         elif category == enm.CATEGORY_MEDIUM:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
             )
         else:
-            return self.get_uint_from_registry_config(
+            value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
             )
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        return value
 
     @subroutine
     def verify_and_set_committee(self) -> None:
@@ -238,14 +265,16 @@ class Proposal(
         )
         assert committee_id != typ.CommitteeId.from_bytes(b""), err.EMPTY_COMMITTEE_ID
 
-        committee_members = self.get_uint_from_registry_config(
+        committee_members, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
         )
+        assert error == typ.Error(""), err.MISSING_CONFIG
         assert committee_members > UInt64(0), err.WRONG_COMMITTEE_MEMBERS
 
-        committee_votes = self.get_uint_from_registry_config(
+        committee_votes, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
         )
+        assert error == typ.Error(""), err.MISSING_CONFIG
         assert committee_votes > UInt64(0), err.WRONG_COMMITTEE_VOTES
 
         self.committee_id.value = committee_id.copy()
@@ -302,12 +331,15 @@ class Proposal(
             or funding_type == enm.FUNDING_RETROACTIVE
         ), err.WRONG_FUNDING_TYPE
 
-        min_requested_amount = self.get_uint_from_registry_config(
+        min_requested_amount, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
         )
-        max_requested_amount_large = self.get_uint_from_registry_config(
+        assert error == typ.Error(""), err.MISSING_CONFIG
+
+        max_requested_amount_large, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
         )
+        assert error == typ.Error(""), err.MISSING_CONFIG
 
         assert requested_amount >= min_requested_amount, err.WRONG_MIN_REQUESTED_AMOUNT
         assert (
@@ -322,11 +354,13 @@ class Proposal(
 
     @subroutine
     def get_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
+        proposal_commitment_bps, error = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
+        )
+        assert error == typ.Error(""), err.MISSING_CONFIG
         return self.relative_to_absolute_amount(
             requested_amount,
-            self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
-            ),
+            proposal_commitment_bps,
         )
 
     @subroutine
@@ -343,12 +377,15 @@ class Proposal(
 
     @subroutine
     def set_category(self, requested_amount: UInt64) -> None:
-        max_requested_amount_small = self.get_uint_from_registry_config(
+        max_requested_amount_small, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
         )
-        max_requested_amount_medium = self.get_uint_from_registry_config(
+        assert error == typ.Error(""), err.MISSING_CONFIG
+
+        max_requested_amount_medium, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
         )
+        assert error == typ.Error(""), err.MISSING_CONFIG
 
         if requested_amount <= max_requested_amount_small:
             self.category.value = UInt64(enm.CATEGORY_SMALL)
@@ -358,12 +395,16 @@ class Proposal(
             self.category.value = UInt64(enm.CATEGORY_LARGE)
 
     @subroutine
-    def get_uint_from_registry_config(self, global_state_key: Bytes) -> UInt64:
+    def get_uint_from_registry_config(
+        self, global_state_key: Bytes
+    ) -> tuple[UInt64, typ.Error]:
         value, exists = AppGlobal.get_ex_uint64(
             self.registry_app_id.value, global_state_key
         )
-        assert exists, err.MISSING_CONFIG
-        return value
+        error = typ.Error("")
+        if not exists:
+            error = typ.Error("ERR:" + err.MISSING_CONFIG)
+        return value, error
 
     @subroutine
     def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
@@ -388,6 +429,10 @@ class Proposal(
                 Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
             )
         )
+
+    @subroutine
+    def is_registry_call(self) -> bool:
+        return Global.caller_application_id == self.registry_app_id.value
 
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
@@ -519,12 +564,15 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_FINAL)
         self.finalization_ts.value = Global.latest_timestamp
 
-        proposal_fee = self.get_uint_from_registry_config(
+        proposal_fee, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_FEE)
         )
-        publishing_fee_bps = self.get_uint_from_registry_config(
+        assert error == typ.Error(""), err.MISSING_CONFIG
+
+        publishing_fee_bps, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
         )
+        assert error == typ.Error(""), err.MISSING_CONFIG
 
         itxn.Payment(
             receiver=Account(
@@ -573,39 +621,49 @@ class Proposal(
             self.vote_open_ts.value = Global.latest_timestamp
 
     @arc4.abimethod()
-    def vote(self, vote: arc4.String) -> None:
+    def vote(
+        self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
+    ) -> typ.Error:
         """Vote on the proposal.
 
         Args:
-            vote (arc4.String): Vote value
+            voter (arc4.Address): Voter address
+            approvals (arc4.UInt64): Number of approvals
+            rejections (arc4.UInt64): Number of rejections
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not a voter (or has already voted)
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
+            err.VOTER_ALREADY_VOTED: If the voter has already voted
+            err.VOTES_EXCEEDED: If the total votes exceed the assigned voting power
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
-            err.WRONG_VOTE_VALUE: If the vote value is not within the limits
 
         """
-        self.vote_check_authorization()
+        error = self.vote_check_authorization()
+        if error != typ.Error(""):
+            return error
 
-        voter_box = self.voters[Txn.sender].copy()
-        self.voters[Txn.sender] = typ.VoterBox(
+        error = self.vote_input_validation(voter, approvals, rejections)
+        if error != typ.Error(""):
+            return error
+
+        voter_box = self.voters[voter.native].copy()
+        self.voters[voter.native] = typ.VoterBox(
             votes=voter_box.votes,
             voted=arc4.Bool(True),  # noqa: FBT003
         )
 
         self.voted_members.value += UInt64(1)
 
-        match vote:
-            case "Approve":
-                self.approvals.value += voter_box.votes.native
-            case "Reject":
-                self.rejections.value += voter_box.votes.native
-            case "Null":
-                self.nulls.value += voter_box.votes.native
-            case _:
-                assert arc4.Bool(False), err.WRONG_VOTE_VALUE  # noqa: FBT003
+        nulls = voter_box.votes.native - approvals.native - rejections.native
+
+        self.approvals.value += approvals.native
+        self.rejections.value += rejections.native
+        self.nulls.value += nulls
+
+        return typ.Error("")
 
     @arc4.abimethod()
     def scrutiny(self) -> None:

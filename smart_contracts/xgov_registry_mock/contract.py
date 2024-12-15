@@ -1,5 +1,6 @@
 # pyright: reportMissingModuleSource=false
 from algopy import (
+    Application,
     ARC4Contract,
     GlobalState,
     StateTotals,
@@ -417,3 +418,54 @@ class XgovRegistryMock(
 
         """
         self.weighted_quorum_large.value = weighted_quorum
+
+    @arc4.abimethod()
+    def vote(
+        self,
+        proposal_app: Application,
+        voter: arc4.Address,
+        approvals: arc4.UInt64,
+        rejections: arc4.UInt64,
+    ) -> None:
+        """
+        Vote on a proposal
+
+        Args:
+            proposal_app (arc4.UInt64): The proposal app
+            voter (arc4.Address): The voter
+            approvals (arc4.UInt64): The number of approvals
+            rejections (arc4.UInt64): The number of rejections
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
+            err.VOTER_ALREADY_VOTED: If the voter has already voted
+            err.VOTES_EXCEEDED: If the total votes exceed the assigned voting power
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
+            err.VOTING_PERIOD_EXPIRED: If the voting period has expired
+
+        """
+        error, tx = arc4.abi_call(
+            Proposal.vote,
+            voter,
+            approvals,
+            rejections,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error == "ERR:" + err.UNAUTHORIZED:
+            assert False, err.UNAUTHORIZED  # noqa
+        elif error == "ERR:" + err.VOTER_NOT_FOUND:
+            assert False, err.VOTER_NOT_FOUND  # noqa
+        elif error == "ERR:" + err.VOTER_ALREADY_VOTED:
+            assert False, err.VOTER_ALREADY_VOTED  # noqa
+        elif error == "ERR:" + err.VOTES_EXCEEDED:
+            assert False, err.VOTES_EXCEEDED  # noqa
+        elif error == "ERR:" + err.MISSING_CONFIG:
+            assert False, err.MISSING_CONFIG  # noqa
+        elif error == "ERR:" + err.WRONG_PROPOSAL_STATUS:
+            assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+        elif error == "ERR:" + err.VOTING_PERIOD_EXPIRED:
+            assert False, err.VOTING_PERIOD_EXPIRED  # noqa
