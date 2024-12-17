@@ -9,7 +9,7 @@ on:
 jobs:
   merge-to-branches:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/create-github-app-token@v1
