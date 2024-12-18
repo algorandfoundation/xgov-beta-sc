@@ -3,8 +3,12 @@ from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 
-from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.proposal_mock.proposal_mock_client import (
+    ProposalMockClient,
+)
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
     COMMITTEE_VOTES,

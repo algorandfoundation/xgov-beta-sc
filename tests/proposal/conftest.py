@@ -9,8 +9,10 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.config import config
 
-from smart_contracts.artifacts.proposal.client import ProposalClient
-from smart_contracts.artifacts.xgov_registry_mock.client import XgovRegistryMockClient
+from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
+from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
+    XgovRegistryMockClient,
+)
 from tests.proposal.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,

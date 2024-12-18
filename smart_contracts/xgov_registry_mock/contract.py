@@ -2,13 +2,10 @@
 from algopy import (
     ARC4Contract,
     GlobalState,
-    StateTotals,
-    Txn,
     UInt64,
     arc4,
 )
 
-import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
 from ..common.types import CommitteeId
@@ -16,24 +13,8 @@ from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
 
-class XgovRegistryMock(
-    ARC4Contract,
-    state_totals=StateTotals(
-        global_bytes=mock_cfg.GLOBAL_BYTES,
-        global_uints=mock_cfg.GLOBAL_UINTS,
-        local_bytes=mock_cfg.LOCAL_BYTES,
-        local_uints=mock_cfg.LOCAL_UINTS,
-    ),
-):
+class XgovRegistryMock(ARC4Contract):
     def __init__(self) -> None:
-        # Preconditions
-        assert (
-            Txn.global_num_byte_slice == mock_cfg.GLOBAL_BYTES
-        ), err.WRONG_GLOBAL_BYTES
-        assert Txn.global_num_uint == mock_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
-        assert Txn.local_num_byte_slice == mock_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
-        assert Txn.local_num_uint == mock_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
-
         self.proposal_commitment_bps = GlobalState(
             UInt64(mock_cfg.PROPOSAL_COMMITMENT_BPS),
             key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,

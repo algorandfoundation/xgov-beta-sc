@@ -5,7 +5,10 @@ from algokit_utils.beta.composer import PayParams
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.encoding import decode_address, encode_address
 
-from smart_contracts.artifacts.proposal.client import GlobalState, ProposalClient
+from smart_contracts.artifacts.proposal.proposal_client import (
+    GlobalState,
+    ProposalClient,
+)
 from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.constants import (
     BPS,

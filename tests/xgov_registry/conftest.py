@@ -12,12 +12,14 @@ from algokit_utils.config import config
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.proposal_mock.client import ProposalMockClient
-from smart_contracts.artifacts.xgov_registry.client import (
+from smart_contracts.artifacts.proposal_mock.proposal_mock_client import (
+    ProposalMockClient,
+)
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
     XGovRegistryConfig,
 )
-from smart_contracts.artifacts.xgov_subscriber_app_mock.client import (
+from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.proposal import enums as enm
