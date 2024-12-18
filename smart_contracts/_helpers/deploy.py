@@ -58,7 +58,7 @@ def deploy(
 
     # upload app spec to ipfs
     logger.info("Uploading AppSpec on IPFS")
-    jwt = ipfs.get_pinata_jwt()
+    jwt = ipfs.get_pinata_jwt().strip()
     app_spec_cid = ipfs.upload_to_pinata(app_spec_path, jwt, app_spec.contract.name)
     app_spec_url = ipfs.GATEWAY + app_spec_cid
     logger.info(f"{app_spec.contract.name} AppSpec URL: {app_spec_url}")
