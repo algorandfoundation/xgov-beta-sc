@@ -133,18 +133,26 @@ class Proposal(
         self.assigned_votes = UInt64(0)
 
     @subroutine
+    def is_voting_open(self) -> tuple[bool, typ.Error]:
+        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
+        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        if error != typ.Error(""):
+            return False, error
+
+        return voting_duration <= maximum_voting_duration, typ.Error("")
+
+    @subroutine
     def vote_check_authorization(self) -> typ.Error:
         assert self.is_registry_call(), err.UNAUTHORIZED
 
         if self.status.value != enm.STATUS_VOTING:
             return typ.Error("ERR:" + err.WRONG_PROPOSAL_STATUS)
 
-        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        is_voting_open, error = self.is_voting_open()
         if error != typ.Error(""):
             return error
 
-        if voting_duration > maximum_voting_duration:
+        if not is_voting_open:
             return typ.Error("ERR:" + err.VOTING_PERIOD_EXPIRED)
 
         return typ.Error("")
@@ -169,12 +177,11 @@ class Proposal(
     def scrutiny_check_authorization(self) -> None:
         assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
 
-        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        is_voting_open, error = self.is_voting_open()
         assert error == typ.Error(""), err.MISSING_CONFIG
 
         assert (
-            voting_duration >= maximum_voting_duration  # voting period has ended
+            not is_voting_open  # voting period has ended
             or self.voted_members.value
             == self.committee_members.value  # all committee members have voted
         ), err.VOTING_ONGOING
