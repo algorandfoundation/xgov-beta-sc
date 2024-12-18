@@ -17,6 +17,7 @@ from tests.proposal.common import (
 )
 
 # TODO add tests for scrutiny on other statuses
+from tests.utils import time_warp
 
 
 def test_scrutiny_empty_proposal(
@@ -80,9 +81,8 @@ def test_scrutiny_final_proposal(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -92,9 +92,6 @@ def test_scrutiny_final_proposal(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.scrutiny(
@@ -128,9 +125,8 @@ def test_scrutiny_voting_ongoing_1(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -140,9 +136,6 @@ def test_scrutiny_voting_ongoing_1(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -193,9 +186,8 @@ def test_scrutiny_voting_ongoing_2(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -205,9 +197,6 @@ def test_scrutiny_voting_ongoing_2(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -277,9 +266,8 @@ def test_scrutiny_voting_ongoing_3(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -289,9 +277,6 @@ def test_scrutiny_voting_ongoing_3(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -359,9 +344,8 @@ def test_scrutiny_twice(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -371,9 +355,6 @@ def test_scrutiny_twice(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -463,9 +444,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -475,9 +455,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -604,9 +581,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -616,9 +592,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -745,9 +718,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -757,9 +729,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -887,9 +856,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -899,9 +867,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1030,9 +995,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1042,9 +1006,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1173,9 +1134,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1185,9 +1145,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1316,9 +1273,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1328,9 +1284,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1459,9 +1412,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1471,9 +1423,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1602,9 +1551,8 @@ def test_scrutiny_after_time_approve_small_1(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1614,9 +1562,6 @@ def test_scrutiny_after_time_approve_small_1(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1656,7 +1601,8 @@ def test_scrutiny_after_time_approve_small_1(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -1665,10 +1611,6 @@ def test_scrutiny_after_time_approve_small_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -1705,9 +1647,8 @@ def test_scrutiny_after_time_approve_small_2(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1717,9 +1658,6 @@ def test_scrutiny_after_time_approve_small_2(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1778,7 +1716,8 @@ def test_scrutiny_after_time_approve_small_2(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -1787,10 +1726,6 @@ def test_scrutiny_after_time_approve_small_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -1828,9 +1763,8 @@ def test_scrutiny_after_time_approve_small_3(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1840,9 +1774,6 @@ def test_scrutiny_after_time_approve_small_3(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -1920,7 +1851,8 @@ def test_scrutiny_after_time_approve_small_3(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -1929,10 +1861,6 @@ def test_scrutiny_after_time_approve_small_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -1971,9 +1899,8 @@ def test_scrutiny_after_time_approve_small_4(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -1983,9 +1910,6 @@ def test_scrutiny_after_time_approve_small_4(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2064,7 +1988,8 @@ def test_scrutiny_after_time_approve_small_4(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2073,10 +1998,6 @@ def test_scrutiny_after_time_approve_small_4(
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2115,9 +2036,8 @@ def test_scrutiny_after_time_approve_small_5(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2127,9 +2047,6 @@ def test_scrutiny_after_time_approve_small_5(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2189,7 +2106,8 @@ def test_scrutiny_after_time_approve_small_5(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2198,10 +2116,6 @@ def test_scrutiny_after_time_approve_small_5(
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2239,9 +2153,8 @@ def test_scrutiny_after_time_reject_small_1(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2251,9 +2164,6 @@ def test_scrutiny_after_time_reject_small_1(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2273,7 +2183,8 @@ def test_scrutiny_after_time_reject_small_1(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2283,10 +2194,6 @@ def test_scrutiny_after_time_reject_small_1(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2321,9 +2228,8 @@ def test_scrutiny_after_time_reject_small_2(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2333,9 +2239,6 @@ def test_scrutiny_after_time_reject_small_2(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2374,7 +2277,8 @@ def test_scrutiny_after_time_reject_small_2(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2384,10 +2288,6 @@ def test_scrutiny_after_time_reject_small_2(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2424,9 +2324,8 @@ def test_scrutiny_after_time_reject_small_3(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2436,9 +2335,6 @@ def test_scrutiny_after_time_reject_small_3(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2478,7 +2374,8 @@ def test_scrutiny_after_time_reject_small_3(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2488,10 +2385,6 @@ def test_scrutiny_after_time_reject_small_3(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2529,9 +2422,8 @@ def test_scrutiny_after_time_reject_small_4(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2541,9 +2433,6 @@ def test_scrutiny_after_time_reject_small_4(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2602,7 +2491,8 @@ def test_scrutiny_after_time_reject_small_4(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2612,10 +2502,6 @@ def test_scrutiny_after_time_reject_small_4(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2654,9 +2540,8 @@ def test_scrutiny_after_time_reject_small_5(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2666,9 +2551,6 @@ def test_scrutiny_after_time_reject_small_5(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2728,7 +2610,8 @@ def test_scrutiny_after_time_reject_small_5(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2738,10 +2621,6 @@ def test_scrutiny_after_time_reject_small_5(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2780,9 +2659,8 @@ def test_scrutiny_after_time_reject_small_6(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2792,9 +2670,6 @@ def test_scrutiny_after_time_reject_small_6(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2833,7 +2708,8 @@ def test_scrutiny_after_time_reject_small_6(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2843,10 +2719,6 @@ def test_scrutiny_after_time_reject_small_6(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2884,9 +2756,8 @@ def test_scrutiny_after_time_reject_small_7(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -2896,9 +2767,6 @@ def test_scrutiny_after_time_reject_small_7(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -2938,7 +2806,8 @@ def test_scrutiny_after_time_reject_small_7(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -2948,10 +2817,6 @@ def test_scrutiny_after_time_reject_small_7(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -2989,9 +2854,8 @@ def test_scrutiny_after_time_reject_small_8(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -3001,9 +2865,6 @@ def test_scrutiny_after_time_reject_small_8(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -3043,7 +2904,8 @@ def test_scrutiny_after_time_reject_small_8(
         )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -3053,10 +2915,6 @@ def test_scrutiny_after_time_reject_small_8(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -3095,9 +2953,8 @@ def test_scrutiny_after_time_reject_small_9(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -3107,9 +2964,6 @@ def test_scrutiny_after_time_reject_small_9(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -3168,7 +3022,8 @@ def test_scrutiny_after_time_reject_small_9(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -3178,10 +3033,6 @@ def test_scrutiny_after_time_reject_small_9(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -3220,9 +3071,8 @@ def test_scrutiny_after_time_reject_small_10(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -3232,9 +3082,6 @@ def test_scrutiny_after_time_reject_small_10(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -3293,7 +3140,8 @@ def test_scrutiny_after_time_reject_small_10(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -3303,10 +3151,6 @@ def test_scrutiny_after_time_reject_small_10(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -3344,9 +3188,8 @@ def test_scrutiny_after_time_reject_small_11(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -3356,9 +3199,6 @@ def test_scrutiny_after_time_reject_small_11(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     proposal_client.assign_voter(
         voter=committee_members[0].address,
@@ -3413,7 +3253,8 @@ def test_scrutiny_after_time_reject_small_11(
     )
 
     voting_duration = reg_gs.voting_duration_small
-    xgov_registry_mock_client.set_voting_duration_small(voting_duration=0)
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
 
     proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -3423,10 +3264,6 @@ def test_scrutiny_after_time_reject_small_11(
             suggested_params=sp,
         ),
     )
-
-    xgov_registry_mock_client.set_voting_duration_small(
-        voting_duration=voting_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 

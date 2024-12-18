@@ -24,6 +24,7 @@ from tests.proposal.common import (
 )
 
 # TODO add tests for finalize on other statuses
+from tests.utils import get_latest_timestamp, time_warp
 
 
 def test_finalize_success(
@@ -53,9 +54,8 @@ def test_finalize_success(
         "amount"
     ]
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -65,9 +65,6 @@ def test_finalize_success(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     assert_account_balance(
         algorand_client=algorand_client,
@@ -103,9 +100,8 @@ def test_finalize_not_proposer(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
@@ -116,9 +112,6 @@ def test_finalize_not_proposer(
                 accounts=[committee_publisher.address],
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -148,9 +141,8 @@ def test_finalize_empty_proposal(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    latest_ts = get_latest_timestamp(algorand_client.client.algod)
+    time_warp(latest_ts + discussion_duration)  # so we could actually finalize
     with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
@@ -161,9 +153,6 @@ def test_finalize_empty_proposal(
                 accounts=[committee_publisher.address],
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -190,9 +179,8 @@ def test_finalize_twice(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -214,9 +202,6 @@ def test_finalize_twice(
                 note="Second finalize",
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     global_state = proposal_client.get_global_state()
 
@@ -286,9 +271,8 @@ def test_finalize_wrong_committee_id(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     xgov_registry_mock_client.clear_committee_id()  # invalid committee id
     with pytest.raises(logic_error_type, match=err.EMPTY_COMMITTEE_ID):
         proposal_client.finalize(
@@ -300,9 +284,7 @@ def test_finalize_wrong_committee_id(
                 suggested_params=sp,
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
+
     xgov_registry_mock_client.set_committee_id(
         committee_id=DEFAULT_COMMITTEE_ID
     )  # restore
@@ -334,9 +316,8 @@ def test_finalize_wrong_committee_members(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     xgov_registry_mock_client.set_committee_members(
         committee_members=0
     )  # invalid committee members
@@ -350,9 +331,7 @@ def test_finalize_wrong_committee_members(
                 suggested_params=sp,
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
+
     xgov_registry_mock_client.set_committee_members(
         committee_members=DEFAULT_COMMITTEE_MEMBERS
     )  # restore
@@ -384,9 +363,8 @@ def test_finalize_wrong_committee_votes(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     xgov_registry_mock_client.set_committee_votes(
         committee_votes=0
     )  # invalid committee votes
@@ -400,9 +378,7 @@ def test_finalize_wrong_committee_votes(
                 suggested_params=sp,
             ),
         )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
+
     xgov_registry_mock_client.set_committee_votes(
         committee_votes=DEFAULT_COMMITTEE_VOTES
     )  # restore
