@@ -9,7 +9,7 @@ on:
 jobs:
   merge-to-branches:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/create-github-app-token@v1
@@ -18,11 +18,21 @@ jobs:
           app-id: ${{ secrets.BOT_ID }}
           private-key: ${{ secrets.BOT_SK }}
 
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y yq
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
+
+      - name: Read Dependabot target branches
+        id: read_branches
+        run: |
+          branches=$(yq '.updates[]."target-branch"' .github/dependabot.yml | tr '\n' ' ')
+          echo "Target branches found: $branches"
+          echo "::set-output name=branches::$branches"
 
       - name: Set up Git
         run: |
@@ -33,38 +43,20 @@ jobs:
         run: |
           git fetch --all
 
-      - name: Check if chore/dependabot/gh-actions exists and create if missing
+      - name: Merge main into Dependabot target branches
         run: |
-          if git show-ref --verify --quiet refs/remotes/origin/chore/dependabot/gh-actions; then
-            echo "chore/dependabot/gh-actions exists remotely. Checking it out."
-            git checkout chore/dependabot/gh-actions
-            git pull origin chore/dependabot/gh-actions
-          else
-            echo "chore/dependabot/gh-actions does not exist. Creating it from main."
-            git checkout -b chore/dependabot/gh-actions main
-            git push origin chore/dependabot/gh-actions
-          fi
-
-      - name: Merge main into chore/dependabot/gh-actions
-        run: |
-          git checkout chore/dependabot/gh-actions
-          git merge main --no-edit
-          git push origin chore/dependabot/gh-actions
-
-      - name: Check if chore/dependabot/pip exists and create if missing
-        run: |
-          if git show-ref --verify --quiet refs/remotes/origin/chore/dependabot/pip; then
-            echo "chore/dependabot/pip exists remotely. Checking it out."
-            git checkout chore/dependabot/pip
-            git pull origin chore/dependabot/pip
-          else
-            echo "chore/dependabot/pip does not exist. Creating it from main."
-            git checkout -b chore/dependabot/pip main
-            git push origin chore/dependabot/pip
-          fi
-
-      - name: Merge main into chore/dependabot/pip
-        run: |
-          git checkout chore/dependabot/pip
-          git merge main --no-edit
-          git push origin chore/dependabot/pip
+          for branch in ${{ steps.read_branches.outputs.branches }}; do
+            echo "Processing branch: $branch"
+            if git show-ref --verify --quiet refs/remotes/origin/$branch; then
+              echo "$branch exists remotely. Checking it out."
+              git checkout $branch
+              git pull origin $branch
+            else
+              echo "$branch does not exist. Creating it from main."
+              git checkout -b $branch main
+              git push origin $branch
+            fi
+            echo "Merging main into $branch"
+            git merge main --no-edit
+            git push origin $branch
+          done

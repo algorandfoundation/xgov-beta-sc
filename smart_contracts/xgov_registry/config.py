@@ -1,19 +1,21 @@
 from typing import Final
 
 # State Schema
-GLOBAL_BYTES: Final[int] = 7
-GLOBAL_UINTS: Final[int] = 30
+GLOBAL_BYTES: Final[int] = 8
+GLOBAL_UINTS: Final[int] = 31
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
 # Global state keys
 GS_KEY_XGOV_MANAGER: Final[bytes] = b"xgov_manager"
+GS_KEY_XGOV_SUBSCRIBER: Final[bytes] = b"xgov_subscriber"
 GS_KEY_XGOV_PAYOR: Final[bytes] = b"xgov_payor"
 GS_KEY_XGOV_REVIEWER: Final[bytes] = b"xgov_reviewer"
 GS_KEY_KYC_PROVIDER: Final[bytes] = b"kyc_provider"
 GS_KEY_COMMITTEE_MANAGER: Final[bytes] = b"committee_manager"
 GS_KEY_COMMITTEE_PUBLISHER: Final[bytes] = b"committee_publisher"
-GS_KEY_XGOV_MIN_BALANCE: Final[bytes] = b"xgov_min_balance"
+GS_KEY_XGOV_FEE: Final[bytes] = b"xgov_fee"
+GS_KEY_XGOVS: Final[bytes] = b"xgovs"
 GS_KEY_PROPOSER_FEE: Final[bytes] = b"proposer_fee"
 GS_KEY_PROPOSAL_FEE: Final[bytes] = b"proposal_fee"
 GS_KEY_PROPOSAL_PUBLISHING_BPS: Final[bytes] = b"proposal_publishing_bps"
@@ -40,9 +42,11 @@ GS_KEY_WEIGHTED_QUORUM_MEDIUM: Final[bytes] = b"weighted_quorum_medium"
 GS_KEY_WEIGHTED_QUORUM_LARGE: Final[bytes] = b"weighted_quorum_large"
 GS_KEY_OUTSTANDING_FUNDS: Final[bytes] = b"outstanding_funds"
 GS_KEY_PENDING_PROPOSALS: Final[bytes] = b"pending_proposals"
+GS_KEY_REQUEST_ID: Final[bytes] = b"request_id"
 GS_KEY_COMMITTEE_ID: Final[bytes] = b"committee_id"
 GS_KEY_COMMITTEE_MEMBERS: Final[bytes] = b"committee_members"
 GS_KEY_COMMITTEE_VOTES: Final[bytes] = b"committee_votes"
 
 XGOV_BOX_MAP_PREFIX: Final[bytes] = b"x"
+REQUEST_BOX_MAP_PREFIX: Final[bytes] = b"r"
 PROPOSER_BOX_MAP_PREFIX: Final[bytes] = b"p"

@@ -5,7 +5,9 @@ from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.xgov_registry.client import XGovRegistryClient
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import LogicErrorType
 

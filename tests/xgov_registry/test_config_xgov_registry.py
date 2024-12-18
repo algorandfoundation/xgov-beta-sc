@@ -6,7 +6,7 @@ from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.xgov_registry.client import (
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
     XGovRegistryConfig,
 )
@@ -37,7 +37,7 @@ def test_config_xgov_registry_success(
 
     assert_registry_config(
         global_state=global_state,
-        xgov_min_balance=xgov_registry_config.xgov_min_balance,
+        xgov_fee=xgov_registry_config.xgov_fee,
         proposal_publishing_bps=xgov_registry_config.proposal_publishing_bps,
         proposal_commitment_bps=xgov_registry_config.proposal_commitment_bps,
         proposer_fee=xgov_registry_config.proposer_fee,

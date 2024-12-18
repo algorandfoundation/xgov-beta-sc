@@ -1,5 +1,3 @@
-from typing import Type
-
 from algokit_utils import LogicError
 from algokit_utils.beta.account_manager import (
     AccountTransactionSigner,
@@ -8,15 +6,19 @@ from algokit_utils.beta.account_manager import (
 from algokit_utils.models import Account
 from algosdk.encoding import decode_address, encode_address
 
-from smart_contracts.artifacts.xgov_registry.client import GlobalState, TypedGlobalState
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GlobalState,
+    TypedGlobalState,
+)
 from smart_contracts.xgov_registry.config import (
     PROPOSER_BOX_MAP_PREFIX,
+    REQUEST_BOX_MAP_PREFIX,
     XGOV_BOX_MAP_PREFIX,
 )
 
-LogicErrorType: Type[LogicError] = LogicError
+LogicErrorType: type[LogicError] = LogicError
 
-XGOV_MIN_BALANCE = 1_000_000
+XGOV_FEE = 1_000_000
 PROPOSER_FEE = 10_000_000
 PROPOSAL_FEE = 100_000_000
 PROPOSAL_PUBLISHING_BPS = 1_000
@@ -58,7 +60,11 @@ KYC_EXPIRATION = 18446744073709551615
 
 
 def xgov_box_name(address: str) -> bytes:
-    return bytes(XGOV_BOX_MAP_PREFIX + decode_address(address))  # type: ignore
+    return XGOV_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
+
+
+def request_box_name(rid: int) -> bytes:
+    return REQUEST_BOX_MAP_PREFIX + rid.to_bytes(8, "big")
 
 
 def proposer_box_name(address: str) -> bytes:
@@ -89,7 +95,7 @@ def assert_registry_payor(
 def assert_registry_config(
     global_state: GlobalState,
     *,
-    xgov_min_balance: int,
+    xgov_fee: int,
     proposal_publishing_bps: int,
     proposal_commitment_bps: int,
     proposer_fee: int,
@@ -113,7 +119,7 @@ def assert_registry_config(
     weighted_quorum_medium: int,
     weighted_quorum_large: int,
 ) -> None:
-    assert global_state.xgov_min_balance == xgov_min_balance
+    assert global_state.xgov_fee == xgov_fee
     assert global_state.proposal_publishing_bps == proposal_publishing_bps
     assert global_state.proposal_commitment_bps == proposal_commitment_bps
     assert global_state.proposer_fee == proposer_fee
@@ -151,7 +157,7 @@ def assert_committee(
 
 
 def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> None:
-    assert global_state.xgov_min_balance == get_state.xgov_min_balance
+    assert global_state.xgov_fee == get_state.xgov_fee
     assert global_state.proposal_publishing_bps == get_state.proposal_publishing_bps
     assert global_state.proposal_commitment_bps == get_state.proposal_commitment_bps
     assert global_state.proposer_fee == get_state.proposer_fee

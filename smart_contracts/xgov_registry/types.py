@@ -11,7 +11,7 @@ class TypedGlobalState(arc4.Struct):
     kyc_provider: arc4.Address
     committee_manager: arc4.Address
     committee_publisher: arc4.Address
-    xgov_min_balance: arc4.UInt64
+    xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
     proposal_fee: arc4.UInt64
     proposal_publishing_bps: arc4.UInt64
@@ -32,7 +32,7 @@ class TypedGlobalState(arc4.Struct):
 
 
 class XGovRegistryConfig(arc4.Struct):
-    xgov_min_balance: arc4.UInt64
+    xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
     proposal_fee: arc4.UInt64
     proposal_publishing_bps: arc4.UInt64
@@ -45,6 +45,12 @@ class XGovRegistryConfig(arc4.Struct):
     stale_proposal_duration: arc4.UInt64
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
+
+
+class XGovSubscribeRequestBoxValue(arc4.Struct):
+    xgov_addr: arc4.Address
+    owner_addr: arc4.Address
+    relation_type: arc4.UInt64
 
 
 class ProposerBoxValue(arc4.Struct):
