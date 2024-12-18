@@ -10,6 +10,7 @@ jobs:
   validate:
     name: Validate xgov-beta-sc
     uses: ./.github/workflows/xgov-beta-sc-ci.yml
+    secrets: inherit
   deploy-fnet:
     runs-on: "ubuntu-latest"
     needs: validate
