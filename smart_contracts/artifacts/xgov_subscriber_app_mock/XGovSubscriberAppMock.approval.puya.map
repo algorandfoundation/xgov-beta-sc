@@ -101,8 +101,7 @@
       ]
     },
     "44": {
-      "error": "OnCompletion is not NoOp",
-      "op": "assert // OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is NoOp",
       "stack_out": []
     },
     "45": {
@@ -115,8 +114,7 @@
       ]
     },
     "47": {
-      "error": "can only call when not creating",
-      "op": "assert // can only call when not creating",
+      "op": "assert // is not creating",
       "stack_out": []
     },
     "48": {
@@ -187,8 +185,7 @@
       ]
     },
     "63": {
-      "error": "OnCompletion is not NoOp",
-      "op": "assert // OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is NoOp",
       "stack_out": []
     },
     "64": {
@@ -201,8 +198,7 @@
       ]
     },
     "66": {
-      "error": "can only call when not creating",
-      "op": "assert // can only call when not creating",
+      "op": "assert // is not creating",
       "stack_out": []
     },
     "67": {
@@ -275,8 +271,7 @@
       ]
     },
     "84": {
-      "error": "can only call when creating",
-      "op": "assert // can only call when creating",
+      "op": "assert // is creating",
       "stack_out": []
     },
     "85": {
@@ -375,7 +370,6 @@
       ]
     },
     "110": {
-      "error": "application exists",
       "op": "assert // application exists",
       "stack_out": [
         "xgov_fee#0",
