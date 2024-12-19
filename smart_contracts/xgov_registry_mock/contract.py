@@ -3,9 +3,11 @@ from algopy import (
     Application,
     ARC4Contract,
     GlobalState,
+    String,
     UInt64,
     arc4,
     itxn,
+    subroutine,
 )
 
 import smart_contracts.errors.std_errors as err
@@ -401,6 +403,10 @@ class XgovRegistryMock(ARC4Contract):
         """
         self.weighted_quorum_large.value = weighted_quorum
 
+    @subroutine
+    def wrap_error(self, error_msg: String) -> String:
+        return err.ARC_65_PREFIX + error_msg
+
     @arc4.abimethod()
     def vote(
         self,
@@ -437,17 +443,17 @@ class XgovRegistryMock(ARC4Contract):
             fee=0,
         )
 
-        if error == err.ARC_65_PREFIX + err.UNAUTHORIZED:
+        if error == self.wrap_error(String(err.UNAUTHORIZED)):
             assert False, err.UNAUTHORIZED  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTER_NOT_FOUND:
+        elif error == self.wrap_error(String(err.VOTER_NOT_FOUND)):
             assert False, err.VOTER_NOT_FOUND  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED:
+        elif error == self.wrap_error(String(err.VOTER_ALREADY_VOTED)):
             assert False, err.VOTER_ALREADY_VOTED  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTES_EXCEEDED:
+        elif error == self.wrap_error(String(err.VOTES_EXCEEDED)):
             assert False, err.VOTES_EXCEEDED  # noqa
-        elif error == err.ARC_65_PREFIX + err.MISSING_CONFIG:
+        elif error == self.wrap_error(String(err.MISSING_CONFIG)):
             assert False, err.MISSING_CONFIG  # noqa
-        elif error == err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS:
+        elif error == self.wrap_error(String(err.WRONG_PROPOSAL_STATUS)):
             assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED:
+        elif error == self.wrap_error(String(err.VOTING_PERIOD_EXPIRED)):
             assert False, err.VOTING_PERIOD_EXPIRED  # noqa
