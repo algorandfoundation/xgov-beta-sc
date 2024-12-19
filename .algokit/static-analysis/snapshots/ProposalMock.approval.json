@@ -64,7 +64,7 @@
     },
     {
       "type": "ExecutionPaths",
-      "count": 14,
+      "count": 16,
       "description": "\nCheck: \"missing-fee-check\", Impact: High, Confidence: High\nDescription: Missing Fee Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-fee-field-validation\n",
       "check": "missing-fee-check",
       "impact": "High",
@@ -149,18 +149,18 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "245: intc_0",
-              "246: retsub"
+              "237: intc_0",
+              "238: retsub"
             ],
             [
               "12: return"
@@ -168,7 +168,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 19 -> 10 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 20 -> 10 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -245,40 +245,40 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "248: __puya_arc4_router___create_route@2:",
-              "251: txn OnCompletion",
-              "252: !",
-              "253: assert",
-              "254: txn ApplicationID",
-              "255: !",
-              "256: assert",
-              "267: txna ApplicationArgs 1",
-              "270: callsub create"
+              "240: __puya_arc4_router___create_route@2:",
+              "243: txn OnCompletion",
+              "244: !",
+              "245: assert",
+              "246: txn ApplicationID",
+              "247: !",
+              "248: assert",
+              "251: txna ApplicationArgs 1",
+              "254: callsub create"
             ],
             [
-              "382: create:",
-              "386: proto 1 0",
-              "389: bytec_1",
-              "390: frame_dig -1",
-              "391: app_global_put",
-              "394: bytec_2",
-              "395: global CallerApplicationID",
-              "396: app_global_put",
-              "397: retsub"
+              "345: create:",
+              "349: proto 1 0",
+              "352: bytec_1",
+              "353: frame_dig -1",
+              "354: app_global_put",
+              "357: bytec_2",
+              "358: global CallerApplicationID",
+              "359: app_global_put",
+              "360: retsub"
             ],
             [
-              "271: intc_1",
-              "272: retsub"
+              "255: intc_1",
+              "256: retsub"
             ],
             [
               "12: return"
@@ -286,7 +286,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 20 -> 12 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 21 -> 12 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -363,37 +363,152 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "274: __puya_arc4_router___set_status_route@3:",
-              "277: txn OnCompletion",
-              "278: !",
-              "279: assert",
-              "280: txn ApplicationID",
+              "258: __puya_arc4_router___set_status_route@3:",
+              "261: txn OnCompletion",
+              "262: !",
+              "263: assert",
+              "264: txn ApplicationID",
+              "265: assert",
+              "268: txna ApplicationArgs 1",
+              "269: btoi",
+              "272: callsub set_status"
+            ],
+            [
+              "364: set_status:",
+              "368: proto 1 0",
+              "371: bytec_3",
+              "372: frame_dig -1",
+              "373: app_global_put",
+              "374: retsub"
+            ],
+            [
+              "273: intc_1",
+              "274: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 13 -> 22 -> 14 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "8: callsub __init__"
+            ],
+            [
+              "16: __init__:",
+              "19: proto 0 0",
+              "22: bytec_1",
+              "25: global ZeroAddress",
+              "31: app_global_put",
+              "34: bytec_2",
+              "37: intc_0",
+              "43: app_global_put",
+              "46: pushbytes 0x7469746c65",
+              "49: bytec_0",
+              "55: app_global_put",
+              "58: pushbytes 0x636964",
+              "61: bytec_0",
+              "67: app_global_put",
+              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
+              "73: intc_0",
+              "79: app_global_put",
+              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "85: intc_0",
+              "91: app_global_put",
+              "94: bytec_3",
+              "97: intc_0",
+              "103: app_global_put",
+              "106: pushbytes 0x63617465676f7279",
+              "109: intc_0",
+              "115: app_global_put",
+              "118: pushbytes 0x66756e64696e675f74797065",
+              "121: intc_0",
+              "127: app_global_put",
+              "130: bytec 4",
+              "133: intc_0",
+              "139: app_global_put",
+              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
+              "145: intc_0",
+              "151: app_global_put",
+              "154: bytec 5",
+              "157: bytec_0",
+              "163: app_global_put",
+              "166: bytec 6",
+              "169: intc_0",
+              "175: app_global_put",
+              "178: bytec 7",
+              "181: intc_0",
+              "187: app_global_put",
+              "190: pushbytes 0x766f7465645f6d656d62657273",
+              "193: intc_0",
+              "199: app_global_put",
+              "202: pushbytes 0x617070726f76616c73",
+              "205: intc_0",
+              "211: app_global_put",
+              "214: pushbytes 0x72656a656374696f6e73",
+              "217: intc_0",
+              "223: app_global_put",
+              "224: retsub"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "276: __puya_arc4_router___set_requested_amount_route@4:",
+              "279: txn OnCompletion",
+              "280: !",
               "281: assert",
-              "292: txna ApplicationArgs 1",
-              "293: btoi",
-              "296: callsub set_status"
+              "282: txn ApplicationID",
+              "283: assert",
+              "286: txna ApplicationArgs 1",
+              "287: btoi",
+              "290: callsub set_requested_amount"
             ],
             [
-              "401: set_status:",
-              "405: proto 1 0",
-              "408: bytec_3",
-              "409: frame_dig -1",
-              "410: app_global_put",
-              "411: retsub"
+              "378: set_requested_amount:",
+              "382: proto 1 0",
+              "385: bytec 4",
+              "386: frame_dig -1",
+              "387: app_global_put",
+              "388: retsub"
             ],
             [
-              "297: intc_1",
-              "298: retsub"
+              "291: intc_1",
+              "292: retsub"
             ],
             [
               "12: return"
@@ -401,7 +516,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 13 -> 21 -> 14 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 15 -> 23 -> 16 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -478,161 +593,46 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "300: __puya_arc4_router___set_requested_amount_route@4:",
-              "303: txn OnCompletion",
-              "304: !",
-              "305: assert",
-              "306: txn ApplicationID",
-              "307: assert",
-              "318: txna ApplicationArgs 1",
-              "319: btoi",
-              "322: callsub set_requested_amount"
+              "294: __puya_arc4_router___set_committee_details_route@5:",
+              "297: txn OnCompletion",
+              "298: !",
+              "299: assert",
+              "300: txn ApplicationID",
+              "301: assert",
+              "304: txna ApplicationArgs 1",
+              "305: txna ApplicationArgs 2",
+              "306: btoi",
+              "307: txna ApplicationArgs 3",
+              "308: btoi",
+              "311: callsub set_committee_details"
             ],
             [
-              "415: set_requested_amount:",
-              "419: proto 1 0",
-              "422: bytec 4",
-              "423: frame_dig -1",
-              "424: app_global_put",
-              "425: retsub"
+              "392: set_committee_details:",
+              "398: proto 3 0",
+              "401: bytec 5",
+              "402: frame_dig -3",
+              "403: app_global_put",
+              "406: bytec 6",
+              "407: frame_dig -2",
+              "408: app_global_put",
+              "411: bytec 7",
+              "412: frame_dig -1",
+              "413: app_global_put",
+              "414: retsub"
             ],
             [
-              "323: intc_1",
-              "324: retsub"
-            ],
-            [
-              "12: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 15 -> 22 -> 16 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
-              "4: intcblock 0 1",
-              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
-              "6: txn ApplicationID",
-              "7: bnz main_after_if_else@2"
-            ],
-            [
-              "8: callsub __init__"
-            ],
-            [
-              "16: __init__:",
-              "19: proto 0 0",
-              "22: bytec_1",
-              "25: global ZeroAddress",
-              "31: app_global_put",
-              "34: bytec_2",
-              "37: intc_0",
-              "43: app_global_put",
-              "46: pushbytes 0x7469746c65",
-              "49: bytec_0",
-              "55: app_global_put",
-              "58: pushbytes 0x636964",
-              "61: bytec_0",
-              "67: app_global_put",
-              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
-              "73: intc_0",
-              "79: app_global_put",
-              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
-              "85: intc_0",
-              "91: app_global_put",
-              "94: bytec_3",
-              "97: intc_0",
-              "103: app_global_put",
-              "106: pushbytes 0x63617465676f7279",
-              "109: intc_0",
-              "115: app_global_put",
-              "118: pushbytes 0x66756e64696e675f74797065",
-              "121: intc_0",
-              "127: app_global_put",
-              "130: bytec 4",
-              "133: intc_0",
-              "139: app_global_put",
-              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
-              "145: intc_0",
-              "151: app_global_put",
-              "154: bytec 5",
-              "157: bytec_0",
-              "163: app_global_put",
-              "166: bytec 6",
-              "169: intc_0",
-              "175: app_global_put",
-              "178: bytec 7",
-              "181: intc_0",
-              "187: app_global_put",
-              "190: pushbytes 0x766f7465645f6d656d62657273",
-              "193: intc_0",
-              "199: app_global_put",
-              "202: pushbytes 0x617070726f76616c73",
-              "205: intc_0",
-              "211: app_global_put",
-              "214: pushbytes 0x72656a656374696f6e73",
-              "217: intc_0",
-              "223: app_global_put",
-              "224: retsub"
-            ],
-            [
-              "10: main_after_if_else@2:",
-              "11: callsub __puya_arc4_router__"
-            ],
-            [
-              "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
-            ],
-            [
-              "326: __puya_arc4_router___set_committee_details_route@5:",
-              "329: txn OnCompletion",
-              "330: !",
-              "331: assert",
-              "332: txn ApplicationID",
-              "333: assert",
-              "344: txna ApplicationArgs 1",
-              "345: txna ApplicationArgs 2",
-              "346: btoi",
-              "347: txna ApplicationArgs 3",
-              "348: btoi",
-              "351: callsub set_committee_details"
-            ],
-            [
-              "429: set_committee_details:",
-              "435: proto 3 0",
-              "438: bytec 5",
-              "439: frame_dig -3",
-              "440: app_global_put",
-              "443: bytec 6",
-              "444: frame_dig -2",
-              "445: app_global_put",
-              "448: bytec 7",
-              "449: frame_dig -1",
-              "450: app_global_put",
-              "451: retsub"
-            ],
-            [
-              "352: intc_1",
-              "353: retsub"
+              "312: intc_1",
+              "313: retsub"
             ],
             [
               "12: return"
@@ -717,24 +717,24 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "355: __puya_arc4_router___release_funds_route@6:",
-              "358: txn OnCompletion",
-              "359: !",
-              "360: assert",
-              "361: txn ApplicationID",
-              "362: assert",
-              "363: intc_1",
-              "364: retsub"
+              "315: __puya_arc4_router___release_funds_route@6:",
+              "318: txn OnCompletion",
+              "319: !",
+              "320: assert",
+              "321: txn ApplicationID",
+              "322: assert",
+              "323: intc_1",
+              "324: retsub"
             ],
             [
               "12: return"
@@ -742,7 +742,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 18 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 18 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -819,14 +819,116 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "366: __puya_arc4_router___after_if_else@10:",
-              "377: intc_0",
-              "378: retsub"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "326: __puya_arc4_router___vote_route@7:",
+              "329: txn OnCompletion",
+              "330: !",
+              "331: assert",
+              "332: txn ApplicationID",
+              "333: assert",
+              "334: intc_1",
+              "335: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 19 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "8: callsub __init__"
+            ],
+            [
+              "16: __init__:",
+              "19: proto 0 0",
+              "22: bytec_1",
+              "25: global ZeroAddress",
+              "31: app_global_put",
+              "34: bytec_2",
+              "37: intc_0",
+              "43: app_global_put",
+              "46: pushbytes 0x7469746c65",
+              "49: bytec_0",
+              "55: app_global_put",
+              "58: pushbytes 0x636964",
+              "61: bytec_0",
+              "67: app_global_put",
+              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
+              "73: intc_0",
+              "79: app_global_put",
+              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "85: intc_0",
+              "91: app_global_put",
+              "94: bytec_3",
+              "97: intc_0",
+              "103: app_global_put",
+              "106: pushbytes 0x63617465676f7279",
+              "109: intc_0",
+              "115: app_global_put",
+              "118: pushbytes 0x66756e64696e675f74797065",
+              "121: intc_0",
+              "127: app_global_put",
+              "130: bytec 4",
+              "133: intc_0",
+              "139: app_global_put",
+              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
+              "145: intc_0",
+              "151: app_global_put",
+              "154: bytec 5",
+              "157: bytec_0",
+              "163: app_global_put",
+              "166: bytec 6",
+              "169: intc_0",
+              "175: app_global_put",
+              "178: bytec 7",
+              "181: intc_0",
+              "187: app_global_put",
+              "190: pushbytes 0x766f7465645f6d656d62657273",
+              "193: intc_0",
+              "199: app_global_put",
+              "202: pushbytes 0x617070726f76616c73",
+              "205: intc_0",
+              "211: app_global_put",
+              "214: pushbytes 0x72656a656374696f6e73",
+              "217: intc_0",
+              "223: app_global_put",
+              "224: retsub"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "337: __puya_arc4_router___after_if_else@11:",
+              "340: intc_0",
+              "341: retsub"
             ],
             [
               "12: return"
@@ -852,18 +954,18 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "245: intc_0",
-              "246: retsub"
+              "237: intc_0",
+              "238: retsub"
             ],
             [
               "12: return"
@@ -871,7 +973,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 19 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 20 -> 10 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -889,40 +991,40 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "248: __puya_arc4_router___create_route@2:",
-              "251: txn OnCompletion",
-              "252: !",
-              "253: assert",
-              "254: txn ApplicationID",
-              "255: !",
-              "256: assert",
-              "267: txna ApplicationArgs 1",
-              "270: callsub create"
+              "240: __puya_arc4_router___create_route@2:",
+              "243: txn OnCompletion",
+              "244: !",
+              "245: assert",
+              "246: txn ApplicationID",
+              "247: !",
+              "248: assert",
+              "251: txna ApplicationArgs 1",
+              "254: callsub create"
             ],
             [
-              "382: create:",
-              "386: proto 1 0",
-              "389: bytec_1",
-              "390: frame_dig -1",
-              "391: app_global_put",
-              "394: bytec_2",
-              "395: global CallerApplicationID",
-              "396: app_global_put",
-              "397: retsub"
+              "345: create:",
+              "349: proto 1 0",
+              "352: bytec_1",
+              "353: frame_dig -1",
+              "354: app_global_put",
+              "357: bytec_2",
+              "358: global CallerApplicationID",
+              "359: app_global_put",
+              "360: retsub"
             ],
             [
-              "271: intc_1",
-              "272: retsub"
+              "255: intc_1",
+              "256: retsub"
             ],
             [
               "12: return"
@@ -930,7 +1032,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 20 -> 12 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 21 -> 12 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -948,37 +1050,93 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "274: __puya_arc4_router___set_status_route@3:",
-              "277: txn OnCompletion",
-              "278: !",
-              "279: assert",
-              "280: txn ApplicationID",
+              "258: __puya_arc4_router___set_status_route@3:",
+              "261: txn OnCompletion",
+              "262: !",
+              "263: assert",
+              "264: txn ApplicationID",
+              "265: assert",
+              "268: txna ApplicationArgs 1",
+              "269: btoi",
+              "272: callsub set_status"
+            ],
+            [
+              "364: set_status:",
+              "368: proto 1 0",
+              "371: bytec_3",
+              "372: frame_dig -1",
+              "373: app_global_put",
+              "374: retsub"
+            ],
+            [
+              "273: intc_1",
+              "274: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 13 -> 22 -> 14 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "276: __puya_arc4_router___set_requested_amount_route@4:",
+              "279: txn OnCompletion",
+              "280: !",
               "281: assert",
-              "292: txna ApplicationArgs 1",
-              "293: btoi",
-              "296: callsub set_status"
+              "282: txn ApplicationID",
+              "283: assert",
+              "286: txna ApplicationArgs 1",
+              "287: btoi",
+              "290: callsub set_requested_amount"
             ],
             [
-              "401: set_status:",
-              "405: proto 1 0",
-              "408: bytec_3",
-              "409: frame_dig -1",
-              "410: app_global_put",
-              "411: retsub"
+              "378: set_requested_amount:",
+              "382: proto 1 0",
+              "385: bytec 4",
+              "386: frame_dig -1",
+              "387: app_global_put",
+              "388: retsub"
             ],
             [
-              "297: intc_1",
-              "298: retsub"
+              "291: intc_1",
+              "292: retsub"
             ],
             [
               "12: return"
@@ -986,7 +1144,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 13 -> 21 -> 14 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 15 -> 23 -> 16 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1004,102 +1162,46 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "300: __puya_arc4_router___set_requested_amount_route@4:",
-              "303: txn OnCompletion",
-              "304: !",
-              "305: assert",
-              "306: txn ApplicationID",
-              "307: assert",
-              "318: txna ApplicationArgs 1",
-              "319: btoi",
-              "322: callsub set_requested_amount"
+              "294: __puya_arc4_router___set_committee_details_route@5:",
+              "297: txn OnCompletion",
+              "298: !",
+              "299: assert",
+              "300: txn ApplicationID",
+              "301: assert",
+              "304: txna ApplicationArgs 1",
+              "305: txna ApplicationArgs 2",
+              "306: btoi",
+              "307: txna ApplicationArgs 3",
+              "308: btoi",
+              "311: callsub set_committee_details"
             ],
             [
-              "415: set_requested_amount:",
-              "419: proto 1 0",
-              "422: bytec 4",
-              "423: frame_dig -1",
-              "424: app_global_put",
-              "425: retsub"
+              "392: set_committee_details:",
+              "398: proto 3 0",
+              "401: bytec 5",
+              "402: frame_dig -3",
+              "403: app_global_put",
+              "406: bytec 6",
+              "407: frame_dig -2",
+              "408: app_global_put",
+              "411: bytec 7",
+              "412: frame_dig -1",
+              "413: app_global_put",
+              "414: retsub"
             ],
             [
-              "323: intc_1",
-              "324: retsub"
-            ],
-            [
-              "12: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 15 -> 22 -> 16 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
-              "4: intcblock 0 1",
-              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
-              "6: txn ApplicationID",
-              "7: bnz main_after_if_else@2"
-            ],
-            [
-              "10: main_after_if_else@2:",
-              "11: callsub __puya_arc4_router__"
-            ],
-            [
-              "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
-            ],
-            [
-              "326: __puya_arc4_router___set_committee_details_route@5:",
-              "329: txn OnCompletion",
-              "330: !",
-              "331: assert",
-              "332: txn ApplicationID",
-              "333: assert",
-              "344: txna ApplicationArgs 1",
-              "345: txna ApplicationArgs 2",
-              "346: btoi",
-              "347: txna ApplicationArgs 3",
-              "348: btoi",
-              "351: callsub set_committee_details"
-            ],
-            [
-              "429: set_committee_details:",
-              "435: proto 3 0",
-              "438: bytec 5",
-              "439: frame_dig -3",
-              "440: app_global_put",
-              "443: bytec 6",
-              "444: frame_dig -2",
-              "445: app_global_put",
-              "448: bytec 7",
-              "449: frame_dig -1",
-              "450: app_global_put",
-              "451: retsub"
-            ],
-            [
-              "352: intc_1",
-              "353: retsub"
+              "312: intc_1",
+              "313: retsub"
             ],
             [
               "12: return"
@@ -1125,24 +1227,24 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "355: __puya_arc4_router___release_funds_route@6:",
-              "358: txn OnCompletion",
-              "359: !",
-              "360: assert",
-              "361: txn ApplicationID",
-              "362: assert",
-              "363: intc_1",
-              "364: retsub"
+              "315: __puya_arc4_router___release_funds_route@6:",
+              "318: txn OnCompletion",
+              "319: !",
+              "320: assert",
+              "321: txn ApplicationID",
+              "322: assert",
+              "323: intc_1",
+              "324: retsub"
             ],
             [
               "12: return"
@@ -1150,7 +1252,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 18 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 18 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1168,14 +1270,57 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "366: __puya_arc4_router___after_if_else@10:",
-              "377: intc_0",
-              "378: retsub"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "326: __puya_arc4_router___vote_route@7:",
+              "329: txn OnCompletion",
+              "330: !",
+              "331: assert",
+              "332: txn ApplicationID",
+              "333: assert",
+              "334: intc_1",
+              "335: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 6 -> 19 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "337: __puya_arc4_router___after_if_else@11:",
+              "340: intc_0",
+              "341: retsub"
             ],
             [
               "12: return"
@@ -1196,7 +1341,7 @@
     },
     {
       "type": "ExecutionPaths",
-      "count": 14,
+      "count": 16,
       "description": "\nCheck: \"rekey-to\", Impact: High, Confidence: High\nDescription: Rekeyable Logic Signatures\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#rekeyable-logicsig\n",
       "check": "rekey-to",
       "impact": "High",
@@ -1281,18 +1426,18 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "245: intc_0",
-              "246: retsub"
+              "237: intc_0",
+              "238: retsub"
             ],
             [
               "12: return"
@@ -1300,7 +1445,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 19 -> 10 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 20 -> 10 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1377,40 +1522,40 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "248: __puya_arc4_router___create_route@2:",
-              "251: txn OnCompletion",
-              "252: !",
-              "253: assert",
-              "254: txn ApplicationID",
-              "255: !",
-              "256: assert",
-              "267: txna ApplicationArgs 1",
-              "270: callsub create"
+              "240: __puya_arc4_router___create_route@2:",
+              "243: txn OnCompletion",
+              "244: !",
+              "245: assert",
+              "246: txn ApplicationID",
+              "247: !",
+              "248: assert",
+              "251: txna ApplicationArgs 1",
+              "254: callsub create"
             ],
             [
-              "382: create:",
-              "386: proto 1 0",
-              "389: bytec_1",
-              "390: frame_dig -1",
-              "391: app_global_put",
-              "394: bytec_2",
-              "395: global CallerApplicationID",
-              "396: app_global_put",
-              "397: retsub"
+              "345: create:",
+              "349: proto 1 0",
+              "352: bytec_1",
+              "353: frame_dig -1",
+              "354: app_global_put",
+              "357: bytec_2",
+              "358: global CallerApplicationID",
+              "359: app_global_put",
+              "360: retsub"
             ],
             [
-              "271: intc_1",
-              "272: retsub"
+              "255: intc_1",
+              "256: retsub"
             ],
             [
               "12: return"
@@ -1418,7 +1563,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 20 -> 12 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 21 -> 12 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1495,37 +1640,152 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "274: __puya_arc4_router___set_status_route@3:",
-              "277: txn OnCompletion",
-              "278: !",
-              "279: assert",
-              "280: txn ApplicationID",
+              "258: __puya_arc4_router___set_status_route@3:",
+              "261: txn OnCompletion",
+              "262: !",
+              "263: assert",
+              "264: txn ApplicationID",
+              "265: assert",
+              "268: txna ApplicationArgs 1",
+              "269: btoi",
+              "272: callsub set_status"
+            ],
+            [
+              "364: set_status:",
+              "368: proto 1 0",
+              "371: bytec_3",
+              "372: frame_dig -1",
+              "373: app_global_put",
+              "374: retsub"
+            ],
+            [
+              "273: intc_1",
+              "274: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 13 -> 22 -> 14 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "8: callsub __init__"
+            ],
+            [
+              "16: __init__:",
+              "19: proto 0 0",
+              "22: bytec_1",
+              "25: global ZeroAddress",
+              "31: app_global_put",
+              "34: bytec_2",
+              "37: intc_0",
+              "43: app_global_put",
+              "46: pushbytes 0x7469746c65",
+              "49: bytec_0",
+              "55: app_global_put",
+              "58: pushbytes 0x636964",
+              "61: bytec_0",
+              "67: app_global_put",
+              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
+              "73: intc_0",
+              "79: app_global_put",
+              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "85: intc_0",
+              "91: app_global_put",
+              "94: bytec_3",
+              "97: intc_0",
+              "103: app_global_put",
+              "106: pushbytes 0x63617465676f7279",
+              "109: intc_0",
+              "115: app_global_put",
+              "118: pushbytes 0x66756e64696e675f74797065",
+              "121: intc_0",
+              "127: app_global_put",
+              "130: bytec 4",
+              "133: intc_0",
+              "139: app_global_put",
+              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
+              "145: intc_0",
+              "151: app_global_put",
+              "154: bytec 5",
+              "157: bytec_0",
+              "163: app_global_put",
+              "166: bytec 6",
+              "169: intc_0",
+              "175: app_global_put",
+              "178: bytec 7",
+              "181: intc_0",
+              "187: app_global_put",
+              "190: pushbytes 0x766f7465645f6d656d62657273",
+              "193: intc_0",
+              "199: app_global_put",
+              "202: pushbytes 0x617070726f76616c73",
+              "205: intc_0",
+              "211: app_global_put",
+              "214: pushbytes 0x72656a656374696f6e73",
+              "217: intc_0",
+              "223: app_global_put",
+              "224: retsub"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "276: __puya_arc4_router___set_requested_amount_route@4:",
+              "279: txn OnCompletion",
+              "280: !",
               "281: assert",
-              "292: txna ApplicationArgs 1",
-              "293: btoi",
-              "296: callsub set_status"
+              "282: txn ApplicationID",
+              "283: assert",
+              "286: txna ApplicationArgs 1",
+              "287: btoi",
+              "290: callsub set_requested_amount"
             ],
             [
-              "401: set_status:",
-              "405: proto 1 0",
-              "408: bytec_3",
-              "409: frame_dig -1",
-              "410: app_global_put",
-              "411: retsub"
+              "378: set_requested_amount:",
+              "382: proto 1 0",
+              "385: bytec 4",
+              "386: frame_dig -1",
+              "387: app_global_put",
+              "388: retsub"
             ],
             [
-              "297: intc_1",
-              "298: retsub"
+              "291: intc_1",
+              "292: retsub"
             ],
             [
               "12: return"
@@ -1533,7 +1793,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 13 -> 21 -> 14 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 15 -> 23 -> 16 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1610,161 +1870,46 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "300: __puya_arc4_router___set_requested_amount_route@4:",
-              "303: txn OnCompletion",
-              "304: !",
-              "305: assert",
-              "306: txn ApplicationID",
-              "307: assert",
-              "318: txna ApplicationArgs 1",
-              "319: btoi",
-              "322: callsub set_requested_amount"
+              "294: __puya_arc4_router___set_committee_details_route@5:",
+              "297: txn OnCompletion",
+              "298: !",
+              "299: assert",
+              "300: txn ApplicationID",
+              "301: assert",
+              "304: txna ApplicationArgs 1",
+              "305: txna ApplicationArgs 2",
+              "306: btoi",
+              "307: txna ApplicationArgs 3",
+              "308: btoi",
+              "311: callsub set_committee_details"
             ],
             [
-              "415: set_requested_amount:",
-              "419: proto 1 0",
-              "422: bytec 4",
-              "423: frame_dig -1",
-              "424: app_global_put",
-              "425: retsub"
+              "392: set_committee_details:",
+              "398: proto 3 0",
+              "401: bytec 5",
+              "402: frame_dig -3",
+              "403: app_global_put",
+              "406: bytec 6",
+              "407: frame_dig -2",
+              "408: app_global_put",
+              "411: bytec 7",
+              "412: frame_dig -1",
+              "413: app_global_put",
+              "414: retsub"
             ],
             [
-              "323: intc_1",
-              "324: retsub"
-            ],
-            [
-              "12: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 15 -> 22 -> 16 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
-              "4: intcblock 0 1",
-              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
-              "6: txn ApplicationID",
-              "7: bnz main_after_if_else@2"
-            ],
-            [
-              "8: callsub __init__"
-            ],
-            [
-              "16: __init__:",
-              "19: proto 0 0",
-              "22: bytec_1",
-              "25: global ZeroAddress",
-              "31: app_global_put",
-              "34: bytec_2",
-              "37: intc_0",
-              "43: app_global_put",
-              "46: pushbytes 0x7469746c65",
-              "49: bytec_0",
-              "55: app_global_put",
-              "58: pushbytes 0x636964",
-              "61: bytec_0",
-              "67: app_global_put",
-              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
-              "73: intc_0",
-              "79: app_global_put",
-              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
-              "85: intc_0",
-              "91: app_global_put",
-              "94: bytec_3",
-              "97: intc_0",
-              "103: app_global_put",
-              "106: pushbytes 0x63617465676f7279",
-              "109: intc_0",
-              "115: app_global_put",
-              "118: pushbytes 0x66756e64696e675f74797065",
-              "121: intc_0",
-              "127: app_global_put",
-              "130: bytec 4",
-              "133: intc_0",
-              "139: app_global_put",
-              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
-              "145: intc_0",
-              "151: app_global_put",
-              "154: bytec 5",
-              "157: bytec_0",
-              "163: app_global_put",
-              "166: bytec 6",
-              "169: intc_0",
-              "175: app_global_put",
-              "178: bytec 7",
-              "181: intc_0",
-              "187: app_global_put",
-              "190: pushbytes 0x766f7465645f6d656d62657273",
-              "193: intc_0",
-              "199: app_global_put",
-              "202: pushbytes 0x617070726f76616c73",
-              "205: intc_0",
-              "211: app_global_put",
-              "214: pushbytes 0x72656a656374696f6e73",
-              "217: intc_0",
-              "223: app_global_put",
-              "224: retsub"
-            ],
-            [
-              "10: main_after_if_else@2:",
-              "11: callsub __puya_arc4_router__"
-            ],
-            [
-              "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
-            ],
-            [
-              "326: __puya_arc4_router___set_committee_details_route@5:",
-              "329: txn OnCompletion",
-              "330: !",
-              "331: assert",
-              "332: txn ApplicationID",
-              "333: assert",
-              "344: txna ApplicationArgs 1",
-              "345: txna ApplicationArgs 2",
-              "346: btoi",
-              "347: txna ApplicationArgs 3",
-              "348: btoi",
-              "351: callsub set_committee_details"
-            ],
-            [
-              "429: set_committee_details:",
-              "435: proto 3 0",
-              "438: bytec 5",
-              "439: frame_dig -3",
-              "440: app_global_put",
-              "443: bytec 6",
-              "444: frame_dig -2",
-              "445: app_global_put",
-              "448: bytec 7",
-              "449: frame_dig -1",
-              "450: app_global_put",
-              "451: retsub"
-            ],
-            [
-              "352: intc_1",
-              "353: retsub"
+              "312: intc_1",
+              "313: retsub"
             ],
             [
               "12: return"
@@ -1849,24 +1994,24 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "355: __puya_arc4_router___release_funds_route@6:",
-              "358: txn OnCompletion",
-              "359: !",
-              "360: assert",
-              "361: txn ApplicationID",
-              "362: assert",
-              "363: intc_1",
-              "364: retsub"
+              "315: __puya_arc4_router___release_funds_route@6:",
+              "318: txn OnCompletion",
+              "319: !",
+              "320: assert",
+              "321: txn ApplicationID",
+              "322: assert",
+              "323: intc_1",
+              "324: retsub"
             ],
             [
               "12: return"
@@ -1874,7 +2019,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 18 -> 4",
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 18 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1951,14 +2096,116 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "366: __puya_arc4_router___after_if_else@10:",
-              "377: intc_0",
-              "378: retsub"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "326: __puya_arc4_router___vote_route@7:",
+              "329: txn OnCompletion",
+              "330: !",
+              "331: assert",
+              "332: txn ApplicationID",
+              "333: assert",
+              "334: intc_1",
+              "335: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 19 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "8: callsub __init__"
+            ],
+            [
+              "16: __init__:",
+              "19: proto 0 0",
+              "22: bytec_1",
+              "25: global ZeroAddress",
+              "31: app_global_put",
+              "34: bytec_2",
+              "37: intc_0",
+              "43: app_global_put",
+              "46: pushbytes 0x7469746c65",
+              "49: bytec_0",
+              "55: app_global_put",
+              "58: pushbytes 0x636964",
+              "61: bytec_0",
+              "67: app_global_put",
+              "70: pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
+              "73: intc_0",
+              "79: app_global_put",
+              "82: pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
+              "85: intc_0",
+              "91: app_global_put",
+              "94: bytec_3",
+              "97: intc_0",
+              "103: app_global_put",
+              "106: pushbytes 0x63617465676f7279",
+              "109: intc_0",
+              "115: app_global_put",
+              "118: pushbytes 0x66756e64696e675f74797065",
+              "121: intc_0",
+              "127: app_global_put",
+              "130: bytec 4",
+              "133: intc_0",
+              "139: app_global_put",
+              "142: pushbytes 0x6c6f636b65645f616d6f756e74",
+              "145: intc_0",
+              "151: app_global_put",
+              "154: bytec 5",
+              "157: bytec_0",
+              "163: app_global_put",
+              "166: bytec 6",
+              "169: intc_0",
+              "175: app_global_put",
+              "178: bytec 7",
+              "181: intc_0",
+              "187: app_global_put",
+              "190: pushbytes 0x766f7465645f6d656d62657273",
+              "193: intc_0",
+              "199: app_global_put",
+              "202: pushbytes 0x617070726f76616c73",
+              "205: intc_0",
+              "211: app_global_put",
+              "214: pushbytes 0x72656a656374696f6e73",
+              "217: intc_0",
+              "223: app_global_put",
+              "224: retsub"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "337: __puya_arc4_router___after_if_else@11:",
+              "340: intc_0",
+              "341: retsub"
             ],
             [
               "12: return"
@@ -1984,18 +2231,18 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "245: intc_0",
-              "246: retsub"
+              "237: intc_0",
+              "238: retsub"
             ],
             [
               "12: return"
@@ -2003,7 +2250,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 19 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 20 -> 10 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -2021,40 +2268,40 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "248: __puya_arc4_router___create_route@2:",
-              "251: txn OnCompletion",
-              "252: !",
-              "253: assert",
-              "254: txn ApplicationID",
-              "255: !",
-              "256: assert",
-              "267: txna ApplicationArgs 1",
-              "270: callsub create"
+              "240: __puya_arc4_router___create_route@2:",
+              "243: txn OnCompletion",
+              "244: !",
+              "245: assert",
+              "246: txn ApplicationID",
+              "247: !",
+              "248: assert",
+              "251: txna ApplicationArgs 1",
+              "254: callsub create"
             ],
             [
-              "382: create:",
-              "386: proto 1 0",
-              "389: bytec_1",
-              "390: frame_dig -1",
-              "391: app_global_put",
-              "394: bytec_2",
-              "395: global CallerApplicationID",
-              "396: app_global_put",
-              "397: retsub"
+              "345: create:",
+              "349: proto 1 0",
+              "352: bytec_1",
+              "353: frame_dig -1",
+              "354: app_global_put",
+              "357: bytec_2",
+              "358: global CallerApplicationID",
+              "359: app_global_put",
+              "360: retsub"
             ],
             [
-              "271: intc_1",
-              "272: retsub"
+              "255: intc_1",
+              "256: retsub"
             ],
             [
               "12: return"
@@ -2062,7 +2309,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 20 -> 12 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 21 -> 12 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -2080,37 +2327,93 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "274: __puya_arc4_router___set_status_route@3:",
-              "277: txn OnCompletion",
-              "278: !",
-              "279: assert",
-              "280: txn ApplicationID",
+              "258: __puya_arc4_router___set_status_route@3:",
+              "261: txn OnCompletion",
+              "262: !",
+              "263: assert",
+              "264: txn ApplicationID",
+              "265: assert",
+              "268: txna ApplicationArgs 1",
+              "269: btoi",
+              "272: callsub set_status"
+            ],
+            [
+              "364: set_status:",
+              "368: proto 1 0",
+              "371: bytec_3",
+              "372: frame_dig -1",
+              "373: app_global_put",
+              "374: retsub"
+            ],
+            [
+              "273: intc_1",
+              "274: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 13 -> 22 -> 14 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "276: __puya_arc4_router___set_requested_amount_route@4:",
+              "279: txn OnCompletion",
+              "280: !",
               "281: assert",
-              "292: txna ApplicationArgs 1",
-              "293: btoi",
-              "296: callsub set_status"
+              "282: txn ApplicationID",
+              "283: assert",
+              "286: txna ApplicationArgs 1",
+              "287: btoi",
+              "290: callsub set_requested_amount"
             ],
             [
-              "401: set_status:",
-              "405: proto 1 0",
-              "408: bytec_3",
-              "409: frame_dig -1",
-              "410: app_global_put",
-              "411: retsub"
+              "378: set_requested_amount:",
+              "382: proto 1 0",
+              "385: bytec 4",
+              "386: frame_dig -1",
+              "387: app_global_put",
+              "388: retsub"
             ],
             [
-              "297: intc_1",
-              "298: retsub"
+              "291: intc_1",
+              "292: retsub"
             ],
             [
               "12: return"
@@ -2118,7 +2421,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 13 -> 21 -> 14 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 15 -> 23 -> 16 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -2136,102 +2439,46 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "300: __puya_arc4_router___set_requested_amount_route@4:",
-              "303: txn OnCompletion",
-              "304: !",
-              "305: assert",
-              "306: txn ApplicationID",
-              "307: assert",
-              "318: txna ApplicationArgs 1",
-              "319: btoi",
-              "322: callsub set_requested_amount"
+              "294: __puya_arc4_router___set_committee_details_route@5:",
+              "297: txn OnCompletion",
+              "298: !",
+              "299: assert",
+              "300: txn ApplicationID",
+              "301: assert",
+              "304: txna ApplicationArgs 1",
+              "305: txna ApplicationArgs 2",
+              "306: btoi",
+              "307: txna ApplicationArgs 3",
+              "308: btoi",
+              "311: callsub set_committee_details"
             ],
             [
-              "415: set_requested_amount:",
-              "419: proto 1 0",
-              "422: bytec 4",
-              "423: frame_dig -1",
-              "424: app_global_put",
-              "425: retsub"
+              "392: set_committee_details:",
+              "398: proto 3 0",
+              "401: bytec 5",
+              "402: frame_dig -3",
+              "403: app_global_put",
+              "406: bytec 6",
+              "407: frame_dig -2",
+              "408: app_global_put",
+              "411: bytec 7",
+              "412: frame_dig -1",
+              "413: app_global_put",
+              "414: retsub"
             ],
             [
-              "323: intc_1",
-              "324: retsub"
-            ],
-            [
-              "12: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 15 -> 22 -> 16 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
-              "4: intcblock 0 1",
-              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
-              "6: txn ApplicationID",
-              "7: bnz main_after_if_else@2"
-            ],
-            [
-              "10: main_after_if_else@2:",
-              "11: callsub __puya_arc4_router__"
-            ],
-            [
-              "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
-            ],
-            [
-              "326: __puya_arc4_router___set_committee_details_route@5:",
-              "329: txn OnCompletion",
-              "330: !",
-              "331: assert",
-              "332: txn ApplicationID",
-              "333: assert",
-              "344: txna ApplicationArgs 1",
-              "345: txna ApplicationArgs 2",
-              "346: btoi",
-              "347: txna ApplicationArgs 3",
-              "348: btoi",
-              "351: callsub set_committee_details"
-            ],
-            [
-              "429: set_committee_details:",
-              "435: proto 3 0",
-              "438: bytec 5",
-              "439: frame_dig -3",
-              "440: app_global_put",
-              "443: bytec 6",
-              "444: frame_dig -2",
-              "445: app_global_put",
-              "448: bytec 7",
-              "449: frame_dig -1",
-              "450: app_global_put",
-              "451: retsub"
-            ],
-            [
-              "352: intc_1",
-              "353: retsub"
+              "312: intc_1",
+              "313: retsub"
             ],
             [
               "12: return"
@@ -2257,24 +2504,24 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "242: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d",
-              "243: txna ApplicationArgs 0",
-              "244: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
             ],
             [
-              "355: __puya_arc4_router___release_funds_route@6:",
-              "358: txn OnCompletion",
-              "359: !",
-              "360: assert",
-              "361: txn ApplicationID",
-              "362: assert",
-              "363: intc_1",
-              "364: retsub"
+              "315: __puya_arc4_router___release_funds_route@6:",
+              "318: txn OnCompletion",
+              "319: !",
+              "320: assert",
+              "321: txn ApplicationID",
+              "322: assert",
+              "323: intc_1",
+              "324: retsub"
             ],
             [
               "12: return"
@@ -2282,7 +2529,7 @@
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 18 -> 4",
+          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 18 -> 4",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -2300,14 +2547,57 @@
             ],
             [
               "228: __puya_arc4_router__:",
-              "239: proto 0 1",
-              "240: txn NumAppArgs",
-              "241: bz __puya_arc4_router___after_if_else@10"
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
             ],
             [
-              "366: __puya_arc4_router___after_if_else@10:",
-              "377: intc_0",
-              "378: retsub"
+              "234: pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68",
+              "235: txna ApplicationArgs 0",
+              "236: match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7"
+            ],
+            [
+              "326: __puya_arc4_router___vote_route@7:",
+              "329: txn OnCompletion",
+              "330: !",
+              "331: assert",
+              "332: txn ApplicationID",
+              "333: assert",
+              "334: intc_1",
+              "335: retsub"
+            ],
+            [
+              "12: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 6 -> 19 -> 4",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.proposal_mock.contract.ProposalMock.approval_program:",
+              "4: intcblock 0 1",
+              "5: bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573",
+              "6: txn ApplicationID",
+              "7: bnz main_after_if_else@2"
+            ],
+            [
+              "10: main_after_if_else@2:",
+              "11: callsub __puya_arc4_router__"
+            ],
+            [
+              "228: __puya_arc4_router__:",
+              "231: proto 0 1",
+              "232: txn NumAppArgs",
+              "233: bz __puya_arc4_router___after_if_else@11"
+            ],
+            [
+              "337: __puya_arc4_router___after_if_else@11:",
+              "340: intc_0",
+              "341: retsub"
             ],
             [
               "12: return"

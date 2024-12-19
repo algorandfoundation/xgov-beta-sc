@@ -4,67 +4,991 @@
   "result": [
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 4,
       "description": "\nCheck: \"unprotected-deletable\", Impact: High, Confidence: High\nDescription: Unprotected Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-deletable-application\n",
       "check": "unprotected-deletable",
       "impact": "High",
       "confidence": "High",
       "help": "- Avoid deletable applications.\n- Add access controls to the vulnerable method.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
+            ],
+            [
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
+              "101: assert",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
+              "137: retsub"
+            ],
+            [
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
+            ],
+            [
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
+            ],
+            [
+              "56: intc_1",
+              "57: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 4,
       "description": "\nCheck: \"unprotected-updatable\", Impact: High, Confidence: High\nDescription: Unprotected Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#unprotected-updatable-application\n",
       "check": "unprotected-updatable",
       "impact": "High",
       "confidence": "High",
       "help": "- Avoid upgradable applications.\n- Add access controls to the vulnerable method.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
+            ],
+            [
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
+              "101: assert",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
+              "137: retsub"
+            ],
+            [
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
+            ],
+            [
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
+            ],
+            [
+              "56: intc_1",
+              "57: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 2,
       "description": "\nCheck: \"can-close-account\", Impact: High, Confidence: High\nDescription: Missing CloseRemainderTo field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-closeremainderto-field-validation\n",
       "check": "can-close-account",
       "impact": "High",
       "confidence": "High",
       "help": "Validate `CloseRemainderTo` field in the LogicSig.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 2,
       "description": "\nCheck: \"can-close-asset\", Impact: High, Confidence: High\nDescription: Missing AssetCloseTo Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-assetcloseto-field-validation\n",
       "check": "can-close-asset",
       "impact": "High",
       "confidence": "High",
       "help": "Validate `AssetCloseTo` field in the LogicSig.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 4,
       "description": "\nCheck: \"is-deletable\", Impact: High, Confidence: High\nDescription: Deletable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#deletable-application\n",
       "check": "is-deletable",
       "impact": "High",
       "confidence": "High",
       "help": "Do not approve `DeleteApplication` type application calls.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
+            ],
+            [
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
+              "101: assert",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
+              "137: retsub"
+            ],
+            [
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
+            ],
+            [
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
+            ],
+            [
+              "56: intc_1",
+              "57: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 0,
+      "count": 4,
       "description": "\nCheck: \"is-updatable\", Impact: High, Confidence: High\nDescription: Upgradable Applications\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#upgradable-application\n",
       "check": "is-updatable",
       "impact": "High",
       "confidence": "High",
       "help": "Do not approve `UpdateApplication` type application calls.",
-      "paths": []
+      "paths": [
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "19: intc_0",
+              "20: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
+            ],
+            [
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
+              "101: assert",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
+              "137: retsub"
+            ],
+            [
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+            ],
+            [
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
+            ],
+            [
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
+            ],
+            [
+              "56: intc_1",
+              "57: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        },
+        {
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
+          "blocks": [
+            [
+              "1: #pragma version 10"
+            ],
+            [
+              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
+              "4: intcblock 0 1 6",
+              "5: callsub __puya_arc4_router__"
+            ],
+            [
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
+            ],
+            [
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
+            ],
+            [
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
+            ],
+            [
+              "6: return"
+            ]
+          ]
+        }
+      ]
     },
     {
       "type": "ExecutionPaths",
-      "count": 10,
+      "count": 5,
       "description": "\nCheck: \"missing-fee-check\", Impact: High, Confidence: High\nDescription: Missing Fee Field Validation\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#missing-fee-field-validation\n",
       "check": "missing-fee-check",
       "impact": "High",
@@ -72,7 +996,7 @@
       "help": "Validate `Fee` field in the LogicSig.",
       "paths": [
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 8 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -80,55 +1004,30 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "19: intc_0",
+              "20: retsub"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "65: intc_0",
-              "66: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 16 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -136,238 +1035,73 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "68: __puya_arc4_router___subscribe_xgov_route@2:",
-              "71: txn OnCompletion",
-              "72: !",
-              "73: assert",
-              "74: txn ApplicationID",
-              "75: assert",
-              "86: txna ApplicationArgs 1",
-              "87: btoi",
-              "90: callsub subscribe_xgov"
-            ],
-            [
-              "155: subscribe_xgov:",
-              "159: proto 1 0",
-              "164: frame_dig -1",
-              "167: pushbytes 0x78676f765f6d696e5f62616c616e6365",
-              "172: app_global_get_ex",
-              "173: pop",
-              "176: frame_dig -1",
-              "177: app_params_get AppAddress",
-              "178: assert",
-              "185: itxn_begin",
-              "186: itxn_field Receiver",
-              "187: itxn_field Amount",
-              "190: intc_1",
-              "191: itxn_field TypeEnum",
-              "192: intc_0",
-              "193: itxn_field Fee",
-              "200: itxn_next",
-              "201: frame_dig -1",
-              "202: itxn_field ApplicationID",
-              "203: pushbytes 0x195715ea",
-              "204: itxn_field ApplicationArgs",
-              "205: intc_2",
-              "206: itxn_field TypeEnum",
-              "207: intc_0",
-              "208: itxn_field Fee",
-              "209: itxn_submit",
-              "210: retsub"
-            ],
-            [
-              "91: intc_1",
-              "92: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 17 -> 12 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "7: callsub __init__"
-            ],
-            [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "94: __puya_arc4_router___unsubscribe_xgov_route@3:",
-              "97: txn OnCompletion",
-              "98: !",
-              "99: assert",
-              "100: txn ApplicationID",
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
               "101: assert",
-              "112: txna ApplicationArgs 1",
-              "113: btoi",
-              "116: callsub unsubscribe_xgov"
-            ],
-            [
-              "214: unsubscribe_xgov:",
-              "218: proto 1 0",
-              "225: itxn_begin",
-              "228: global MinTxnFee",
-              "229: pushint 2",
-              "230: *",
-              "231: frame_dig -1",
-              "232: itxn_field ApplicationID",
-              "239: pushbytes 0xdf39fdb9",
-              "240: itxn_field ApplicationArgs",
-              "241: intc_2",
-              "242: itxn_field TypeEnum",
-              "243: itxn_field Fee",
-              "244: itxn_submit",
-              "245: retsub"
-            ],
-            [
-              "117: intc_1",
-              "118: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 13 -> 14 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "7: callsub __init__"
-            ],
-            [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "133: txn ApplicationID",
-              "134: !",
-              "135: assert",
-              "136: intc_1",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
               "137: retsub"
             ],
             [
-              "11: return"
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 13 -> 15 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -375,56 +1109,60 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
             ],
             [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
+              "56: intc_1",
+              "57: retsub"
             ],
             [
-              "139: __puya_arc4_router___after_if_else@10:",
-              "150: intc_0",
-              "151: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 8 -> 4",
+          "short": "0 -> 1 -> 3 -> 10 -> 11 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -432,35 +1170,33 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
             ],
             [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+              "64: txn ApplicationID",
+              "65: !",
+              "66: assert",
+              "67: intc_1",
+              "68: retsub"
             ],
             [
-              "65: intc_0",
-              "66: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 16 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -468,210 +1204,26 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
             ],
             [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
             ],
             [
-              "68: __puya_arc4_router___subscribe_xgov_route@2:",
-              "71: txn OnCompletion",
-              "72: !",
-              "73: assert",
-              "74: txn ApplicationID",
-              "75: assert",
-              "86: txna ApplicationArgs 1",
-              "87: btoi",
-              "90: callsub subscribe_xgov"
-            ],
-            [
-              "155: subscribe_xgov:",
-              "159: proto 1 0",
-              "164: frame_dig -1",
-              "167: pushbytes 0x78676f765f6d696e5f62616c616e6365",
-              "172: app_global_get_ex",
-              "173: pop",
-              "176: frame_dig -1",
-              "177: app_params_get AppAddress",
-              "178: assert",
-              "185: itxn_begin",
-              "186: itxn_field Receiver",
-              "187: itxn_field Amount",
-              "190: intc_1",
-              "191: itxn_field TypeEnum",
-              "192: intc_0",
-              "193: itxn_field Fee",
-              "200: itxn_next",
-              "201: frame_dig -1",
-              "202: itxn_field ApplicationID",
-              "203: pushbytes 0x195715ea",
-              "204: itxn_field ApplicationArgs",
-              "205: intc_2",
-              "206: itxn_field TypeEnum",
-              "207: intc_0",
-              "208: itxn_field Fee",
-              "209: itxn_submit",
-              "210: retsub"
-            ],
-            [
-              "91: intc_1",
-              "92: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 17 -> 12 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "94: __puya_arc4_router___unsubscribe_xgov_route@3:",
-              "97: txn OnCompletion",
-              "98: !",
-              "99: assert",
-              "100: txn ApplicationID",
-              "101: assert",
-              "112: txna ApplicationArgs 1",
-              "113: btoi",
-              "116: callsub unsubscribe_xgov"
-            ],
-            [
-              "214: unsubscribe_xgov:",
-              "218: proto 1 0",
-              "225: itxn_begin",
-              "228: global MinTxnFee",
-              "229: pushint 2",
-              "230: *",
-              "231: frame_dig -1",
-              "232: itxn_field ApplicationID",
-              "239: pushbytes 0xdf39fdb9",
-              "240: itxn_field ApplicationArgs",
-              "241: intc_2",
-              "242: itxn_field TypeEnum",
-              "243: itxn_field Fee",
-              "244: itxn_submit",
-              "245: retsub"
-            ],
-            [
-              "117: intc_1",
-              "118: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 13 -> 14 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "133: txn ApplicationID",
-              "134: !",
-              "135: assert",
-              "136: intc_1",
-              "137: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 13 -> 15 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "139: __puya_arc4_router___after_if_else@10:",
-              "150: intc_0",
-              "151: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         }
@@ -689,7 +1241,7 @@
     },
     {
       "type": "ExecutionPaths",
-      "count": 10,
+      "count": 5,
       "description": "\nCheck: \"rekey-to\", Impact: High, Confidence: High\nDescription: Rekeyable Logic Signatures\n\nWiki: https://github.com/crytic/tealer/wiki/Detector-Documentation#rekeyable-logicsig\n",
       "check": "rekey-to",
       "impact": "High",
@@ -697,7 +1249,7 @@
       "help": "Validate `RekeyTo` field in the LogicSig.",
       "paths": [
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 8 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 5 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -705,55 +1257,30 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "19: intc_0",
+              "20: retsub"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "65: intc_0",
-              "66: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 9 -> 16 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 6 -> 13 -> 7 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -761,238 +1288,73 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "22: __puya_arc4_router___subscribe_xgov_route@2:",
+              "25: txn OnCompletion",
+              "26: !",
+              "27: assert",
+              "28: txn ApplicationID",
+              "29: assert",
+              "32: txna ApplicationArgs 1",
+              "33: btoi",
+              "34: txna ApplicationArgs 2",
+              "37: callsub subscribe_xgov"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "68: __puya_arc4_router___subscribe_xgov_route@2:",
-              "71: txn OnCompletion",
-              "72: !",
-              "73: assert",
-              "74: txn ApplicationID",
-              "75: assert",
-              "86: txna ApplicationArgs 1",
-              "87: btoi",
-              "90: callsub subscribe_xgov"
-            ],
-            [
-              "155: subscribe_xgov:",
-              "159: proto 1 0",
-              "164: frame_dig -1",
-              "167: pushbytes 0x78676f765f6d696e5f62616c616e6365",
-              "172: app_global_get_ex",
-              "173: pop",
-              "176: frame_dig -1",
-              "177: app_params_get AppAddress",
-              "178: assert",
-              "185: itxn_begin",
-              "186: itxn_field Receiver",
-              "187: itxn_field Amount",
-              "190: intc_1",
-              "191: itxn_field TypeEnum",
-              "192: intc_0",
-              "193: itxn_field Fee",
-              "200: itxn_next",
-              "201: frame_dig -1",
-              "202: itxn_field ApplicationID",
-              "203: pushbytes 0x195715ea",
-              "204: itxn_field ApplicationArgs",
-              "205: intc_2",
-              "206: itxn_field TypeEnum",
-              "207: intc_0",
-              "208: itxn_field Fee",
-              "209: itxn_submit",
-              "210: retsub"
-            ],
-            [
-              "91: intc_1",
-              "92: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 7 -> 11 -> 17 -> 12 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "7: callsub __init__"
-            ],
-            [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "94: __puya_arc4_router___unsubscribe_xgov_route@3:",
-              "97: txn OnCompletion",
-              "98: !",
-              "99: assert",
-              "100: txn ApplicationID",
+              "78: subscribe_xgov:",
+              "82: proto 2 0",
+              "87: frame_dig -2",
+              "90: pushbytes 0x78676f765f666565",
+              "95: app_global_get_ex",
+              "96: pop",
+              "99: frame_dig -2",
+              "100: app_params_get AppAddress",
               "101: assert",
-              "112: txna ApplicationArgs 1",
-              "113: btoi",
-              "116: callsub unsubscribe_xgov"
-            ],
-            [
-              "214: unsubscribe_xgov:",
-              "218: proto 1 0",
-              "225: itxn_begin",
-              "228: global MinTxnFee",
-              "229: pushint 2",
-              "230: *",
-              "231: frame_dig -1",
-              "232: itxn_field ApplicationID",
-              "239: pushbytes 0xdf39fdb9",
-              "240: itxn_field ApplicationArgs",
-              "241: intc_2",
-              "242: itxn_field TypeEnum",
-              "243: itxn_field Fee",
-              "244: itxn_submit",
-              "245: retsub"
-            ],
-            [
-              "117: intc_1",
-              "118: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 13 -> 14 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "7: callsub __init__"
-            ],
-            [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "133: txn ApplicationID",
-              "134: !",
-              "135: assert",
-              "136: intc_1",
+              "109: itxn_begin",
+              "110: itxn_field Receiver",
+              "111: itxn_field Amount",
+              "114: intc_1",
+              "115: itxn_field TypeEnum",
+              "116: intc_0",
+              "117: itxn_field Fee",
+              "125: itxn_next",
+              "126: frame_dig -2",
+              "127: itxn_field ApplicationID",
+              "128: pushbytes 0xa082cef8",
+              "129: itxn_field ApplicationArgs",
+              "130: frame_dig -1",
+              "131: itxn_field ApplicationArgs",
+              "132: intc_2",
+              "133: itxn_field TypeEnum",
+              "134: intc_0",
+              "135: itxn_field Fee",
+              "136: itxn_submit",
               "137: retsub"
             ],
             [
-              "11: return"
+              "38: intc_1",
+              "39: retsub"
+            ],
+            [
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 2 -> 5 -> 3 -> 6 -> 13 -> 15 -> 4",
+          "short": "0 -> 1 -> 3 -> 4 -> 8 -> 14 -> 9 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1000,56 +1362,60 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "7: callsub __init__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "15: __init__:",
-              "18: proto 0 0",
-              "21: txn GlobalNumByteSlice",
-              "22: !",
-              "28: assert",
-              "31: txn GlobalNumUint",
-              "32: !",
-              "33: assert",
-              "36: txn LocalNumByteSlice",
-              "37: !",
-              "38: assert",
-              "41: txn LocalNumUint",
-              "42: !",
-              "43: assert",
-              "44: retsub"
+              "16: pushbytess 0x42317b4f 0x5a2a3f16",
+              "17: txna ApplicationArgs 0",
+              "18: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "41: __puya_arc4_router___unsubscribe_xgov_route@3:",
+              "44: txn OnCompletion",
+              "45: !",
+              "46: assert",
+              "47: txn ApplicationID",
+              "48: assert",
+              "51: txna ApplicationArgs 1",
+              "52: btoi",
+              "55: callsub unsubscribe_xgov"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "141: unsubscribe_xgov:",
+              "145: proto 1 0",
+              "153: itxn_begin",
+              "156: global MinTxnFee",
+              "157: pushint 2",
+              "158: *",
+              "161: global CurrentApplicationAddress",
+              "162: frame_dig -1",
+              "163: itxn_field ApplicationID",
+              "171: pushbytes 0x76725559",
+              "172: itxn_field ApplicationArgs",
+              "173: itxn_field ApplicationArgs",
+              "174: intc_2",
+              "175: itxn_field TypeEnum",
+              "176: itxn_field Fee",
+              "177: itxn_submit",
+              "178: retsub"
             ],
             [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
+              "56: intc_1",
+              "57: retsub"
             ],
             [
-              "139: __puya_arc4_router___after_if_else@10:",
-              "150: intc_0",
-              "151: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 8 -> 4",
+          "short": "0 -> 1 -> 3 -> 10 -> 11 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1057,35 +1423,33 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
             ],
             [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+              "64: txn ApplicationID",
+              "65: !",
+              "66: assert",
+              "67: intc_1",
+              "68: retsub"
             ],
             [
-              "65: intc_0",
-              "66: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         },
         {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 9 -> 16 -> 10 -> 4",
+          "short": "0 -> 1 -> 3 -> 10 -> 12 -> 2",
           "blocks": [
             [
               "1: #pragma version 10"
@@ -1093,210 +1457,26 @@
             [
               "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
               "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
+              "5: callsub __puya_arc4_router__"
             ],
             [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
+              "10: __puya_arc4_router__:",
+              "13: proto 0 1",
+              "14: txn NumAppArgs",
+              "15: bz __puya_arc4_router___bare_routing@6"
             ],
             [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
+              "59: __puya_arc4_router___bare_routing@6:",
+              "62: txn OnCompletion",
+              "63: bnz __puya_arc4_router___after_if_else@10"
             ],
             [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
+              "70: __puya_arc4_router___after_if_else@10:",
+              "73: intc_0",
+              "74: retsub"
             ],
             [
-              "68: __puya_arc4_router___subscribe_xgov_route@2:",
-              "71: txn OnCompletion",
-              "72: !",
-              "73: assert",
-              "74: txn ApplicationID",
-              "75: assert",
-              "86: txna ApplicationArgs 1",
-              "87: btoi",
-              "90: callsub subscribe_xgov"
-            ],
-            [
-              "155: subscribe_xgov:",
-              "159: proto 1 0",
-              "164: frame_dig -1",
-              "167: pushbytes 0x78676f765f6d696e5f62616c616e6365",
-              "172: app_global_get_ex",
-              "173: pop",
-              "176: frame_dig -1",
-              "177: app_params_get AppAddress",
-              "178: assert",
-              "185: itxn_begin",
-              "186: itxn_field Receiver",
-              "187: itxn_field Amount",
-              "190: intc_1",
-              "191: itxn_field TypeEnum",
-              "192: intc_0",
-              "193: itxn_field Fee",
-              "200: itxn_next",
-              "201: frame_dig -1",
-              "202: itxn_field ApplicationID",
-              "203: pushbytes 0x195715ea",
-              "204: itxn_field ApplicationArgs",
-              "205: intc_2",
-              "206: itxn_field TypeEnum",
-              "207: intc_0",
-              "208: itxn_field Fee",
-              "209: itxn_submit",
-              "210: retsub"
-            ],
-            [
-              "91: intc_1",
-              "92: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 7 -> 11 -> 17 -> 12 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "62: pushbytess 0xd5e8532a 0x5a2a3f16",
-              "63: txna ApplicationArgs 0",
-              "64: match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3"
-            ],
-            [
-              "94: __puya_arc4_router___unsubscribe_xgov_route@3:",
-              "97: txn OnCompletion",
-              "98: !",
-              "99: assert",
-              "100: txn ApplicationID",
-              "101: assert",
-              "112: txna ApplicationArgs 1",
-              "113: btoi",
-              "116: callsub unsubscribe_xgov"
-            ],
-            [
-              "214: unsubscribe_xgov:",
-              "218: proto 1 0",
-              "225: itxn_begin",
-              "228: global MinTxnFee",
-              "229: pushint 2",
-              "230: *",
-              "231: frame_dig -1",
-              "232: itxn_field ApplicationID",
-              "239: pushbytes 0xdf39fdb9",
-              "240: itxn_field ApplicationArgs",
-              "241: intc_2",
-              "242: itxn_field TypeEnum",
-              "243: itxn_field Fee",
-              "244: itxn_submit",
-              "245: retsub"
-            ],
-            [
-              "117: intc_1",
-              "118: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 13 -> 14 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "133: txn ApplicationID",
-              "134: !",
-              "135: assert",
-              "136: intc_1",
-              "137: retsub"
-            ],
-            [
-              "11: return"
-            ]
-          ]
-        },
-        {
-          "short": "0 -> 1 -> 3 -> 6 -> 13 -> 15 -> 4",
-          "blocks": [
-            [
-              "1: #pragma version 10"
-            ],
-            [
-              "3: smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:",
-              "4: intcblock 0 1 6",
-              "5: txn ApplicationID",
-              "6: bnz main_after_if_else@2"
-            ],
-            [
-              "9: main_after_if_else@2:",
-              "10: callsub __puya_arc4_router__"
-            ],
-            [
-              "48: __puya_arc4_router__:",
-              "59: proto 0 1",
-              "60: txn NumAppArgs",
-              "61: bz __puya_arc4_router___bare_routing@6"
-            ],
-            [
-              "120: __puya_arc4_router___bare_routing@6:",
-              "131: txn OnCompletion",
-              "132: bnz __puya_arc4_router___after_if_else@10"
-            ],
-            [
-              "139: __puya_arc4_router___after_if_else@10:",
-              "150: intc_0",
-              "151: retsub"
-            ],
-            [
-              "11: return"
+              "6: return"
             ]
           ]
         }
