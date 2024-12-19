@@ -437,17 +437,17 @@ class XgovRegistryMock(ARC4Contract):
             fee=0,
         )
 
-        if error == "ERR:" + err.UNAUTHORIZED:
+        if error == err.ARC_65_PREFIX + err.UNAUTHORIZED:
             assert False, err.UNAUTHORIZED  # noqa
-        elif error == "ERR:" + err.VOTER_NOT_FOUND:
+        elif error == err.ARC_65_PREFIX + err.VOTER_NOT_FOUND:
             assert False, err.VOTER_NOT_FOUND  # noqa
-        elif error == "ERR:" + err.VOTER_ALREADY_VOTED:
+        elif error == err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED:
             assert False, err.VOTER_ALREADY_VOTED  # noqa
-        elif error == "ERR:" + err.VOTES_EXCEEDED:
+        elif error == err.ARC_65_PREFIX + err.VOTES_EXCEEDED:
             assert False, err.VOTES_EXCEEDED  # noqa
-        elif error == "ERR:" + err.MISSING_CONFIG:
+        elif error == err.ARC_65_PREFIX + err.MISSING_CONFIG:
             assert False, err.MISSING_CONFIG  # noqa
-        elif error == "ERR:" + err.WRONG_PROPOSAL_STATUS:
+        elif error == err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS:
             assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-        elif error == "ERR:" + err.VOTING_PERIOD_EXPIRED:
+        elif error == err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED:
             assert False, err.VOTING_PERIOD_EXPIRED  # noqa

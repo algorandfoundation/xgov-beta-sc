@@ -1,3 +1,4 @@
+ARC_65_PREFIX = "ERR:"
 # Errors
 WRONG_GLOBAL_BYTES = "Wrong Global Bytes allocation"
 WRONG_GLOBAL_UINTS = "Wrong Global UInts allocation"

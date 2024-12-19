@@ -46,7 +46,7 @@ class Proposal(
         assert Txn.local_num_uint == prop_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
         self.proposer = GlobalState(
-            arc4.Address(),
+            Account(),
             key=prop_cfg.GS_KEY_PROPOSER,
         )
         self.registry_app_id = GlobalState(
@@ -146,30 +146,30 @@ class Proposal(
         assert self.is_registry_call(), err.UNAUTHORIZED
 
         if self.status.value != enm.STATUS_VOTING:
-            return typ.Error("ERR:" + err.WRONG_PROPOSAL_STATUS)
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
 
         is_voting_open, error = self.is_voting_open()
         if error != typ.Error(""):
             return error
 
         if not is_voting_open:
-            return typ.Error("ERR:" + err.VOTING_PERIOD_EXPIRED)
+            return typ.Error(err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED)
 
         return typ.Error("")
 
     @subroutine
     def vote_input_validation(
-        self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
+        self, voter: Account, approvals: UInt64, rejections: UInt64
     ) -> typ.Error:
-        if voter.native not in self.voters:
-            return typ.Error("ERR:" + err.VOTER_NOT_FOUND)
+        if voter not in self.voters:
+            return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
 
-        voter_box = self.voters[voter.native].copy()
+        voter_box = self.voters[voter].copy()
         if voter_box.voted:
-            return typ.Error("ERR:" + err.VOTER_ALREADY_VOTED)
+            return typ.Error(err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED)
 
-        if approvals.native + rejections.native > voter_box.votes:
-            return typ.Error("ERR:" + err.VOTES_EXCEEDED)
+        if approvals + rejections > voter_box.votes:
+            return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
 
         return typ.Error("")
 
@@ -193,9 +193,9 @@ class Proposal(
 
     @subroutine
     def assign_voter_input_validation(
-        self, voter: arc4.Address, voting_power: UInt64
+        self, voter: Account, voting_power: UInt64
     ) -> None:
-        assert voter.native not in self.voters, err.VOTER_ALREADY_ASSIGNED
+        assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
         assert voting_power > 0, err.INVALID_VOTING_POWER
 
     @subroutine
@@ -410,7 +410,7 @@ class Proposal(
         )
         error = typ.Error("")
         if not exists:
-            error = typ.Error("ERR:" + err.MISSING_CONFIG)
+            error = typ.Error(err.ARC_65_PREFIX + err.MISSING_CONFIG)
         return value, error
 
     @subroutine
@@ -452,17 +452,17 @@ class Proposal(
             Global.caller_application_id != 0
         ), err.UNAUTHORIZED  # Only callable by another contract
 
-        self.proposer.value = proposer
+        self.proposer.value = proposer.native
         self.registry_app_id.value = Global.caller_application_id
 
     @arc4.abimethod()
     def submit(
         self,
         payment: gtxn.PaymentTransaction,
-        title: String,
+        title: arc4.String,
         cid: typ.Cid,
-        funding_type: UInt64,
-        requested_amount: UInt64,
+        funding_type: arc4.UInt64,
+        requested_amount: arc4.UInt64,
     ) -> None:
         """Submit the first draft of the proposal.
 
@@ -489,20 +489,24 @@ class Proposal(
         """
         self.submit_check_authorization()
 
-        self.submit_input_validation(title, cid, funding_type, requested_amount)
-        self.submit_payment_validation(payment, requested_amount)
+        self.submit_input_validation(
+            title.native, cid, funding_type.native, requested_amount.native
+        )
+        self.submit_payment_validation(payment, requested_amount.native)
 
-        self.title.value = title
+        self.title.value = title.native
         self.cid.value = cid.copy()
-        self.set_category(requested_amount)
-        self.funding_type.value = funding_type
-        self.requested_amount.value = requested_amount
-        self.locked_amount.value = self.get_expected_locked_amount(requested_amount)
+        self.set_category(requested_amount.native)
+        self.funding_type.value = funding_type.native
+        self.requested_amount.value = requested_amount.native
+        self.locked_amount.value = self.get_expected_locked_amount(
+            requested_amount.native
+        )
         self.submission_ts.value = Global.latest_timestamp
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def update(self, title: String, cid: typ.Cid) -> None:
+    def update(self, title: arc4.String, cid: typ.Cid) -> None:
         """Update the proposal.
 
         Args:
@@ -518,9 +522,9 @@ class Proposal(
         """
         self.update_check_authorization()
 
-        self.updateable_input_validation(title, cid)
+        self.updateable_input_validation(title.native, cid)
 
-        self.title.value = title
+        self.title.value = title.native
         self.cid.value = cid.copy()
 
     @arc4.abimethod()
@@ -535,7 +539,7 @@ class Proposal(
         self.drop_check_authorization()
 
         itxn.Payment(
-            receiver=self.proposer.value.native,
+            receiver=self.proposer.value,
             amount=self.locked_amount.value,
             fee=UInt64(0),  # enforces the proposer to pay the fee
         ).submit()
@@ -592,7 +596,7 @@ class Proposal(
         ).submit()
 
     @arc4.abimethod()
-    def assign_voter(self, voter: arc4.Address, voting_power: UInt64) -> None:
+    def assign_voter(self, voter: arc4.Address, voting_power: arc4.UInt64) -> None:
         """Assign a voter to the proposal.
 
         Args:
@@ -610,15 +614,15 @@ class Proposal(
         """
         self.assign_voter_check_authorization()
 
-        self.assign_voter_input_validation(voter, voting_power)
+        self.assign_voter_input_validation(voter.native, voting_power.native)
 
         self.voters[voter.native] = typ.VoterBox(
-            votes=arc4.UInt64(voting_power),
+            votes=voting_power,
             voted=arc4.Bool(False),  # noqa: FBT003
         )
 
-        self.voters_count += UInt64(1)
-        self.assigned_votes += voting_power
+        self.voters_count += 1
+        self.assigned_votes += voting_power.native
 
         if self.voters_count == self.committee_members.value:
             assert (
@@ -652,7 +656,9 @@ class Proposal(
         if error != typ.Error(""):
             return error
 
-        error = self.vote_input_validation(voter, approvals, rejections)
+        error = self.vote_input_validation(
+            voter.native, approvals.native, rejections.native
+        )
         if error != typ.Error(""):
             return error
 
@@ -662,7 +668,7 @@ class Proposal(
             voted=arc4.Bool(True),  # noqa: FBT003
         )
 
-        self.voted_members.value += UInt64(1)
+        self.voted_members.value += 1
 
         nulls = voter_box.votes.native - approvals.native - rejections.native
 
@@ -710,7 +716,7 @@ class Proposal(
         else:
             self.status.value = UInt64(enm.STATUS_REJECTED)
             itxn.Payment(
-                receiver=self.proposer.value.native,
+                receiver=self.proposer.value,
                 amount=self.locked_amount.value,
                 fee=UInt64(0),  # enforces the sender to pay the fee
             ).submit()
