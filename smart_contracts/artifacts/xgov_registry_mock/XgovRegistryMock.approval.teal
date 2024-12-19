@@ -314,9 +314,9 @@ __puya_arc4_router___create_empty_proposal_route@2:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -336,9 +336,9 @@ __puya_arc4_router___set_proposal_commitment_bps_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -354,9 +354,9 @@ __puya_arc4_router___set_min_requested_amount_route@4:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -372,9 +372,9 @@ __puya_arc4_router___set_max_requested_amount_small_route@5:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -390,9 +390,9 @@ __puya_arc4_router___set_max_requested_amount_medium_route@6:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -408,9 +408,9 @@ __puya_arc4_router___set_max_requested_amount_large_route@7:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -426,9 +426,9 @@ __puya_arc4_router___set_publishing_fee_route@8:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -444,9 +444,9 @@ __puya_arc4_router___set_discussion_duration_small_route@9:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -462,9 +462,9 @@ __puya_arc4_router___set_discussion_duration_medium_route@10:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -480,9 +480,9 @@ __puya_arc4_router___set_discussion_duration_large_route@11:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -498,9 +498,9 @@ __puya_arc4_router___set_committee_publisher_route@12:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -515,9 +515,9 @@ __puya_arc4_router___set_proposal_fee_route@13:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -533,9 +533,9 @@ __puya_arc4_router___set_committee_id_route@14:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -550,9 +550,9 @@ __puya_arc4_router___clear_committee_id_route@15:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub clear_committee_id
     intc_0 // 1
     retsub
@@ -562,9 +562,9 @@ __puya_arc4_router___set_committee_members_route@16:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -580,9 +580,9 @@ __puya_arc4_router___set_committee_votes_route@17:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -598,9 +598,9 @@ __puya_arc4_router___set_voting_duration_small_route@18:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -616,9 +616,9 @@ __puya_arc4_router___set_voting_duration_medium_route@19:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -634,9 +634,9 @@ __puya_arc4_router___set_voting_duration_large_route@20:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -652,9 +652,9 @@ __puya_arc4_router___set_quorum_small_route@21:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -670,9 +670,9 @@ __puya_arc4_router___set_quorum_medium_route@22:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -688,9 +688,9 @@ __puya_arc4_router___set_quorum_large_route@23:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -706,9 +706,9 @@ __puya_arc4_router___set_weighted_quorum_small_route@24:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -724,9 +724,9 @@ __puya_arc4_router___set_weighted_quorum_medium_route@25:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -742,9 +742,9 @@ __puya_arc4_router___set_weighted_quorum_large_route@26:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -760,9 +760,9 @@ __puya_arc4_router___vote_route@27:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txna ApplicationArgs 1
@@ -784,7 +784,7 @@ __puya_arc4_router___bare_routing@30:
     bnz __puya_arc4_router___after_if_else@34
     txn ApplicationID
     !
-    assert // is creating
+    assert // can only call when creating
     intc_0 // 1
     retsub
 

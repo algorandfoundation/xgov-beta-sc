@@ -323,10 +323,10 @@ __puya_arc4_router___create_route@2:
     // @arc4.abimethod(create="require")
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
     !
-    assert // is creating
+    assert // can only call when creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -349,9 +349,9 @@ __puya_arc4_router___submit_route@3:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -388,9 +388,9 @@ __puya_arc4_router___update_route@4:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -415,9 +415,9 @@ __puya_arc4_router___drop_route@5:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub drop
     intc_1 // 1
     retsub
@@ -427,9 +427,9 @@ __puya_arc4_router___finalize_route@6:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub finalize
     intc_1 // 1
     retsub
@@ -439,9 +439,9 @@ __puya_arc4_router___assign_voter_route@7:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -466,9 +466,9 @@ __puya_arc4_router___vote_route@8:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     // smart_contracts/proposal/contract.py:30-38
     // class Proposal(
     //     ARC4Contract,
@@ -497,9 +497,9 @@ __puya_arc4_router___scrutiny_route@9:
     // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is NoOp
+    assert // OnCompletion is not NoOp
     txn ApplicationID
-    assert // is not creating
+    assert // can only call when not creating
     callsub scrutiny
     intc_1 // 1
     retsub
@@ -683,7 +683,7 @@ submit_input_validation:
     // smart_contracts/proposal/contract.py:337-338
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
-    bnz submit_input_validation_bool_true@2
+    bnz submit_input_validation_bool_true@4
     // smart_contracts/proposal/contract.py:338
     // or funding_type == enm.FUNDING_RETROACTIVE
     frame_dig -2
@@ -692,16 +692,16 @@ submit_input_validation:
     // smart_contracts/proposal/contract.py:337-338
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
-    bz submit_input_validation_bool_false@3
+    bz submit_input_validation_bool_false@5
 
-submit_input_validation_bool_true@2:
+submit_input_validation_bool_true@4:
     intc_1 // 1
-    b submit_input_validation_bool_merge@4
+    b submit_input_validation_bool_merge@6
 
-submit_input_validation_bool_false@3:
+submit_input_validation_bool_false@5:
     intc_0 // 0
 
-submit_input_validation_bool_merge@4:
+submit_input_validation_bool_merge@6:
     // smart_contracts/proposal/contract.py:336-339
     // assert (
     //     funding_type == enm.FUNDING_PROACTIVE
