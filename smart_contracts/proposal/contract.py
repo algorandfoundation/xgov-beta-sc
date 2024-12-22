@@ -133,10 +133,6 @@ class Proposal(
         self.assigned_votes = UInt64(0)
 
     @subroutine
-    def wrap_error(self, error_msg: String) -> String:
-        return err.ARC_65_PREFIX + error_msg
-
-    @subroutine
     def is_voting_open(self) -> tuple[bool, typ.Error]:
         voting_duration = Global.latest_timestamp - self.vote_open_ts.value
         maximum_voting_duration, error = self.get_voting_duration(self.category.value)
@@ -150,14 +146,14 @@ class Proposal(
         assert self.is_registry_call(), err.UNAUTHORIZED
 
         if self.status.value != enm.STATUS_VOTING:
-            return typ.Error(self.wrap_error(String(err.WRONG_PROPOSAL_STATUS)))
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
 
         is_voting_open, error = self.is_voting_open()
         if error != typ.Error(""):
             return error
 
         if not is_voting_open:
-            return typ.Error(self.wrap_error(String(err.VOTING_PERIOD_EXPIRED)))
+            return typ.Error(err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED)
 
         return typ.Error("")
 
@@ -166,14 +162,14 @@ class Proposal(
         self, voter: Account, approvals: UInt64, rejections: UInt64
     ) -> typ.Error:
         if voter not in self.voters:
-            return typ.Error(self.wrap_error(String(err.VOTER_NOT_FOUND)))
+            return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
 
         voter_box = self.voters[voter].copy()
         if voter_box.voted:
-            return typ.Error(self.wrap_error(String(err.VOTER_ALREADY_VOTED)))
+            return typ.Error(err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED)
 
         if approvals + rejections > voter_box.votes:
-            return typ.Error(self.wrap_error(String(err.VOTES_EXCEEDED)))
+            return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
 
         return typ.Error("")
 
@@ -414,7 +410,7 @@ class Proposal(
         )
         error = typ.Error("")
         if not exists:
-            error = typ.Error(self.wrap_error(String(err.MISSING_CONFIG)))
+            error = typ.Error(err.ARC_65_PREFIX + err.MISSING_CONFIG)
         return value, error
 
     @subroutine
