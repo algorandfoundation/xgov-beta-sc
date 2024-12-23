@@ -10,6 +10,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 from smart_contracts.errors import std_errors as err
 from tests.proposal.common import (
     LOCKED_AMOUNT,
+    PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
     assert_boxes,
     assert_draft_proposal_global_state,
@@ -22,6 +23,7 @@ from tests.proposal.common import (
 )
 
 # TODO add tests for assign_voter on other statuses
+from tests.utils import time_warp
 
 
 def test_assign_voter_success(
@@ -43,9 +45,8 @@ def test_assign_voter_success(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -55,9 +56,6 @@ def test_assign_voter_success(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     voter_box_key = get_voter_box_key(committee_member.address)
 
@@ -74,7 +72,6 @@ def test_assign_voter_success(
                     voter_box_key,
                 )
             ],
-            suggested_params=sp,
         ),
     )
 
@@ -114,9 +111,8 @@ def test_assign_voter_assign_all_voters(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -126,9 +122,6 @@ def test_assign_voter_assign_all_voters(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -144,7 +137,6 @@ def test_assign_voter_assign_all_voters(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -188,9 +180,8 @@ def test_assign_voter_not_committee_publisher(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -200,9 +191,6 @@ def test_assign_voter_not_committee_publisher(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
         proposal_client.assign_voter(
@@ -218,7 +206,6 @@ def test_assign_voter_not_committee_publisher(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -256,9 +243,8 @@ def test_assign_voter_voter_already_assigned(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -268,9 +254,6 @@ def test_assign_voter_voter_already_assigned(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     voter_box_key = get_voter_box_key(committee_member.address)
 
@@ -287,7 +270,6 @@ def test_assign_voter_voter_already_assigned(
                     voter_box_key,
                 )
             ],
-            suggested_params=sp,
         ),
     )
 
@@ -305,7 +287,6 @@ def test_assign_voter_voter_already_assigned(
                         voter_box_key,
                     )
                 ],
-                suggested_params=sp,
                 note="Assigning voter twice should fail",
             ),
         )
@@ -324,6 +305,70 @@ def test_assign_voter_voter_already_assigned(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
         expected_boxes=[(voter_box_key, "AAAAAAAAAAoA")],
+    )
+
+
+def test_assign_voter_invalid_voting_power(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    committee_publisher: AddressAndSigner,
+    committee_member: AddressAndSigner,
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[committee_publisher.address],
+            suggested_params=sp,
+        ),
+    )
+
+    with pytest.raises(logic_error_type, match=err.INVALID_VOTING_POWER):
+        proposal_client.assign_voter(
+            voter=committee_member.address,
+            voting_power=0,
+            transaction_parameters=TransactionParameters(
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+                note="Voting power should be positive",
+            ),
+        )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_final_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[],  # no voter boxes
     )
 
 
@@ -352,7 +397,6 @@ def test_assign_voter_empty_proposal(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -401,7 +445,6 @@ def test_assign_voter_draft_proposal(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -416,7 +459,7 @@ def test_assign_voter_draft_proposal(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
     assert_boxes(
@@ -445,9 +488,8 @@ def test_assign_voter_voting_power_mismatch(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -457,9 +499,6 @@ def test_assign_voter_voting_power_mismatch(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members[:-1]:
         proposal_client.assign_voter(
@@ -475,7 +514,6 @@ def test_assign_voter_voting_power_mismatch(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -493,7 +531,6 @@ def test_assign_voter_voting_power_mismatch(
                         get_voter_box_key(committee_members[-1].address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -539,9 +576,8 @@ def test_assign_voter_voting_open(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=0
-    )  # so we could actually finalize
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -551,9 +587,6 @@ def test_assign_voter_voting_open(
             suggested_params=sp,
         ),
     )
-    xgov_registry_mock_client.set_discussion_duration_small(
-        discussion_duration=discussion_duration
-    )  # restore
 
     for committee_member in committee_members:
         proposal_client.assign_voter(
@@ -569,7 +602,6 @@ def test_assign_voter_voting_open(
                         get_voter_box_key(committee_member.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 
@@ -587,7 +619,6 @@ def test_assign_voter_voting_open(
                         get_voter_box_key(proposer.address),
                     )
                 ],
-                suggested_params=sp,
             ),
         )
 

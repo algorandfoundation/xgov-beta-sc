@@ -134,7 +134,7 @@ def proposal_client(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
     proposal_app_id = xgov_registry_mock_client.create_empty_proposal(
         proposer=proposer.address,

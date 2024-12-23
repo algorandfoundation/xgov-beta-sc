@@ -23,6 +23,7 @@ from smart_contracts.xgov_registry_mock.config import (
 )
 from tests.proposal.common import (
     LOCKED_AMOUNT,
+    PROPOSAL_PARTIAL_FEE,
     REQUESTED_AMOUNT,
     assert_account_balance,
     assert_draft_proposal_global_state,
@@ -57,7 +58,7 @@ def test_submit_success(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -85,7 +86,7 @@ def test_submit_not_proposer(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -115,7 +116,7 @@ def test_submit_twice(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -143,7 +144,7 @@ def test_submit_wrong_title_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -171,7 +172,7 @@ def test_submit_wrong_title_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -199,7 +200,7 @@ def test_submit_wrong_funding_type_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -227,7 +228,7 @@ def test_submit_wrong_funding_type_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -258,7 +259,7 @@ def test_submit_wrong_requested_amount_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -289,7 +290,7 @@ def test_submit_wrong_requested_amount_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -318,7 +319,7 @@ def test_submit_wrong_payment_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -347,7 +348,7 @@ def test_submit_wrong_payment_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -376,7 +377,7 @@ def test_submit_wrong_payment_3(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -404,7 +405,7 @@ def test_submit_wrong_payment_4(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -430,7 +431,7 @@ def test_submit_category_small_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -465,7 +466,7 @@ def test_submit_category_small_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -500,7 +501,7 @@ def test_submit_category_small_3(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -535,7 +536,7 @@ def test_submit_category_small_4(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -571,7 +572,7 @@ def test_submit_category_medium_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -607,7 +608,7 @@ def test_submit_category_medium_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -643,7 +644,7 @@ def test_submit_category_medium_3(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -679,7 +680,7 @@ def test_submit_category_large_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -715,7 +716,7 @@ def test_submit_category_large_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -751,5 +752,5 @@ def test_submit_category_large_3(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        locked_amount,
+        locked_amount + PROPOSAL_PARTIAL_FEE,
     )

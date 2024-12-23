@@ -2228,7 +2228,7 @@ open_proposal:
     txn Sender
     // smart_contracts/xgov_registry/contract.py:718
     // global_num_uint=pcfg.GLOBAL_UINTS,
-    pushint 18 // 18
+    pushint 20 // 20
     itxn_field GlobalNumUint
     // smart_contracts/xgov_registry/contract.py:717
     // global_num_bytes=pcfg.GLOBAL_BYTES,
@@ -2309,7 +2309,7 @@ open_proposal:
     bytec 6 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
-    pushint 963000 // 963000
+    pushint 1020000 // 1020000
     -
     itxn_field Amount
     itxn_field Receiver

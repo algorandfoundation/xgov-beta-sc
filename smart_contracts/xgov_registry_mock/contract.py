@@ -1,14 +1,18 @@
 # pyright: reportMissingModuleSource=false
 from algopy import (
+    Application,
     ARC4Contract,
     GlobalState,
     UInt64,
     arc4,
+    itxn,
 )
 
+import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
 from ..common.types import CommitteeId
+from ..proposal import config as prop_cfg
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
@@ -71,6 +75,42 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(mock_cfg.COMMITTEE_VOTES),
             key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
+        self.voting_duration_small = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_SMALL),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_SMALL,
+        )
+        self.voting_duration_medium = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_MEDIUM),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM,
+        )
+        self.voting_duration_large = GlobalState(
+            UInt64(mock_cfg.VOTING_DURATION_LARGE),
+            key=reg_cfg.GS_KEY_VOTING_DURATION_LARGE,
+        )
+        self.quorum_small = GlobalState(
+            UInt64(mock_cfg.QUORUM_SMALL_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_SMALL,
+        )
+        self.quorum_medium = GlobalState(
+            UInt64(mock_cfg.QUORUM_MEDIUM_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_MEDIUM,
+        )
+        self.quorum_large = GlobalState(
+            UInt64(mock_cfg.QUORUM_LARGE_BPS),
+            key=reg_cfg.GS_KEY_QUORUM_LARGE,
+        )
+        self.weighted_quorum_small = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_SMALL_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL,
+        )
+        self.weighted_quorum_medium = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_MEDIUM_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM,
+        )
+        self.weighted_quorum_large = GlobalState(
+            UInt64(mock_cfg.WEIGHTED_QUORUM_LARGE_BPS),
+            key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
+        )
 
     @arc4.abimethod()
     def create_empty_proposal(
@@ -91,6 +131,12 @@ class XgovRegistryMock(ARC4Contract):
             Proposal,
             proposer,
         )
+
+        itxn.Payment(
+            receiver=res.created_app.address,
+            amount=self.proposal_fee.value - prop_cfg.PROPOSAL_MBR,
+            fee=0,
+        ).submit()
 
         return res.created_app.id
 
@@ -255,3 +301,153 @@ class XgovRegistryMock(ARC4Contract):
 
         """
         self.committee_votes.value = committee_votes
+
+    @arc4.abimethod()
+    def set_voting_duration_small(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for small proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_small.value = voting_duration
+
+    @arc4.abimethod()
+    def set_voting_duration_medium(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for medium proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_medium.value = voting_duration
+
+    @arc4.abimethod()
+    def set_voting_duration_large(self, voting_duration: UInt64) -> None:
+        """
+        Set the voting duration for large proposals
+
+        Args:
+            voting_duration (UInt64): The voting duration
+
+        """
+        self.voting_duration_large.value = voting_duration
+
+    @arc4.abimethod()
+    def set_quorum_small(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for small proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_small.value = quorum
+
+    @arc4.abimethod()
+    def set_quorum_medium(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for medium proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_medium.value = quorum
+
+    @arc4.abimethod()
+    def set_quorum_large(self, quorum: UInt64) -> None:
+        """
+        Set the quorum for large proposals
+
+        Args:
+            quorum (UInt64): The quorum
+
+        """
+        self.quorum_large.value = quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_small(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for small proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_small.value = weighted_quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_medium(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for medium proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_medium.value = weighted_quorum
+
+    @arc4.abimethod()
+    def set_weighted_quorum_large(self, weighted_quorum: UInt64) -> None:
+        """
+        Set the weighted quorum for large proposals
+
+        Args:
+            weighted_quorum (UInt64): The weighted quorum
+
+        """
+        self.weighted_quorum_large.value = weighted_quorum
+
+    @arc4.abimethod()
+    def vote(
+        self,
+        proposal_app: Application,
+        voter: arc4.Address,
+        approvals: arc4.UInt64,
+        rejections: arc4.UInt64,
+    ) -> None:
+        """
+        Vote on a proposal
+
+        Args:
+            proposal_app (arc4.UInt64): The proposal app
+            voter (arc4.Address): The voter
+            approvals (arc4.UInt64): The number of approvals
+            rejections (arc4.UInt64): The number of rejections
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
+            err.VOTER_ALREADY_VOTED: If the voter has already voted
+            err.VOTES_EXCEEDED: If the total votes exceed the assigned voting power
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
+            err.VOTING_PERIOD_EXPIRED: If the voting period has expired
+
+        """
+        error, tx = arc4.abi_call(
+            Proposal.vote,
+            voter,
+            approvals,
+            rejections,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error == err.ARC_65_PREFIX + err.UNAUTHORIZED:
+            assert False, err.UNAUTHORIZED  # noqa
+        elif error == err.ARC_65_PREFIX + err.VOTER_NOT_FOUND:
+            assert False, err.VOTER_NOT_FOUND  # noqa
+        elif error == err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED:
+            assert False, err.VOTER_ALREADY_VOTED  # noqa
+        elif error == err.ARC_65_PREFIX + err.VOTES_EXCEEDED:
+            assert False, err.VOTES_EXCEEDED  # noqa
+        elif error == err.ARC_65_PREFIX + err.MISSING_CONFIG:
+            assert False, err.MISSING_CONFIG  # noqa
+        elif error == err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS:
+            assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+        elif error == err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED:
+            assert False, err.VOTING_PERIOD_EXPIRED  # noqa
