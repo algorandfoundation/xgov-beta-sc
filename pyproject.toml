@@ -17,7 +17,7 @@ algokit-client-generator = "^1.1.7"
 black = {extras = ["d"], version = "^24.10.0"}
 ruff = "^0.8.4"
 mypy = "==1.11.2"  # TODO: relax to caret again once this is done: https://github.com/algorandfoundation/algokit-internal/issues/42
-pytest = "^8.3.3"
+pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
 pytest-sugar = "^1.0.0"
 pip-audit = "^2.7.3"
