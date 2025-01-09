@@ -1,3 +1,4 @@
+ARC_65_PREFIX = "ERR:"
 # Errors
 WRONG_GLOBAL_BYTES = "Wrong Global Bytes allocation"
 WRONG_GLOBAL_UINTS = "Wrong Global UInts allocation"
@@ -55,3 +56,10 @@ WRONG_COMMITTEE_MEMBERS = "Wrong Committee Members"
 WRONG_COMMITTEE_VOTES = "Wrong Committee Votes"
 VOTER_ALREADY_ASSIGNED = "Voter Already Assigned"
 VOTING_POWER_MISMATCH = "Voting Power Mismatch"
+VOTING_PERIOD_EXPIRED = "Voting Period Expired"
+INVALID_VOTING_POWER = "Invalid Voting Power"
+VOTING_ONGOING = "Voting Ongoing"
+
+VOTER_NOT_FOUND = "Voter not found"
+VOTER_ALREADY_VOTED = "Voter already voted"
+VOTES_EXCEEDED = "Votes exceeded"

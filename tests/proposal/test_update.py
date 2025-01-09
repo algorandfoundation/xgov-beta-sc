@@ -13,6 +13,7 @@ from smart_contracts.proposal.constants import (
 )
 from tests.proposal.common import (
     LOCKED_AMOUNT,
+    PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
@@ -57,7 +58,7 @@ def test_update_success(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -104,7 +105,7 @@ def test_update_twice(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -142,7 +143,7 @@ def test_update_not_proposer(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -173,7 +174,7 @@ def test_update_empty_proposal(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        0,
+        PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -210,7 +211,7 @@ def test_update_wrong_title_1(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
 
@@ -247,5 +248,5 @@ def test_update_wrong_title_2(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
