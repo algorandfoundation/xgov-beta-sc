@@ -10,6 +10,7 @@ from algokit_utils import (
     is_localnet,
 )
 from algokit_utils.account import Account as AlgokitAccount
+from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.util import algos_to_microalgos
 from algosdk.v2client.algod import AlgodClient
@@ -17,6 +18,7 @@ from algosdk.v2client.indexer import IndexerClient
 from dotenv import load_dotenv
 
 from models.account import Account
+from tests.common import DEFAULT_COMMITTEE_MEMBERS
 from tests.xgov_registry.common import address_and_signer_from_account
 
 INITIAL_FUNDS: int = algos_to_microalgos(10_000)  # type: ignore[no-untyped-call]
@@ -71,3 +73,21 @@ def deployer(algorand_client: AlgorandClient) -> AlgokitAccount:
     )
 
     return deployer
+
+
+@pytest.fixture(scope="session")
+def committee_members(algorand_client: AlgorandClient) -> list[AddressAndSigner]:
+    accounts = [
+        algorand_client.account.random() for _ in range(DEFAULT_COMMITTEE_MEMBERS)
+    ]
+
+    for account in accounts:
+        ensure_funded(
+            algorand_client.client.algod,
+            EnsureBalanceParameters(
+                account_to_fund=account.address,
+                min_spending_balance_micro_algos=INITIAL_FUNDS,
+            ),
+        )
+
+    return accounts
