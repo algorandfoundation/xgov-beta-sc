@@ -8,6 +8,8 @@ from ..common import types as ptyp
 class TypedGlobalState(arc4.Struct):
     xgov_manager: arc4.Address
     xgov_payor: arc4.Address
+    xgov_reviewer: arc4.Address
+    xgov_subscriber: arc4.Address
     kyc_provider: arc4.Address
     committee_manager: arc4.Address
     committee_publisher: arc4.Address

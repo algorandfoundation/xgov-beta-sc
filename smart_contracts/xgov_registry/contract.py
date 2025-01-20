@@ -899,6 +899,8 @@ class XGovRegistry(
         return typ.TypedGlobalState(
             xgov_manager=self.xgov_manager.value,
             xgov_payor=self.xgov_payor.value,
+            xgov_reviewer=self.xgov_reviewer.value,
+            xgov_subscriber=self.xgov_subscriber.value,
             kyc_provider=self.kyc_provider.value,
             committee_manager=self.committee_manager.value,
             committee_publisher=self.committee_publisher.value,
