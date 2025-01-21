@@ -2228,7 +2228,7 @@ open_proposal:
     txn Sender
     // smart_contracts/xgov_registry/contract.py:718
     // global_num_uint=pcfg.GLOBAL_UINTS,
-    pushint 20 // 20
+    pushint 18 // 18
     itxn_field GlobalNumUint
     // smart_contracts/xgov_registry/contract.py:717
     // global_num_bytes=pcfg.GLOBAL_BYTES,
@@ -2240,7 +2240,7 @@ open_proposal:
     // compiled = compile_contract(proposal_contract.ProposalMock)
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(CiACAAEmCAAIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkBnN0YXR1cxByZXF1ZXN0ZWRfYW1vdW50DGNvbW1pdHRlZV9pZBFjb21taXR0ZWVfbWVtYmVycw9jb21taXR0ZWVfdm90ZXMxGEAAA4gABIgAukOKAAApMgNnKiJngAV0aXRsZShngANjaWQoZ4AUc3VibWlzc2lvbl90aW1lc3RhbXAiZ4AWZmluYWxpemF0aW9uX3RpbWVzdGFtcCJnKyJngAhjYXRlZ29yeSJngAxmdW5kaW5nX3R5cGUiZycEImeADWxvY2tlZF9hbW91bnQiZycFKGcnBiJnJwciZ4ANdm90ZWRfbWVtYmVycyJngAlhcHByb3ZhbHMiZ4AKcmVqZWN0aW9ucyJniYoAATEbQQCMggYEzGlOqgQTlMw8BNN5ElMEAlqYBATpSkRNBLuOHWg2GgCOBgACABIAIgAyAEkAUiKJMRkURDEYFEQ2GgGIAE0jiTEZFEQxGEQ2GgEXiABJI4kxGRREMRhENhoBF4gAQSOJMRkURDEYRDYaATYaAhc2GgMXiAAzI4kxGRREMRhEI4kxGRREMRhEI4kiiYoBACmL/2cqMg1niYoBACuL/2eJigEAJwSL/2eJigMAJwWL/WcnBov+ZycHi/9niQ==)
+    pushbytes base64(CiACAAEmCAAIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkBnN0YXR1cxByZXF1ZXN0ZWRfYW1vdW50DGNvbW1pdHRlZV9pZBFjb21taXR0ZWVfbWVtYmVycw9jb21taXR0ZWVfdm90ZXMxGEAAA4gABIgAwkOKAAApMgNnKiJngAV0aXRsZShngANjaWQoZ4AUc3VibWlzc2lvbl90aW1lc3RhbXAiZ4AWZmluYWxpemF0aW9uX3RpbWVzdGFtcCJnKyJngBBmdW5kaW5nX2NhdGVnb3J5ImeADGZ1bmRpbmdfdHlwZSJnJwQiZ4ANbG9ja2VkX2Ftb3VudCJnJwUoZycGImcnByJngA12b3RlZF9tZW1iZXJzImeACWFwcHJvdmFscyJngApyZWplY3Rpb25zImeJigABMRtBAIyCBgTMaU6qBBOUzDwE03kSUwQCWpgEBOlKRE0Eu44daDYaAI4GAAIAEgAiADIASQBSIokxGRREMRgURDYaAYgATSOJMRkURDEYRDYaAReIAEkjiTEZFEQxGEQ2GgEXiABBI4kxGRREMRhENhoBNhoCFzYaAxeIADMjiTEZFEQxGEQjiTEZFEQxGEQjiSKJigEAKYv/ZyoyDWeJigEAK4v/Z4mKAQAnBIv/Z4mKAwAnBYv9ZycGi/5nJweL/2eJ)
     itxn_field ApprovalProgramPages
     // smart_contracts/xgov_registry/contract.py:712-722
     // proposal_app = arc4.abi_call(
@@ -2309,7 +2309,7 @@ open_proposal:
     bytec 6 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
-    pushint 1020000 // 1020000
+    pushint 963000 // 963000
     -
     itxn_field Amount
     itxn_field Receiver

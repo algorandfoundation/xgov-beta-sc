@@ -1,8 +1,10 @@
 # pyright: reportMissingModuleSource=false
+
 from algopy import (
     Application,
     ARC4Contract,
     GlobalState,
+    String,
     UInt64,
     arc4,
     itxn,
@@ -110,6 +112,14 @@ class XgovRegistryMock(ARC4Contract):
         self.weighted_quorum_large = GlobalState(
             UInt64(mock_cfg.WEIGHTED_QUORUM_LARGE_BPS),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
+        )
+        self.xgov_reviewer = GlobalState(
+            arc4.Address(mock_cfg.XGOV_REVIEWER),
+            key=reg_cfg.GS_KEY_XGOV_REVIEWER,
+        )
+        self.cooldown_duration = GlobalState(
+            UInt64(mock_cfg.COOL_DOWN_DURATION),
+            key=reg_cfg.GS_KEY_COOL_DOWN_DURATION,
         )
 
     @arc4.abimethod()
@@ -437,17 +447,92 @@ class XgovRegistryMock(ARC4Contract):
             fee=0,
         )
 
-        if error == err.ARC_65_PREFIX + err.UNAUTHORIZED:
-            assert False, err.UNAUTHORIZED  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTER_NOT_FOUND:
-            assert False, err.VOTER_NOT_FOUND  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED:
-            assert False, err.VOTER_ALREADY_VOTED  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTES_EXCEEDED:
-            assert False, err.VOTES_EXCEEDED  # noqa
-        elif error == err.ARC_65_PREFIX + err.MISSING_CONFIG:
-            assert False, err.MISSING_CONFIG  # noqa
-        elif error == err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS:
-            assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-        elif error == err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED:
-            assert False, err.VOTING_PERIOD_EXPIRED  # noqa
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.UNAUTHORIZED:
+                    assert False, err.UNAUTHORIZED  # noqa
+                case err.VOTER_NOT_FOUND:
+                    assert False, err.VOTER_NOT_FOUND  # noqa
+                case err.VOTER_ALREADY_VOTED:
+                    assert False, err.VOTER_ALREADY_VOTED  # noqa
+                case err.VOTES_EXCEEDED:
+                    assert False, err.VOTES_EXCEEDED  # noqa
+                case err.MISSING_CONFIG:
+                    assert False, err.MISSING_CONFIG  # noqa
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.VOTING_PERIOD_EXPIRED:
+                    assert False, err.VOTING_PERIOD_EXPIRED  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def set_xgov_reviewer(self, xgov_reviewer: arc4.Address) -> None:
+        """
+        Set the XGov reviewer
+
+        Args:
+            xgov_reviewer (arc4.Address): The XGov reviewer
+
+        """
+        self.xgov_reviewer.value = xgov_reviewer
+
+    @arc4.abimethod()
+    def fund(self, proposal_app: Application) -> None:
+        """
+        Fund a proposal
+
+        Args:
+            proposal_app (arc4.UInt64): The proposal app
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+
+        """
+        error, tx = arc4.abi_call(
+            Proposal.fund,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.UNAUTHORIZED:
+                    assert False, err.UNAUTHORIZED  # noqa
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def set_cooldown_duration(self, cooldown_duration: UInt64) -> None:
+        """
+        Set the cooldown duration
+
+        Args:
+            cooldown_duration (UInt64): The cooldown duration
+
+        """
+        self.cooldown_duration.value = cooldown_duration
+
+    @arc4.abimethod()
+    def delete_proposal(self, proposal_app: Application) -> None:
+        error, tx = arc4.abi_call(
+            Proposal.delete,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.UNAUTHORIZED:
+                    assert False, err.UNAUTHORIZED  # noqa
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa

@@ -17,6 +17,7 @@ from tests.proposal.common import (
     logic_error_type,
     submit_proposal,
 )
+from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for drop on other statuses
 
@@ -96,7 +97,9 @@ def test_drop_twice(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -139,7 +142,9 @@ def test_drop_empty_proposal(
         "amount"
     ]
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -180,7 +185,7 @@ def test_drop_not_proposer(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.drop(
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
