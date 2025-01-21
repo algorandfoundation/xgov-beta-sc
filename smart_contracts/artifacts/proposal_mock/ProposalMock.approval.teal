@@ -153,11 +153,11 @@ __init__:
     // key=prop_cfg.GS_KEY_COMMITTEE_ID,
     bytec 5 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal_mock/contract.py:64
-    // typ.CommitteeId.from_bytes(b""),
+    // typ.Cid.from_bytes(b""),
     bytec_0 // 0x
     // smart_contracts/proposal_mock/contract.py:63-66
     // self.committee_id = GlobalState(
-    //     typ.CommitteeId.from_bytes(b""),
+    //     typ.Cid.from_bytes(b""),
     //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -313,7 +313,7 @@ __puya_arc4_router___set_committee_details_route@5:
     retsub
 
 __puya_arc4_router___release_funds_route@6:
-    // smart_contracts/proposal_mock/contract.py:109
+    // smart_contracts/proposal_mock/contract.py:107
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -324,7 +324,7 @@ __puya_arc4_router___release_funds_route@6:
     retsub
 
 __puya_arc4_router___vote_route@7:
-    // smart_contracts/proposal_mock/contract.py:113
+    // smart_contracts/proposal_mock/contract.py:111
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -390,23 +390,21 @@ set_requested_amount:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details(cid: bytes, size: uint64, votes: uint64) -> void:
 set_committee_details:
-    // smart_contracts/proposal_mock/contract.py:101-104
+    // smart_contracts/proposal_mock/contract.py:101-102
     // @arc4.abimethod()
-    // def set_committee_details(
-    //     self, cid: typ.CommitteeId, size: UInt64, votes: UInt64
-    // ) -> None:
+    // def set_committee_details(self, cid: typ.Cid, size: UInt64, votes: UInt64) -> None:
     proto 3 0
-    // smart_contracts/proposal_mock/contract.py:105
+    // smart_contracts/proposal_mock/contract.py:103
     // self.committee_id.value = cid.copy()
     bytec 5 // 0x636f6d6d69747465655f6964
     frame_dig -3
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:106
+    // smart_contracts/proposal_mock/contract.py:104
     // self.committee_members.value = size
     bytec 6 // 0x636f6d6d69747465655f6d656d62657273
     frame_dig -2
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:107
+    // smart_contracts/proposal_mock/contract.py:105
     // self.committee_votes.value = votes
     bytec 7 // 0x636f6d6d69747465655f766f746573
     frame_dig -1

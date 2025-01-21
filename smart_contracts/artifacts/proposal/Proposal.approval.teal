@@ -192,11 +192,11 @@ __init__:
     // key=prop_cfg.GS_KEY_COMMITTEE_ID,
     bytec 22 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal/contract.py:97
-    // typ.CommitteeId.from_bytes(b""),
+    // typ.Cid.from_bytes(b""),
     bytec_2 // 0x
     // smart_contracts/proposal/contract.py:96-99
     // self.committee_id = GlobalState(
-    //     typ.CommitteeId.from_bytes(b""),
+    //     typ.Cid.from_bytes(b""),
     //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -312,7 +312,7 @@ __puya_arc4_router__:
     proto 0 1
     txn NumAppArgs
     bz __puya_arc4_router___after_if_else@13
-    pushbytess 0xcc694eaa 0x6ecbb813 0x43f37dfa 0x5fcdfdee 0x23d8b7ce 0x74e6557e 0x1841a0d2 0x734dbecc // method "create(address)void", method "submit(pay,string,byte[59],uint64,uint64)void", method "update(string,byte[59])void", method "drop()void", method "finalize()void", method "assign_voter(address,uint64)void", method "vote(address,uint64,uint64)string", method "scrutiny()void"
+    pushbytess 0xcc694eaa 0x13bf8a7a 0x40df8a0c 0x5fcdfdee 0x23d8b7ce 0x74e6557e 0x1841a0d2 0x734dbecc // method "create(address)void", method "submit(pay,string,byte[36],uint64,uint64)void", method "update(string,byte[36])void", method "drop()void", method "finalize()void", method "assign_voter(address,uint64)void", method "vote(address,uint64,uint64)string", method "scrutiny()void"
     txna ApplicationArgs 0
     match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7 __puya_arc4_router___vote_route@8 __puya_arc4_router___scrutiny_route@9
     intc_0 // 0
@@ -1378,7 +1378,7 @@ verify_and_set_committee:
     bytec 22 // 0x636f6d6d69747465655f6964
     callsub get_bytes_from_registry_config
     // smart_contracts/proposal/contract.py:273
-    // assert committee_id != typ.CommitteeId.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+    // assert committee_id != typ.Cid.from_bytes(b""), err.EMPTY_COMMITTEE_ID
     dup
     bytec_2 // 0x
     !=
