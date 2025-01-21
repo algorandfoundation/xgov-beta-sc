@@ -8,10 +8,15 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.proposal.common import (
+
+# TODO add tests for finalize on other statuses
+from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
+    relative_to_absolute_amount,
+)
+from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
@@ -19,11 +24,8 @@ from tests.proposal.common import (
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
     logic_error_type,
-    relative_to_absolute_amount,
     submit_proposal,
 )
-
-# TODO add tests for finalize on other statuses
 from tests.utils import get_latest_timestamp, time_warp
 
 

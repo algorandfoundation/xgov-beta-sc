@@ -11,7 +11,6 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
-    compile_contract,
     gtxn,
     itxn,
     op,
@@ -22,8 +21,8 @@ import smart_contracts.errors.std_errors as err
 
 from ..common import types as ptyp
 from ..proposal import config as pcfg
+from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
-from ..proposal_mock import contract as proposal_contract
 from . import config as cfg
 from . import types as typ
 
@@ -706,27 +705,28 @@ class XGovRegistry(
         assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # Create the Proposal App
-        # TODO: replace the proposal mock contract with the real one
-        compiled = compile_contract(proposal_contract.ProposalMock)
+        # compiled = compile_contract(proposal_contract.Proposal)
 
-        proposal_app = arc4.abi_call(
-            proposal_contract.ProposalMock.create,
-            Txn.sender,
-            approval_program=compiled.approval_program,
-            clear_state_program=compiled.clear_state_program,
-            global_num_bytes=pcfg.GLOBAL_BYTES,
-            global_num_uint=pcfg.GLOBAL_UINTS,
-            local_num_bytes=pcfg.LOCAL_BYTES,
-            local_num_uint=pcfg.LOCAL_UINTS,
-            fee=0,
-        ).created_app
+        # proposal_app = arc4.abi_call(
+        #     proposal_contract.Proposal.create,
+        #     Txn.sender,
+        #     approval_program=compiled.approval_program,
+        #     clear_state_program=compiled.clear_state_program,
+        #     global_num_bytes=pcfg.GLOBAL_BYTES,
+        #     global_num_uint=pcfg.GLOBAL_UINTS,
+        #     local_num_bytes=pcfg.LOCAL_BYTES,
+        #     local_num_uint=pcfg.LOCAL_UINTS,
+        #     fee=0,
+        # ).created_app
+
+        res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
 
         # Update proposer state
         self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
         # Transfer funds to the new Proposal App
         itxn.Payment(
-            receiver=proposal_app.address,
+            receiver=res.created_app.address,
             amount=self.proposal_fee.value - pcfg.PROPOSAL_MBR,
             fee=0,
         ).submit()
@@ -734,7 +734,7 @@ class XGovRegistry(
         # Increment pending proposals
         self.pending_proposals.value += 1
 
-        return proposal_app.id
+        return res.created_app.id
 
     @arc4.abimethod()
     def vote_proposal(
@@ -777,9 +777,8 @@ class XGovRegistry(
         assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
-        # TODO: switch to Proposal contract
         arc4.abi_call(
-            proposal_contract.ProposalMock.vote,
+            proposal_contract.Proposal.vote,
             xgov_address,
             approval_votes,
             rejection_votes,
@@ -835,9 +834,10 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        arc4.abi_call(
-            proposal_contract.ProposalMock.release_funds, app_id=proposal_id.native
-        )
+        # TODO: uncomment when proposal contract is ready
+        # arc4.abi_call(
+        #     proposal_contract.Proposal.fund, app_id=proposal_id.native
+        # )
 
         # Decrement pending proposals count
         # TODO: might happen on decommission as well

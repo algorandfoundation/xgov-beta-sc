@@ -8,15 +8,15 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+
+# TODO add tests for scrutiny on other statuses
+from tests.common import get_voter_box_key
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
     assert_rejected_proposal_global_state,
-    get_voter_box_key,
     logic_error_type,
     submit_proposal,
 )
-
-# TODO add tests for scrutiny on other statuses
 from tests.utils import time_warp
 
 
