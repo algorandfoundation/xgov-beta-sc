@@ -22,11 +22,11 @@ def get_voter_box_key(voter_address: str) -> bytes:
     return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
-DEFAULT_COMMITTEE_ID = b"\x01" * 32
+DEFAULT_COMMITTEE_ID = b"\x01" * 36
 DEFAULT_COMMITTEE_MEMBERS = 20
 DEFAULT_COMMITTEE_VOTES = 200
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 PROPOSAL_TITLE = "Test Proposal"
-PROPOSAL_CID = b"\x01" * 59
+PROPOSAL_CID = b"\x01" * 36

@@ -3,7 +3,7 @@
   "sources": [
     "../../proposal_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAiBA;;;AAGgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;AADe;AADvB;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADuB;AAD/B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;;AAlER;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;AAAA;AAuEK;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAvEL;;;AAuEK;;;AAAA;AAAA;AAKA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;AAgFK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AApFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAoFK;;;AAAA;AAAA;AAQA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAhGL;AAAA;AAuEA;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAIQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAiBA;;;AAGgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;AADe;AADvB;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADe;AADvB;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;;AAlER;;;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;AAAA;AAuEK;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAvEL;;;AAuEK;;;AAAA;AAAA;AAKA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;AAgFK;;;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AApFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAoFK;;;AAAA;AAAA;AAMA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAIA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AA9FL;AAAA;AAuEA;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -431,14 +431,14 @@
       "stack_out": []
     },
     "309": {
-      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\""
+      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0xa4ddde0c 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[36],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\""
     },
     "341": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(create(address)void)",
         "Method(release_funds()void)",
-        "Method(set_committee_details(byte[32],uint64,uint64)void)",
+        "Method(set_committee_details(byte[36],uint64,uint64)void)",
         "Method(set_requested_amount(uint64)void)",
         "Method(set_status(uint64)void)",
         "Method(vote(address,uint64,uint64)void)",
@@ -448,7 +448,7 @@
         "Method(create(address)void)",
         "Method(set_status(uint64)void)",
         "Method(set_requested_amount(uint64)void)",
-        "Method(set_committee_details(byte[32],uint64,uint64)void)",
+        "Method(set_committee_details(byte[36],uint64,uint64)void)",
         "Method(release_funds()void)",
         "Method(vote(address,uint64,uint64)void)",
         "tmp%2#0"
