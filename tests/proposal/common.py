@@ -4,6 +4,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.encoding import decode_address, encode_address
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
@@ -14,15 +15,19 @@ from smart_contracts.proposal.constants import (
     BPS,
 )
 from smart_contracts.proposal.enums import (
-    CATEGORY_NULL,
-    CATEGORY_SMALL,
+    FUNDING_CATEGORY_NULL,
+    FUNDING_CATEGORY_SMALL,
     FUNDING_NULL,
     FUNDING_PROACTIVE,
     STATUS_APPROVED,
+    STATUS_BLOCKED,
+    STATUS_DECOMMISSIONED,
     STATUS_DRAFT,
     STATUS_EMPTY,
     STATUS_FINAL,
+    STATUS_FUNDED,
     STATUS_REJECTED,
+    STATUS_REVIEWED,
     STATUS_VOTING,
 )
 from smart_contracts.xgov_registry_mock.config import (
@@ -53,6 +58,7 @@ INITIAL_FUNDS = 10_000_000_000
 DEFAULT_COMMITTEE_ID = b"\x01" * 32
 DEFAULT_COMMITTEE_MEMBERS = 20
 DEFAULT_COMMITTEE_VOTES = 200
+DEFAULT_FOCUS = 42
 
 
 def assert_proposal_global_state(
@@ -63,7 +69,8 @@ def assert_proposal_global_state(
     status: int = STATUS_EMPTY,
     title: str = "",
     cid: bytes = b"",
-    category: int = CATEGORY_NULL,
+    funding_category: int = FUNDING_CATEGORY_NULL,
+    focus: int = 0,
     funding_type: int = FUNDING_NULL,
     requested_amount: int = 0,
     locked_amount: int = 0,
@@ -76,13 +83,13 @@ def assert_proposal_global_state(
     nulls: int = 0,
     assigned_votes: int = 0,
     voters_count: int = 0,
-    milestone_approved: bool = False,
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
     assert global_state.cid.as_bytes == cid
     assert global_state.status == status
-    assert global_state.category == category
+    assert global_state.funding_category == funding_category
+    assert int.from_bytes(global_state.focus.as_bytes, "big") == focus
     assert global_state.funding_type == funding_type
     assert global_state.requested_amount == requested_amount
     assert global_state.locked_amount == locked_amount
@@ -96,7 +103,6 @@ def assert_proposal_global_state(
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
     assert global_state.voters_count == voters_count
-    assert global_state.milestone_approved == milestone_approved
 
     if status == STATUS_EMPTY:
         assert global_state.submission_ts == 0
@@ -122,7 +128,8 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
         "funding_type": FUNDING_PROACTIVE,
         "requested_amount": REQUESTED_AMOUNT,
         "locked_amount": LOCKED_AMOUNT,
-        "category": CATEGORY_SMALL,
+        "funding_category": FUNDING_CATEGORY_SMALL,
+        "focus": DEFAULT_FOCUS,
     }
 
     # Define common committee-related defaults used in multiple statuses
@@ -154,6 +161,29 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
         },
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
+            **committee_defaults,
+            **voter_defaults,
+            "locked_amount": 0,
+        },
+        STATUS_REVIEWED: {
+            "status": STATUS_REVIEWED,
+            **committee_defaults,
+            **voter_defaults,
+        },
+        STATUS_BLOCKED: {
+            "status": STATUS_BLOCKED,
+            **committee_defaults,
+            **voter_defaults,
+            "locked_amount": 0,
+        },
+        STATUS_FUNDED: {
+            "status": STATUS_FUNDED,
+            **committee_defaults,
+            **voter_defaults,
+            "locked_amount": 0,
+        },
+        STATUS_DECOMMISSIONED: {
+            "status": STATUS_DECOMMISSIONED,
             **committee_defaults,
             **voter_defaults,
             "locked_amount": 0,
@@ -243,6 +273,50 @@ def assert_final_proposal_global_state(  # type: ignore
     )
 
 
+def assert_reviewed_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_REVIEWED, **kwargs  # type: ignore
+    )
+
+
+def assert_blocked_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, **kwargs  # type: ignore
+    )
+
+
+def assert_funded_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_FUNDED, **kwargs  # type: ignore
+    )
+
+
+def assert_decommissioned_proposal_global_state(  # type: ignore
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    **kwargs,  # noqa: ANN003
+) -> None:
+    assert_proposal_with_status(
+        global_state, proposer_address, registry_app_id, STATUS_DECOMMISSIONED, **kwargs  # type: ignore
+    )
+
+
 def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
@@ -284,6 +358,7 @@ def submit_proposal(
     title: str = PROPOSAL_TITLE,
     cid: bytes = PROPOSAL_CID,
     funding_type: int = FUNDING_PROACTIVE,
+    focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,
     locked_amount: int = LOCKED_AMOUNT,
 ) -> None:
@@ -307,6 +382,7 @@ def submit_proposal(
         title=title,
         cid=cid,
         funding_type=funding_type,
+        focus=focus,
         requested_amount=requested_amount,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
@@ -314,3 +390,32 @@ def submit_proposal(
             foreign_apps=[registry_app_id],
         ),
     )
+
+
+def decommission_proposal(
+    proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+    committee_publisher: AddressAndSigner,
+    sp: SuggestedParams,
+    xgov_registry_app_id: int,
+    bulks: int = 7,
+) -> None:
+    for i in range(1 + len(committee_members) // bulks):
+        proposal_client.decommission(
+            voters=[
+                cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
+                foreign_apps=[xgov_registry_app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(cm.address),
+                    )
+                    for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
+                suggested_params=sp,
+            ),
+        )

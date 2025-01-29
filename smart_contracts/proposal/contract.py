@@ -2,6 +2,7 @@
 
 from algopy import (
     Account,
+    Application,
     ARC4Contract,
     BoxMap,
     Bytes,
@@ -77,9 +78,13 @@ class Proposal(
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
         )
-        self.category = GlobalState(
-            UInt64(enm.CATEGORY_NULL),
-            key=prop_cfg.GS_KEY_CATEGORY,
+        self.funding_category = GlobalState(
+            UInt64(enm.FUNDING_CATEGORY_NULL),
+            key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
+        )
+        self.focus = GlobalState(
+            arc4.UInt8(0),
+            key=prop_cfg.GS_KEY_FOCUS,
         )
         self.funding_type = GlobalState(
             UInt64(enm.FUNDING_NULL),
@@ -121,9 +126,9 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_NULLS,
         )
-        self.milestone_approved = GlobalState(
-            False,  # noqa: FBT003
-            key=prop_cfg.GS_KEY_MILESTONE_APPROVED,
+        self.cool_down_start_ts = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_COOL_DOWN_START_TS,
         )
 
         self.voters = BoxMap(
@@ -135,11 +140,54 @@ class Proposal(
     @subroutine
     def is_voting_open(self) -> tuple[bool, typ.Error]:
         voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration, error = self.get_voting_duration(self.category.value)
+        maximum_voting_duration, error = self.get_voting_duration(
+            self.funding_category.value
+        )
         if error != typ.Error(""):
             return False, error
 
         return voting_duration <= maximum_voting_duration, typ.Error("")
+
+    @subroutine
+    def review_check_authorization(self) -> None:
+        assert self.is_reviewer(), err.UNAUTHORIZED
+        assert self.status.value == enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
+    def fund_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+        if self.status.value != enm.STATUS_REVIEWED:
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+
+        return typ.Error("")
+
+    @subroutine
+    def decommission_check_authorization(self) -> None:
+        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert (
+            # TODO: Support STATUS_DRAFT here when we add stale proposal management
+            self.status.value == enm.STATUS_FUNDED
+            or self.status.value == enm.STATUS_BLOCKED
+            or self.status.value == enm.STATUS_REJECTED
+        ), err.WRONG_PROPOSAL_STATUS
+
+        cooldown_duration, error = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
+        )
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        assert (
+            self.cool_down_start_ts.value != 0
+            and Global.latest_timestamp
+            >= self.cool_down_start_ts.value + cooldown_duration
+        ), err.TOO_EARLY
+
+    @subroutine
+    def delete_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+        if self.status.value != enm.STATUS_DECOMMISSIONED:
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+
+        return typ.Error("")
 
     @subroutine
     def vote_check_authorization(self) -> typ.Error:
@@ -200,11 +248,11 @@ class Proposal(
 
     @subroutine
     def get_discussion_duration(self, category: UInt64) -> UInt64:
-        if category == enm.CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_SMALL:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
             )
-        elif category == enm.CATEGORY_MEDIUM:
+        elif category == enm.FUNDING_CATEGORY_MEDIUM:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
             )
@@ -217,11 +265,11 @@ class Proposal(
 
     @subroutine
     def get_voting_duration(self, category: UInt64) -> tuple[UInt64, typ.Error]:
-        if category == enm.CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_SMALL:
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
             )
-        elif category == enm.CATEGORY_MEDIUM:
+        elif category == enm.FUNDING_CATEGORY_MEDIUM:
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM)
             )
@@ -232,11 +280,11 @@ class Proposal(
 
     @subroutine
     def get_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_SMALL:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
             )
-        elif category == enm.CATEGORY_MEDIUM:
+        elif category == enm.FUNDING_CATEGORY_MEDIUM:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_MEDIUM)
             )
@@ -249,11 +297,11 @@ class Proposal(
 
     @subroutine
     def get_weighted_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_SMALL:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
             )
-        elif category == enm.CATEGORY_MEDIUM:
+        elif category == enm.FUNDING_CATEGORY_MEDIUM:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
             )
@@ -295,7 +343,9 @@ class Proposal(
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
 
         discussion_duration = Global.latest_timestamp - self.submission_ts.value
-        minimum_discussion_duration = self.get_discussion_duration(self.category.value)
+        minimum_discussion_duration = self.get_discussion_duration(
+            self.funding_category.value
+        )
 
         assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
 
@@ -395,11 +445,11 @@ class Proposal(
         assert error == typ.Error(""), err.MISSING_CONFIG
 
         if requested_amount <= max_requested_amount_small:
-            self.category.value = UInt64(enm.CATEGORY_SMALL)
+            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_SMALL)
         elif requested_amount <= max_requested_amount_medium:
-            self.category.value = UInt64(enm.CATEGORY_MEDIUM)
+            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_MEDIUM)
         else:
-            self.category.value = UInt64(enm.CATEGORY_LARGE)
+            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_LARGE)
 
     @subroutine
     def get_uint_from_registry_config(
@@ -430,6 +480,12 @@ class Proposal(
         return Txn.sender == self.proposer.value
 
     @subroutine
+    def is_reviewer(self) -> bool:
+        return Txn.sender == Account(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_REVIEWER))
+        )
+
+    @subroutine
     def is_committee_publisher(self) -> bool:
         return Txn.sender == Account(
             self.get_bytes_from_registry_config(
@@ -441,9 +497,21 @@ class Proposal(
     def is_registry_call(self) -> bool:
         return Global.caller_application_id == self.registry_app_id.value
 
+    @subroutine
+    def pay(self, receiver: Account, amount: UInt64) -> None:
+        itxn.Payment(
+            receiver=receiver,
+            amount=amount,
+            fee=UInt64(0),  # enforces the sender to pay the fee
+        ).submit()
+
+    @subroutine
+    def transfer_locked_amount(self, receiver: Account) -> None:
+        self.pay(receiver, self.locked_amount.value)
+
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
-        """Create a new proposal.
+        """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Args:
             proposer (arc4.Address): Address of the proposer
@@ -463,6 +531,7 @@ class Proposal(
         cid: typ.Cid,
         funding_type: arc4.UInt64,
         requested_amount: arc4.UInt64,
+        focus: arc4.UInt8,
     ) -> None:
         """Submit the first draft of the proposal.
 
@@ -472,6 +541,7 @@ class Proposal(
             cid (typ.Cid): IPFS V1 CID
             funding_type (UInt64): Funding type (Proactive / Retroactive)
             requested_amount (UInt64): Requested amount in microAlgos
+            focus (UInt8): Proposal focus area
 
         Raises:
             err.MISSING_CONFIG: If one of the required configuration values is missing
@@ -499,6 +569,7 @@ class Proposal(
         self.set_category(requested_amount.native)
         self.funding_type.value = funding_type.native
         self.requested_amount.value = requested_amount.native
+        self.focus.value = focus
         self.locked_amount.value = self.get_expected_locked_amount(
             requested_amount.native
         )
@@ -538,16 +609,15 @@ class Proposal(
         """
         self.drop_check_authorization()
 
-        itxn.Payment(
+        self.transfer_locked_amount(
             receiver=self.proposer.value,
-            amount=self.locked_amount.value,
-            fee=UInt64(0),  # enforces the proposer to pay the fee
-        ).submit()
+        )
 
         #  Clear the proposal data TODO: check if this can be in a struct and clear the struct
         self.title.value = String()
         self.cid.value = typ.Cid.from_bytes(b"")
-        self.category.value = UInt64(enm.CATEGORY_NULL)
+        self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
+        self.focus.value = arc4.UInt8(0)
         self.funding_type.value = UInt64(enm.FUNDING_NULL)
         self.requested_amount.value = UInt64(0)
         self.locked_amount.value = UInt64(0)
@@ -585,15 +655,14 @@ class Proposal(
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
-        itxn.Payment(
+        self.pay(
             receiver=Account(
                 self.get_bytes_from_registry_config(
                     Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
                 )
             ),
             amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
-            fee=UInt64(0),  # enforces the proposer to pay the fee
-        ).submit()
+        )
 
     @arc4.abimethod()
     def assign_voter(self, voter: arc4.Address, voting_power: arc4.UInt64) -> None:
@@ -635,7 +704,7 @@ class Proposal(
     def vote(
         self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
     ) -> typ.Error:
-        """Vote on the proposal.
+        """Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Args:
             voter (arc4.Address): Voter address
@@ -692,14 +761,14 @@ class Proposal(
 
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
         # Null votes affect this quorum.
-        quorum_bps = self.get_quorum(self.category.value)
+        quorum_bps = self.get_quorum(self.funding_category.value)
         minimum_voters_required = self.relative_to_absolute_amount(
             self.committee_members.value, quorum_bps
         )
 
         # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
         # Null votes affect this quorum.
-        weighted_quorum_bps = self.get_weighted_quorum(self.category.value)
+        weighted_quorum_bps = self.get_weighted_quorum(self.funding_category.value)
         total_votes = self.approvals.value + self.rejections.value + self.nulls.value
         minimum_votes_required = self.relative_to_absolute_amount(
             self.committee_votes.value, weighted_quorum_bps
@@ -715,9 +784,139 @@ class Proposal(
             self.status.value = UInt64(enm.STATUS_APPROVED)
         else:
             self.status.value = UInt64(enm.STATUS_REJECTED)
-            itxn.Payment(
+            self.transfer_locked_amount(
                 receiver=self.proposer.value,
-                amount=self.locked_amount.value,
-                fee=UInt64(0),  # enforces the sender to pay the fee
-            ).submit()
+            )
             self.locked_amount.value = UInt64(0)
+            self.cool_down_start_ts.value = Global.latest_timestamp
+
+    @arc4.abimethod()
+    def review(self, block: bool) -> None:  # noqa: FBT001
+        """Review the proposal.
+
+        Args:
+            block (bool): Whether to block the proposal or not
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xgov reviewer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+
+        """
+        self.review_check_authorization()
+
+        if block:
+            self.status.value = UInt64(enm.STATUS_BLOCKED)
+
+            # slashing: send locked amount to the registry treasury
+            reg_app = Application(self.registry_app_id.value)
+            self.transfer_locked_amount(
+                receiver=reg_app.address,
+            )
+
+            self.locked_amount.value = UInt64(0)
+            self.cool_down_start_ts.value = Global.latest_timestamp
+        else:
+            self.status.value = UInt64(enm.STATUS_REVIEWED)
+
+    @arc4.abimethod()
+    def fund(self) -> typ.Error:
+        """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
+
+        """
+        error = self.fund_check_authorization()
+        if error != typ.Error(""):
+            return error
+
+        self.status.value = UInt64(enm.STATUS_FUNDED)
+
+        # refund the locked amount to the proposer
+        self.transfer_locked_amount(
+            receiver=self.proposer.value,
+        )
+
+        self.locked_amount.value = UInt64(0)
+        self.cool_down_start_ts.value = Global.latest_timestamp
+
+        return typ.Error("")
+
+    @arc4.abimethod()
+    def decommission(self, voters: arc4.DynamicArray[arc4.Address]) -> None:
+        """Decommission the proposal.
+
+        Args:
+            voters: List of voters to be removed
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FUNDED, STATUS_BLOCKED or STATUS_REJECTED
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.TOO_EARLY: If the proposal is still in the cool down period
+
+        """
+        self.decommission_check_authorization()
+
+        # remove voters
+        for voter in voters:
+            if voter.native in self.voters:
+                del self.voters[voter.native]
+
+        # if all voters are removed, refund the treasury and decommission the proposal
+        if Global.current_application_address.total_boxes == UInt64(0):
+            reg_app = Application(self.registry_app_id.value)
+            self.pay(
+                receiver=reg_app.address,
+                amount=Global.current_application_address.balance,
+            )
+            self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+
+    @arc4.abimethod(allow_actions=("DeleteApplication",))
+    def delete(self) -> typ.Error:
+        """Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DECOMMISSIONED
+
+        """
+        error = self.delete_check_authorization()
+        if error != typ.Error(""):
+            return error
+
+        return typ.Error("")
+
+    @arc4.abimethod(readonly=True)
+    def get_state(self) -> typ.ProposalTypedGlobalState:
+        """Get the proposal state.
+
+        Returns:
+            typ.ProposalTypedGlobalState: The proposal state
+
+        """
+        return typ.ProposalTypedGlobalState(
+            proposer=arc4.Address(self.proposer.value),
+            registry_app_id=arc4.UInt64(self.registry_app_id.value),
+            title=arc4.String(self.title.value),
+            cid=self.cid.value.copy(),
+            submission_ts=arc4.UInt64(self.submission_ts.value),
+            finalization_ts=arc4.UInt64(self.finalization_ts.value),
+            vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
+            status=arc4.UInt64(self.status.value),
+            funding_category=arc4.UInt64(self.funding_category.value),
+            focus=self.focus.value,
+            funding_type=arc4.UInt64(self.funding_type.value),
+            requested_amount=arc4.UInt64(self.requested_amount.value),
+            locked_amount=arc4.UInt64(self.locked_amount.value),
+            committee_id=self.committee_id.value.copy(),
+            committee_members=arc4.UInt64(self.committee_members.value),
+            committee_votes=arc4.UInt64(self.committee_votes.value),
+            voted_members=arc4.UInt64(self.voted_members.value),
+            approvals=arc4.UInt64(self.approvals.value),
+            rejections=arc4.UInt64(self.rejections.value),
+            nulls=arc4.UInt64(self.nulls.value),
+            cool_down_start_ts=arc4.UInt64(self.cool_down_start_ts.value),
+        )
