@@ -165,6 +165,7 @@ class Proposal(
     def decommission_check_authorization(self) -> None:
         assert self.is_committee_publisher(), err.UNAUTHORIZED
         assert (
+            # TODO: Support STATUS_DRAFT here when we add stale proposal management
             self.status.value == enm.STATUS_FUNDED
             or self.status.value == enm.STATUS_BLOCKED
             or self.status.value == enm.STATUS_REJECTED
