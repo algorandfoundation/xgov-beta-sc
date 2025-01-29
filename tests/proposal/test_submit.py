@@ -11,8 +11,8 @@ from smart_contracts.proposal.constants import (
     TITLE_MAX_BYTES,
 )
 from smart_contracts.proposal.enums import (
-    CATEGORY_LARGE,
-    CATEGORY_MEDIUM,
+    FUNDING_CATEGORY_LARGE,
+    FUNDING_CATEGORY_MEDIUM,
     FUNDING_NULL,
 )
 from smart_contracts.xgov_registry_mock.config import (
@@ -32,6 +32,7 @@ from tests.proposal.common import (
     logic_error_type,
     submit_proposal,
 )
+from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for submit on other statuses
 
@@ -69,7 +70,7 @@ def test_submit_not_proposer(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -100,7 +101,9 @@ def test_submit_twice(
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         submit_proposal(
             proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
         )
@@ -126,7 +129,7 @@ def test_submit_wrong_title_1(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -154,7 +157,7 @@ def test_submit_wrong_title_2(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -182,7 +185,7 @@ def test_submit_wrong_funding_type_1(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -210,7 +213,7 @@ def test_submit_wrong_funding_type_2(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_FUNDING_TYPE):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -240,7 +243,9 @@ def test_submit_wrong_requested_amount_1(
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - 1
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(logic_error_type, match=err.WRONG_MIN_REQUESTED_AMOUNT):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_MIN_REQUESTED_AMOUNT]
+    ):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -271,7 +276,9 @@ def test_submit_wrong_requested_amount_2(
 ) -> None:
     requested_amount = MAX_REQUESTED_AMOUNT_LARGE + 1
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(logic_error_type, match=err.WRONG_MAX_REQUESTED_AMOUNT):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_MAX_REQUESTED_AMOUNT]
+    ):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -301,7 +308,7 @@ def test_submit_wrong_payment_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT - 1
-    with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -330,7 +337,7 @@ def test_submit_wrong_payment_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT + 1
-    with pytest.raises(logic_error_type, match=err.WRONG_LOCKED_AMOUNT):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -359,7 +366,7 @@ def test_submit_wrong_payment_3(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_SENDER):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_SENDER]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -387,7 +394,7 @@ def test_submit_wrong_payment_4(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_RECEIVER):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_RECEIVER]):
         submit_proposal(
             proposal_client,
             algorand_client,
@@ -409,7 +416,7 @@ def test_submit_wrong_payment_4(
     )
 
 
-def test_submit_category_small_1(
+def test_submit_funding_category_small_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -435,7 +442,7 @@ def test_submit_category_small_1(
     )
 
 
-def test_submit_category_small_2(
+def test_submit_funding_category_small_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -470,7 +477,7 @@ def test_submit_category_small_2(
     )
 
 
-def test_submit_category_small_3(
+def test_submit_funding_category_small_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -505,7 +512,7 @@ def test_submit_category_small_3(
     )
 
 
-def test_submit_category_small_4(
+def test_submit_funding_category_small_4(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -540,7 +547,7 @@ def test_submit_category_small_4(
     )
 
 
-def test_submit_category_medium_1(
+def test_submit_funding_category_medium_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -566,7 +573,7 @@ def test_submit_category_medium_1(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_MEDIUM,
+        funding_category=FUNDING_CATEGORY_MEDIUM,
     )
 
     assert_account_balance(
@@ -576,7 +583,7 @@ def test_submit_category_medium_1(
     )
 
 
-def test_submit_category_medium_2(
+def test_submit_funding_category_medium_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -602,7 +609,7 @@ def test_submit_category_medium_2(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_MEDIUM,
+        funding_category=FUNDING_CATEGORY_MEDIUM,
     )
 
     assert_account_balance(
@@ -612,7 +619,7 @@ def test_submit_category_medium_2(
     )
 
 
-def test_submit_category_medium_3(
+def test_submit_funding_category_medium_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -638,7 +645,7 @@ def test_submit_category_medium_3(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_MEDIUM,
+        funding_category=FUNDING_CATEGORY_MEDIUM,
     )
 
     assert_account_balance(
@@ -648,7 +655,7 @@ def test_submit_category_medium_3(
     )
 
 
-def test_submit_category_large_1(
+def test_submit_funding_category_large_1(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -674,7 +681,7 @@ def test_submit_category_large_1(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_LARGE,
+        funding_category=FUNDING_CATEGORY_LARGE,
     )
 
     assert_account_balance(
@@ -684,7 +691,7 @@ def test_submit_category_large_1(
     )
 
 
-def test_submit_category_large_2(
+def test_submit_funding_category_large_2(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -710,7 +717,7 @@ def test_submit_category_large_2(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_LARGE,
+        funding_category=FUNDING_CATEGORY_LARGE,
     )
 
     assert_account_balance(
@@ -720,7 +727,7 @@ def test_submit_category_large_2(
     )
 
 
-def test_submit_category_large_3(
+def test_submit_funding_category_large_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -746,7 +753,7 @@ def test_submit_category_large_3(
         proposer_address=proposer.address,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
-        category=CATEGORY_LARGE,
+        funding_category=FUNDING_CATEGORY_LARGE,
     )
 
     assert_account_balance(

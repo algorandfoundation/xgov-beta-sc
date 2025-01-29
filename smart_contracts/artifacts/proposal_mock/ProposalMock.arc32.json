@@ -52,10 +52,6 @@
                     "type": "uint64",
                     "key": "approvals"
                 },
-                "category": {
-                    "type": "uint64",
-                    "key": "category"
-                },
                 "cid": {
                     "type": "bytes",
                     "key": "cid"
@@ -75,6 +71,10 @@
                 "finalization_ts": {
                     "type": "uint64",
                     "key": "finalization_timestamp"
+                },
+                "funding_category": {
+                    "type": "uint64",
+                    "key": "funding_category"
                 },
                 "funding_type": {
                     "type": "uint64",

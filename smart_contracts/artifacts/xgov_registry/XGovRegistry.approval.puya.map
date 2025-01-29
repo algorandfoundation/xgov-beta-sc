@@ -9051,14 +9051,14 @@
       ]
     },
     "2623": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 18 // 18",
       "defined_out": [
-        "20",
+        "18",
         "tmp%16#0"
       ],
       "stack_out": [
         "tmp%16#0",
-        "20"
+        "18"
       ]
     },
     "2625": {
@@ -9366,7 +9366,7 @@
     "5335": {
       "op": "pushint 1020000 // 1020000",
       "defined_out": [
-        "1020000",
+        "963000",
         "maybe_value%4#0",
         "res.CreatedApplicationID#0",
         "value%0#0"
@@ -9375,7 +9375,7 @@
         "res.CreatedApplicationID#0",
         "value%0#0",
         "maybe_value%4#0",
-        "1020000"
+        "963000"
       ]
     },
     "5339": {

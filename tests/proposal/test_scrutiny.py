@@ -17,7 +17,9 @@ from tests.proposal.common import (
     logic_error_type,
     submit_proposal,
 )
-from tests.utils import time_warp
+
+# TODO add tests for scrutiny on other statuses
+from tests.utils import ERROR_TO_REGEX, time_warp
 
 
 def test_scrutiny_empty_proposal(
@@ -28,7 +30,9 @@ def test_scrutiny_empty_proposal(
     committee_publisher: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -53,7 +57,9 @@ def test_scrutiny_draft_proposal(
         registry_app_id=xgov_registry_mock_client.app_id,
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -93,7 +99,9 @@ def test_scrutiny_final_proposal(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -154,7 +162,7 @@ def test_scrutiny_voting_ongoing_1(
             ),
         )
 
-    with pytest.raises(logic_error_type, match=err.VOTING_ONGOING):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -234,7 +242,7 @@ def test_scrutiny_voting_ongoing_2(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.VOTING_ONGOING):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -315,7 +323,7 @@ def test_scrutiny_voting_ongoing_3(
             ),
         )
 
-    with pytest.raises(logic_error_type, match=err.VOTING_ONGOING):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -401,7 +409,9 @@ def test_scrutiny_twice(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,

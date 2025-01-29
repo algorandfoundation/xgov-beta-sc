@@ -75,10 +75,6 @@ _APP_SPEC_JSON = r"""{
                     "type": "uint64",
                     "key": "approvals"
                 },
-                "category": {
-                    "type": "uint64",
-                    "key": "category"
-                },
                 "cid": {
                     "type": "bytes",
                     "key": "cid"
@@ -98,6 +94,10 @@ _APP_SPEC_JSON = r"""{
                 "finalization_ts": {
                     "type": "uint64",
                     "key": "finalization_timestamp"
+                },
+                "funding_category": {
+                    "type": "uint64",
+                    "key": "funding_category"
                 },
                 "funding_type": {
                     "type": "uint64",
@@ -396,12 +396,12 @@ class ByteReader:
 class GlobalState:
     def __init__(self, data: dict[bytes, bytes | int]):
         self.approvals = typing.cast(int, data.get(b"approvals"))
-        self.category = typing.cast(int, data.get(b"category"))
         self.cid = ByteReader(typing.cast(bytes, data.get(b"cid")))
         self.committee_id = ByteReader(typing.cast(bytes, data.get(b"committee_id")))
         self.committee_members = typing.cast(int, data.get(b"committee_members"))
         self.committee_votes = typing.cast(int, data.get(b"committee_votes"))
         self.finalization_ts = typing.cast(int, data.get(b"finalization_timestamp"))
+        self.funding_category = typing.cast(int, data.get(b"funding_category"))
         self.funding_type = typing.cast(int, data.get(b"funding_type"))
         self.locked_amount = typing.cast(int, data.get(b"locked_amount"))
         self.proposer = ByteReader(typing.cast(bytes, data.get(b"proposer")))

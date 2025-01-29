@@ -129,6 +129,26 @@
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "set_xgov_reviewer(address)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "fund(application)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_cooldown_duration(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "delete_proposal(application)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -137,8 +157,8 @@
     },
     "state": {
         "global": {
-            "num_byte_slices": 2,
-            "num_uints": 21
+            "num_byte_slices": 3,
+            "num_uints": 22
         },
         "local": {
             "num_byte_slices": 0,
@@ -163,6 +183,10 @@
                 "committee_votes": {
                     "type": "uint64",
                     "key": "committee_votes"
+                },
+                "cooldown_duration": {
+                    "type": "uint64",
+                    "key": "cool_down_duration"
                 },
                 "discussion_duration_large": {
                     "type": "uint64",
@@ -239,6 +263,10 @@
                 "weighted_quorum_small": {
                     "type": "uint64",
                     "key": "weighted_quorum_small"
+                },
+                "xgov_reviewer": {
+                    "type": "bytes",
+                    "key": "xgov_reviewer"
                 }
             },
             "reserved": {}
@@ -650,6 +678,64 @@
                     "type": "void"
                 },
                 "desc": "Vote on a proposal"
+            },
+            {
+                "name": "set_xgov_reviewer",
+                "args": [
+                    {
+                        "type": "address",
+                        "name": "xgov_reviewer",
+                        "desc": "The XGov reviewer"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the XGov reviewer"
+            },
+            {
+                "name": "fund",
+                "args": [
+                    {
+                        "type": "application",
+                        "name": "proposal_app",
+                        "desc": "The proposal app"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Fund a proposal"
+            },
+            {
+                "name": "set_cooldown_duration",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "cooldown_duration",
+                        "desc": "The cooldown duration"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the cooldown duration"
+            },
+            {
+                "name": "delete_proposal",
+                "args": [
+                    {
+                        "type": "application",
+                        "name": "proposal_app"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                }
             }
         ],
         "networks": {}

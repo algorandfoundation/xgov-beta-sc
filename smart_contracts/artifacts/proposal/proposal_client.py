@@ -62,6 +62,123 @@ _APP_SPEC_JSON = r"""{
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "review(bool)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "fund()string": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "decommission(address[])void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "delete()string": {
+            "call_config": {
+                "delete_application": "CALL"
+            }
+        },
+        "get_state()(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)": {
+            "read_only": true,
+            "structs": {
+                "output": {
+                    "name": "ProposalTypedGlobalState",
+                    "elements": [
+                        [
+                            "proposer",
+                            "address"
+                        ],
+                        [
+                            "registry_app_id",
+                            "uint64"
+                        ],
+                        [
+                            "title",
+                            "string"
+                        ],
+                        [
+                            "cid",
+                            "byte[59]"
+                        ],
+                        [
+                            "submission_ts",
+                            "uint64"
+                        ],
+                        [
+                            "finalization_ts",
+                            "uint64"
+                        ],
+                        [
+                            "vote_open_ts",
+                            "uint64"
+                        ],
+                        [
+                            "status",
+                            "uint64"
+                        ],
+                        [
+                            "funding_category",
+                            "uint64"
+                        ],
+                        [
+                            "focus",
+                            "uint8"
+                        ],
+                        [
+                            "funding_type",
+                            "uint64"
+                        ],
+                        [
+                            "requested_amount",
+                            "uint64"
+                        ],
+                        [
+                            "locked_amount",
+                            "uint64"
+                        ],
+                        [
+                            "committee_id",
+                            "byte[32]"
+                        ],
+                        [
+                            "committee_members",
+                            "uint64"
+                        ],
+                        [
+                            "committee_votes",
+                            "uint64"
+                        ],
+                        [
+                            "voted_members",
+                            "uint64"
+                        ],
+                        [
+                            "approvals",
+                            "uint64"
+                        ],
+                        [
+                            "rejections",
+                            "uint64"
+                        ],
+                        [
+                            "nulls",
+                            "uint64"
+                        ],
+                        [
+                            "cool_down_start_ts",
+                            "uint64"
+                        ]
+                    ]
+                }
+            },
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -71,7 +188,7 @@ _APP_SPEC_JSON = r"""{
     "state": {
         "global": {
             "num_byte_slices": 5,
-            "num_uints": 20
+            "num_uints": 18
         },
         "local": {
             "num_byte_slices": 0,
@@ -89,10 +206,6 @@ _APP_SPEC_JSON = r"""{
                     "type": "uint64",
                     "key": "assigned_votes"
                 },
-                "category": {
-                    "type": "uint64",
-                    "key": "category"
-                },
                 "cid": {
                     "type": "bytes",
                     "key": "cid"
@@ -109,9 +222,21 @@ _APP_SPEC_JSON = r"""{
                     "type": "uint64",
                     "key": "committee_votes"
                 },
+                "cool_down_start_ts": {
+                    "type": "uint64",
+                    "key": "cool_down_start_ts"
+                },
                 "finalization_ts": {
                     "type": "uint64",
                     "key": "finalization_timestamp"
+                },
+                "focus": {
+                    "type": "bytes",
+                    "key": "focus"
+                },
+                "funding_category": {
+                    "type": "uint64",
+                    "key": "funding_category"
                 },
                 "funding_type": {
                     "type": "uint64",
@@ -120,10 +245,6 @@ _APP_SPEC_JSON = r"""{
                 "locked_amount": {
                     "type": "uint64",
                     "key": "locked_amount"
-                },
-                "milestone_approved": {
-                    "type": "uint64",
-                    "key": "milestone_approved"
                 },
                 "nulls": {
                     "type": "uint64",
@@ -192,7 +313,7 @@ _APP_SPEC_JSON = r"""{
                 "returns": {
                     "type": "void"
                 },
-                "desc": "Create a new proposal."
+                "desc": "Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
             },
             {
                 "name": "submit",
@@ -221,6 +342,11 @@ _APP_SPEC_JSON = r"""{
                         "type": "uint64",
                         "name": "requested_amount",
                         "desc": "Requested amount in microAlgos"
+                    },
+                    {
+                        "type": "uint8",
+                        "name": "focus",
+                        "desc": "Proposal focus area"
                     }
                 ],
                 "returns": {
@@ -304,7 +430,7 @@ _APP_SPEC_JSON = r"""{
                 "returns": {
                     "type": "string"
                 },
-                "desc": "Vote on the proposal."
+                "desc": "Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
             },
             {
                 "name": "scrutiny",
@@ -313,6 +439,59 @@ _APP_SPEC_JSON = r"""{
                     "type": "void"
                 },
                 "desc": "Scrutinize the proposal."
+            },
+            {
+                "name": "review",
+                "args": [
+                    {
+                        "type": "bool",
+                        "name": "block",
+                        "desc": "Whether to block the proposal or not"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Review the proposal."
+            },
+            {
+                "name": "fund",
+                "args": [],
+                "returns": {
+                    "type": "string"
+                },
+                "desc": "Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
+            },
+            {
+                "name": "decommission",
+                "args": [
+                    {
+                        "type": "address[]",
+                        "name": "voters",
+                        "desc": "List of voters to be removed"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Decommission the proposal."
+            },
+            {
+                "name": "delete",
+                "args": [],
+                "returns": {
+                    "type": "string"
+                },
+                "desc": "Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
+            },
+            {
+                "name": "get_state",
+                "args": [],
+                "returns": {
+                    "type": "(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)",
+                    "desc": "The proposal state"
+                },
+                "desc": "Get the proposal state."
             }
         ],
         "networks": {}
@@ -340,6 +519,11 @@ class _TArgsHolder(typing.Generic[_TArgs]):
 
 @dataclasses.dataclass(kw_only=True)
 class DeployCreate(algokit_utils.DeployCreateCallArgs, _TArgsHolder[_TArgs], typing.Generic[_TArgs]):
+    pass
+
+
+@dataclasses.dataclass(kw_only=True)
+class Deploy(algokit_utils.DeployCallArgs, _TArgsHolder[_TArgs], typing.Generic[_TArgs]):
     pass
 
 
@@ -411,6 +595,8 @@ class SubmitArgs(_ArgsBase[None]):
     """Funding type (Proactive / Retroactive)"""
     requested_amount: int
     """Requested amount in microAlgos"""
+    focus: int
+    """Proposal focus area"""
 
     @staticmethod
     def method() -> str:
@@ -465,7 +651,7 @@ class AssignVoterArgs(_ArgsBase[None]):
 
 @dataclasses.dataclass(kw_only=True)
 class VoteArgs(_ArgsBase[str]):
-    """Vote on the proposal."""
+    """Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."""
 
     voter: str
     """Voter address"""
@@ -489,8 +675,75 @@ class ScrutinyArgs(_ArgsBase[None]):
 
 
 @dataclasses.dataclass(kw_only=True)
+class ReviewArgs(_ArgsBase[None]):
+    """Review the proposal."""
+
+    block: bool
+    """Whether to block the proposal or not"""
+
+    @staticmethod
+    def method() -> str:
+        return "review(bool)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class FundArgs(_ArgsBase[str]):
+    """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."""
+
+    @staticmethod
+    def method() -> str:
+        return "fund()string"
+
+
+@dataclasses.dataclass(kw_only=True)
+class DecommissionArgs(_ArgsBase[None]):
+    """Decommission the proposal."""
+
+    voters: list[str]
+    """List of voters to be removed"""
+
+    @staticmethod
+    def method() -> str:
+        return "decommission(address[])void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class ProposalTypedGlobalState:
+    proposer: str
+    registry_app_id: int
+    title: str
+    cid: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
+    submission_ts: int
+    finalization_ts: int
+    vote_open_ts: int
+    status: int
+    funding_category: int
+    focus: int
+    funding_type: int
+    requested_amount: int
+    locked_amount: int
+    committee_id: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int]
+    committee_members: int
+    committee_votes: int
+    voted_members: int
+    approvals: int
+    rejections: int
+    nulls: int
+    cool_down_start_ts: int
+
+
+@dataclasses.dataclass(kw_only=True)
+class GetStateArgs(_ArgsBase[ProposalTypedGlobalState]):
+    """Get the proposal state."""
+
+    @staticmethod
+    def method() -> str:
+        return "get_state()(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)"
+
+
+@dataclasses.dataclass(kw_only=True)
 class CreateArgs(_ArgsBase[None]):
-    """Create a new proposal."""
+    """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."""
 
     proposer: str
     """Address of the proposer"""
@@ -498,6 +751,15 @@ class CreateArgs(_ArgsBase[None]):
     @staticmethod
     def method() -> str:
         return "create(address)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class DeleteArgs(_ArgsBase[str]):
+    """Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."""
+
+    @staticmethod
+    def method() -> str:
+        return "delete()string"
 
 
 class ByteReader:
@@ -525,15 +787,16 @@ class GlobalState:
     def __init__(self, data: dict[bytes, bytes | int]):
         self.approvals = typing.cast(int, data.get(b"approvals"))
         self.assigned_votes = typing.cast(int, data.get(b"assigned_votes"))
-        self.category = typing.cast(int, data.get(b"category"))
         self.cid = ByteReader(typing.cast(bytes, data.get(b"cid")))
         self.committee_id = ByteReader(typing.cast(bytes, data.get(b"committee_id")))
         self.committee_members = typing.cast(int, data.get(b"committee_members"))
         self.committee_votes = typing.cast(int, data.get(b"committee_votes"))
+        self.cool_down_start_ts = typing.cast(int, data.get(b"cool_down_start_ts"))
         self.finalization_ts = typing.cast(int, data.get(b"finalization_timestamp"))
+        self.focus = ByteReader(typing.cast(bytes, data.get(b"focus")))
+        self.funding_category = typing.cast(int, data.get(b"funding_category"))
         self.funding_type = typing.cast(int, data.get(b"funding_type"))
         self.locked_amount = typing.cast(int, data.get(b"locked_amount"))
-        self.milestone_approved = typing.cast(int, data.get(b"milestone_approved"))
         self.nulls = typing.cast(int, data.get(b"nulls"))
         self.proposer = ByteReader(typing.cast(bytes, data.get(b"proposer")))
         self.registry_app_id = typing.cast(int, data.get(b"registry_app_id"))
@@ -586,6 +849,7 @@ class Composer:
         cid: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int],
         funding_type: int,
         requested_amount: int,
+        focus: int,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> "Composer":
         """Submit the first draft of the proposal.
@@ -597,6 +861,7 @@ class Composer:
         :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] cid: IPFS V1 CID
         :param int funding_type: Funding type (Proactive / Retroactive)
         :param int requested_amount: Requested amount in microAlgos
+        :param int focus: Proposal focus area
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns Composer: This Composer instance"""
 
@@ -606,6 +871,7 @@ class Composer:
             cid=cid,
             funding_type=funding_type,
             requested_amount=requested_amount,
+            focus=focus,
         )
         self.app_client.compose_call(
             self.atc,
@@ -721,7 +987,7 @@ class Composer:
         rejections: int,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> "Composer":
-        """Vote on the proposal.
+        """Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
         
         Adds a call to `vote(address,uint64,uint64)string` ABI method
         
@@ -765,6 +1031,98 @@ class Composer:
         )
         return self
 
+    def review(
+        self,
+        *,
+        block: bool,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Review the proposal.
+        
+        Adds a call to `review(bool)void` ABI method
+        
+        :param bool block: Whether to block the proposal or not
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = ReviewArgs(
+            block=block,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def fund(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+        
+        Adds a call to `fund()string` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = FundArgs()
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def decommission(
+        self,
+        *,
+        voters: list[str],
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Decommission the proposal.
+        
+        Adds a call to `decommission(address[])void` ABI method
+        
+        :param list[str] voters: List of voters to be removed
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = DecommissionArgs(
+            voters=voters,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def get_state(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Get the proposal state.
+        
+        Adds a call to `get_state()(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = GetStateArgs()
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
     def create_create(
         self,
         *,
@@ -772,7 +1130,7 @@ class Composer:
         on_complete: typing.Literal["no_op"] = "no_op",
         transaction_parameters: algokit_utils.CreateTransactionParameters | None = None,
     ) -> "Composer":
-        """Create a new proposal.
+        """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
         
         Adds a call to `create(address)void` ABI method
         
@@ -788,6 +1146,27 @@ class Composer:
             self.atc,
             call_abi_method=args.method(),
             transaction_parameters=_convert_create_transaction_parameters(transaction_parameters, on_complete),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def delete_delete(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+        
+        Adds a call to `delete()string` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = DeleteArgs()
+        self.app_client.compose_delete(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_transaction_parameters(transaction_parameters),
             **_as_dict(args, convert_all=True),
         )
         return self
@@ -946,6 +1325,7 @@ class ProposalClient:
         cid: bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int],
         funding_type: int,
         requested_amount: int,
+        focus: int,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[None]:
         """Submit the first draft of the proposal.
@@ -957,6 +1337,7 @@ class ProposalClient:
         :param bytes | bytearray | tuple[int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int] cid: IPFS V1 CID
         :param int funding_type: Funding type (Proactive / Retroactive)
         :param int requested_amount: Requested amount in microAlgos
+        :param int focus: Proposal focus area
         :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
         :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
 
@@ -966,6 +1347,7 @@ class ProposalClient:
             cid=cid,
             funding_type=funding_type,
             requested_amount=requested_amount,
+            focus=focus,
         )
         result = self.app_client.call(
             call_abi_method=args.method(),
@@ -1076,7 +1458,7 @@ class ProposalClient:
         rejections: int,
         transaction_parameters: algokit_utils.TransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[str]:
-        """Vote on the proposal.
+        """Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
         
         Calls `vote(address,uint64,uint64)string` ABI method
         
@@ -1118,6 +1500,97 @@ class ProposalClient:
         )
         return result
 
+    def review(
+        self,
+        *,
+        block: bool,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Review the proposal.
+        
+        Calls `review(bool)void` ABI method
+        
+        :param bool block: Whether to block the proposal or not
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = ReviewArgs(
+            block=block,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def fund(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[str]:
+        """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+        
+        Calls `fund()string` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[str]: The result of the transaction"""
+
+        args = FundArgs()
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def decommission(
+        self,
+        *,
+        voters: list[str],
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Decommission the proposal.
+        
+        Calls `decommission(address[])void` ABI method
+        
+        :param list[str] voters: List of voters to be removed
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = DecommissionArgs(
+            voters=voters,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def get_state(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[ProposalTypedGlobalState]:
+        """Get the proposal state.
+        
+        Calls `get_state()(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[ProposalTypedGlobalState]: The proposal state"""
+
+        args = GetStateArgs()
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        elements = self.app_spec.hints[args.method()].structs["output"]["elements"]
+        result_dict = {element[0]: value for element, value in zip(elements, result.return_value)}
+        result.return_value = ProposalTypedGlobalState(**result_dict)
+        return result
+
     def create_create(
         self,
         *,
@@ -1125,7 +1598,7 @@ class ProposalClient:
         on_complete: typing.Literal["no_op"] = "no_op",
         transaction_parameters: algokit_utils.CreateTransactionParameters | None = None,
     ) -> algokit_utils.ABITransactionResponse[None]:
-        """Create a new proposal.
+        """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
         
         Calls `create(address)void` ABI method
         
@@ -1140,6 +1613,26 @@ class ProposalClient:
         result = self.app_client.create(
             call_abi_method=args.method(),
             transaction_parameters=_convert_create_transaction_parameters(transaction_parameters, on_complete),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def delete_delete(
+        self,
+        *,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[str]:
+        """Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+        
+        Calls `delete()string` ABI method
+        
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[str]: The result of the transaction"""
+
+        args = DeleteArgs()
+        result = self.app_client.delete(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_transaction_parameters(transaction_parameters),
             **_as_dict(args, convert_all=True),
         )
         return result
@@ -1170,7 +1663,7 @@ class ProposalClient:
         template_values: algokit_utils.TemplateValueMapping | None = None,
         create_args: DeployCreate[CreateArgs],
         update_args: algokit_utils.DeployCallArgs | None = None,
-        delete_args: algokit_utils.DeployCallArgs | None = None,
+        delete_args: Deploy[DeleteArgs],
     ) -> algokit_utils.DeployResponse:
         """Deploy an application and update client to reference it.
         
@@ -1204,7 +1697,7 @@ class ProposalClient:
         should *NOT* include the TMPL_ prefix
         :param DeployCreate[CreateArgs] create_args: Arguments used when creating an application
         :param algokit_utils.DeployCallArgs | None update_args: Arguments used when updating an application
-        :param algokit_utils.DeployCallArgs | None delete_args: Arguments used when deleting an application
+        :param Deploy[DeleteArgs] delete_args: Arguments used when deleting an application
         :return DeployResponse: details action taken and relevant transactions
         :raises DeploymentError: If the deployment failed"""
 

@@ -2265,7 +2265,7 @@ open_proposal:
     bytec 6 // 0x70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.proposal_fee exists
-    pushint 1020000 // 1020000
+    pushint 963000 // 963000
     -
     itxn_field Amount
     itxn_field Receiver

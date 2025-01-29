@@ -44,9 +44,9 @@ class ProposalMock(ARC4Contract):
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
         )
-        self.category = GlobalState(
-            UInt64(enm.CATEGORY_NULL),
-            key=prop_cfg.GS_KEY_CATEGORY,
+        self.funding_category = GlobalState(
+            UInt64(enm.FUNDING_CATEGORY_NULL),
+            key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
         )
         self.funding_type = GlobalState(
             UInt64(enm.FUNDING_NULL),

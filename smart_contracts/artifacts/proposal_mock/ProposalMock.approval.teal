@@ -102,15 +102,15 @@ __init__:
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:49
-    // key=prop_cfg.GS_KEY_CATEGORY,
-    pushbytes 0x63617465676f7279
+    // key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
+    pushbytes 0x66756e64696e675f63617465676f7279
     // smart_contracts/proposal_mock/contract.py:48
-    // UInt64(enm.CATEGORY_NULL),
+    // UInt64(enm.FUNDING_CATEGORY_NULL),
     intc_0 // 0
     // smart_contracts/proposal_mock/contract.py:47-50
-    // self.category = GlobalState(
-    //     UInt64(enm.CATEGORY_NULL),
-    //     key=prop_cfg.GS_KEY_CATEGORY,
+    // self.funding_category = GlobalState(
+    //     UInt64(enm.FUNDING_CATEGORY_NULL),
+    //     key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:53

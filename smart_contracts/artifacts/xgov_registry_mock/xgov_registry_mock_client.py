@@ -152,6 +152,26 @@ _APP_SPEC_JSON = r"""{
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "set_xgov_reviewer(address)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "fund(application)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "set_cooldown_duration(uint64)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "delete_proposal(application)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
         }
     },
     "source": {
@@ -160,8 +180,8 @@ _APP_SPEC_JSON = r"""{
     },
     "state": {
         "global": {
-            "num_byte_slices": 2,
-            "num_uints": 21
+            "num_byte_slices": 3,
+            "num_uints": 22
         },
         "local": {
             "num_byte_slices": 0,
@@ -186,6 +206,10 @@ _APP_SPEC_JSON = r"""{
                 "committee_votes": {
                     "type": "uint64",
                     "key": "committee_votes"
+                },
+                "cooldown_duration": {
+                    "type": "uint64",
+                    "key": "cool_down_duration"
                 },
                 "discussion_duration_large": {
                     "type": "uint64",
@@ -262,6 +286,10 @@ _APP_SPEC_JSON = r"""{
                 "weighted_quorum_small": {
                     "type": "uint64",
                     "key": "weighted_quorum_small"
+                },
+                "xgov_reviewer": {
+                    "type": "bytes",
+                    "key": "xgov_reviewer"
                 }
             },
             "reserved": {}
@@ -647,6 +675,60 @@ _APP_SPEC_JSON = r"""{
                     "type": "void"
                 },
                 "desc": "Vote on a proposal"
+            },
+            {
+                "name": "set_xgov_reviewer",
+                "args": [
+                    {
+                        "type": "address",
+                        "name": "xgov_reviewer",
+                        "desc": "The XGov reviewer"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the XGov reviewer"
+            },
+            {
+                "name": "fund",
+                "args": [
+                    {
+                        "type": "application",
+                        "name": "proposal_app",
+                        "desc": "The proposal app"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Fund a proposal"
+            },
+            {
+                "name": "set_cooldown_duration",
+                "args": [
+                    {
+                        "type": "uint64",
+                        "name": "cooldown_duration",
+                        "desc": "The cooldown duration"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Set the cooldown duration"
+            },
+            {
+                "name": "delete_proposal",
+                "args": [
+                    {
+                        "type": "application",
+                        "name": "proposal_app"
+                    }
+                ],
+                "returns": {
+                    "type": "void"
+                }
             }
         ],
         "networks": {}
@@ -1043,6 +1125,51 @@ class VoteArgs(_ArgsBase[None]):
         return "vote(application,address,uint64,uint64)void"
 
 
+@dataclasses.dataclass(kw_only=True)
+class SetXgovReviewerArgs(_ArgsBase[None]):
+    """Set the XGov reviewer"""
+
+    xgov_reviewer: str
+    """The XGov reviewer"""
+
+    @staticmethod
+    def method() -> str:
+        return "set_xgov_reviewer(address)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class FundArgs(_ArgsBase[None]):
+    """Fund a proposal"""
+
+    proposal_app: int
+    """The proposal app"""
+
+    @staticmethod
+    def method() -> str:
+        return "fund(application)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class SetCooldownDurationArgs(_ArgsBase[None]):
+    """Set the cooldown duration"""
+
+    cooldown_duration: int
+    """The cooldown duration"""
+
+    @staticmethod
+    def method() -> str:
+        return "set_cooldown_duration(uint64)void"
+
+
+@dataclasses.dataclass(kw_only=True)
+class DeleteProposalArgs(_ArgsBase[None]):
+    proposal_app: int
+
+    @staticmethod
+    def method() -> str:
+        return "delete_proposal(application)void"
+
+
 class ByteReader:
     def __init__(self, data: bytes):
         self._data = data
@@ -1070,6 +1197,7 @@ class GlobalState:
         self.committee_members = typing.cast(int, data.get(b"committee_members"))
         self.committee_publisher = ByteReader(typing.cast(bytes, data.get(b"committee_publisher")))
         self.committee_votes = typing.cast(int, data.get(b"committee_votes"))
+        self.cooldown_duration = typing.cast(int, data.get(b"cool_down_duration"))
         self.discussion_duration_large = typing.cast(int, data.get(b"discussion_duration_large"))
         self.discussion_duration_medium = typing.cast(int, data.get(b"discussion_duration_medium"))
         self.discussion_duration_small = typing.cast(int, data.get(b"discussion_duration_small"))
@@ -1089,6 +1217,7 @@ class GlobalState:
         self.weighted_quorum_large = typing.cast(int, data.get(b"weighted_quorum_large"))
         self.weighted_quorum_medium = typing.cast(int, data.get(b"weighted_quorum_medium"))
         self.weighted_quorum_small = typing.cast(int, data.get(b"weighted_quorum_small"))
+        self.xgov_reviewer = ByteReader(typing.cast(bytes, data.get(b"xgov_reviewer")))
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -1768,6 +1897,104 @@ class Composer:
             voter=voter,
             approvals=approvals,
             rejections=rejections,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def set_xgov_reviewer(
+        self,
+        *,
+        xgov_reviewer: str,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Set the XGov reviewer
+        
+        Adds a call to `set_xgov_reviewer(address)void` ABI method
+        
+        :param str xgov_reviewer: The XGov reviewer
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = SetXgovReviewerArgs(
+            xgov_reviewer=xgov_reviewer,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def fund(
+        self,
+        *,
+        proposal_app: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Fund a proposal
+        
+        Adds a call to `fund(application)void` ABI method
+        
+        :param int proposal_app: The proposal app
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = FundArgs(
+            proposal_app=proposal_app,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def set_cooldown_duration(
+        self,
+        *,
+        cooldown_duration: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Set the cooldown duration
+        
+        Adds a call to `set_cooldown_duration(uint64)void` ABI method
+        
+        :param int cooldown_duration: The cooldown duration
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = SetCooldownDurationArgs(
+            cooldown_duration=cooldown_duration,
+        )
+        self.app_client.compose_call(
+            self.atc,
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return self
+
+    def delete_proposal(
+        self,
+        *,
+        proposal_app: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> "Composer":
+        """Adds a call to `delete_proposal(application)void` ABI method
+        
+        :param int proposal_app: The `proposal_app` ABI parameter
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns Composer: This Composer instance"""
+
+        args = DeleteProposalArgs(
+            proposal_app=proposal_app,
         )
         self.app_client.compose_call(
             self.atc,
@@ -2563,6 +2790,100 @@ class XgovRegistryMockClient:
             voter=voter,
             approvals=approvals,
             rejections=rejections,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def set_xgov_reviewer(
+        self,
+        *,
+        xgov_reviewer: str,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Set the XGov reviewer
+        
+        Calls `set_xgov_reviewer(address)void` ABI method
+        
+        :param str xgov_reviewer: The XGov reviewer
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = SetXgovReviewerArgs(
+            xgov_reviewer=xgov_reviewer,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def fund(
+        self,
+        *,
+        proposal_app: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Fund a proposal
+        
+        Calls `fund(application)void` ABI method
+        
+        :param int proposal_app: The proposal app
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = FundArgs(
+            proposal_app=proposal_app,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def set_cooldown_duration(
+        self,
+        *,
+        cooldown_duration: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Set the cooldown duration
+        
+        Calls `set_cooldown_duration(uint64)void` ABI method
+        
+        :param int cooldown_duration: The cooldown duration
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = SetCooldownDurationArgs(
+            cooldown_duration=cooldown_duration,
+        )
+        result = self.app_client.call(
+            call_abi_method=args.method(),
+            transaction_parameters=_convert_call_transaction_parameters(transaction_parameters),
+            **_as_dict(args, convert_all=True),
+        )
+        return result
+
+    def delete_proposal(
+        self,
+        *,
+        proposal_app: int,
+        transaction_parameters: algokit_utils.TransactionParameters | None = None,
+    ) -> algokit_utils.ABITransactionResponse[None]:
+        """Calls `delete_proposal(application)void` ABI method
+        
+        :param int proposal_app: The `proposal_app` ABI parameter
+        :param algokit_utils.TransactionParameters transaction_parameters: (optional) Additional transaction parameters
+        :returns algokit_utils.ABITransactionResponse[None]: The result of the transaction"""
+
+        args = DeleteProposalArgs(
+            proposal_app=proposal_app,
         )
         result = self.app_client.call(
             call_abi_method=args.method(),

@@ -20,6 +20,7 @@ from tests.proposal.common import (
     logic_error_type,
     submit_proposal,
 )
+from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for update on other statuses
 
@@ -121,7 +122,7 @@ def test_update_not_proposer(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.update(
             title="Updated Test Proposal",
             cid=b"\x02" * 36,
@@ -154,7 +155,9 @@ def test_update_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.update(
             title="Updated Test Proposal",
             cid=b"\x01" * 36,
@@ -189,7 +192,7 @@ def test_update_wrong_title_1(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         proposal_client.update(
             title="",
             cid=b"\x02" * 36,
@@ -226,7 +229,7 @@ def test_update_wrong_title_2(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         proposal_client.update(
             title="a" * (TITLE_MAX_BYTES + 1),
             cid=b"\x02" * 36,

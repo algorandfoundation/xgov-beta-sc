@@ -39,6 +39,123 @@
             "call_config": {
                 "no_op": "CALL"
             }
+        },
+        "review(bool)void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "fund()string": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "decommission(address[])void": {
+            "call_config": {
+                "no_op": "CALL"
+            }
+        },
+        "delete()string": {
+            "call_config": {
+                "delete_application": "CALL"
+            }
+        },
+        "get_state()(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)": {
+            "read_only": true,
+            "call_config": {
+                "no_op": "CALL"
+            },
+            "structs": {
+                "output": {
+                    "name": "ProposalTypedGlobalState",
+                    "elements": [
+                        [
+                            "proposer",
+                            "address"
+                        ],
+                        [
+                            "registry_app_id",
+                            "uint64"
+                        ],
+                        [
+                            "title",
+                            "string"
+                        ],
+                        [
+                            "cid",
+                            "byte[59]"
+                        ],
+                        [
+                            "submission_ts",
+                            "uint64"
+                        ],
+                        [
+                            "finalization_ts",
+                            "uint64"
+                        ],
+                        [
+                            "vote_open_ts",
+                            "uint64"
+                        ],
+                        [
+                            "status",
+                            "uint64"
+                        ],
+                        [
+                            "funding_category",
+                            "uint64"
+                        ],
+                        [
+                            "focus",
+                            "uint8"
+                        ],
+                        [
+                            "funding_type",
+                            "uint64"
+                        ],
+                        [
+                            "requested_amount",
+                            "uint64"
+                        ],
+                        [
+                            "locked_amount",
+                            "uint64"
+                        ],
+                        [
+                            "committee_id",
+                            "byte[32]"
+                        ],
+                        [
+                            "committee_members",
+                            "uint64"
+                        ],
+                        [
+                            "committee_votes",
+                            "uint64"
+                        ],
+                        [
+                            "voted_members",
+                            "uint64"
+                        ],
+                        [
+                            "approvals",
+                            "uint64"
+                        ],
+                        [
+                            "rejections",
+                            "uint64"
+                        ],
+                        [
+                            "nulls",
+                            "uint64"
+                        ],
+                        [
+                            "cool_down_start_ts",
+                            "uint64"
+                        ]
+                    ]
+                }
+            }
         }
     },
     "source": {
@@ -48,7 +165,7 @@
     "state": {
         "global": {
             "num_byte_slices": 5,
-            "num_uints": 20
+            "num_uints": 18
         },
         "local": {
             "num_byte_slices": 0,
@@ -66,10 +183,6 @@
                     "type": "uint64",
                     "key": "assigned_votes"
                 },
-                "category": {
-                    "type": "uint64",
-                    "key": "category"
-                },
                 "cid": {
                     "type": "bytes",
                     "key": "cid"
@@ -86,9 +199,21 @@
                     "type": "uint64",
                     "key": "committee_votes"
                 },
+                "cool_down_start_ts": {
+                    "type": "uint64",
+                    "key": "cool_down_start_ts"
+                },
                 "finalization_ts": {
                     "type": "uint64",
                     "key": "finalization_timestamp"
+                },
+                "focus": {
+                    "type": "bytes",
+                    "key": "focus"
+                },
+                "funding_category": {
+                    "type": "uint64",
+                    "key": "funding_category"
                 },
                 "funding_type": {
                     "type": "uint64",
@@ -97,10 +222,6 @@
                 "locked_amount": {
                     "type": "uint64",
                     "key": "locked_amount"
-                },
-                "milestone_approved": {
-                    "type": "uint64",
-                    "key": "milestone_approved"
                 },
                 "nulls": {
                     "type": "uint64",
@@ -170,7 +291,7 @@
                 "returns": {
                     "type": "void"
                 },
-                "desc": "Create a new proposal."
+                "desc": "Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
             },
             {
                 "name": "submit",
@@ -199,6 +320,11 @@
                         "type": "uint64",
                         "name": "requested_amount",
                         "desc": "Requested amount in microAlgos"
+                    },
+                    {
+                        "type": "uint8",
+                        "name": "focus",
+                        "desc": "Proposal focus area"
                     }
                 ],
                 "readonly": false,
@@ -288,7 +414,7 @@
                 "returns": {
                     "type": "string"
                 },
-                "desc": "Vote on the proposal."
+                "desc": "Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
             },
             {
                 "name": "scrutiny",
@@ -298,6 +424,64 @@
                     "type": "void"
                 },
                 "desc": "Scrutinize the proposal."
+            },
+            {
+                "name": "review",
+                "args": [
+                    {
+                        "type": "bool",
+                        "name": "block",
+                        "desc": "Whether to block the proposal or not"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Review the proposal."
+            },
+            {
+                "name": "fund",
+                "args": [],
+                "readonly": false,
+                "returns": {
+                    "type": "string"
+                },
+                "desc": "Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
+            },
+            {
+                "name": "decommission",
+                "args": [
+                    {
+                        "type": "address[]",
+                        "name": "voters",
+                        "desc": "List of voters to be removed"
+                    }
+                ],
+                "readonly": false,
+                "returns": {
+                    "type": "void"
+                },
+                "desc": "Decommission the proposal."
+            },
+            {
+                "name": "delete",
+                "args": [],
+                "readonly": false,
+                "returns": {
+                    "type": "string"
+                },
+                "desc": "Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT."
+            },
+            {
+                "name": "get_state",
+                "args": [],
+                "readonly": true,
+                "returns": {
+                    "type": "(address,uint64,string,byte[59],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)",
+                    "desc": "The proposal state"
+                },
+                "desc": "Get the proposal state."
             }
         ],
         "networks": {}

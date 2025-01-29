@@ -26,7 +26,9 @@ from tests.proposal.common import (
     logic_error_type,
     submit_proposal,
 )
-from tests.utils import get_latest_timestamp, time_warp
+
+# TODO add tests for finalize on other statuses
+from tests.utils import ERROR_TO_REGEX, get_latest_timestamp, time_warp
 
 
 def test_finalize_success(
@@ -104,7 +106,7 @@ def test_finalize_not_proposer(
 
     submission_ts = proposal_client.get_global_state().submission_ts
     time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    with pytest.raises(logic_error_type, match=err.UNAUTHORIZED):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
@@ -145,7 +147,9 @@ def test_finalize_empty_proposal(
 
     latest_ts = get_latest_timestamp(algorand_client.client.algod)
     time_warp(latest_ts + discussion_duration)  # so we could actually finalize
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -193,7 +197,9 @@ def test_finalize_twice(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -229,7 +235,7 @@ def test_finalize_too_early(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    with pytest.raises(logic_error_type, match=err.TOO_EARLY):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -276,7 +282,7 @@ def test_finalize_wrong_committee_id(
     submission_ts = proposal_client.get_global_state().submission_ts
     time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     xgov_registry_mock_client.clear_committee_id()  # invalid committee id
-    with pytest.raises(logic_error_type, match=err.EMPTY_COMMITTEE_ID):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.EMPTY_COMMITTEE_ID]):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -323,7 +329,9 @@ def test_finalize_wrong_committee_members(
     xgov_registry_mock_client.set_committee_members(
         committee_members=0
     )  # invalid committee members
-    with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_MEMBERS):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_COMMITTEE_MEMBERS]
+    ):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
@@ -370,7 +378,9 @@ def test_finalize_wrong_committee_votes(
     xgov_registry_mock_client.set_committee_votes(
         committee_votes=0
     )  # invalid committee votes
-    with pytest.raises(logic_error_type, match=err.WRONG_COMMITTEE_VOTES):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_COMMITTEE_VOTES]
+    ):
         proposal_client.finalize(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
