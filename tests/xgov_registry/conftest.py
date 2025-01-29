@@ -27,6 +27,7 @@ from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_FOCUS,
     get_locked_amount,
     get_voter_box_key,
 )
@@ -562,6 +563,7 @@ def voting_proposal_client(
         cid=PROPOSAL_CID,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
+        focus=DEFAULT_FOCUS,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -683,6 +685,7 @@ def voting_proposal_client_requested_too_much(
         cid=PROPOSAL_CID,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
+        focus=DEFAULT_FOCUS,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,

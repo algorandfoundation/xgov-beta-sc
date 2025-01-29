@@ -29,14 +29,15 @@ from smart_contracts.proposal.enums import (
 )
 from smart_contracts.xgov_registry_mock.config import PROPOSAL_FEE
 from tests.common import (
-    get_voter_box_key,
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_FOCUS,
     LOCKED_AMOUNT,
     PROPOSAL_CID,
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
+    get_voter_box_key,
 )
 
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
@@ -44,7 +45,6 @@ PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 logic_error_type: type[LogicError] = LogicError
 
 INITIAL_FUNDS = 10_000_000_000
-DEFAULT_FOCUS = 42
 
 
 def assert_proposal_global_state(

@@ -28,7 +28,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     funding_type: arc4.UInt64
     requested_amount: arc4.UInt64
     locked_amount: arc4.UInt64
-    committee_id: CommitteeId
+    committee_id: Cid
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
     voted_members: arc4.UInt64
