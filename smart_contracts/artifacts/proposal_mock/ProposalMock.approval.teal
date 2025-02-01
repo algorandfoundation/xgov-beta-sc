@@ -1,22 +1,12 @@
 #pragma version 10
+#pragma typetrack false
 
-smart_contracts.proposal_mock.contract.ProposalMock.approval_program:
+// smart_contracts.proposal_mock.contract.ProposalMock.__algopy_entrypoint_with_init() -> uint64:
+main:
     intcblock 0 1
     bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573
     txn ApplicationID
     bnz main_after_if_else@2
-    callsub __init__
-
-main_after_if_else@2:
-    callsub __puya_arc4_router__
-    return
-
-
-// smart_contracts.proposal_mock.contract.ProposalMock.__init__() -> void:
-__init__:
-    // smart_contracts/proposal_mock/contract.py:18
-    // def __init__(self) -> None:
-    proto 0 0
     // smart_contracts/proposal_mock/contract.py:21
     // key=prop_cfg.GS_KEY_PROPOSER,
     bytec_1 // 0x70726f706f736572
@@ -221,77 +211,45 @@ __init__:
     //     key=prop_cfg.GS_KEY_REJECTIONS,
     // )
     app_global_put
-    retsub
 
-
-// smart_contracts.proposal_mock.contract.ProposalMock.__puya_arc4_router__() -> uint64:
-__puya_arc4_router__:
+main_after_if_else@2:
     // smart_contracts/proposal_mock/contract.py:17
     // class ProposalMock(ARC4Contract):
-    proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___after_if_else@11
+    bz main_after_if_else@11
     pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___create_route@2 __puya_arc4_router___set_status_route@3 __puya_arc4_router___set_requested_amount_route@4 __puya_arc4_router___set_committee_details_route@5 __puya_arc4_router___release_funds_route@6 __puya_arc4_router___vote_route@7
+    match main_create_route@5 main_set_status_route@6 main_set_requested_amount_route@7 main_set_committee_details_route@8 main_release_funds_route@9 main_vote_route@10
+
+main_after_if_else@11:
+    // smart_contracts/proposal_mock/contract.py:17
+    // class ProposalMock(ARC4Contract):
     intc_0 // 0
-    retsub
+    return
 
-__puya_arc4_router___create_route@2:
-    // smart_contracts/proposal_mock/contract.py:88
-    // @arc4.abimethod(create="require")
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    // smart_contracts/proposal_mock/contract.py:88
-    // @arc4.abimethod(create="require")
-    callsub create
-    intc_1 // 1
-    retsub
-
-__puya_arc4_router___set_status_route@3:
-    // smart_contracts/proposal_mock/contract.py:93
+main_vote_route@10:
+    // smart_contracts/proposal_mock/contract.py:113
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/proposal_mock/contract.py:93
-    // @arc4.abimethod()
-    callsub set_status
     intc_1 // 1
-    retsub
+    return
 
-__puya_arc4_router___set_requested_amount_route@4:
-    // smart_contracts/proposal_mock/contract.py:97
+main_release_funds_route@9:
+    // smart_contracts/proposal_mock/contract.py:109
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/proposal_mock/contract.py:97
-    // @arc4.abimethod()
-    callsub set_requested_amount
     intc_1 // 1
-    retsub
+    return
 
-__puya_arc4_router___set_committee_details_route@5:
+main_set_committee_details_route@8:
     // smart_contracts/proposal_mock/contract.py:101
     // @arc4.abimethod()
     txn OnCompletion
@@ -310,35 +268,61 @@ __puya_arc4_router___set_committee_details_route@5:
     // @arc4.abimethod()
     callsub set_committee_details
     intc_1 // 1
-    retsub
+    return
 
-__puya_arc4_router___release_funds_route@6:
-    // smart_contracts/proposal_mock/contract.py:109
+main_set_requested_amount_route@7:
+    // smart_contracts/proposal_mock/contract.py:97
     // @arc4.abimethod()
     txn OnCompletion
     !
     assert // OnCompletion is not NoOp
     txn ApplicationID
     assert // can only call when not creating
-    intc_1 // 1
-    retsub
-
-__puya_arc4_router___vote_route@7:
-    // smart_contracts/proposal_mock/contract.py:113
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    intc_1 // 1
-    retsub
-
-__puya_arc4_router___after_if_else@11:
     // smart_contracts/proposal_mock/contract.py:17
     // class ProposalMock(ARC4Contract):
-    intc_0 // 0
-    retsub
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/proposal_mock/contract.py:97
+    // @arc4.abimethod()
+    callsub set_requested_amount
+    intc_1 // 1
+    return
+
+main_set_status_route@6:
+    // smart_contracts/proposal_mock/contract.py:93
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/proposal_mock/contract.py:17
+    // class ProposalMock(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/proposal_mock/contract.py:93
+    // @arc4.abimethod()
+    callsub set_status
+    intc_1 // 1
+    return
+
+main_create_route@5:
+    // smart_contracts/proposal_mock/contract.py:88
+    // @arc4.abimethod(create="require")
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    !
+    assert // can only call when creating
+    // smart_contracts/proposal_mock/contract.py:17
+    // class ProposalMock(ARC4Contract):
+    txna ApplicationArgs 1
+    // smart_contracts/proposal_mock/contract.py:88
+    // @arc4.abimethod(create="require")
+    callsub create
+    intc_1 // 1
+    return
 
 
 // smart_contracts.proposal_mock.contract.ProposalMock.create(proposer: bytes) -> void:
