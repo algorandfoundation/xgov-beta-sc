@@ -13,7 +13,7 @@ from algopy import (
 import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
-from ..common.types import CommitteeId
+from ..common.abi_types import CommitteeId
 from ..proposal import config as prop_cfg
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
