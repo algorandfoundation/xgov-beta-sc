@@ -36,8 +36,8 @@ def test_vote_proposal_success(
             signer=xgov.signer,
             suggested_params=sp,
             boxes=[(0, xgov_box_name(xgov.address))],
-            foreign_apps=[(voting_proposal_mock_client.app_id)],
-            accounts=[(xgov.address)],
+            foreign_apps=[voting_proposal_mock_client.app_id],
+            accounts=[xgov.address],
         ),
     )
 
@@ -62,8 +62,8 @@ def test_vote_proposal_not_in_voting_phase(
                 signer=xgov.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(xgov.address))],
-                foreign_apps=[(proposal_mock_client.app_id)],
-                accounts=[(xgov.address)],
+                foreign_apps=[proposal_mock_client.app_id],
+                accounts=[xgov.address],
             ),
         )
 
@@ -88,8 +88,8 @@ def test_vote_proposal_not_a_proposal_app(
                 signer=xgov.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(xgov.address))],
-                foreign_apps=[(xgov_registry_client.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[xgov_registry_client.app_id],
+                accounts=[proposer.address],
             ),
         )
 
@@ -114,8 +114,8 @@ def test_vote_proposal_not_an_xgov(
                 signer=random_account.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(random_account.address))],
-                foreign_apps=[(voting_proposal_mock_client.app_id)],
-                accounts=[(random_account.address)],
+                foreign_apps=[voting_proposal_mock_client.app_id],
+                accounts=[random_account.address],
             ),
         )
 
@@ -141,7 +141,7 @@ def test_vote_proposal_wrong_voting_address(
                 signer=random_account.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(xgov.address))],
-                foreign_apps=[(voting_proposal_mock_client.app_id)],
-                accounts=[(xgov.address)],
+                foreign_apps=[voting_proposal_mock_client.app_id],
+                accounts=[xgov.address],
             ),
         )
