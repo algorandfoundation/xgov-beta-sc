@@ -19,7 +19,7 @@ from algopy import (
 
 import smart_contracts.errors.std_errors as err
 
-from ..common import types as ptyp
+from ..common import types as ctyp
 from ..proposal import config as pcfg
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
@@ -133,7 +133,7 @@ class XGovRegistry(
 
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
 
-        self.committee_id = GlobalState(ptyp.Cid, key=cfg.GS_KEY_COMMITTEE_ID)
+        self.committee_id = GlobalState(ctyp.Cid, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
 
@@ -650,13 +650,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def declare_committee(
-        self, cid: ptyp.Cid, size: arc4.UInt64, votes: arc4.UInt64
+        self, cid: ctyp.Cid, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.
 
         Args:
-            id (ptyp.Cid): The ID of the xGov Committee
+            id (ctyp.Cid): The ID of the xGov Committee
             size (arc4.UInt64): The size of the xGov Committee
             votes (arc4.UInt64): The voting power of the xGov Committee
 
