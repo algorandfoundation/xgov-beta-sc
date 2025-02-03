@@ -13,12 +13,12 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
-from tests.proposal.common import (
+from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
-    INITIAL_FUNDS,
 )
+from tests.proposal.common import INITIAL_FUNDS
 
 
 @pytest.fixture(scope="session")
@@ -68,24 +68,6 @@ def committee_member(algorand_client: AlgorandClient) -> AddressAndSigner:
         ),
     )
     return account
-
-
-@pytest.fixture(scope="session")
-def committee_members(algorand_client: AlgorandClient) -> list[AddressAndSigner]:
-    accounts = [
-        algorand_client.account.random() for _ in range(DEFAULT_COMMITTEE_MEMBERS)
-    ]
-
-    for account in accounts:
-        ensure_funded(
-            algorand_client.client.algod,
-            EnsureBalanceParameters(
-                account_to_fund=account.address,
-                min_spending_balance_micro_algos=INITIAL_FUNDS,
-            ),
-        )
-
-    return accounts
 
 
 @pytest.fixture(scope="session")

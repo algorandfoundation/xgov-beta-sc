@@ -12,8 +12,8 @@ from algokit_utils.config import config
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 
-from smart_contracts.artifacts.proposal_mock.proposal_mock_client import (
-    ProposalMockClient,
+from smart_contracts.artifacts.proposal.proposal_client import (
+    ProposalClient,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -23,11 +23,21 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.proposal import enums as enm
-from tests.proposal.common import INITIAL_FUNDS
+from tests.common import (
+    DEFAULT_COMMITTEE_ID,
+    DEFAULT_COMMITTEE_MEMBERS,
+    DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_FOCUS,
+    get_locked_amount,
+    get_voter_box_key,
+)
+from tests.proposal.common import (
+    INITIAL_FUNDS,
+    PROPOSAL_CID,
+    PROPOSAL_TITLE,
+)
+from tests.utils import time_warp
 from tests.xgov_registry.common import (
-    COMMITTEE_ID,
-    COMMITTEE_SIZE,
-    COMMITTEE_VOTES,
     COOL_DOWN_DURATION,
     DEPOSIT_AMOUNT,
     DISCUSSION_DURATION_LARGE,
@@ -38,7 +48,7 @@ from tests.xgov_registry.common import (
     MAX_REQUESTED_AMOUNT_MEDIUM,
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
-    PROPOSAL_COMMITTMENT_BPS,
+    PROPOSAL_COMMITMENT_BPS,
     PROPOSAL_FEE,
     PROPOSAL_PUBLISHING_BPS,
     PROPOSER_FEE,
@@ -138,6 +148,22 @@ def xgov_registry_client(
 
     client.set_committee_manager(
         manager=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_committee_publisher(
+        publisher=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.declare_committee(
+        cid=DEFAULT_COMMITTEE_ID,
+        size=DEFAULT_COMMITTEE_MEMBERS,
+        votes=DEFAULT_COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
@@ -300,7 +326,7 @@ def xgov_registry_config() -> XGovRegistryConfig:
         proposer_fee=PROPOSER_FEE,
         proposal_fee=PROPOSAL_FEE,
         proposal_publishing_bps=PROPOSAL_PUBLISHING_BPS,
-        proposal_commitment_bps=PROPOSAL_COMMITTMENT_BPS,
+        proposal_commitment_bps=PROPOSAL_COMMITMENT_BPS,
         min_requested_amount=MIN_REQUESTED_AMOUNT,
         max_requested_amount=[
             MAX_REQUESTED_AMOUNT_SMALL,
@@ -440,11 +466,11 @@ def random_account(algorand_client: AlgorandClient) -> AddressAndSigner:
 
 
 @pytest.fixture(scope="function")
-def proposal_mock_client(
+def proposal_client(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-) -> ProposalMockClient:
+) -> ProposalClient:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
@@ -469,22 +495,24 @@ def proposal_mock_client(
         ),
     )
 
-    proposal_mock_app_id = open_proposal_response.return_value
+    proposal_app_id = open_proposal_response.return_value
 
-    proposal_mock_client = ProposalMockClient(
+    proposal_client = ProposalClient(
         algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
+        app_id=proposal_app_id,
     )
 
-    return proposal_mock_client
+    return proposal_client
 
 
 @pytest.fixture(scope="function")
-def approved_proposal_mock_client(
+def voting_proposal_client(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-) -> ProposalMockClient:
+    deployer: AddressAndSigner,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
@@ -509,54 +537,104 @@ def approved_proposal_mock_client(
         ),
     )
 
-    proposal_mock_app_id = open_proposal_response.return_value
+    proposal_app_id = open_proposal_response.return_value
 
-    proposal_mock_client = ProposalMockClient(
+    proposal_client = ProposalClient(
         algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
+        app_id=proposal_app_id,
     )
 
     sp.min_fee *= 2  # type: ignore
 
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
+    requested_amount = 10_000_000
+
+    proposal_client.submit(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=get_locked_amount(requested_amount),
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        title=PROPOSAL_TITLE,
+        cid=PROPOSAL_CID,
+        funding_type=enm.FUNDING_RETROACTIVE,
+        requested_amount=requested_amount,
+        focus=DEFAULT_FOCUS,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
+            foreign_apps=[xgov_registry_client.app_id],
         ),
     )
 
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_APPROVED,
+    reg_gs = xgov_registry_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)
+
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+            accounts=[deployer.address],
             suggested_params=sp,
         ),
     )
 
-    proposal_mock_client.set_committee_details(
-        cid=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-        ),
-    )
+    for committee_member in committee_members:
+        xgov_registry_client.subscribe_xgov(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=committee_member.address,
+                        signer=committee_member.signer,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.xgov_fee,
+                    ),
+                ),
+                signer=committee_member.signer,
+            ),
+            voting_address=committee_member.address,
+            transaction_parameters=TransactionParameters(
+                sender=committee_member.address,
+                signer=committee_member.signer,
+                boxes=[(0, xgov_box_name(committee_member.address))],
+            ),
+        )
 
-    return proposal_mock_client
+        proposal_client.assign_voter(
+            voter=committee_member.address,
+            voting_power=10,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                foreign_apps=[xgov_registry_client.app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+            ),
+        )
+
+    return proposal_client
 
 
 @pytest.fixture(scope="function")
-def voting_proposal_mock_client(
+def voting_proposal_client_requested_too_much(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-) -> ProposalMockClient:
+    deployer: AddressAndSigner,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
@@ -581,46 +659,213 @@ def voting_proposal_mock_client(
         ),
     )
 
-    proposal_mock_app_id = open_proposal_response.return_value
+    proposal_app_id = open_proposal_response.return_value
 
-    proposal_mock_client = ProposalMockClient(
+    proposal_client = ProposalClient(
         algorand_client.client.algod,
-        app_id=proposal_mock_app_id,
+        app_id=proposal_app_id,
     )
 
     sp.min_fee *= 2  # type: ignore
 
-    proposal_mock_client.set_requested_amount(
-        requested_amount=10_000_000,
+    requested_amount = 10_000_000_000
+
+    proposal_client.submit(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=get_locked_amount(requested_amount),
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        title=PROPOSAL_TITLE,
+        cid=PROPOSAL_CID,
+        funding_type=enm.FUNDING_RETROACTIVE,
+        requested_amount=requested_amount,
+        focus=DEFAULT_FOCUS,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
+            foreign_apps=[xgov_registry_client.app_id],
         ),
     )
 
-    # approve
-    proposal_mock_client.set_status(
-        status=enm.STATUS_VOTING,
+    reg_gs = xgov_registry_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_xlarge
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)
+
+    proposal_client.finalize(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+            accounts=[deployer.address],
             suggested_params=sp,
         ),
     )
 
-    proposal_mock_client.set_committee_details(
-        cid=COMMITTEE_ID,
-        size=COMMITTEE_SIZE,
-        votes=COMMITTEE_VOTES,
+    for committee_member in committee_members:
+        xgov_registry_client.subscribe_xgov(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=committee_member.address,
+                        signer=committee_member.signer,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.xgov_fee,
+                    ),
+                ),
+                signer=committee_member.signer,
+            ),
+            voting_address=committee_member.address,
+            transaction_parameters=TransactionParameters(
+                sender=committee_member.address,
+                signer=committee_member.signer,
+                boxes=[(0, xgov_box_name(committee_member.address))],
+            ),
+        )
+
+        proposal_client.assign_voter(
+            voter=committee_member.address,
+            voting_power=10,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                foreign_apps=[xgov_registry_client.app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+            ),
+        )
+
+    return proposal_client
+
+
+@pytest.fixture(scope="function")
+def approved_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    voting_proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    for committee_member in committee_members:
+        xgov_registry_client.vote_proposal(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee_member.address,
+            approval_votes=10,
+            rejection_votes=0,
+            transaction_parameters=TransactionParameters(
+                sender=committee_member.address,
+                signer=committee_member.signer,
+                foreign_apps=[
+                    xgov_registry_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
+                boxes=[
+                    (0, xgov_box_name(committee_member.address)),
+                    (
+                        voting_proposal_client.app_id,
+                        get_voter_box_key(committee_member.address),
+                    ),
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+    reg_gs = xgov_registry_client.get_global_state()
+    voting_duration = reg_gs.voting_duration_small
+    submission_ts = voting_proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + voting_duration)
+
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
+            sender=committee_member.address,
+            signer=committee_member.signer,
+            foreign_apps=[xgov_registry_client.app_id, voting_proposal_client.app_id],
+            boxes=[
+                (
+                    voting_proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
             suggested_params=sp,
         ),
     )
 
-    return proposal_mock_client
+    return voting_proposal_client
+
+
+@pytest.fixture(scope="function")
+def approved_proposal_client_requested_too_much(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    voting_proposal_client_requested_too_much: ProposalClient,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    for committee_member in committee_members:
+        xgov_registry_client.vote_proposal(
+            proposal_id=voting_proposal_client_requested_too_much.app_id,
+            xgov_address=committee_member.address,
+            approval_votes=10,
+            rejection_votes=0,
+            transaction_parameters=TransactionParameters(
+                sender=committee_member.address,
+                signer=committee_member.signer,
+                foreign_apps=[
+                    xgov_registry_client.app_id,
+                    voting_proposal_client_requested_too_much.app_id,
+                ],
+                boxes=[
+                    (0, xgov_box_name(committee_member.address)),
+                    (
+                        voting_proposal_client_requested_too_much.app_id,
+                        get_voter_box_key(committee_member.address),
+                    ),
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+    reg_gs = xgov_registry_client.get_global_state()
+    voting_duration = reg_gs.voting_duration_xlarge
+    submission_ts = (
+        voting_proposal_client_requested_too_much.get_global_state().submission_ts
+    )
+    time_warp(submission_ts + voting_duration)
+
+    voting_proposal_client_requested_too_much.scrutiny(
+        transaction_parameters=TransactionParameters(
+            sender=committee_member.address,
+            signer=committee_member.signer,
+            foreign_apps=[
+                xgov_registry_client.app_id,
+                voting_proposal_client_requested_too_much.app_id,
+            ],
+            boxes=[
+                (
+                    voting_proposal_client_requested_too_much.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
+        ),
+    )
+
+    return voting_proposal_client_requested_too_much
 
 
 @pytest.fixture(scope="function")

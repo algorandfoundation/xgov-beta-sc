@@ -8,6 +8,8 @@ from ..common import abi_types as ptyp
 class TypedGlobalState(arc4.Struct):
     xgov_manager: arc4.Address
     xgov_payor: arc4.Address
+    xgov_reviewer: arc4.Address
+    xgov_subscriber: arc4.Address
     kyc_provider: arc4.Address
     committee_manager: arc4.Address
     committee_publisher: arc4.Address
@@ -26,7 +28,7 @@ class TypedGlobalState(arc4.Struct):
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     outstanding_funds: arc4.UInt64
     pending_proposals: arc4.UInt64
-    committee_id: ptyp.CommitteeId
+    committee_id: ptyp.Cid
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
 

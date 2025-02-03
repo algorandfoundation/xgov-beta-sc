@@ -3,17 +3,14 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.encoding import decode_address, encode_address
+from algosdk.encoding import encode_address
 from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
     ProposalClient,
 )
-from smart_contracts.proposal.config import PROPOSAL_MBR, VOTER_BOX_KEY_PREFIX
-from smart_contracts.proposal.constants import (
-    BPS,
-)
+from smart_contracts.proposal.config import PROPOSAL_MBR
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -30,35 +27,24 @@ from smart_contracts.proposal.enums import (
     STATUS_REVIEWED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry_mock.config import (
-    MIN_REQUESTED_AMOUNT,
-    PROPOSAL_COMMITMENT_BPS,
-    PROPOSAL_FEE,
+from smart_contracts.xgov_registry_mock.config import PROPOSAL_FEE
+from tests.common import (
+    DEFAULT_COMMITTEE_ID,
+    DEFAULT_COMMITTEE_MEMBERS,
+    DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_FOCUS,
+    LOCKED_AMOUNT,
+    PROPOSAL_CID,
+    PROPOSAL_TITLE,
+    REQUESTED_AMOUNT,
+    get_voter_box_key,
 )
 
-
-def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:
-    return amount * fraction_in_bps // BPS
-
-
-def get_locked_amount(requested_amount: int) -> int:
-    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
-
-
-REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
-LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
-PROPOSAL_TITLE = "Test Proposal"
-PROPOSAL_CID = b"\x01" * 59
 
 logic_error_type: type[LogicError] = LogicError
 
 INITIAL_FUNDS = 10_000_000_000
-
-DEFAULT_COMMITTEE_ID = b"\x01" * 32
-DEFAULT_COMMITTEE_MEMBERS = 20
-DEFAULT_COMMITTEE_VOTES = 200
-DEFAULT_FOCUS = 42
 
 
 def assert_proposal_global_state(
@@ -341,10 +327,6 @@ def assert_boxes(
                 ]
                 == expected_value
             )
-
-
-def get_voter_box_key(voter_address: str) -> bytes:
-    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
 def submit_proposal(

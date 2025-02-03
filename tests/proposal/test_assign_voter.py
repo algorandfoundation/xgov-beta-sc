@@ -8,6 +8,9 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+
+# TODO add tests for assign_voter on other statuses
+from tests.common import get_voter_box_key
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -17,7 +20,6 @@ from tests.proposal.common import (
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
     assert_voting_proposal_global_state,
-    get_voter_box_key,
     logic_error_type,
     submit_proposal,
 )
