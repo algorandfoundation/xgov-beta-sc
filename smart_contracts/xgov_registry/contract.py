@@ -705,20 +705,6 @@ class XGovRegistry(
         assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
 
         # Create the Proposal App
-        # compiled = compile_contract(proposal_contract.Proposal)
-
-        # proposal_app = arc4.abi_call(
-        #     proposal_contract.Proposal.create,
-        #     Txn.sender,
-        #     approval_program=compiled.approval_program,
-        #     clear_state_program=compiled.clear_state_program,
-        #     global_num_bytes=pcfg.GLOBAL_BYTES,
-        #     global_num_uint=pcfg.GLOBAL_UINTS,
-        #     local_num_bytes=pcfg.LOCAL_BYTES,
-        #     local_num_uint=pcfg.LOCAL_UINTS,
-        #     fee=0,
-        # ).created_app
-
         res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
 
         # Update proposer state
@@ -834,10 +820,7 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        # TODO: uncomment when proposal contract is ready
-        # arc4.abi_call(
-        #     proposal_contract.Proposal.fund, app_id=proposal_id.native
-        # )
+        arc4.abi_call(proposal_contract.Proposal.fund, app_id=proposal_id.native)
 
         # Decrement pending proposals count
         # TODO: might happen on decommission as well
