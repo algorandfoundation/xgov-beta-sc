@@ -75,7 +75,7 @@ def assert_proposal_global_state(
     assert global_state.cid.as_bytes == cid
     assert global_state.status == status
     assert global_state.funding_category == funding_category
-    assert int.from_bytes(global_state.focus.as_bytes, "big") == focus
+    assert global_state.focus == focus
     assert global_state.funding_type == funding_type
     assert global_state.requested_amount == requested_amount
     assert global_state.locked_amount == locked_amount

@@ -32,3 +32,12 @@ FUNDING_CATEGORY_LARGE: Final[int] = 33  # Large category
 FUNDING_NULL: Final[int] = 0  # Null funding type
 FUNDING_PROACTIVE: Final[int] = 10  # Proactive funding type
 FUNDING_RETROACTIVE: Final[int] = 20  # Retroactive funding type
+
+FOCUS_NULL: Final[int] = 0  # Null focus
+FOCUS_DEFI: Final[int] = 10  # DeFi focus
+FOCUS_EDUCATION: Final[int] = 20  # Education focus
+FOCUS_LIBRARIES: Final[int] = 30  # Libraries focus
+FOCUS_NFT: Final[int] = 40  # NFT focus
+FOCUS_TOOLING: Final[int] = 50  # Tooling focus
+FOCUS_SAAS: Final[int] = 60  # SaaS focus
+FOCUS_OTHER: Final[int] = 70  # Other focus
