@@ -20,7 +20,7 @@ from algopy import (
 from algopy.op import AppGlobal
 
 import smart_contracts.errors.std_errors as err
-from smart_contracts.common import types as typ
+from smart_contracts.common import abi_types as typ
 
 from ..xgov_registry import config as reg_cfg
 from . import config as prop_cfg

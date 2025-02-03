@@ -9,7 +9,7 @@ from algopy import (
     arc4,
 )
 
-from ..common import types as typ
+from ..common import abi_types as typ
 from ..proposal import config as prop_cfg
 from ..proposal import enums as enm
 

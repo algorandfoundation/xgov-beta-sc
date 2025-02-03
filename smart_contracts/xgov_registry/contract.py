@@ -19,7 +19,7 @@ from algopy import (
 
 import smart_contracts.errors.std_errors as err
 
-from ..common import types as ctyp
+from ..common import abi_types as ctyp
 from ..proposal import config as pcfg
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm

@@ -1,25 +1,42 @@
 #pragma version 10
+#pragma typetrack false
 
-smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.approval_program:
-    intcblock 0 1 6
-    callsub __puya_arc4_router__
-    return
-
-
-// smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.__puya_arc4_router__() -> uint64:
-__puya_arc4_router__:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 1 0 6
     // smart_contracts/xgov_subscriber_app_mock/contract.py:15
     // class XGovSubscriberAppMock(ARC4Contract):
-    proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___bare_routing@6
+    bz main_bare_routing@7
     pushbytess 0x42317b4f 0x5a2a3f16 // method "subscribe_xgov(uint64,address)void", method "unsubscribe_xgov(uint64)void"
     txna ApplicationArgs 0
-    match __puya_arc4_router___subscribe_xgov_route@2 __puya_arc4_router___unsubscribe_xgov_route@3
-    intc_0 // 0
-    retsub
+    match main_subscribe_xgov_route@3 main_unsubscribe_xgov_route@4
 
-__puya_arc4_router___subscribe_xgov_route@2:
+main_after_if_else@11:
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:15
+    // class XGovSubscriberAppMock(ARC4Contract):
+    intc_1 // 0
+    return
+
+main_unsubscribe_xgov_route@4:
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:35
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:15
+    // class XGovSubscriberAppMock(ARC4Contract):
+    txna ApplicationArgs 1
+    btoi
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:35
+    // @arc4.abimethod()
+    callsub unsubscribe_xgov
+    intc_0 // 1
+    return
+
+main_subscribe_xgov_route@3:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:16
     // @arc4.abimethod()
     txn OnCompletion
@@ -35,43 +52,19 @@ __puya_arc4_router___subscribe_xgov_route@2:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:16
     // @arc4.abimethod()
     callsub subscribe_xgov
-    intc_1 // 1
-    retsub
+    intc_0 // 1
+    return
 
-__puya_arc4_router___unsubscribe_xgov_route@3:
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:35
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:15
-    // class XGovSubscriberAppMock(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:35
-    // @arc4.abimethod()
-    callsub unsubscribe_xgov
-    intc_1 // 1
-    retsub
-
-__puya_arc4_router___bare_routing@6:
+main_bare_routing@7:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:15
     // class XGovSubscriberAppMock(ARC4Contract):
     txn OnCompletion
-    bnz __puya_arc4_router___after_if_else@10
+    bnz main_after_if_else@11
     txn ApplicationID
     !
     assert // can only call when creating
-    intc_1 // 1
-    retsub
-
-__puya_arc4_router___after_if_else@10:
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:15
-    // class XGovSubscriberAppMock(ARC4Contract):
-    intc_0 // 0
-    retsub
+    intc_0 // 1
+    return
 
 
 // smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov(app_id: uint64, voting_address: bytes) -> void:
@@ -111,9 +104,9 @@ subscribe_xgov:
     itxn_field Amount
     // smart_contracts/xgov_subscriber_app_mock/contract.py:23
     // payment = itxn.Payment(
-    intc_1 // pay
+    intc_0 // pay
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     // smart_contracts/xgov_subscriber_app_mock/contract.py:28-33
     // arc4.abi_call(
@@ -131,7 +124,7 @@ subscribe_xgov:
     itxn_field ApplicationArgs
     intc_2 // appl
     itxn_field TypeEnum
-    intc_0 // 0
+    intc_1 // 0
     itxn_field Fee
     itxn_submit
     retsub

@@ -2,7 +2,7 @@ import typing as t
 
 from algopy import arc4
 
-from ..common import types as ptyp
+from ..common import abi_types as ptyp
 
 
 class TypedGlobalState(arc4.Struct):
