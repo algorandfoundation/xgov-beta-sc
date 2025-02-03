@@ -83,7 +83,7 @@ class Proposal(
             key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
         )
         self.focus = GlobalState(
-            arc4.UInt8(0),
+            UInt64(enm.FOCUS_NULL),
             key=prop_cfg.GS_KEY_FOCUS,
         )
         self.funding_type = GlobalState(
@@ -569,7 +569,7 @@ class Proposal(
         self.set_category(requested_amount.native)
         self.funding_type.value = funding_type.native
         self.requested_amount.value = requested_amount.native
-        self.focus.value = focus
+        self.focus.value = focus.native
         self.locked_amount.value = self.get_expected_locked_amount(
             requested_amount.native
         )
@@ -617,7 +617,7 @@ class Proposal(
         self.title.value = String()
         self.cid.value = typ.Cid.from_bytes(b"")
         self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
-        self.focus.value = arc4.UInt8(0)
+        self.focus.value = UInt64(0)
         self.funding_type.value = UInt64(enm.FUNDING_NULL)
         self.requested_amount.value = UInt64(0)
         self.locked_amount.value = UInt64(0)
@@ -907,7 +907,7 @@ class Proposal(
             vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
             status=arc4.UInt64(self.status.value),
             funding_category=arc4.UInt64(self.funding_category.value),
-            focus=self.focus.value,
+            focus=arc4.UInt64(self.focus.value),
             funding_type=arc4.UInt64(self.funding_type.value),
             requested_amount=arc4.UInt64(self.requested_amount.value),
             locked_amount=arc4.UInt64(self.locked_amount.value),
