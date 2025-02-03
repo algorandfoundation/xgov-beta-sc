@@ -42,8 +42,8 @@ def test_pay_grant_proposal_success(
             signer=deployer.signer,
             suggested_params=sp,
             boxes=[(0, proposer_box_name(proposer.address))],
-            foreign_apps=[(approved_proposal_client.app_id)],
-            accounts=[(proposer.address)],
+            foreign_apps=[approved_proposal_client.app_id],
+            accounts=[proposer.address],
         ),
     )
 
@@ -72,8 +72,8 @@ def test_pay_grant_proposal_not_payor(
                 signer=proposer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(approved_proposal_client.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[approved_proposal_client.app_id],
+                accounts=[proposer.address],
             ),
         )
 
@@ -133,8 +133,8 @@ def test_pay_grant_proposal_not_approved(
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(proposal_client.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[proposal_client.app_id],
+                accounts=[proposer.address],
             ),
         )
 
@@ -172,8 +172,8 @@ def test_pay_grant_proposal_invalid_kyc(
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(approved_proposal_client.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[approved_proposal_client.app_id],
+                accounts=[proposer.address],
             ),
         )
 
@@ -211,8 +211,8 @@ def test_pay_grant_proposal_expired_kyc(
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(approved_proposal_client.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[approved_proposal_client.app_id],
+                accounts=[proposer.address],
             ),
         )
 
@@ -236,7 +236,7 @@ def test_pay_grant_proposal_insufficient_funds(
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[(approved_proposal_client_requested_too_much.app_id)],
-                accounts=[(proposer.address)],
+                foreign_apps=[approved_proposal_client_requested_too_much.app_id],
+                accounts=[proposer.address],
             ),
         )
