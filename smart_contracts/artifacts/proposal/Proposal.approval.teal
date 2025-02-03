@@ -324,7 +324,7 @@ __puya_arc4_router__:
     proto 0 1
     txn NumAppArgs
     bz __puya_arc4_router___after_if_else@18
-    pushbytess 0xcc694eaa 0xc92066d7 0x40df8a0c 0x5fcdfdee 0x23d8b7ce 0x74e6557e 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x461b5751 0x1feb95da 0x6daa1706 // method "create(address)void", method "submit(pay,string,byte[36],uint64,uint64,uint8)void", method "update(string,byte[36])void", method "drop()void", method "finalize()void", method "assign_voter(address,uint64)void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "decommission(address[])void", method "delete()string", method "get_state()(address,uint64,string,byte[36],uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,uint64,byte[36],uint64,uint64,uint64,uint64,uint64,uint64,uint64)"
+    pushbytess 0xcc694eaa 0xc92066d7 0x40df8a0c 0x5fcdfdee 0x23d8b7ce 0x74e6557e 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x461b5751 0x1feb95da 0xaccb37ed // method "create(address)void", method "submit(pay,string,byte[36],uint64,uint64,uint8)void", method "update(string,byte[36])void", method "drop()void", method "finalize()void", method "assign_voter(address,uint64)void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "decommission(address[])void", method "delete()string", method "get_state()(address,uint64,string,byte[36],uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[36],uint64,uint64,uint64,uint64,uint64,uint64,uint64)"
     txna ApplicationArgs 0
     match __puya_arc4_router___create_route@2 __puya_arc4_router___submit_route@3 __puya_arc4_router___update_route@4 __puya_arc4_router___drop_route@5 __puya_arc4_router___finalize_route@6 __puya_arc4_router___assign_voter_route@7 __puya_arc4_router___vote_route@8 __puya_arc4_router___scrutiny_route@9 __puya_arc4_router___review_route@10 __puya_arc4_router___fund_route@11 __puya_arc4_router___decommission_route@12 __puya_arc4_router___delete_route@13 __puya_arc4_router___get_state_route@14
     intc_0 // 0
@@ -3094,12 +3094,13 @@ get_state:
     assert // check self.funding_category exists
     itob
     // smart_contracts/proposal/contract.py:910
-    // focus=arc4.UInt64(self.focus.value),
+    // focus=arc4.UInt8(self.focus.value),
     intc_0 // 0
     bytec 19 // 0x666f637573
     app_global_get_ex
     assert // check self.focus exists
     itob
+    extract 7 1
     // smart_contracts/proposal/contract.py:911
     // funding_type=arc4.UInt64(self.funding_type.value),
     intc_0 // 0
@@ -3187,7 +3188,7 @@ get_state:
     //     vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
     //     status=arc4.UInt64(self.status.value),
     //     funding_category=arc4.UInt64(self.funding_category.value),
-    //     focus=arc4.UInt64(self.focus.value),
+    //     focus=arc4.UInt8(self.focus.value),
     //     funding_type=arc4.UInt64(self.funding_type.value),
     //     requested_amount=arc4.UInt64(self.requested_amount.value),
     //     locked_amount=arc4.UInt64(self.locked_amount.value),
@@ -3203,7 +3204,7 @@ get_state:
     uncover 20
     uncover 20
     concat
-    pushbytes 0x00f2
+    pushbytes 0x00eb
     concat
     uncover 18
     concat
