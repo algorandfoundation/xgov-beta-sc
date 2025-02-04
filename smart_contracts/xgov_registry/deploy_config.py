@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 def deploy(
     algod_client: AlgodClient,
     indexer_client: IndexerClient,
-    app_spec: algokit_utils.ApplicationSpecification,
     deployer: algokit_utils.Account,
 ) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -30,7 +29,7 @@ def deploy(
 
     app_client.deploy(
         on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
-        on_update=algokit_utils.OnUpdate.UpdateApp,
-        create_args=DeployCreate(args=CreateArgs()),
+        on_update=algokit_utils.OnUpdate.AppendApp,  # TODO: restore UpdateApp behavior after first deployment
+        create_args=DeployCreate(args=CreateArgs(), extra_pages=3),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
     )
