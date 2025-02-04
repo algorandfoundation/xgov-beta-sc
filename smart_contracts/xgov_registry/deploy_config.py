@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 def deploy(
     algod_client: AlgodClient,
     indexer_client: IndexerClient,
+    app_spec: algokit_utils.ApplicationSpecification,
     deployer: algokit_utils.Account,
 ) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
