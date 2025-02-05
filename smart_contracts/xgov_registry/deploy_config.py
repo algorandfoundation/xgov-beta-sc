@@ -30,7 +30,7 @@ def deploy(
 
     app_client.deploy(
         on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
-        on_update=algokit_utils.OnUpdate.AppendApp,  # TODO: restore UpdateApp behavior after first deployment
+        on_update=algokit_utils.OnUpdate.UpdateApp,
         create_args=DeployCreate(args=CreateArgs(), extra_pages=3),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
     )
