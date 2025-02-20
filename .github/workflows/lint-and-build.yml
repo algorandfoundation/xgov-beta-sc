@@ -1,0 +1,58 @@
+name: Lint and build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dependabot/*/minor-and-patch-* # Dependabot PRs
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_ID }}
+          private-key: ${{ secrets.BOT_SK }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install algokit
+        run: pipx install algokit
+
+      - name: Bootstrap dependencies
+        run: algokit project bootstrap all
+
+      - name: Configure git
+        shell: bash
+        run: |
+          # set git user and email as test invoke git
+          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
+
+      - name: Fix black formatting
+        run: poetry run black .
+
+      - name: Fix ruff linting
+        run: poetry run ruff check --fix .
+
+      - name: Build smart contracts
+        run: algokit project run build
+
+      - name: Commit changes
+        run: |
+          git add .
+          git commit -m "[skip-ci] Fix formatting and linting issues and build artifacts"
+          git push
