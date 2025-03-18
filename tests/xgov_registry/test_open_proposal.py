@@ -312,7 +312,7 @@ def test_open_proposal_wrong_recipient(
         )
 
 
-def test_open_proposal_paused_non_admin_error(
+def test_open_proposal_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
@@ -348,9 +348,9 @@ def test_open_proposal_paused_non_admin_error(
         ),
     )
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.open_proposal(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -370,7 +370,7 @@ def test_open_proposal_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.open_proposal(
         payment=TransactionWithSigner(

@@ -168,7 +168,7 @@ def test_vote_proposal_wrong_voting_address(
         )
 
 
-def test_vote_proposal_paused_non_admin_error(
+def test_vote_proposal_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     # xgov: AddressAndSigner,
@@ -178,9 +178,9 @@ def test_vote_proposal_paused_non_admin_error(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.vote_proposal(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=committee_members[0].address,
@@ -202,7 +202,7 @@ def test_vote_proposal_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.vote_proposal(
         proposal_id=voting_proposal_client.app_id,

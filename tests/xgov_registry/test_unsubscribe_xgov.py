@@ -97,15 +97,15 @@ def test_unsubscribe_xgov_not_an_xgov(
         )
 
 
-def test_unsubscribe_xgov_paused_non_admin_error(
+def test_unsubscribe_xgov_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     xgov: AddressAndSigner,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.unsubscribe_xgov(
             xgov_address=xgov.address,
             transaction_parameters=TransactionParameters(
@@ -115,7 +115,7 @@ def test_unsubscribe_xgov_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.unsubscribe_xgov(
         xgov_address=xgov.address,

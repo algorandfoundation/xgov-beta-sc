@@ -175,7 +175,7 @@ def test_subscribe_proposer_wrong_amount(
         )
 
 
-def test_subscribe_proposer_paused_non_admin_error(
+def test_subscribe_proposer_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
@@ -187,9 +187,9 @@ def test_subscribe_proposer_paused_non_admin_error(
         xgov_registry_client.app_address,
     )
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.subscribe_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
@@ -209,7 +209,7 @@ def test_subscribe_proposer_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.subscribe_proposer(
         payment=TransactionWithSigner(

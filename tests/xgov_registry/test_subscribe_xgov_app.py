@@ -206,7 +206,7 @@ def test_subscribe_xgov_app_wrong_amount(
         )
 
 
-def test_subscribe_xgov_app_paused_non_admin_error(
+def test_subscribe_xgov_app_paused_registry_error(
     deployer: Account,
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
@@ -219,9 +219,9 @@ def test_subscribe_xgov_app_paused_non_admin_error(
         xgov_registry_client.app_address,
     )
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.subscribe_xgov_app(
             app_id=xgov_subscriber_app.app_id,
             voting_address=deployer.address,
@@ -244,7 +244,7 @@ def test_subscribe_xgov_app_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.subscribe_xgov_app(
         app_id=xgov_subscriber_app.app_id,

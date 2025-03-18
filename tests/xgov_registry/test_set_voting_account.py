@@ -102,7 +102,7 @@ def test_set_voting_account_not_voting_account_or_xgov(
         )
 
 
-def test_set_voting_account_paused_non_admin_error(
+def test_set_voting_account_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
@@ -111,9 +111,9 @@ def test_set_voting_account_paused_non_admin_error(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.pause_non_admin()
+    xgov_registry_client.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.set_voting_account(
             xgov_address=xgov.address,
             voting_address=random_account.address,
@@ -125,7 +125,7 @@ def test_set_voting_account_paused_non_admin_error(
             ),
         )
 
-    xgov_registry_client.resume_non_admin()
+    xgov_registry_client.resume_registry()
 
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
