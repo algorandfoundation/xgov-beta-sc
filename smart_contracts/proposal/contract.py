@@ -165,21 +165,26 @@ class Proposal(
     def decommission_check_authorization(self) -> None:
         assert self.is_committee_publisher(), err.UNAUTHORIZED
         assert (
-            # TODO: Support STATUS_DRAFT here when we add stale proposal management
-            self.status.value == enm.STATUS_FUNDED
+            self.status.value == enm.STATUS_EMPTY
+            or self.status.value == enm.STATUS_DRAFT
+            or self.status.value == enm.STATUS_FUNDED
             or self.status.value == enm.STATUS_BLOCKED
             or self.status.value == enm.STATUS_REJECTED
         ), err.WRONG_PROPOSAL_STATUS
 
-        cooldown_duration, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
-        )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        assert (
-            self.cool_down_start_ts.value != 0
-            and Global.latest_timestamp
-            >= self.cool_down_start_ts.value + cooldown_duration
-        ), err.TOO_EARLY
+        if (
+            self.status.value != enm.STATUS_EMPTY
+            and self.status.value != enm.STATUS_DRAFT
+        ):
+            cooldown_duration, error = self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
+            )
+            assert error == typ.Error(""), err.MISSING_CONFIG
+            assert (
+                self.cool_down_start_ts.value != 0
+                and Global.latest_timestamp
+                >= self.cool_down_start_ts.value + cooldown_duration
+            ), err.TOO_EARLY
 
     @subroutine
     def delete_check_authorization(self) -> typ.Error:
@@ -853,7 +858,7 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the committee publisher
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FUNDED, STATUS_BLOCKED or STATUS_REJECTED
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.TOO_EARLY: If the proposal is still in the cool down period
 
@@ -867,6 +872,11 @@ class Proposal(
 
         # if all voters are removed, refund the treasury and decommission the proposal
         if Global.current_application_address.total_boxes == UInt64(0):
+            if self.status.value == enm.STATUS_DRAFT:
+                self.transfer_locked_amount(
+                    receiver=self.proposer.value,
+                )
+                self.locked_amount.value = UInt64(0)
             reg_app = Application(self.registry_app_id.value)
             self.pay(
                 receiver=reg_app.address,
