@@ -74,3 +74,43 @@ def test_withdraw_funds_insufficient_funds(
                 suggested_params=sp,
             ),
         )
+
+
+def test_withdraw_funds_paused_non_admin_error(
+    funded_xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> None:
+    before_global_state = funded_xgov_registry_client.get_global_state()
+    added_amount = 10_000_000
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    funded_xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        funded_xgov_registry_client.withdraw_funds(
+            amount=added_amount,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                suggested_params=sp,
+            ),
+        )
+
+    funded_xgov_registry_client.resume_non_admin()
+
+    funded_xgov_registry_client.withdraw_funds(
+        amount=added_amount,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    after_global_state = funded_xgov_registry_client.get_global_state()
+
+    assert (
+        before_global_state.outstanding_funds - added_amount
+    ) == after_global_state.outstanding_funds

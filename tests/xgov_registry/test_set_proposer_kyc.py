@@ -94,3 +94,52 @@ def test_set_proposer_kyc_not_a_proposer(
                 boxes=[(0, proposer_box_name(random_account.address))],
             ),
         )
+
+
+def test_set_proposer_kyc_paused_non_admin_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: Account,
+    proposer: AddressAndSigner,
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.set_proposer_kyc(
+            proposer=proposer.address,
+            kyc_status=True,
+            kyc_expiring=18446744073709551615,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                boxes=[(0, proposer_box_name(proposer.address))],
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.set_proposer_kyc(
+        proposer=proposer.address,
+        kyc_status=True,
+        kyc_expiring=18446744073709551615,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            boxes=[(0, proposer_box_name(proposer.address))],
+        ),
+    )
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=proposer_box_name(proposer.address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("(bool,bool,uint64)")
+    active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
+
+    assert kyc_status  # type: ignore
+    assert kyc_expiring == KYC_EXPIRATION  # type: ignore

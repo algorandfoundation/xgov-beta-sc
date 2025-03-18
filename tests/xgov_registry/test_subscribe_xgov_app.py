@@ -204,3 +204,86 @@ def test_subscribe_xgov_app_wrong_amount(
                 foreign_apps=[xgov_subscriber_app.app_id],
             ),
         )
+
+
+def test_subscribe_xgov_app_paused_non_admin_error(
+    deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    algorand_client: AlgorandClient,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.subscribe_xgov_app(
+            app_id=xgov_subscriber_app.app_id,
+            voting_address=deployer.address,
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=deployer.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=before_global_state.xgov_fee,
+                    ),
+                ),
+                signer=deployer.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                suggested_params=sp,
+                boxes=[(0, xgov_box_name(xgov_subscriber_app.app_address))],
+                foreign_apps=[xgov_subscriber_app.app_id],
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.subscribe_xgov_app(
+        app_id=xgov_subscriber_app.app_id,
+        voting_address=deployer.address,
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=before_global_state.xgov_fee,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            boxes=[(0, xgov_box_name(xgov_subscriber_app.app_address))],
+            foreign_apps=[xgov_subscriber_app.app_id],
+        ),
+    )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
+    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(xgov_subscriber_app.app_address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("address")
+    voting_address = box_abi.decode(box_value)  # type: ignore
+
+    assert deployer.address == voting_address  # type: ignore

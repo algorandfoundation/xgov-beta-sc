@@ -73,3 +73,62 @@ def test_deposit_funds_wrong_recipient(
                 suggested_params=sp,
             ),
         )
+
+
+def test_deposit_funds_paused_non_admin_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+    added_amount = 10_000_000
+
+    sp = algorand_client.get_suggested_params()
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.deposit_funds(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=deployer.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=added_amount,
+                    ),
+                ),
+                signer=deployer.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                suggested_params=sp,
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.deposit_funds(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=added_amount,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    assert (
+        before_global_state.outstanding_funds + added_amount
+        == after_global_state.outstanding_funds
+    )

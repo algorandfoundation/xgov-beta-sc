@@ -185,3 +185,81 @@ def test_subscribe_xgov_wrong_amount(
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )
+
+
+def test_subscribe_xgov_paused_non_admin_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    random_account: AddressAndSigner,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.subscribe_xgov(
+            voting_address=random_account.address,
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=before_global_state.xgov_fee,
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, xgov_box_name(random_account.address))],
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.subscribe_xgov(
+        voting_address=random_account.address,
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=random_account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=before_global_state.xgov_fee,
+                ),
+            ),
+            signer=random_account.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=random_account.address,
+            signer=random_account.signer,
+            suggested_params=sp,
+            boxes=[(0, xgov_box_name(random_account.address))],
+        ),
+    )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
+    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(random_account.address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("address")
+    voting_address = box_abi.decode(box_value)  # type: ignore
+
+    assert random_account.address == voting_address  # type: ignore

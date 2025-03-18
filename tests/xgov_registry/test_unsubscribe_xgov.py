@@ -95,3 +95,43 @@ def test_unsubscribe_xgov_not_an_xgov(
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )
+
+
+def test_unsubscribe_xgov_paused_non_admin_error(
+    xgov_registry_client: XGovRegistryClient,
+    xgov: AddressAndSigner,
+) -> None:
+    before_global_state = xgov_registry_client.get_global_state()
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.unsubscribe_xgov(
+            xgov_address=xgov.address,
+            transaction_parameters=TransactionParameters(
+                sender=xgov.address,
+                signer=xgov.signer,
+                boxes=[(0, xgov_box_name(xgov.address))],
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.unsubscribe_xgov(
+        xgov_address=xgov.address,
+        transaction_parameters=TransactionParameters(
+            sender=xgov.address,
+            signer=xgov.signer,
+            boxes=[(0, xgov_box_name(xgov.address))],
+        ),
+    )
+
+    after_global_state = xgov_registry_client.get_global_state()
+
+    assert (before_global_state.xgovs - 1) == after_global_state.xgovs
+
+    with pytest.raises(error.AlgodHTTPError):  # type: ignore
+        xgov_registry_client.algod_client.application_box_by_name(
+            application_id=xgov_registry_client.app_id,
+            box_name=xgov_box_name(xgov.address),
+        )

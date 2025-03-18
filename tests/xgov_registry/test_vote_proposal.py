@@ -166,3 +166,61 @@ def test_vote_proposal_wrong_voting_address(
                 accounts=[xgov.address],
             ),
         )
+
+
+def test_vote_proposal_paused_non_admin_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    # xgov: AddressAndSigner,
+    voting_proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    xgov_registry_client.pause_non_admin()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_NON_ADMIN):
+        xgov_registry_client.vote_proposal(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee_members[0].address,
+            approval_votes=COMMITTEE_VOTES,
+            rejection_votes=0,
+            transaction_parameters=TransactionParameters(
+                sender=committee_members[0].address,
+                signer=committee_members[0].signer,
+                suggested_params=sp,
+                boxes=[
+                    (0, xgov_box_name(committee_members[0].address)),
+                    (
+                        voting_proposal_client.app_id,
+                        get_voter_box_key(committee_members[0].address),
+                    ),
+                ],
+                foreign_apps=[voting_proposal_client.app_id],
+                accounts=[committee_members[0].address],
+            ),
+        )
+
+    xgov_registry_client.resume_non_admin()
+
+    xgov_registry_client.vote_proposal(
+        proposal_id=voting_proposal_client.app_id,
+        xgov_address=committee_members[0].address,
+        approval_votes=COMMITTEE_VOTES,
+        rejection_votes=0,
+        transaction_parameters=TransactionParameters(
+            sender=committee_members[0].address,
+            signer=committee_members[0].signer,
+            suggested_params=sp,
+            boxes=[
+                (0, xgov_box_name(committee_members[0].address)),
+                (
+                    voting_proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                ),
+            ],
+            foreign_apps=[voting_proposal_client.app_id],
+            accounts=[committee_members[0].address],
+        ),
+    )

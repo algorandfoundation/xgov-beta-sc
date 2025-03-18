@@ -63,3 +63,6 @@ VOTING_ONGOING = "Voting Ongoing"
 VOTER_NOT_FOUND = "Voter not found"
 VOTER_ALREADY_VOTED = "Voter already voted"
 VOTES_EXCEEDED = "Votes exceeded"
+
+PAUSED_NON_ADMIN = "Registry's non-admin methods are paused"
+PAUSED_PROPOSALS = "Creation of proposals is paused"

@@ -44,6 +44,13 @@ class XGovRegistry(
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
         # Initialize global state variables
+        self.paused_non_admin = GlobalState(
+            arc4.Bool(), key=cfg.GS_KEY_PAUSED_NON_ADMIN
+        )
+        self.paused_proposals = GlobalState(
+            arc4.Bool(), key=cfg.GS_KEY_PAUSED_PROPOSALS
+        )
+
         self.xgov_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_MANAGER)
         self.xgov_subscriber = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_XGOV_SUBSCRIBER
@@ -212,6 +219,42 @@ class XGovRegistry(
         """
 
         self.xgov_manager.value = arc4.Address(Txn.sender)
+
+    @arc4.abimethod()
+    def pause_non_admin(self) -> None:
+        """
+        Pauses the xGov Registry non-administrative methods.
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.paused_non_admin.value = arc4.Bool(True)
+
+    @arc4.abimethod()
+    def pause_proposals(self) -> None:
+        """
+        Pauses the creation of new Proposals.
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.paused_proposals.value = arc4.Bool(True)
+
+    @arc4.abimethod()
+    def resume_non_admin(self) -> None:
+        """
+        Resumes the xGov Registry non-administrative methods.
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.paused_non_admin.value = arc4.Bool(False)
+
+    @arc4.abimethod()
+    def resume_proposals(self) -> None:
+        """
+        Resumes the creation of new Proposals.
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        self.paused_proposals.value = arc4.Bool(False)
 
     @arc4.abimethod()
     def set_xgov_manager(self, manager: arc4.Address) -> None:
@@ -392,6 +435,8 @@ class XGovRegistry(
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
         # check payment
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
@@ -411,6 +456,8 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
 
         # ensure the provided address is an xGov
         assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
@@ -446,6 +493,8 @@ class XGovRegistry(
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         app_creator = Application(app_id.native).creator
         app_address = Application(app_id.native).address
 
@@ -470,6 +519,8 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov or the sender is not the App Creator
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
 
         app_creator = Application(app_id.native).creator
         app_address = Application(app_id.native).address
@@ -509,6 +560,8 @@ class XGovRegistry(
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         # ensure the xgov_address is not already an xGov
         assert xgov_address.native not in self.xgov_box, err.ALREADY_XGOV
 
@@ -538,6 +591,8 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the xGov Manager
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # get the request
@@ -560,6 +615,8 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the xGov Manager
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # delete the request
@@ -579,6 +636,8 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not currently an xGov
             err.VOTING_ADDRESS_MUST_BE_DIFFERENT: If the new voting account is the same as currently set
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
 
         # Check if the sender is an xGov member
         old_voting_address, exists = self.xgov_box.maybe(xgov_address.native)
@@ -605,6 +664,8 @@ class XGovRegistry(
             err.WRONG_RECEIVER: If the payment receiver is not the xGov Registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the proposer_fee global state key
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
 
         assert Txn.sender not in self.proposer_box, err.ALREADY_PROPOSER
         # check fee
@@ -636,6 +697,8 @@ class XGovRegistry(
             err.PROPOSER_DOES_NOT_EXIST: If the referenced address is not a Proposer
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         # check if kyc provider
         assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
         assert proposer.native in self.proposer_box, err.PROPOSER_DOES_NOT_EXIST
@@ -664,6 +727,8 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the xGov Manager
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
 
         self.committee_id.value = cid.copy()
@@ -686,6 +751,9 @@ class XGovRegistry(
             err.WRONG_RECEIVER: If the payment receiver is not the xGov Registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the proposal_fee global state key
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+        assert not self.paused_proposals.value, err.PAUSED_PROPOSALS
 
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
@@ -746,6 +814,8 @@ class XGovRegistry(
             err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         # verify proposal id is genuine proposal
         assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
 
@@ -787,6 +857,8 @@ class XGovRegistry(
             err.INVALID_KYC: If the Proposer KYC is invalid or expired
             err.INSUFFICIENT_TREASURY_FUNDS: If the xGov Registry does not have enough funds for the disbursement
         """
+
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
 
         # Verify the caller is the xGov Payor
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
@@ -843,6 +915,8 @@ class XGovRegistry(
             err.WRONG_RECEIVER: If the recipient is not the xGov Treasury (xGov Registry Account)
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert (
             payment.receiver == Global.current_application_address
         ), err.WRONG_RECEIVER
@@ -862,6 +936,8 @@ class XGovRegistry(
             err.INSUFFICIENT_FEE: If the fee is not enough to cover the inner transaction to send the funds back
         """
 
+        assert not self.paused_non_admin.value, err.PAUSED_NON_ADMIN
+
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
@@ -880,6 +956,8 @@ class XGovRegistry(
         """
 
         return typ.TypedGlobalState(
+            paused_non_admin=self.paused_non_admin.value,
+            paused_proposals=self.paused_proposals.value,
             xgov_manager=self.xgov_manager.value,
             xgov_payor=self.xgov_payor.value,
             xgov_reviewer=self.xgov_reviewer.value,
