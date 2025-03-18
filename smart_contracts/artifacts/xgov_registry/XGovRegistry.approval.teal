@@ -1284,7 +1284,7 @@ pause_non_admin:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:230
-    // self.paused_non_admin.value = arc4.Bool(True)
+    // self.paused_non_admin.value = arc4.Bool(True)  # noqa: FBT003
     bytec_1 // 0x7061757365645f6e6f6e5f61646d696e
     pushbytes 0x80
     app_global_put
@@ -1298,7 +1298,7 @@ pause_proposals:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:239
-    // self.paused_proposals.value = arc4.Bool(True)
+    // self.paused_proposals.value = arc4.Bool(True)  # noqa: FBT003
     bytec 8 // 0x7061757365645f70726f706f73616c73
     pushbytes 0x80
     app_global_put
@@ -1312,7 +1312,7 @@ resume_non_admin:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:248
-    // self.paused_non_admin.value = arc4.Bool(False)
+    // self.paused_non_admin.value = arc4.Bool(False)  # noqa: FBT003
     bytec_1 // 0x7061757365645f6e6f6e5f61646d696e
     bytec_0 // 0x00
     app_global_put
@@ -1326,7 +1326,7 @@ resume_proposals:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:257
-    // self.paused_proposals.value = arc4.Bool(False)
+    // self.paused_proposals.value = arc4.Bool(False)  # noqa: FBT003
     bytec 8 // 0x7061757365645f70726f706f73616c73
     bytec_0 // 0x00
     app_global_put

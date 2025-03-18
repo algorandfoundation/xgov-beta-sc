@@ -227,7 +227,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_non_admin.value = arc4.Bool(True)
+        self.paused_non_admin.value = arc4.Bool(True)  # noqa: FBT003
 
     @arc4.abimethod()
     def pause_proposals(self) -> None:
@@ -236,7 +236,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_proposals.value = arc4.Bool(True)
+        self.paused_proposals.value = arc4.Bool(True)  # noqa: FBT003
 
     @arc4.abimethod()
     def resume_non_admin(self) -> None:
@@ -245,7 +245,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_non_admin.value = arc4.Bool(False)
+        self.paused_non_admin.value = arc4.Bool(False)  # noqa: FBT003
 
     @arc4.abimethod()
     def resume_proposals(self) -> None:
@@ -254,7 +254,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_proposals.value = arc4.Bool(False)
+        self.paused_proposals.value = arc4.Bool(False)  # noqa: FBT003
 
     @arc4.abimethod()
     def set_xgov_manager(self, manager: arc4.Address) -> None:
