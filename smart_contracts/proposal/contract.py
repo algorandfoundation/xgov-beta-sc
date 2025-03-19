@@ -513,6 +513,7 @@ class Proposal(
     @subroutine
     def transfer_locked_amount(self, receiver: Account) -> None:
         self.pay(receiver, self.locked_amount.value)
+        self.locked_amount.value = UInt64(0)
 
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
@@ -618,14 +619,12 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        #  Clear the proposal data TODO: check if this can be in a struct and clear the struct
         self.title.value = String()
         self.cid.value = typ.Cid.from_bytes(b"")
         self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
         self.focus.value = UInt64(0)
         self.funding_type.value = UInt64(enm.FUNDING_NULL)
         self.requested_amount.value = UInt64(0)
-        self.locked_amount.value = UInt64(0)
         self.submission_ts.value = UInt64(0)
         self.status.value = UInt64(enm.STATUS_EMPTY)
 
@@ -792,7 +791,6 @@ class Proposal(
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
             )
-            self.locked_amount.value = UInt64(0)
             self.cool_down_start_ts.value = Global.latest_timestamp
 
     @arc4.abimethod()
@@ -819,7 +817,6 @@ class Proposal(
                 receiver=reg_app.address,
             )
 
-            self.locked_amount.value = UInt64(0)
             self.cool_down_start_ts.value = Global.latest_timestamp
         else:
             self.status.value = UInt64(enm.STATUS_REVIEWED)
@@ -844,7 +841,6 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        self.locked_amount.value = UInt64(0)
         self.cool_down_start_ts.value = Global.latest_timestamp
 
         return typ.Error("")
@@ -872,11 +868,12 @@ class Proposal(
 
         # if all voters are removed, refund the treasury and decommission the proposal
         if Global.current_application_address.total_boxes == UInt64(0):
+            # refund the locked amount to the proposer
+            # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
             if self.status.value == enm.STATUS_DRAFT:
                 self.transfer_locked_amount(
                     receiver=self.proposer.value,
                 )
-                self.locked_amount.value = UInt64(0)
             reg_app = Application(self.registry_app_id.value)
             self.pay(
                 receiver=reg_app.address,
