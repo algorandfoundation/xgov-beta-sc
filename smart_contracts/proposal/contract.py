@@ -165,21 +165,26 @@ class Proposal(
     def decommission_check_authorization(self) -> None:
         assert self.is_committee_publisher(), err.UNAUTHORIZED
         assert (
-            # TODO: Support STATUS_DRAFT here when we add stale proposal management
-            self.status.value == enm.STATUS_FUNDED
+            self.status.value == enm.STATUS_EMPTY
+            or self.status.value == enm.STATUS_DRAFT
+            or self.status.value == enm.STATUS_FUNDED
             or self.status.value == enm.STATUS_BLOCKED
             or self.status.value == enm.STATUS_REJECTED
         ), err.WRONG_PROPOSAL_STATUS
 
-        cooldown_duration, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
-        )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        assert (
-            self.cool_down_start_ts.value != 0
-            and Global.latest_timestamp
-            >= self.cool_down_start_ts.value + cooldown_duration
-        ), err.TOO_EARLY
+        if (
+            self.status.value != enm.STATUS_EMPTY
+            and self.status.value != enm.STATUS_DRAFT
+        ):
+            cooldown_duration, error = self.get_uint_from_registry_config(
+                Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
+            )
+            assert error == typ.Error(""), err.MISSING_CONFIG
+            assert (
+                self.cool_down_start_ts.value != 0
+                and Global.latest_timestamp
+                >= self.cool_down_start_ts.value + cooldown_duration
+            ), err.TOO_EARLY
 
     @subroutine
     def delete_check_authorization(self) -> typ.Error:
@@ -508,6 +513,7 @@ class Proposal(
     @subroutine
     def transfer_locked_amount(self, receiver: Account) -> None:
         self.pay(receiver, self.locked_amount.value)
+        self.locked_amount.value = UInt64(0)
 
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
@@ -613,14 +619,12 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        #  Clear the proposal data TODO: check if this can be in a struct and clear the struct
         self.title.value = String()
         self.cid.value = typ.Cid.from_bytes(b"")
         self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
         self.focus.value = UInt64(0)
         self.funding_type.value = UInt64(enm.FUNDING_NULL)
         self.requested_amount.value = UInt64(0)
-        self.locked_amount.value = UInt64(0)
         self.submission_ts.value = UInt64(0)
         self.status.value = UInt64(enm.STATUS_EMPTY)
 
@@ -787,7 +791,6 @@ class Proposal(
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
             )
-            self.locked_amount.value = UInt64(0)
             self.cool_down_start_ts.value = Global.latest_timestamp
 
     @arc4.abimethod()
@@ -814,7 +817,6 @@ class Proposal(
                 receiver=reg_app.address,
             )
 
-            self.locked_amount.value = UInt64(0)
             self.cool_down_start_ts.value = Global.latest_timestamp
         else:
             self.status.value = UInt64(enm.STATUS_REVIEWED)
@@ -839,7 +841,6 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        self.locked_amount.value = UInt64(0)
         self.cool_down_start_ts.value = Global.latest_timestamp
 
         return typ.Error("")
@@ -853,7 +854,7 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the committee publisher
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FUNDED, STATUS_BLOCKED or STATUS_REJECTED
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.TOO_EARLY: If the proposal is still in the cool down period
 
@@ -867,6 +868,12 @@ class Proposal(
 
         # if all voters are removed, refund the treasury and decommission the proposal
         if Global.current_application_address.total_boxes == UInt64(0):
+            # refund the locked amount to the proposer
+            # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
+            if self.status.value == enm.STATUS_DRAFT:
+                self.transfer_locked_amount(
+                    receiver=self.proposer.value,
+                )
             reg_app = Application(self.registry_app_id.value)
             self.pay(
                 receiver=reg_app.address,

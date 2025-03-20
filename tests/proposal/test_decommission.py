@@ -11,6 +11,7 @@ from smart_contracts.errors import std_errors as err
 from tests.proposal.common import (
     assert_account_balance,
     assert_decommissioned_proposal_global_state,
+    assert_empty_proposal_global_state,
     decommission_proposal,
     get_voter_box_key,
     logic_error_type,
@@ -23,21 +24,34 @@ from tests.utils import ERROR_TO_REGEX, time_warp
 
 def test_decommission_empty_proposal(
     proposal_client: ProposalClient,
+    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     committee_publisher: AddressAndSigner,
 ) -> None:
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        proposal_client.decommission(
-            voters=[],
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-            ),
-        )
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    proposal_client.decommission(
+        voters=[],
+        transaction_parameters=TransactionParameters(
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            suggested_params=sp,
+        ),
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_empty_proposal_global_state(
+        global_state,
+        proposer.address,
+        xgov_registry_mock_client.app_id,
+        decommissioned=True,
+    )
+
+    assert_account_balance(algorand_client, proposal_client.app_address, 0)
 
 
 def test_decommission_draft_proposal(
@@ -52,17 +66,42 @@ def test_decommission_draft_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        proposal_client.decommission(
-            voters=[],
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-            ),
-        )
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    locked_amount = proposal_client.get_global_state().locked_amount
+    proposer_balance = algorand_client.account.get_information(proposer.address)[  # type: ignore
+        "amount"
+    ]
+
+    proposal_client.decommission(
+        voters=[],
+        transaction_parameters=TransactionParameters(
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[proposer.address],
+            suggested_params=sp,
+        ),
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_decommissioned_proposal_global_state(
+        global_state,
+        proposer.address,
+        xgov_registry_mock_client.app_id,
+        committee_id=b"",
+        committee_members=0,
+        committee_votes=0,
+        voters_count=0,
+        assigned_votes=0,
+    )
+
+    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+    assert_account_balance(
+        algorand_client, proposer.address, proposer_balance + locked_amount  # type: ignore
+    )
 
 
 def test_decommission_final_proposal(
