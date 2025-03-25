@@ -478,12 +478,12 @@ class Proposal(
 
     @subroutine
     def check_registry_not_paused(self) -> None:
-        registry_paused = self.get_bytes_from_registry_config(
+        registry_paused, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
         )
-        assert (
-            registry_paused == arc4.Bool(False).bytes  # noqa: FBT003
-        ), err.PAUSED_REGISTRY
+
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        assert not registry_paused, err.PAUSED_REGISTRY
 
     @subroutine
     def is_creator(self) -> bool:

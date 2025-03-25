@@ -44,10 +44,8 @@ class XGovRegistry(
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
         # Initialize global state variables
-        self.paused_registry = GlobalState(arc4.Bool(), key=cfg.GS_KEY_PAUSED_REGISTRY)
-        self.paused_proposals = GlobalState(
-            arc4.Bool(), key=cfg.GS_KEY_PAUSED_PROPOSALS
-        )
+        self.paused_registry = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_REGISTRY)
+        self.paused_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_PROPOSALS)
 
         self.xgov_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_MANAGER)
         self.xgov_subscriber = GlobalState(
@@ -225,7 +223,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_registry.value = arc4.Bool(True)  # noqa: FBT003
+        self.paused_registry.value = UInt64(1)
 
     @arc4.abimethod()
     def pause_proposals(self) -> None:
@@ -234,7 +232,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_proposals.value = arc4.Bool(True)  # noqa: FBT003
+        self.paused_proposals.value = UInt64(1)
 
     @arc4.abimethod()
     def resume_registry(self) -> None:
@@ -243,7 +241,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_registry.value = arc4.Bool(False)  # noqa: FBT003
+        self.paused_registry.value = UInt64(0)
 
     @arc4.abimethod()
     def resume_proposals(self) -> None:
@@ -252,7 +250,7 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.paused_proposals.value = arc4.Bool(False)  # noqa: FBT003
+        self.paused_proposals.value = UInt64(0)
 
     @arc4.abimethod()
     def set_xgov_manager(self, manager: arc4.Address) -> None:
@@ -903,8 +901,6 @@ class XGovRegistry(
             err.WRONG_RECEIVER: If the recipient is not the xGov Treasury (xGov Registry Account)
         """
 
-        assert not self.paused_registry.value, err.PAUSED_REGISTRY
-
         assert (
             payment.receiver == Global.current_application_address
         ), err.WRONG_RECEIVER
@@ -942,8 +938,8 @@ class XGovRegistry(
         """
 
         return typ.TypedGlobalState(
-            paused_registry=self.paused_registry.value,
-            paused_proposals=self.paused_proposals.value,
+            paused_registry=arc4.UInt64(self.paused_registry.value),
+            paused_proposals=arc4.UInt64(self.paused_proposals.value),
             xgov_manager=self.xgov_manager.value,
             xgov_payor=self.xgov_payor.value,
             xgov_reviewer=self.xgov_reviewer.value,

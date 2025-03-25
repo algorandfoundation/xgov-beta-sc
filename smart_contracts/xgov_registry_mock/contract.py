@@ -122,7 +122,7 @@ class XgovRegistryMock(ARC4Contract):
             key=reg_cfg.GS_KEY_COOL_DOWN_DURATION,
         )
         self.paused_registry = GlobalState(
-            arc4.Bool(False),  # noqa: FBT003
+            UInt64(0),
             key=reg_cfg.GS_KEY_PAUSED_REGISTRY,
         )
 
@@ -132,7 +132,7 @@ class XgovRegistryMock(ARC4Contract):
         Pauses the xGov Registry non-administrative methods.
         """
 
-        self.paused_registry.value = arc4.Bool(True)  # noqa: FBT003
+        self.paused_registry.value = UInt64(1)
 
     @arc4.abimethod()
     def resume_registry(self) -> None:
@@ -140,7 +140,7 @@ class XgovRegistryMock(ARC4Contract):
         Resumes the xGov Registry non-administrative methods.
         """
 
-        self.paused_registry.value = arc4.Bool(False)  # noqa: FBT003
+        self.paused_registry.value = UInt64(0)
 
     @arc4.abimethod()
     def create_empty_proposal(

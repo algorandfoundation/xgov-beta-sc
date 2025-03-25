@@ -7,28 +7,22 @@ def test_pause_and_resume(
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
 
-    assert (
-        xgov_registry_client.get_global_state().paused_registry.as_hex == "00"
-    )  # I.e, False
+    assert not xgov_registry_client.get_global_state().paused_registry
 
     xgov_registry_client.pause_registry()
 
-    assert (
-        xgov_registry_client.get_global_state().paused_registry.as_hex == "80"
-    )  # I.e, True, is paused (ARC4 Boolean representation)
+    assert xgov_registry_client.get_global_state().paused_registry
 
     xgov_registry_client.resume_registry()
 
-    assert (
-        xgov_registry_client.get_global_state().paused_registry.as_hex == "00"
-    )  # I.e, False again
+    assert not xgov_registry_client.get_global_state().paused_registry
 
-    assert xgov_registry_client.get_global_state().paused_proposals.as_hex == "00"
+    assert not xgov_registry_client.get_global_state().paused_proposals
 
     xgov_registry_client.pause_proposals()
 
-    assert xgov_registry_client.get_global_state().paused_proposals.as_hex == "80"
+    assert xgov_registry_client.get_global_state().paused_proposals
 
     xgov_registry_client.resume_proposals()
 
-    assert xgov_registry_client.get_global_state().paused_proposals.as_hex == "00"
+    assert not xgov_registry_client.get_global_state().paused_proposals
