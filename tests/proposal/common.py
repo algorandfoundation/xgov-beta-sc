@@ -90,20 +90,21 @@ def assert_proposal_global_state(
     assert global_state.assigned_votes == assigned_votes
     assert global_state.voters_count == voters_count
 
-    if status == STATUS_EMPTY:
-        assert global_state.submission_ts == 0
-    else:
-        assert global_state.submission_ts > 0
+    if status != STATUS_DECOMMISSIONED:  # Decommissioned proposals are ambiguous here
+        if status == STATUS_EMPTY:
+            assert global_state.submission_ts == 0
+        else:
+            assert global_state.submission_ts > 0
 
-    if status >= STATUS_FINAL:
-        assert global_state.finalization_ts > 0
-    else:
-        assert global_state.finalization_ts == 0
+        if status >= STATUS_FINAL:
+            assert global_state.finalization_ts > 0
+        else:
+            assert global_state.finalization_ts == 0
 
-    if status >= STATUS_VOTING:
-        assert global_state.vote_open_ts > 0
-    else:
-        assert global_state.vote_open_ts == 0
+        if status >= STATUS_VOTING:
+            assert global_state.vote_open_ts > 0
+        else:
+            assert global_state.vote_open_ts == 0
 
 
 def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type: ignore
@@ -197,10 +198,16 @@ def assert_proposal_with_status(  # type: ignore
 
 
 def assert_empty_proposal_global_state(
-    global_state: GlobalState, proposer_address: str, registry_app_id: int
+    global_state: GlobalState,
+    proposer_address: str,
+    registry_app_id: int,
+    decommissioned: bool = False,  # noqa: FBT001, FBT002
 ) -> None:
     assert_proposal_global_state(
-        global_state, proposer_address=proposer_address, registry_app_id=registry_app_id
+        global_state,
+        proposer_address=proposer_address,
+        registry_app_id=registry_app_id,
+        status=STATUS_EMPTY if not decommissioned else STATUS_DECOMMISSIONED,
     )
 
 
