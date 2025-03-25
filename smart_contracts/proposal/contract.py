@@ -481,7 +481,6 @@ class Proposal(
         registry_paused = self.get_bytes_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
         )
-        # assert error == typ.Error(""), err.MISSING_CONFIG
         assert (
             registry_paused == arc4.Bool(False).bytes  # noqa: FBT003
         ), err.PAUSED_REGISTRY
