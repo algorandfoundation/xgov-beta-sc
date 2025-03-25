@@ -3,7 +3,7 @@
   "sources": [
     "../../xgov_registry_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyBgB;;AADJ;;AADJ;AAMQ;;AADJ;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;AADJ;;;;;AADJ;AAMQ;AADW;;AADnB;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAlGR;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;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;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;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",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAyBgB;;AADJ;;AADJ;AAMQ;;AADJ;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;;;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;AADJ;;;;;AADJ;AAMQ;AADW;;AADnB;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;;AADJ;;AADJ;AAMQ;AADJ;;;AADJ;AAtGR;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;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;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;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",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -14,9 +14,9 @@
       "op": "intcblock 1 0 4 6 1209600 604800 1814400"
     },
     "16": {
-      "op": "bytecblock 0x151f7c75 0x70726f706f73616c5f666565 0x636f6d6d69747465655f6964 \"Unauthorized\" \"Wrong Proposal Status\" \"ERR:\" 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x70726f706f73616c5f7075626c697368696e675f627073 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x636f6d6d69747465655f7075626c6973686572 base32(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x78676f765f7265766965776572 0x636f6f6c5f646f776e5f6475726174696f6e"
+      "op": "bytecblock 0x151f7c75 0x70726f706f73616c5f666565 0x636f6d6d69747465655f6964 0x7061757365645f7265676973747279 \"Unauthorized\" \"Wrong Proposal Status\" \"ERR:\" 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x70726f706f73616c5f7075626c697368696e675f627073 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x636f6d6d69747465655f7075626c6973686572 base32(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x78676f765f7265766965776572 0x636f6f6c5f646f776e5f6475726174696f6e"
     },
-    "613": {
+    "629": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%0#0"
@@ -25,12 +25,12 @@
         "tmp%0#0"
       ]
     },
-    "615": {
+    "631": {
       "op": "bnz main_after_if_else@2",
       "stack_out": []
     },
-    "618": {
-      "op": "bytec 6 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+    "634": {
+      "op": "bytec 7 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
       "defined_out": [
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
       ],
@@ -38,7 +38,7 @@
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
       ]
     },
-    "620": {
+    "636": {
       "op": "pushint 100 // 100",
       "defined_out": [
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
@@ -49,12 +49,12 @@
         "100"
       ]
     },
-    "622": {
+    "638": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "623": {
-      "op": "bytec 7 // 0x6d696e5f7265717565737465645f616d6f756e74",
+    "639": {
+      "op": "bytec 8 // 0x6d696e5f7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x6d696e5f7265717565737465645f616d6f756e74"
       ],
@@ -62,7 +62,7 @@
         "0x6d696e5f7265717565737465645f616d6f756e74"
       ]
     },
-    "625": {
+    "641": {
       "op": "pushint 10000000000 // 10000000000",
       "defined_out": [
         "0x6d696e5f7265717565737465645f616d6f756e74",
@@ -73,12 +73,12 @@
         "10000000000"
       ]
     },
-    "631": {
+    "647": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "632": {
-      "op": "bytec 8 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+    "648": {
+      "op": "bytec 9 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
       ],
@@ -86,7 +86,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
       ]
     },
-    "634": {
+    "650": {
       "op": "pushint 50000000000 // 50000000000",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
@@ -97,12 +97,12 @@
         "50000000000"
       ]
     },
-    "641": {
+    "657": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "642": {
-      "op": "bytec 9 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+    "658": {
+      "op": "bytec 10 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
       ],
@@ -110,7 +110,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
       ]
     },
-    "644": {
+    "660": {
       "op": "pushint 250000000000 // 250000000000",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
@@ -121,12 +121,12 @@
         "250000000000"
       ]
     },
-    "651": {
+    "667": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "652": {
-      "op": "bytec 10 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+    "668": {
+      "op": "bytec 11 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
       ],
@@ -134,7 +134,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
       ]
     },
-    "654": {
+    "670": {
       "op": "pushint 500000000000 // 500000000000",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
@@ -145,12 +145,12 @@
         "500000000000"
       ]
     },
-    "661": {
+    "677": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "662": {
-      "op": "bytec 11 // 0x70726f706f73616c5f7075626c697368696e675f627073",
+    "678": {
+      "op": "bytec 12 // 0x70726f706f73616c5f7075626c697368696e675f627073",
       "defined_out": [
         "0x70726f706f73616c5f7075626c697368696e675f627073"
       ],
@@ -158,7 +158,7 @@
         "0x70726f706f73616c5f7075626c697368696e675f627073"
       ]
     },
-    "664": {
+    "680": {
       "op": "pushint 500 // 500",
       "defined_out": [
         "0x70726f706f73616c5f7075626c697368696e675f627073",
@@ -169,12 +169,12 @@
         "500"
       ]
     },
-    "667": {
+    "683": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "668": {
-      "op": "bytec 12 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+    "684": {
+      "op": "bytec 13 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
       ],
@@ -182,7 +182,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
       ]
     },
-    "670": {
+    "686": {
       "op": "intc 5 // 604800",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
@@ -193,12 +193,12 @@
         "604800"
       ]
     },
-    "672": {
+    "688": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "673": {
-      "op": "bytec 13 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+    "689": {
+      "op": "bytec 14 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
       ],
@@ -206,7 +206,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
       ]
     },
-    "675": {
+    "691": {
       "op": "intc 4 // 1209600",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
@@ -217,12 +217,12 @@
         "1209600"
       ]
     },
-    "677": {
+    "693": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "678": {
-      "op": "bytec 14 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+    "694": {
+      "op": "bytec 15 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
       ],
@@ -230,7 +230,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
       ]
     },
-    "680": {
+    "696": {
       "op": "intc 6 // 1814400",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
@@ -241,12 +241,12 @@
         "1814400"
       ]
     },
-    "682": {
+    "698": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "683": {
-      "op": "bytec 15 // 0x636f6d6d69747465655f7075626c6973686572",
+    "699": {
+      "op": "bytec 16 // 0x636f6d6d69747465655f7075626c6973686572",
       "defined_out": [
         "0x636f6d6d69747465655f7075626c6973686572"
       ],
@@ -254,8 +254,8 @@
         "0x636f6d6d69747465655f7075626c6973686572"
       ]
     },
-    "685": {
-      "op": "bytec 16 // addr AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+    "701": {
+      "op": "bytec 17 // addr AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
       "defined_out": [
         "0x636f6d6d69747465655f7075626c6973686572",
         "Address(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ)"
@@ -265,11 +265,11 @@
         "Address(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ)"
       ]
     },
-    "687": {
+    "703": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "688": {
+    "704": {
       "op": "bytec_1 // 0x70726f706f73616c5f666565",
       "defined_out": [
         "0x70726f706f73616c5f666565"
@@ -278,7 +278,7 @@
         "0x70726f706f73616c5f666565"
       ]
     },
-    "689": {
+    "705": {
       "op": "pushint 100000000 // 100000000",
       "defined_out": [
         "0x70726f706f73616c5f666565",
@@ -289,11 +289,11 @@
         "100000000"
       ]
     },
-    "694": {
+    "710": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "695": {
+    "711": {
       "op": "bytec_2 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -302,7 +302,7 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "696": {
+    "712": {
       "op": "pushbytes 0x",
       "defined_out": [
         "0x",
@@ -313,12 +313,12 @@
         "0x"
       ]
     },
-    "698": {
+    "714": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "699": {
-      "op": "bytec 17 // 0x636f6d6d69747465655f6d656d62657273",
+    "715": {
+      "op": "bytec 18 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
       ],
@@ -326,7 +326,7 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "701": {
+    "717": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0",
@@ -337,12 +337,12 @@
         "0"
       ]
     },
-    "702": {
+    "718": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "703": {
-      "op": "bytec 18 // 0x636f6d6d69747465655f766f746573",
+    "719": {
+      "op": "bytec 19 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
       ],
@@ -350,19 +350,19 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "705": {
+    "721": {
       "op": "intc_1 // 0",
       "stack_out": [
         "0x636f6d6d69747465655f766f746573",
         "0"
       ]
     },
-    "706": {
+    "722": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "707": {
-      "op": "bytec 19 // 0x766f74696e675f6475726174696f6e5f736d616c6c",
+    "723": {
+      "op": "bytec 20 // 0x766f74696e675f6475726174696f6e5f736d616c6c",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f736d616c6c"
       ],
@@ -370,19 +370,19 @@
         "0x766f74696e675f6475726174696f6e5f736d616c6c"
       ]
     },
-    "709": {
+    "725": {
       "op": "intc 5 // 604800",
       "stack_out": [
         "0x766f74696e675f6475726174696f6e5f736d616c6c",
         "604800"
       ]
     },
-    "711": {
+    "727": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "712": {
-      "op": "bytec 20 // 0x766f74696e675f6475726174696f6e5f6d656469756d",
+    "728": {
+      "op": "bytec 21 // 0x766f74696e675f6475726174696f6e5f6d656469756d",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6d656469756d"
       ],
@@ -390,19 +390,19 @@
         "0x766f74696e675f6475726174696f6e5f6d656469756d"
       ]
     },
-    "714": {
+    "730": {
       "op": "intc 4 // 1209600",
       "stack_out": [
         "0x766f74696e675f6475726174696f6e5f6d656469756d",
         "1209600"
       ]
     },
-    "716": {
+    "732": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "717": {
-      "op": "bytec 21 // 0x766f74696e675f6475726174696f6e5f6c61726765",
+    "733": {
+      "op": "bytec 22 // 0x766f74696e675f6475726174696f6e5f6c61726765",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6c61726765"
       ],
@@ -410,19 +410,19 @@
         "0x766f74696e675f6475726174696f6e5f6c61726765"
       ]
     },
-    "719": {
+    "735": {
       "op": "intc 6 // 1814400",
       "stack_out": [
         "0x766f74696e675f6475726174696f6e5f6c61726765",
         "1814400"
       ]
     },
-    "721": {
+    "737": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "722": {
-      "op": "bytec 22 // 0x71756f72756d5f736d616c6c",
+    "738": {
+      "op": "bytec 23 // 0x71756f72756d5f736d616c6c",
       "defined_out": [
         "0x71756f72756d5f736d616c6c"
       ],
@@ -430,7 +430,7 @@
         "0x71756f72756d5f736d616c6c"
       ]
     },
-    "724": {
+    "740": {
       "op": "pushint 1000 // 1000",
       "defined_out": [
         "0x71756f72756d5f736d616c6c",
@@ -441,12 +441,12 @@
         "1000"
       ]
     },
-    "727": {
+    "743": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "728": {
-      "op": "bytec 23 // 0x71756f72756d5f6d656469756d",
+    "744": {
+      "op": "bytec 24 // 0x71756f72756d5f6d656469756d",
       "defined_out": [
         "0x71756f72756d5f6d656469756d"
       ],
@@ -454,7 +454,7 @@
         "0x71756f72756d5f6d656469756d"
       ]
     },
-    "730": {
+    "746": {
       "op": "pushint 1500 // 1500",
       "defined_out": [
         "0x71756f72756d5f6d656469756d",
@@ -465,12 +465,12 @@
         "1500"
       ]
     },
-    "733": {
+    "749": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "734": {
-      "op": "bytec 24 // 0x71756f72756d5f6c61726765",
+    "750": {
+      "op": "bytec 25 // 0x71756f72756d5f6c61726765",
       "defined_out": [
         "0x71756f72756d5f6c61726765"
       ],
@@ -478,7 +478,7 @@
         "0x71756f72756d5f6c61726765"
       ]
     },
-    "736": {
+    "752": {
       "op": "pushint 2000 // 2000",
       "defined_out": [
         "0x71756f72756d5f6c61726765",
@@ -489,12 +489,12 @@
         "2000"
       ]
     },
-    "739": {
+    "755": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "740": {
-      "op": "bytec 25 // 0x77656967687465645f71756f72756d5f736d616c6c",
+    "756": {
+      "op": "bytec 26 // 0x77656967687465645f71756f72756d5f736d616c6c",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f736d616c6c"
       ],
@@ -502,19 +502,19 @@
         "0x77656967687465645f71756f72756d5f736d616c6c"
       ]
     },
-    "742": {
+    "758": {
       "op": "pushint 2000 // 2000",
       "stack_out": [
         "0x77656967687465645f71756f72756d5f736d616c6c",
         "2000"
       ]
     },
-    "745": {
+    "761": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "746": {
-      "op": "bytec 26 // 0x77656967687465645f71756f72756d5f6d656469756d",
+    "762": {
+      "op": "bytec 27 // 0x77656967687465645f71756f72756d5f6d656469756d",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6d656469756d"
       ],
@@ -522,7 +522,7 @@
         "0x77656967687465645f71756f72756d5f6d656469756d"
       ]
     },
-    "748": {
+    "764": {
       "op": "pushint 3000 // 3000",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6d656469756d",
@@ -533,12 +533,12 @@
         "3000"
       ]
     },
-    "751": {
+    "767": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "752": {
-      "op": "bytec 27 // 0x77656967687465645f71756f72756d5f6c61726765",
+    "768": {
+      "op": "bytec 28 // 0x77656967687465645f71756f72756d5f6c61726765",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6c61726765"
       ],
@@ -546,7 +546,7 @@
         "0x77656967687465645f71756f72756d5f6c61726765"
       ]
     },
-    "754": {
+    "770": {
       "op": "pushint 4000 // 4000",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6c61726765",
@@ -557,12 +557,12 @@
         "4000"
       ]
     },
-    "757": {
+    "773": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "758": {
-      "op": "bytec 28 // 0x78676f765f7265766965776572",
+    "774": {
+      "op": "bytec 29 // 0x78676f765f7265766965776572",
       "defined_out": [
         "0x78676f765f7265766965776572"
       ],
@@ -570,19 +570,19 @@
         "0x78676f765f7265766965776572"
       ]
     },
-    "760": {
-      "op": "bytec 16 // addr AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+    "776": {
+      "op": "bytec 17 // addr AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
       "stack_out": [
         "0x78676f765f7265766965776572",
         "Address(AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ)"
       ]
     },
-    "762": {
+    "778": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "763": {
-      "op": "bytec 29 // 0x636f6f6c5f646f776e5f6475726174696f6e",
+    "779": {
+      "op": "bytec 30 // 0x636f6f6c5f646f776e5f6475726174696f6e",
       "defined_out": [
         "0x636f6f6c5f646f776e5f6475726174696f6e"
       ],
@@ -590,18 +590,42 @@
         "0x636f6f6c5f646f776e5f6475726174696f6e"
       ]
     },
-    "765": {
+    "781": {
       "op": "intc 4 // 1209600",
       "stack_out": [
         "0x636f6f6c5f646f776e5f6475726174696f6e",
         "1209600"
       ]
     },
-    "767": {
+    "783": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "768": {
+    "784": {
+      "op": "bytec_3 // 0x7061757365645f7265676973747279",
+      "defined_out": [
+        "0x7061757365645f7265676973747279"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279"
+      ]
+    },
+    "785": {
+      "op": "pushbytes 0x00",
+      "defined_out": [
+        "0x00",
+        "0x7061757365645f7265676973747279"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279",
+        "0x00"
+      ]
+    },
+    "788": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "789": {
       "block": "main_after_if_else@2",
       "stack_in": [],
       "op": "txn NumAppArgs",
@@ -612,17 +636,19 @@
         "tmp%0#2"
       ]
     },
-    "770": {
-      "op": "bz main_bare_routing@35",
+    "791": {
+      "op": "bz main_bare_routing@37",
       "stack_out": []
     },
-    "773": {
-      "op": "pushbytess 0xc386b03f 0x6811eb76 0x37235b22 0xbbc72d1b 0xd17676d9 0x7cd79aad 0x77152d58 0x29dfd021 0x34a5dc55 0xbb0db011 0xaa348d0d 0x97f1e857 0xb6c22459 0x56ad1c6f 0xf83579fd 0x520e1f64 0x53802148 0xa4f766f6 0xa9998b1d 0x4e9c607c 0x650dfa8b 0xc887f086 0x4af84ea5 0x2c64e86f 0x16acce3b 0x886b3b04 0x11cf9720 0x45f6ca71 0xe23713e9 0x57bf85dc // method \"create_empty_proposal(address)uint64\", method \"set_proposal_commitment_bps(uint64)void\", method \"set_min_requested_amount(uint64)void\", method \"set_max_requested_amount_small(uint64)void\", method \"set_max_requested_amount_medium(uint64)void\", method \"set_max_requested_amount_large(uint64)void\", method \"set_publishing_fee(uint64)void\", method \"set_discussion_duration_small(uint64)void\", method \"set_discussion_duration_medium(uint64)void\", method \"set_discussion_duration_large(uint64)void\", method \"set_committee_publisher(address)void\", method \"set_proposal_fee(uint64)void\", method \"set_committee_id(byte[36])void\", method \"clear_committee_id()void\", method \"set_committee_members(uint64)void\", method \"set_committee_votes(uint64)void\", method \"set_voting_duration_small(uint64)void\", method \"set_voting_duration_medium(uint64)void\", method \"set_voting_duration_large(uint64)void\", method \"set_quorum_small(uint64)void\", method \"set_quorum_medium(uint64)void\", method \"set_quorum_large(uint64)void\", method \"set_weighted_quorum_small(uint64)void\", method \"set_weighted_quorum_medium(uint64)void\", method \"set_weighted_quorum_large(uint64)void\", method \"vote(application,address,uint64,uint64)void\", method \"set_xgov_reviewer(address)void\", method \"fund(application)void\", method \"set_cooldown_duration(uint64)void\", method \"delete_proposal(application)void\"",
+    "794": {
+      "op": "pushbytess 0x86f7e0e6 0x98352e86 0xc386b03f 0x6811eb76 0x37235b22 0xbbc72d1b 0xd17676d9 0x7cd79aad 0x77152d58 0x29dfd021 0x34a5dc55 0xbb0db011 0xaa348d0d 0x97f1e857 0xb6c22459 0x56ad1c6f 0xf83579fd 0x520e1f64 0x53802148 0xa4f766f6 0xa9998b1d 0x4e9c607c 0x650dfa8b 0xc887f086 0x4af84ea5 0x2c64e86f 0x16acce3b 0x886b3b04 0x11cf9720 0x45f6ca71 0xe23713e9 0x57bf85dc // method \"pause_registry()void\", method \"resume_registry()void\", method \"create_empty_proposal(address)uint64\", method \"set_proposal_commitment_bps(uint64)void\", method \"set_min_requested_amount(uint64)void\", method \"set_max_requested_amount_small(uint64)void\", method \"set_max_requested_amount_medium(uint64)void\", method \"set_max_requested_amount_large(uint64)void\", method \"set_publishing_fee(uint64)void\", method \"set_discussion_duration_small(uint64)void\", method \"set_discussion_duration_medium(uint64)void\", method \"set_discussion_duration_large(uint64)void\", method \"set_committee_publisher(address)void\", method \"set_proposal_fee(uint64)void\", method \"set_committee_id(byte[36])void\", method \"clear_committee_id()void\", method \"set_committee_members(uint64)void\", method \"set_committee_votes(uint64)void\", method \"set_voting_duration_small(uint64)void\", method \"set_voting_duration_medium(uint64)void\", method \"set_voting_duration_large(uint64)void\", method \"set_quorum_small(uint64)void\", method \"set_quorum_medium(uint64)void\", method \"set_quorum_large(uint64)void\", method \"set_weighted_quorum_small(uint64)void\", method \"set_weighted_quorum_medium(uint64)void\", method \"set_weighted_quorum_large(uint64)void\", method \"vote(application,address,uint64,uint64)void\", method \"set_xgov_reviewer(address)void\", method \"fund(application)void\", method \"set_cooldown_duration(uint64)void\", method \"delete_proposal(application)void\"",
       "defined_out": [
         "Method(clear_committee_id()void)",
         "Method(create_empty_proposal(address)uint64)",
         "Method(delete_proposal(application)void)",
         "Method(fund(application)void)",
+        "Method(pause_registry()void)",
+        "Method(resume_registry()void)",
         "Method(set_committee_id(byte[36])void)",
         "Method(set_committee_members(uint64)void)",
         "Method(set_committee_publisher(address)void)",
@@ -651,6 +677,8 @@
         "Method(vote(application,address,uint64,uint64)void)"
       ],
       "stack_out": [
+        "Method(pause_registry()void)",
+        "Method(resume_registry()void)",
         "Method(create_empty_proposal(address)uint64)",
         "Method(set_proposal_commitment_bps(uint64)void)",
         "Method(set_min_requested_amount(uint64)void)",
@@ -683,13 +711,15 @@
         "Method(delete_proposal(application)void)"
       ]
     },
-    "925": {
+    "956": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(clear_committee_id()void)",
         "Method(create_empty_proposal(address)uint64)",
         "Method(delete_proposal(application)void)",
         "Method(fund(application)void)",
+        "Method(pause_registry()void)",
+        "Method(resume_registry()void)",
         "Method(set_committee_id(byte[36])void)",
         "Method(set_committee_members(uint64)void)",
         "Method(set_committee_publisher(address)void)",
@@ -719,6 +749,8 @@
         "tmp%2#0"
       ],
       "stack_out": [
+        "Method(pause_registry()void)",
+        "Method(resume_registry()void)",
         "Method(create_empty_proposal(address)uint64)",
         "Method(set_proposal_commitment_bps(uint64)void)",
         "Method(set_min_requested_amount(uint64)void)",
@@ -752,12 +784,12 @@
         "tmp%2#0"
       ]
     },
-    "928": {
-      "op": "match main_create_empty_proposal_route@5 main_set_proposal_commitment_bps_route@6 main_set_min_requested_amount_route@7 main_set_max_requested_amount_small_route@8 main_set_max_requested_amount_medium_route@9 main_set_max_requested_amount_large_route@10 main_set_publishing_fee_route@11 main_set_discussion_duration_small_route@12 main_set_discussion_duration_medium_route@13 main_set_discussion_duration_large_route@14 main_set_committee_publisher_route@15 main_set_proposal_fee_route@16 main_set_committee_id_route@17 main_clear_committee_id_route@18 main_set_committee_members_route@19 main_set_committee_votes_route@20 main_set_voting_duration_small_route@21 main_set_voting_duration_medium_route@22 main_set_voting_duration_large_route@23 main_set_quorum_small_route@24 main_set_quorum_medium_route@25 main_set_quorum_large_route@26 main_set_weighted_quorum_small_route@27 main_set_weighted_quorum_medium_route@28 main_set_weighted_quorum_large_route@29 main_vote_route@30 main_set_xgov_reviewer_route@31 main_fund_route@32 main_set_cooldown_duration_route@33 main_delete_proposal_route@34",
+    "959": {
+      "op": "match main_pause_registry_route@5 main_resume_registry_route@6 main_create_empty_proposal_route@7 main_set_proposal_commitment_bps_route@8 main_set_min_requested_amount_route@9 main_set_max_requested_amount_small_route@10 main_set_max_requested_amount_medium_route@11 main_set_max_requested_amount_large_route@12 main_set_publishing_fee_route@13 main_set_discussion_duration_small_route@14 main_set_discussion_duration_medium_route@15 main_set_discussion_duration_large_route@16 main_set_committee_publisher_route@17 main_set_proposal_fee_route@18 main_set_committee_id_route@19 main_clear_committee_id_route@20 main_set_committee_members_route@21 main_set_committee_votes_route@22 main_set_voting_duration_small_route@23 main_set_voting_duration_medium_route@24 main_set_voting_duration_large_route@25 main_set_quorum_small_route@26 main_set_quorum_medium_route@27 main_set_quorum_large_route@28 main_set_weighted_quorum_small_route@29 main_set_weighted_quorum_medium_route@30 main_set_weighted_quorum_large_route@31 main_vote_route@32 main_set_xgov_reviewer_route@33 main_fund_route@34 main_set_cooldown_duration_route@35 main_delete_proposal_route@36",
       "stack_out": []
     },
-    "990": {
-      "block": "main_after_if_else@37",
+    "1025": {
+      "block": "main_after_if_else@39",
       "stack_in": [],
       "op": "intc_1 // 0",
       "defined_out": [
@@ -767,50 +799,50 @@
         "tmp%0#0"
       ]
     },
-    "991": {
+    "1026": {
       "op": "return",
       "stack_out": []
     },
-    "992": {
-      "block": "main_delete_proposal_route@34",
+    "1027": {
+      "block": "main_delete_proposal_route@36",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%146#0"
+        "tmp%154#0"
       ],
       "stack_out": [
-        "tmp%146#0"
+        "tmp%154#0"
       ]
     },
-    "994": {
+    "1029": {
       "op": "!",
       "defined_out": [
-        "tmp%147#0"
+        "tmp%155#0"
       ],
       "stack_out": [
-        "tmp%147#0"
+        "tmp%155#0"
       ]
     },
-    "995": {
+    "1030": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "996": {
+    "1031": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%148#0"
+        "tmp%156#0"
       ],
       "stack_out": [
-        "tmp%148#0"
+        "tmp%156#0"
       ]
     },
-    "998": {
+    "1033": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "999": {
+    "1034": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[1]%2#0"
@@ -819,30 +851,30 @@
         "reinterpret_bytes[1]%2#0"
       ]
     },
-    "1002": {
+    "1037": {
       "op": "btoi",
       "defined_out": [
-        "tmp%150#0"
+        "tmp%158#0"
       ],
       "stack_out": [
-        "tmp%150#0"
+        "tmp%158#0"
       ]
     },
-    "1003": {
+    "1038": {
       "op": "txnas Applications",
       "defined_out": [
-        "tmp%151#0"
+        "tmp%159#0"
       ],
       "stack_out": [
-        "tmp%151#0"
+        "tmp%159#0"
       ]
     },
-    "1005": {
+    "1040": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.delete_proposal",
       "op": "callsub delete_proposal",
       "stack_out": []
     },
-    "1008": {
+    "1043": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -851,50 +883,50 @@
         "tmp%0#0"
       ]
     },
-    "1009": {
+    "1044": {
       "op": "return",
       "stack_out": []
     },
-    "1010": {
-      "block": "main_set_cooldown_duration_route@33",
+    "1045": {
+      "block": "main_set_cooldown_duration_route@35",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%141#0"
+        "tmp%149#0"
       ],
       "stack_out": [
-        "tmp%141#0"
+        "tmp%149#0"
       ]
     },
-    "1012": {
+    "1047": {
       "op": "!",
       "defined_out": [
-        "tmp%142#0"
+        "tmp%150#0"
       ],
       "stack_out": [
-        "tmp%142#0"
+        "tmp%150#0"
       ]
     },
-    "1013": {
+    "1048": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1014": {
+    "1049": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%143#0"
+        "tmp%151#0"
       ],
       "stack_out": [
-        "tmp%143#0"
+        "tmp%151#0"
       ]
     },
-    "1016": {
+    "1051": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1017": {
+    "1052": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%23#0"
@@ -903,21 +935,21 @@
         "reinterpret_bytes[8]%23#0"
       ]
     },
-    "1020": {
+    "1055": {
       "op": "btoi",
       "defined_out": [
-        "tmp%145#0"
+        "tmp%153#0"
       ],
       "stack_out": [
-        "tmp%145#0"
+        "tmp%153#0"
       ]
     },
-    "1021": {
+    "1056": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_cooldown_duration",
       "op": "callsub set_cooldown_duration",
       "stack_out": []
     },
-    "1024": {
+    "1059": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -926,50 +958,50 @@
         "tmp%0#0"
       ]
     },
-    "1025": {
+    "1060": {
       "op": "return",
       "stack_out": []
     },
-    "1026": {
-      "block": "main_fund_route@32",
+    "1061": {
+      "block": "main_fund_route@34",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%135#0"
+        "tmp%143#0"
       ],
       "stack_out": [
-        "tmp%135#0"
+        "tmp%143#0"
       ]
     },
-    "1028": {
+    "1063": {
       "op": "!",
       "defined_out": [
-        "tmp%136#0"
+        "tmp%144#0"
       ],
       "stack_out": [
-        "tmp%136#0"
+        "tmp%144#0"
       ]
     },
-    "1029": {
+    "1064": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1030": {
+    "1065": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%137#0"
+        "tmp%145#0"
       ],
       "stack_out": [
-        "tmp%137#0"
+        "tmp%145#0"
       ]
     },
-    "1032": {
+    "1067": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1033": {
+    "1068": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[1]%1#0"
@@ -978,30 +1010,30 @@
         "reinterpret_bytes[1]%1#0"
       ]
     },
-    "1036": {
+    "1071": {
       "op": "btoi",
       "defined_out": [
-        "tmp%139#0"
+        "tmp%147#0"
       ],
       "stack_out": [
-        "tmp%139#0"
+        "tmp%147#0"
       ]
     },
-    "1037": {
+    "1072": {
       "op": "txnas Applications",
       "defined_out": [
-        "tmp%140#0"
+        "tmp%148#0"
       ],
       "stack_out": [
-        "tmp%140#0"
+        "tmp%148#0"
       ]
     },
-    "1039": {
+    "1074": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.fund",
       "op": "callsub fund",
       "stack_out": []
     },
-    "1042": {
+    "1077": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1010,50 +1042,50 @@
         "tmp%0#0"
       ]
     },
-    "1043": {
+    "1078": {
       "op": "return",
       "stack_out": []
     },
-    "1044": {
-      "block": "main_set_xgov_reviewer_route@31",
+    "1079": {
+      "block": "main_set_xgov_reviewer_route@33",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%131#0"
+        "tmp%139#0"
       ],
       "stack_out": [
-        "tmp%131#0"
+        "tmp%139#0"
       ]
     },
-    "1046": {
+    "1081": {
       "op": "!",
       "defined_out": [
-        "tmp%132#0"
+        "tmp%140#0"
       ],
       "stack_out": [
-        "tmp%132#0"
+        "tmp%140#0"
       ]
     },
-    "1047": {
+    "1082": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1048": {
+    "1083": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%133#0"
+        "tmp%141#0"
       ],
       "stack_out": [
-        "tmp%133#0"
+        "tmp%141#0"
       ]
     },
-    "1050": {
+    "1085": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1051": {
+    "1086": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%3#0"
@@ -1062,12 +1094,12 @@
         "reinterpret_bytes[32]%3#0"
       ]
     },
-    "1054": {
+    "1089": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_xgov_reviewer",
       "op": "callsub set_xgov_reviewer",
       "stack_out": []
     },
-    "1057": {
+    "1092": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1076,50 +1108,50 @@
         "tmp%0#0"
       ]
     },
-    "1058": {
+    "1093": {
       "op": "return",
       "stack_out": []
     },
-    "1059": {
-      "block": "main_vote_route@30",
+    "1094": {
+      "block": "main_vote_route@32",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%125#0"
+        "tmp%133#0"
       ],
       "stack_out": [
-        "tmp%125#0"
+        "tmp%133#0"
       ]
     },
-    "1061": {
+    "1096": {
       "op": "!",
       "defined_out": [
-        "tmp%126#0"
+        "tmp%134#0"
       ],
       "stack_out": [
-        "tmp%126#0"
+        "tmp%134#0"
       ]
     },
-    "1062": {
+    "1097": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1063": {
+    "1098": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%127#0"
+        "tmp%135#0"
       ],
       "stack_out": [
-        "tmp%127#0"
+        "tmp%135#0"
       ]
     },
-    "1065": {
+    "1100": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1066": {
+    "1101": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[1]%0#0"
@@ -1128,69 +1160,69 @@
         "reinterpret_bytes[1]%0#0"
       ]
     },
-    "1069": {
+    "1104": {
       "op": "btoi",
       "defined_out": [
-        "tmp%129#0"
+        "tmp%137#0"
       ],
       "stack_out": [
-        "tmp%129#0"
+        "tmp%137#0"
       ]
     },
-    "1070": {
+    "1105": {
       "op": "txnas Applications",
       "defined_out": [
-        "tmp%130#0"
+        "tmp%138#0"
       ],
       "stack_out": [
-        "tmp%130#0"
+        "tmp%138#0"
       ]
     },
-    "1072": {
+    "1107": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "reinterpret_bytes[32]%2#0",
-        "tmp%130#0"
+        "tmp%138#0"
       ],
       "stack_out": [
-        "tmp%130#0",
+        "tmp%138#0",
         "reinterpret_bytes[32]%2#0"
       ]
     },
-    "1075": {
+    "1110": {
       "op": "txna ApplicationArgs 3",
       "defined_out": [
         "reinterpret_bytes[32]%2#0",
         "reinterpret_bytes[8]%21#0",
-        "tmp%130#0"
+        "tmp%138#0"
       ],
       "stack_out": [
-        "tmp%130#0",
+        "tmp%138#0",
         "reinterpret_bytes[32]%2#0",
         "reinterpret_bytes[8]%21#0"
       ]
     },
-    "1078": {
+    "1113": {
       "op": "txna ApplicationArgs 4",
       "defined_out": [
         "reinterpret_bytes[32]%2#0",
         "reinterpret_bytes[8]%21#0",
         "reinterpret_bytes[8]%22#0",
-        "tmp%130#0"
+        "tmp%138#0"
       ],
       "stack_out": [
-        "tmp%130#0",
+        "tmp%138#0",
         "reinterpret_bytes[32]%2#0",
         "reinterpret_bytes[8]%21#0",
         "reinterpret_bytes[8]%22#0"
       ]
     },
-    "1081": {
+    "1116": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.vote",
       "op": "callsub vote",
       "stack_out": []
     },
-    "1084": {
+    "1119": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1199,50 +1231,50 @@
         "tmp%0#0"
       ]
     },
-    "1085": {
+    "1120": {
       "op": "return",
       "stack_out": []
     },
-    "1086": {
-      "block": "main_set_weighted_quorum_large_route@29",
+    "1121": {
+      "block": "main_set_weighted_quorum_large_route@31",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%120#0"
+        "tmp%128#0"
       ],
       "stack_out": [
-        "tmp%120#0"
+        "tmp%128#0"
       ]
     },
-    "1088": {
+    "1123": {
       "op": "!",
       "defined_out": [
-        "tmp%121#0"
+        "tmp%129#0"
       ],
       "stack_out": [
-        "tmp%121#0"
+        "tmp%129#0"
       ]
     },
-    "1089": {
+    "1124": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1090": {
+    "1125": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%122#0"
+        "tmp%130#0"
       ],
       "stack_out": [
-        "tmp%122#0"
+        "tmp%130#0"
       ]
     },
-    "1092": {
+    "1127": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1093": {
+    "1128": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%20#0"
@@ -1251,21 +1283,21 @@
         "reinterpret_bytes[8]%20#0"
       ]
     },
-    "1096": {
+    "1131": {
       "op": "btoi",
       "defined_out": [
-        "tmp%124#0"
+        "tmp%132#0"
       ],
       "stack_out": [
-        "tmp%124#0"
+        "tmp%132#0"
       ]
     },
-    "1097": {
+    "1132": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_large",
       "op": "callsub set_weighted_quorum_large",
       "stack_out": []
     },
-    "1100": {
+    "1135": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1274,50 +1306,50 @@
         "tmp%0#0"
       ]
     },
-    "1101": {
+    "1136": {
       "op": "return",
       "stack_out": []
     },
-    "1102": {
-      "block": "main_set_weighted_quorum_medium_route@28",
+    "1137": {
+      "block": "main_set_weighted_quorum_medium_route@30",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%115#0"
+        "tmp%123#0"
       ],
       "stack_out": [
-        "tmp%115#0"
+        "tmp%123#0"
       ]
     },
-    "1104": {
+    "1139": {
       "op": "!",
       "defined_out": [
-        "tmp%116#0"
+        "tmp%124#0"
       ],
       "stack_out": [
-        "tmp%116#0"
+        "tmp%124#0"
       ]
     },
-    "1105": {
+    "1140": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1106": {
+    "1141": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%117#0"
+        "tmp%125#0"
       ],
       "stack_out": [
-        "tmp%117#0"
+        "tmp%125#0"
       ]
     },
-    "1108": {
+    "1143": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1109": {
+    "1144": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%19#0"
@@ -1326,21 +1358,21 @@
         "reinterpret_bytes[8]%19#0"
       ]
     },
-    "1112": {
+    "1147": {
       "op": "btoi",
       "defined_out": [
-        "tmp%119#0"
+        "tmp%127#0"
       ],
       "stack_out": [
-        "tmp%119#0"
+        "tmp%127#0"
       ]
     },
-    "1113": {
+    "1148": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_medium",
       "op": "callsub set_weighted_quorum_medium",
       "stack_out": []
     },
-    "1116": {
+    "1151": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1349,50 +1381,50 @@
         "tmp%0#0"
       ]
     },
-    "1117": {
+    "1152": {
       "op": "return",
       "stack_out": []
     },
-    "1118": {
-      "block": "main_set_weighted_quorum_small_route@27",
+    "1153": {
+      "block": "main_set_weighted_quorum_small_route@29",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%110#0"
+        "tmp%118#0"
       ],
       "stack_out": [
-        "tmp%110#0"
+        "tmp%118#0"
       ]
     },
-    "1120": {
+    "1155": {
       "op": "!",
       "defined_out": [
-        "tmp%111#0"
+        "tmp%119#0"
       ],
       "stack_out": [
-        "tmp%111#0"
+        "tmp%119#0"
       ]
     },
-    "1121": {
+    "1156": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1122": {
+    "1157": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%112#0"
+        "tmp%120#0"
       ],
       "stack_out": [
-        "tmp%112#0"
+        "tmp%120#0"
       ]
     },
-    "1124": {
+    "1159": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1125": {
+    "1160": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%18#0"
@@ -1401,21 +1433,21 @@
         "reinterpret_bytes[8]%18#0"
       ]
     },
-    "1128": {
+    "1163": {
       "op": "btoi",
       "defined_out": [
-        "tmp%114#0"
+        "tmp%122#0"
       ],
       "stack_out": [
-        "tmp%114#0"
+        "tmp%122#0"
       ]
     },
-    "1129": {
+    "1164": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_small",
       "op": "callsub set_weighted_quorum_small",
       "stack_out": []
     },
-    "1132": {
+    "1167": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1424,50 +1456,50 @@
         "tmp%0#0"
       ]
     },
-    "1133": {
+    "1168": {
       "op": "return",
       "stack_out": []
     },
-    "1134": {
-      "block": "main_set_quorum_large_route@26",
+    "1169": {
+      "block": "main_set_quorum_large_route@28",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%105#0"
+        "tmp%113#0"
       ],
       "stack_out": [
-        "tmp%105#0"
+        "tmp%113#0"
       ]
     },
-    "1136": {
+    "1171": {
       "op": "!",
       "defined_out": [
-        "tmp%106#0"
+        "tmp%114#0"
       ],
       "stack_out": [
-        "tmp%106#0"
+        "tmp%114#0"
       ]
     },
-    "1137": {
+    "1172": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1138": {
+    "1173": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%107#0"
+        "tmp%115#0"
       ],
       "stack_out": [
-        "tmp%107#0"
+        "tmp%115#0"
       ]
     },
-    "1140": {
+    "1175": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1141": {
+    "1176": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%17#0"
@@ -1476,21 +1508,21 @@
         "reinterpret_bytes[8]%17#0"
       ]
     },
-    "1144": {
+    "1179": {
       "op": "btoi",
       "defined_out": [
-        "tmp%109#0"
+        "tmp%117#0"
       ],
       "stack_out": [
-        "tmp%109#0"
+        "tmp%117#0"
       ]
     },
-    "1145": {
+    "1180": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_large",
       "op": "callsub set_quorum_large",
       "stack_out": []
     },
-    "1148": {
+    "1183": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1499,50 +1531,50 @@
         "tmp%0#0"
       ]
     },
-    "1149": {
+    "1184": {
       "op": "return",
       "stack_out": []
     },
-    "1150": {
-      "block": "main_set_quorum_medium_route@25",
+    "1185": {
+      "block": "main_set_quorum_medium_route@27",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%100#0"
+        "tmp%108#0"
       ],
       "stack_out": [
-        "tmp%100#0"
+        "tmp%108#0"
       ]
     },
-    "1152": {
+    "1187": {
       "op": "!",
       "defined_out": [
-        "tmp%101#0"
+        "tmp%109#0"
       ],
       "stack_out": [
-        "tmp%101#0"
+        "tmp%109#0"
       ]
     },
-    "1153": {
+    "1188": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1154": {
+    "1189": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%102#0"
+        "tmp%110#0"
       ],
       "stack_out": [
-        "tmp%102#0"
+        "tmp%110#0"
       ]
     },
-    "1156": {
+    "1191": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1157": {
+    "1192": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%16#0"
@@ -1551,21 +1583,21 @@
         "reinterpret_bytes[8]%16#0"
       ]
     },
-    "1160": {
+    "1195": {
       "op": "btoi",
       "defined_out": [
-        "tmp%104#0"
+        "tmp%112#0"
       ],
       "stack_out": [
-        "tmp%104#0"
+        "tmp%112#0"
       ]
     },
-    "1161": {
+    "1196": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_medium",
       "op": "callsub set_quorum_medium",
       "stack_out": []
     },
-    "1164": {
+    "1199": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1574,50 +1606,50 @@
         "tmp%0#0"
       ]
     },
-    "1165": {
+    "1200": {
       "op": "return",
       "stack_out": []
     },
-    "1166": {
-      "block": "main_set_quorum_small_route@24",
+    "1201": {
+      "block": "main_set_quorum_small_route@26",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%95#0"
+        "tmp%103#0"
       ],
       "stack_out": [
-        "tmp%95#0"
+        "tmp%103#0"
       ]
     },
-    "1168": {
+    "1203": {
       "op": "!",
       "defined_out": [
-        "tmp%96#0"
+        "tmp%104#0"
       ],
       "stack_out": [
-        "tmp%96#0"
+        "tmp%104#0"
       ]
     },
-    "1169": {
+    "1204": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1170": {
+    "1205": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%97#0"
+        "tmp%105#0"
       ],
       "stack_out": [
-        "tmp%97#0"
+        "tmp%105#0"
       ]
     },
-    "1172": {
+    "1207": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1173": {
+    "1208": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%15#0"
@@ -1626,21 +1658,21 @@
         "reinterpret_bytes[8]%15#0"
       ]
     },
-    "1176": {
+    "1211": {
       "op": "btoi",
       "defined_out": [
-        "tmp%99#0"
+        "tmp%107#0"
       ],
       "stack_out": [
-        "tmp%99#0"
+        "tmp%107#0"
       ]
     },
-    "1177": {
+    "1212": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_small",
       "op": "callsub set_quorum_small",
       "stack_out": []
     },
-    "1180": {
+    "1215": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1649,50 +1681,50 @@
         "tmp%0#0"
       ]
     },
-    "1181": {
+    "1216": {
       "op": "return",
       "stack_out": []
     },
-    "1182": {
-      "block": "main_set_voting_duration_large_route@23",
+    "1217": {
+      "block": "main_set_voting_duration_large_route@25",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%90#0"
+        "tmp%98#0"
       ],
       "stack_out": [
-        "tmp%90#0"
+        "tmp%98#0"
       ]
     },
-    "1184": {
+    "1219": {
       "op": "!",
       "defined_out": [
-        "tmp%91#0"
+        "tmp%99#0"
       ],
       "stack_out": [
-        "tmp%91#0"
+        "tmp%99#0"
       ]
     },
-    "1185": {
+    "1220": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1186": {
+    "1221": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%92#0"
+        "tmp%100#0"
       ],
       "stack_out": [
-        "tmp%92#0"
+        "tmp%100#0"
       ]
     },
-    "1188": {
+    "1223": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1189": {
+    "1224": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%14#0"
@@ -1701,21 +1733,21 @@
         "reinterpret_bytes[8]%14#0"
       ]
     },
-    "1192": {
+    "1227": {
       "op": "btoi",
       "defined_out": [
-        "tmp%94#0"
+        "tmp%102#0"
       ],
       "stack_out": [
-        "tmp%94#0"
+        "tmp%102#0"
       ]
     },
-    "1193": {
+    "1228": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_large",
       "op": "callsub set_voting_duration_large",
       "stack_out": []
     },
-    "1196": {
+    "1231": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1724,50 +1756,50 @@
         "tmp%0#0"
       ]
     },
-    "1197": {
+    "1232": {
       "op": "return",
       "stack_out": []
     },
-    "1198": {
-      "block": "main_set_voting_duration_medium_route@22",
+    "1233": {
+      "block": "main_set_voting_duration_medium_route@24",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%85#0"
+        "tmp%93#0"
       ],
       "stack_out": [
-        "tmp%85#0"
+        "tmp%93#0"
       ]
     },
-    "1200": {
+    "1235": {
       "op": "!",
       "defined_out": [
-        "tmp%86#0"
+        "tmp%94#0"
       ],
       "stack_out": [
-        "tmp%86#0"
+        "tmp%94#0"
       ]
     },
-    "1201": {
+    "1236": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1202": {
+    "1237": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%87#0"
+        "tmp%95#0"
       ],
       "stack_out": [
-        "tmp%87#0"
+        "tmp%95#0"
       ]
     },
-    "1204": {
+    "1239": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1205": {
+    "1240": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%13#0"
@@ -1776,21 +1808,21 @@
         "reinterpret_bytes[8]%13#0"
       ]
     },
-    "1208": {
+    "1243": {
       "op": "btoi",
       "defined_out": [
-        "tmp%89#0"
+        "tmp%97#0"
       ],
       "stack_out": [
-        "tmp%89#0"
+        "tmp%97#0"
       ]
     },
-    "1209": {
+    "1244": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_medium",
       "op": "callsub set_voting_duration_medium",
       "stack_out": []
     },
-    "1212": {
+    "1247": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1799,50 +1831,50 @@
         "tmp%0#0"
       ]
     },
-    "1213": {
+    "1248": {
       "op": "return",
       "stack_out": []
     },
-    "1214": {
-      "block": "main_set_voting_duration_small_route@21",
+    "1249": {
+      "block": "main_set_voting_duration_small_route@23",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%80#0"
+        "tmp%88#0"
       ],
       "stack_out": [
-        "tmp%80#0"
+        "tmp%88#0"
       ]
     },
-    "1216": {
+    "1251": {
       "op": "!",
       "defined_out": [
-        "tmp%81#0"
+        "tmp%89#0"
       ],
       "stack_out": [
-        "tmp%81#0"
+        "tmp%89#0"
       ]
     },
-    "1217": {
+    "1252": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1218": {
+    "1253": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%82#0"
+        "tmp%90#0"
       ],
       "stack_out": [
-        "tmp%82#0"
+        "tmp%90#0"
       ]
     },
-    "1220": {
+    "1255": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1221": {
+    "1256": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%12#0"
@@ -1851,21 +1883,21 @@
         "reinterpret_bytes[8]%12#0"
       ]
     },
-    "1224": {
+    "1259": {
       "op": "btoi",
       "defined_out": [
-        "tmp%84#0"
+        "tmp%92#0"
       ],
       "stack_out": [
-        "tmp%84#0"
+        "tmp%92#0"
       ]
     },
-    "1225": {
+    "1260": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_small",
       "op": "callsub set_voting_duration_small",
       "stack_out": []
     },
-    "1228": {
+    "1263": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1874,50 +1906,50 @@
         "tmp%0#0"
       ]
     },
-    "1229": {
+    "1264": {
       "op": "return",
       "stack_out": []
     },
-    "1230": {
-      "block": "main_set_committee_votes_route@20",
+    "1265": {
+      "block": "main_set_committee_votes_route@22",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%75#0"
+        "tmp%83#0"
       ],
       "stack_out": [
-        "tmp%75#0"
+        "tmp%83#0"
       ]
     },
-    "1232": {
+    "1267": {
       "op": "!",
       "defined_out": [
-        "tmp%76#0"
+        "tmp%84#0"
       ],
       "stack_out": [
-        "tmp%76#0"
+        "tmp%84#0"
       ]
     },
-    "1233": {
+    "1268": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1234": {
+    "1269": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%77#0"
+        "tmp%85#0"
       ],
       "stack_out": [
-        "tmp%77#0"
+        "tmp%85#0"
       ]
     },
-    "1236": {
+    "1271": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1237": {
+    "1272": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%11#0"
@@ -1926,21 +1958,21 @@
         "reinterpret_bytes[8]%11#0"
       ]
     },
-    "1240": {
+    "1275": {
       "op": "btoi",
       "defined_out": [
-        "tmp%79#0"
+        "tmp%87#0"
       ],
       "stack_out": [
-        "tmp%79#0"
+        "tmp%87#0"
       ]
     },
-    "1241": {
+    "1276": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_votes",
       "op": "callsub set_committee_votes",
       "stack_out": []
     },
-    "1244": {
+    "1279": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -1949,50 +1981,50 @@
         "tmp%0#0"
       ]
     },
-    "1245": {
+    "1280": {
       "op": "return",
       "stack_out": []
     },
-    "1246": {
-      "block": "main_set_committee_members_route@19",
+    "1281": {
+      "block": "main_set_committee_members_route@21",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%70#0"
+        "tmp%78#0"
       ],
       "stack_out": [
-        "tmp%70#0"
+        "tmp%78#0"
       ]
     },
-    "1248": {
+    "1283": {
       "op": "!",
       "defined_out": [
-        "tmp%71#0"
+        "tmp%79#0"
       ],
       "stack_out": [
-        "tmp%71#0"
+        "tmp%79#0"
       ]
     },
-    "1249": {
+    "1284": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1250": {
+    "1285": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%72#0"
+        "tmp%80#0"
       ],
       "stack_out": [
-        "tmp%72#0"
+        "tmp%80#0"
       ]
     },
-    "1252": {
+    "1287": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1253": {
+    "1288": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%10#0"
@@ -2001,21 +2033,21 @@
         "reinterpret_bytes[8]%10#0"
       ]
     },
-    "1256": {
+    "1291": {
       "op": "btoi",
       "defined_out": [
-        "tmp%74#0"
+        "tmp%82#0"
       ],
       "stack_out": [
-        "tmp%74#0"
+        "tmp%82#0"
       ]
     },
-    "1257": {
+    "1292": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_members",
       "op": "callsub set_committee_members",
       "stack_out": []
     },
-    "1260": {
+    "1295": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2024,54 +2056,54 @@
         "tmp%0#0"
       ]
     },
-    "1261": {
+    "1296": {
       "op": "return",
       "stack_out": []
     },
-    "1262": {
-      "block": "main_clear_committee_id_route@18",
+    "1297": {
+      "block": "main_clear_committee_id_route@20",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%66#0"
+        "tmp%74#0"
       ],
       "stack_out": [
-        "tmp%66#0"
+        "tmp%74#0"
       ]
     },
-    "1264": {
+    "1299": {
       "op": "!",
       "defined_out": [
-        "tmp%67#0"
+        "tmp%75#0"
       ],
       "stack_out": [
-        "tmp%67#0"
+        "tmp%75#0"
       ]
     },
-    "1265": {
+    "1300": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1266": {
+    "1301": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%68#0"
+        "tmp%76#0"
       ],
       "stack_out": [
-        "tmp%68#0"
+        "tmp%76#0"
       ]
     },
-    "1268": {
+    "1303": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1269": {
+    "1304": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id",
       "op": "callsub clear_committee_id"
     },
-    "1272": {
+    "1307": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2080,50 +2112,50 @@
         "tmp%0#0"
       ]
     },
-    "1273": {
+    "1308": {
       "op": "return",
       "stack_out": []
     },
-    "1274": {
-      "block": "main_set_committee_id_route@17",
+    "1309": {
+      "block": "main_set_committee_id_route@19",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%62#0"
+        "tmp%70#0"
       ],
       "stack_out": [
-        "tmp%62#0"
+        "tmp%70#0"
       ]
     },
-    "1276": {
+    "1311": {
       "op": "!",
       "defined_out": [
-        "tmp%63#0"
+        "tmp%71#0"
       ],
       "stack_out": [
-        "tmp%63#0"
+        "tmp%71#0"
       ]
     },
-    "1277": {
+    "1312": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1278": {
+    "1313": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%64#0"
+        "tmp%72#0"
       ],
       "stack_out": [
-        "tmp%64#0"
+        "tmp%72#0"
       ]
     },
-    "1280": {
+    "1315": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1281": {
+    "1316": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[36]%0#0"
@@ -2132,12 +2164,12 @@
         "reinterpret_bytes[36]%0#0"
       ]
     },
-    "1284": {
+    "1319": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_id",
       "op": "callsub set_committee_id",
       "stack_out": []
     },
-    "1287": {
+    "1322": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2146,50 +2178,50 @@
         "tmp%0#0"
       ]
     },
-    "1288": {
+    "1323": {
       "op": "return",
       "stack_out": []
     },
-    "1289": {
-      "block": "main_set_proposal_fee_route@16",
+    "1324": {
+      "block": "main_set_proposal_fee_route@18",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%57#0"
+        "tmp%65#0"
       ],
       "stack_out": [
-        "tmp%57#0"
+        "tmp%65#0"
       ]
     },
-    "1291": {
+    "1326": {
       "op": "!",
       "defined_out": [
-        "tmp%58#0"
+        "tmp%66#0"
       ],
       "stack_out": [
-        "tmp%58#0"
+        "tmp%66#0"
       ]
     },
-    "1292": {
+    "1327": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1293": {
+    "1328": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%59#0"
+        "tmp%67#0"
       ],
       "stack_out": [
-        "tmp%59#0"
+        "tmp%67#0"
       ]
     },
-    "1295": {
+    "1330": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1296": {
+    "1331": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%9#0"
@@ -2198,21 +2230,21 @@
         "reinterpret_bytes[8]%9#0"
       ]
     },
-    "1299": {
+    "1334": {
       "op": "btoi",
       "defined_out": [
-        "tmp%61#0"
+        "tmp%69#0"
       ],
       "stack_out": [
-        "tmp%61#0"
+        "tmp%69#0"
       ]
     },
-    "1300": {
+    "1335": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_fee",
       "op": "callsub set_proposal_fee",
       "stack_out": []
     },
-    "1303": {
+    "1338": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2221,50 +2253,50 @@
         "tmp%0#0"
       ]
     },
-    "1304": {
+    "1339": {
       "op": "return",
       "stack_out": []
     },
-    "1305": {
-      "block": "main_set_committee_publisher_route@15",
+    "1340": {
+      "block": "main_set_committee_publisher_route@17",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%53#0"
+        "tmp%61#0"
       ],
       "stack_out": [
-        "tmp%53#0"
+        "tmp%61#0"
       ]
     },
-    "1307": {
+    "1342": {
       "op": "!",
       "defined_out": [
-        "tmp%54#0"
+        "tmp%62#0"
       ],
       "stack_out": [
-        "tmp%54#0"
+        "tmp%62#0"
       ]
     },
-    "1308": {
+    "1343": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1309": {
+    "1344": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%55#0"
+        "tmp%63#0"
       ],
       "stack_out": [
-        "tmp%55#0"
+        "tmp%63#0"
       ]
     },
-    "1311": {
+    "1346": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1312": {
+    "1347": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%1#0"
@@ -2273,12 +2305,12 @@
         "reinterpret_bytes[32]%1#0"
       ]
     },
-    "1315": {
+    "1350": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_publisher",
       "op": "callsub set_committee_publisher",
       "stack_out": []
     },
-    "1318": {
+    "1353": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2287,50 +2319,50 @@
         "tmp%0#0"
       ]
     },
-    "1319": {
+    "1354": {
       "op": "return",
       "stack_out": []
     },
-    "1320": {
-      "block": "main_set_discussion_duration_large_route@14",
+    "1355": {
+      "block": "main_set_discussion_duration_large_route@16",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%48#0"
+        "tmp%56#0"
       ],
       "stack_out": [
-        "tmp%48#0"
+        "tmp%56#0"
       ]
     },
-    "1322": {
+    "1357": {
       "op": "!",
       "defined_out": [
-        "tmp%49#0"
+        "tmp%57#0"
       ],
       "stack_out": [
-        "tmp%49#0"
+        "tmp%57#0"
       ]
     },
-    "1323": {
+    "1358": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1324": {
+    "1359": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%50#0"
+        "tmp%58#0"
       ],
       "stack_out": [
-        "tmp%50#0"
+        "tmp%58#0"
       ]
     },
-    "1326": {
+    "1361": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1327": {
+    "1362": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%8#0"
@@ -2339,21 +2371,21 @@
         "reinterpret_bytes[8]%8#0"
       ]
     },
-    "1330": {
+    "1365": {
       "op": "btoi",
       "defined_out": [
-        "tmp%52#0"
+        "tmp%60#0"
       ],
       "stack_out": [
-        "tmp%52#0"
+        "tmp%60#0"
       ]
     },
-    "1331": {
+    "1366": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_large",
       "op": "callsub set_discussion_duration_large",
       "stack_out": []
     },
-    "1334": {
+    "1369": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2362,50 +2394,50 @@
         "tmp%0#0"
       ]
     },
-    "1335": {
+    "1370": {
       "op": "return",
       "stack_out": []
     },
-    "1336": {
-      "block": "main_set_discussion_duration_medium_route@13",
+    "1371": {
+      "block": "main_set_discussion_duration_medium_route@15",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%43#0"
+        "tmp%51#0"
       ],
       "stack_out": [
-        "tmp%43#0"
+        "tmp%51#0"
       ]
     },
-    "1338": {
+    "1373": {
       "op": "!",
       "defined_out": [
-        "tmp%44#0"
+        "tmp%52#0"
       ],
       "stack_out": [
-        "tmp%44#0"
+        "tmp%52#0"
       ]
     },
-    "1339": {
+    "1374": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1340": {
+    "1375": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%45#0"
+        "tmp%53#0"
       ],
       "stack_out": [
-        "tmp%45#0"
+        "tmp%53#0"
       ]
     },
-    "1342": {
+    "1377": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1343": {
+    "1378": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%7#0"
@@ -2414,21 +2446,21 @@
         "reinterpret_bytes[8]%7#0"
       ]
     },
-    "1346": {
+    "1381": {
       "op": "btoi",
       "defined_out": [
-        "tmp%47#0"
+        "tmp%55#0"
       ],
       "stack_out": [
-        "tmp%47#0"
+        "tmp%55#0"
       ]
     },
-    "1347": {
+    "1382": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_medium",
       "op": "callsub set_discussion_duration_medium",
       "stack_out": []
     },
-    "1350": {
+    "1385": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2437,50 +2469,50 @@
         "tmp%0#0"
       ]
     },
-    "1351": {
+    "1386": {
       "op": "return",
       "stack_out": []
     },
-    "1352": {
-      "block": "main_set_discussion_duration_small_route@12",
+    "1387": {
+      "block": "main_set_discussion_duration_small_route@14",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%38#0"
+        "tmp%46#0"
       ],
       "stack_out": [
-        "tmp%38#0"
+        "tmp%46#0"
       ]
     },
-    "1354": {
+    "1389": {
       "op": "!",
       "defined_out": [
-        "tmp%39#0"
+        "tmp%47#0"
       ],
       "stack_out": [
-        "tmp%39#0"
+        "tmp%47#0"
       ]
     },
-    "1355": {
+    "1390": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1356": {
+    "1391": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%40#0"
+        "tmp%48#0"
       ],
       "stack_out": [
-        "tmp%40#0"
+        "tmp%48#0"
       ]
     },
-    "1358": {
+    "1393": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1359": {
+    "1394": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%6#0"
@@ -2489,21 +2521,21 @@
         "reinterpret_bytes[8]%6#0"
       ]
     },
-    "1362": {
+    "1397": {
       "op": "btoi",
       "defined_out": [
-        "tmp%42#0"
+        "tmp%50#0"
       ],
       "stack_out": [
-        "tmp%42#0"
+        "tmp%50#0"
       ]
     },
-    "1363": {
+    "1398": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_small",
       "op": "callsub set_discussion_duration_small",
       "stack_out": []
     },
-    "1366": {
+    "1401": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2512,50 +2544,50 @@
         "tmp%0#0"
       ]
     },
-    "1367": {
+    "1402": {
       "op": "return",
       "stack_out": []
     },
-    "1368": {
-      "block": "main_set_publishing_fee_route@11",
+    "1403": {
+      "block": "main_set_publishing_fee_route@13",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%33#0"
+        "tmp%41#0"
       ],
       "stack_out": [
-        "tmp%33#0"
+        "tmp%41#0"
       ]
     },
-    "1370": {
+    "1405": {
       "op": "!",
       "defined_out": [
-        "tmp%34#0"
+        "tmp%42#0"
       ],
       "stack_out": [
-        "tmp%34#0"
+        "tmp%42#0"
       ]
     },
-    "1371": {
+    "1406": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1372": {
+    "1407": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%35#0"
+        "tmp%43#0"
       ],
       "stack_out": [
-        "tmp%35#0"
+        "tmp%43#0"
       ]
     },
-    "1374": {
+    "1409": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1375": {
+    "1410": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%5#0"
@@ -2564,21 +2596,21 @@
         "reinterpret_bytes[8]%5#0"
       ]
     },
-    "1378": {
+    "1413": {
       "op": "btoi",
       "defined_out": [
-        "tmp%37#0"
+        "tmp%45#0"
       ],
       "stack_out": [
-        "tmp%37#0"
+        "tmp%45#0"
       ]
     },
-    "1379": {
+    "1414": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee",
       "op": "callsub set_publishing_fee",
       "stack_out": []
     },
-    "1382": {
+    "1417": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2587,50 +2619,50 @@
         "tmp%0#0"
       ]
     },
-    "1383": {
+    "1418": {
       "op": "return",
       "stack_out": []
     },
-    "1384": {
-      "block": "main_set_max_requested_amount_large_route@10",
+    "1419": {
+      "block": "main_set_max_requested_amount_large_route@12",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%28#0"
+        "tmp%36#0"
       ],
       "stack_out": [
-        "tmp%28#0"
+        "tmp%36#0"
       ]
     },
-    "1386": {
+    "1421": {
       "op": "!",
       "defined_out": [
-        "tmp%29#0"
+        "tmp%37#0"
       ],
       "stack_out": [
-        "tmp%29#0"
+        "tmp%37#0"
       ]
     },
-    "1387": {
+    "1422": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1388": {
+    "1423": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%30#0"
+        "tmp%38#0"
       ],
       "stack_out": [
-        "tmp%30#0"
+        "tmp%38#0"
       ]
     },
-    "1390": {
+    "1425": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1391": {
+    "1426": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%4#0"
@@ -2639,21 +2671,21 @@
         "reinterpret_bytes[8]%4#0"
       ]
     },
-    "1394": {
+    "1429": {
       "op": "btoi",
       "defined_out": [
-        "tmp%32#0"
+        "tmp%40#0"
       ],
       "stack_out": [
-        "tmp%32#0"
+        "tmp%40#0"
       ]
     },
-    "1395": {
+    "1430": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_large",
       "op": "callsub set_max_requested_amount_large",
       "stack_out": []
     },
-    "1398": {
+    "1433": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2662,50 +2694,50 @@
         "tmp%0#0"
       ]
     },
-    "1399": {
+    "1434": {
       "op": "return",
       "stack_out": []
     },
-    "1400": {
-      "block": "main_set_max_requested_amount_medium_route@9",
+    "1435": {
+      "block": "main_set_max_requested_amount_medium_route@11",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%23#0"
+        "tmp%31#0"
       ],
       "stack_out": [
-        "tmp%23#0"
+        "tmp%31#0"
       ]
     },
-    "1402": {
+    "1437": {
       "op": "!",
       "defined_out": [
-        "tmp%24#0"
+        "tmp%32#0"
       ],
       "stack_out": [
-        "tmp%24#0"
+        "tmp%32#0"
       ]
     },
-    "1403": {
+    "1438": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1404": {
+    "1439": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%25#0"
+        "tmp%33#0"
       ],
       "stack_out": [
-        "tmp%25#0"
+        "tmp%33#0"
       ]
     },
-    "1406": {
+    "1441": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1407": {
+    "1442": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%3#0"
@@ -2714,21 +2746,21 @@
         "reinterpret_bytes[8]%3#0"
       ]
     },
-    "1410": {
+    "1445": {
       "op": "btoi",
       "defined_out": [
-        "tmp%27#0"
+        "tmp%35#0"
       ],
       "stack_out": [
-        "tmp%27#0"
+        "tmp%35#0"
       ]
     },
-    "1411": {
+    "1446": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_medium",
       "op": "callsub set_max_requested_amount_medium",
       "stack_out": []
     },
-    "1414": {
+    "1449": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2737,50 +2769,50 @@
         "tmp%0#0"
       ]
     },
-    "1415": {
+    "1450": {
       "op": "return",
       "stack_out": []
     },
-    "1416": {
-      "block": "main_set_max_requested_amount_small_route@8",
+    "1451": {
+      "block": "main_set_max_requested_amount_small_route@10",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%18#0"
+        "tmp%26#0"
       ],
       "stack_out": [
-        "tmp%18#0"
+        "tmp%26#0"
       ]
     },
-    "1418": {
+    "1453": {
       "op": "!",
       "defined_out": [
-        "tmp%19#0"
+        "tmp%27#0"
       ],
       "stack_out": [
-        "tmp%19#0"
+        "tmp%27#0"
       ]
     },
-    "1419": {
+    "1454": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1420": {
+    "1455": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%20#0"
+        "tmp%28#0"
       ],
       "stack_out": [
-        "tmp%20#0"
+        "tmp%28#0"
       ]
     },
-    "1422": {
+    "1457": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1423": {
+    "1458": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%2#0"
@@ -2789,21 +2821,21 @@
         "reinterpret_bytes[8]%2#0"
       ]
     },
-    "1426": {
+    "1461": {
       "op": "btoi",
       "defined_out": [
-        "tmp%22#0"
+        "tmp%30#0"
       ],
       "stack_out": [
-        "tmp%22#0"
+        "tmp%30#0"
       ]
     },
-    "1427": {
+    "1462": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_small",
       "op": "callsub set_max_requested_amount_small",
       "stack_out": []
     },
-    "1430": {
+    "1465": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2812,50 +2844,50 @@
         "tmp%0#0"
       ]
     },
-    "1431": {
+    "1466": {
       "op": "return",
       "stack_out": []
     },
-    "1432": {
-      "block": "main_set_min_requested_amount_route@7",
+    "1467": {
+      "block": "main_set_min_requested_amount_route@9",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%13#0"
+        "tmp%21#0"
       ],
       "stack_out": [
-        "tmp%13#0"
+        "tmp%21#0"
       ]
     },
-    "1434": {
+    "1469": {
       "op": "!",
       "defined_out": [
-        "tmp%14#0"
+        "tmp%22#0"
       ],
       "stack_out": [
-        "tmp%14#0"
+        "tmp%22#0"
       ]
     },
-    "1435": {
+    "1470": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1436": {
+    "1471": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%15#0"
+        "tmp%23#0"
       ],
       "stack_out": [
-        "tmp%15#0"
+        "tmp%23#0"
       ]
     },
-    "1438": {
+    "1473": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1439": {
+    "1474": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%1#0"
@@ -2864,21 +2896,21 @@
         "reinterpret_bytes[8]%1#0"
       ]
     },
-    "1442": {
+    "1477": {
       "op": "btoi",
       "defined_out": [
-        "tmp%17#0"
+        "tmp%25#0"
       ],
       "stack_out": [
-        "tmp%17#0"
+        "tmp%25#0"
       ]
     },
-    "1443": {
+    "1478": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_min_requested_amount",
       "op": "callsub set_min_requested_amount",
       "stack_out": []
     },
-    "1446": {
+    "1481": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2887,50 +2919,50 @@
         "tmp%0#0"
       ]
     },
-    "1447": {
+    "1482": {
       "op": "return",
       "stack_out": []
     },
-    "1448": {
-      "block": "main_set_proposal_commitment_bps_route@6",
+    "1483": {
+      "block": "main_set_proposal_commitment_bps_route@8",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%8#0"
+        "tmp%16#0"
       ],
       "stack_out": [
-        "tmp%8#0"
+        "tmp%16#0"
       ]
     },
-    "1450": {
+    "1485": {
       "op": "!",
       "defined_out": [
-        "tmp%9#0"
+        "tmp%17#0"
       ],
       "stack_out": [
-        "tmp%9#0"
+        "tmp%17#0"
       ]
     },
-    "1451": {
+    "1486": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1452": {
+    "1487": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%10#0"
+        "tmp%18#0"
       ],
       "stack_out": [
-        "tmp%10#0"
+        "tmp%18#0"
       ]
     },
-    "1454": {
+    "1489": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1455": {
+    "1490": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%0#0"
@@ -2939,21 +2971,21 @@
         "reinterpret_bytes[8]%0#0"
       ]
     },
-    "1458": {
+    "1493": {
       "op": "btoi",
       "defined_out": [
-        "tmp%12#0"
+        "tmp%20#0"
       ],
       "stack_out": [
-        "tmp%12#0"
+        "tmp%20#0"
       ]
     },
-    "1459": {
+    "1494": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_commitment_bps",
       "op": "callsub set_proposal_commitment_bps",
       "stack_out": []
     },
-    "1462": {
+    "1497": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -2962,50 +2994,50 @@
         "tmp%0#0"
       ]
     },
-    "1463": {
+    "1498": {
       "op": "return",
       "stack_out": []
     },
-    "1464": {
-      "block": "main_create_empty_proposal_route@5",
+    "1499": {
+      "block": "main_create_empty_proposal_route@7",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%3#0"
+        "tmp%11#0"
       ],
       "stack_out": [
-        "tmp%3#0"
+        "tmp%11#0"
       ]
     },
-    "1466": {
+    "1501": {
       "op": "!",
       "defined_out": [
-        "tmp%4#0"
+        "tmp%12#0"
       ],
       "stack_out": [
-        "tmp%4#0"
+        "tmp%12#0"
       ]
     },
-    "1467": {
+    "1502": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "1468": {
+    "1503": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%5#0"
+        "tmp%13#0"
       ],
       "stack_out": [
-        "tmp%5#0"
+        "tmp%13#0"
       ]
     },
-    "1470": {
+    "1505": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "1471": {
+    "1506": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%0#0"
@@ -3014,7 +3046,7 @@
         "reinterpret_bytes[32]%0#0"
       ]
     },
-    "1474": {
+    "1509": {
       "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal",
       "op": "callsub create_empty_proposal",
       "defined_out": [
@@ -3024,7 +3056,7 @@
         "to_encode%0#0"
       ]
     },
-    "1477": {
+    "1512": {
       "op": "itob",
       "defined_out": [
         "val_as_bytes%0#0"
@@ -3033,7 +3065,7 @@
         "val_as_bytes%0#0"
       ]
     },
-    "1478": {
+    "1513": {
       "op": "bytec_0 // 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -3044,27 +3076,27 @@
         "0x151f7c75"
       ]
     },
-    "1479": {
+    "1514": {
       "op": "swap",
       "stack_out": [
         "0x151f7c75",
         "val_as_bytes%0#0"
       ]
     },
-    "1480": {
+    "1515": {
       "op": "concat",
       "defined_out": [
-        "tmp%7#0"
+        "tmp%15#0"
       ],
       "stack_out": [
-        "tmp%7#0"
+        "tmp%15#0"
       ]
     },
-    "1481": {
+    "1516": {
       "op": "log",
       "stack_out": []
     },
-    "1482": {
+    "1517": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -3073,49 +3105,161 @@
         "tmp%0#0"
       ]
     },
-    "1483": {
+    "1518": {
       "op": "return",
       "stack_out": []
     },
-    "1484": {
-      "block": "main_bare_routing@35",
+    "1519": {
+      "block": "main_resume_registry_route@6",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%152#0"
+        "tmp%7#0"
       ],
       "stack_out": [
-        "tmp%152#0"
+        "tmp%7#0"
       ]
     },
-    "1486": {
-      "op": "bnz main_after_if_else@37",
-      "stack_out": []
-    },
-    "1489": {
-      "op": "txn ApplicationID",
-      "defined_out": [
-        "tmp%153#0"
-      ],
-      "stack_out": [
-        "tmp%153#0"
-      ]
-    },
-    "1491": {
+    "1521": {
       "op": "!",
       "defined_out": [
-        "tmp%154#0"
+        "tmp%8#0"
       ],
       "stack_out": [
-        "tmp%154#0"
+        "tmp%8#0"
       ]
     },
-    "1492": {
+    "1522": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "1523": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%9#0"
+      ],
+      "stack_out": [
+        "tmp%9#0"
+      ]
+    },
+    "1525": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "1526": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.resume_registry",
+      "op": "callsub resume_registry"
+    },
+    "1529": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "1530": {
+      "op": "return",
+      "stack_out": []
+    },
+    "1531": {
+      "block": "main_pause_registry_route@5",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "1533": {
+      "op": "!",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "1534": {
+      "error": "OnCompletion is not NoOp",
+      "op": "assert // OnCompletion is not NoOp",
+      "stack_out": []
+    },
+    "1535": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "tmp%5#0"
+      ]
+    },
+    "1537": {
+      "error": "can only call when not creating",
+      "op": "assert // can only call when not creating",
+      "stack_out": []
+    },
+    "1538": {
+      "callsub": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.pause_registry",
+      "op": "callsub pause_registry"
+    },
+    "1541": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "1542": {
+      "op": "return",
+      "stack_out": []
+    },
+    "1543": {
+      "block": "main_bare_routing@37",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%160#0"
+      ],
+      "stack_out": [
+        "tmp%160#0"
+      ]
+    },
+    "1545": {
+      "op": "bnz main_after_if_else@39",
+      "stack_out": []
+    },
+    "1548": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%161#0"
+      ],
+      "stack_out": [
+        "tmp%161#0"
+      ]
+    },
+    "1550": {
+      "op": "!",
+      "defined_out": [
+        "tmp%162#0"
+      ],
+      "stack_out": [
+        "tmp%162#0"
+      ]
+    },
+    "1551": {
       "error": "can only call when creating",
       "op": "assert // can only call when creating",
       "stack_out": []
     },
-    "1493": {
+    "1552": {
       "op": "intc_0 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -3124,11 +3268,75 @@
         "tmp%0#0"
       ]
     },
-    "1494": {
+    "1553": {
       "op": "return",
       "stack_out": []
     },
-    "1495": {
+    "1554": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.pause_registry",
+      "params": {},
+      "block": "pause_registry",
+      "stack_in": [],
+      "op": "bytec_3 // 0x7061757365645f7265676973747279",
+      "defined_out": [
+        "0x7061757365645f7265676973747279"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279"
+      ]
+    },
+    "1555": {
+      "op": "pushbytes 0x80",
+      "defined_out": [
+        "0x7061757365645f7265676973747279",
+        "0x80"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279",
+        "0x80"
+      ]
+    },
+    "1558": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "1559": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "1560": {
+      "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.resume_registry",
+      "params": {},
+      "block": "resume_registry",
+      "stack_in": [],
+      "op": "bytec_3 // 0x7061757365645f7265676973747279",
+      "defined_out": [
+        "0x7061757365645f7265676973747279"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279"
+      ]
+    },
+    "1561": {
+      "op": "pushbytes 0x00",
+      "defined_out": [
+        "0x00",
+        "0x7061757365645f7265676973747279"
+      ],
+      "stack_out": [
+        "0x7061757365645f7265676973747279",
+        "0x00"
+      ]
+    },
+    "1564": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "1565": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "1566": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal",
       "params": {
         "proposer#0": "bytes"
@@ -3137,10 +3345,10 @@
       "stack_in": [],
       "op": "proto 1 1"
     },
-    "1498": {
+    "1569": {
       "op": "itxn_begin"
     },
-    "1499": {
+    "1570": {
       "op": "pushint 19 // 19",
       "defined_out": [
         "19"
@@ -3149,11 +3357,11 @@
         "19"
       ]
     },
-    "1501": {
+    "1572": {
       "op": "itxn_field GlobalNumUint",
       "stack_out": []
     },
-    "1503": {
+    "1574": {
       "op": "intc_2 // 4",
       "defined_out": [
         "4"
@@ -3162,11 +3370,11 @@
         "4"
       ]
     },
-    "1504": {
+    "1575": {
       "op": "itxn_field GlobalNumByteSlice",
       "stack_out": []
     },
-    "1506": {
+    "1577": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1"
@@ -3175,11 +3383,11 @@
         "1"
       ]
     },
-    "1507": {
+    "1578": {
       "op": "itxn_field ExtraProgramPages",
       "stack_out": []
     },
-    "1509": {
+    "1580": {
       "op": "pushbytes base64(CoEBQw==)",
       "defined_out": [
         "CoEBQw=="
@@ -3188,24 +3396,24 @@
         "CoEBQw=="
       ]
     },
-    "1515": {
+    "1586": {
       "op": "itxn_field ClearStateProgramPages",
       "stack_out": []
     },
-    "1517": {
-      "op": "pushbytes base64(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)",
+    "1588": {
+      "op": "pushbytes base64(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)",
       "defined_out": [
-        "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"
+        "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"
       ],
       "stack_out": [
-        "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"
+        "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"
       ]
     },
-    "4783": {
+    "4924": {
       "op": "itxn_field ApprovalProgramPages",
       "stack_out": []
     },
-    "4785": {
+    "4926": {
       "op": "pushbytes 0xcc694eaa // method \"create(address)void\"",
       "defined_out": [
         "Method(create(address)void)"
@@ -3214,11 +3422,11 @@
         "Method(create(address)void)"
       ]
     },
-    "4791": {
+    "4932": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "4793": {
+    "4934": {
       "op": "frame_dig -1",
       "defined_out": [
         "proposer#0 (copy)"
@@ -3227,11 +3435,11 @@
         "proposer#0 (copy)"
       ]
     },
-    "4795": {
+    "4936": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "4797": {
+    "4938": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl"
@@ -3240,11 +3448,11 @@
         "appl"
       ]
     },
-    "4798": {
+    "4939": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "4800": {
+    "4941": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0"
@@ -3253,14 +3461,14 @@
         "0"
       ]
     },
-    "4801": {
+    "4942": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "4803": {
+    "4944": {
       "op": "itxn_submit"
     },
-    "4804": {
+    "4945": {
       "op": "itxn CreatedApplicationID",
       "defined_out": [
         "res.CreatedApplicationID#0"
@@ -3269,10 +3477,10 @@
         "res.CreatedApplicationID#0"
       ]
     },
-    "4806": {
+    "4947": {
       "op": "itxn_begin"
     },
-    "4807": {
+    "4948": {
       "op": "dup",
       "defined_out": [
         "res.CreatedApplicationID#0",
@@ -3283,7 +3491,7 @@
         "res.CreatedApplicationID#0 (copy)"
       ]
     },
-    "4808": {
+    "4949": {
       "op": "app_params_get AppAddress",
       "defined_out": [
         "check%0#0",
@@ -3296,7 +3504,7 @@
         "check%0#0"
       ]
     },
-    "4810": {
+    "4951": {
       "error": "application exists",
       "op": "assert // application exists",
       "stack_out": [
@@ -3304,7 +3512,7 @@
         "value%0#0"
       ]
     },
-    "4811": {
+    "4952": {
       "op": "intc_1 // 0",
       "stack_out": [
         "res.CreatedApplicationID#0",
@@ -3312,7 +3520,7 @@
         "0"
       ]
     },
-    "4812": {
+    "4953": {
       "op": "bytec_1 // 0x70726f706f73616c5f666565",
       "defined_out": [
         "0",
@@ -3327,7 +3535,7 @@
         "0x70726f706f73616c5f666565"
       ]
     },
-    "4813": {
+    "4954": {
       "op": "app_global_get_ex",
       "defined_out": [
         "maybe_exists%0#0",
@@ -3342,7 +3550,7 @@
         "maybe_exists%0#0"
       ]
     },
-    "4814": {
+    "4955": {
       "error": "check self.proposal_fee exists",
       "op": "assert // check self.proposal_fee exists",
       "stack_out": [
@@ -3351,7 +3559,7 @@
         "maybe_value%0#0"
       ]
     },
-    "4815": {
+    "4956": {
       "op": "pushint 941500 // 941500",
       "defined_out": [
         "941500",
@@ -3366,7 +3574,7 @@
         "941500"
       ]
     },
-    "4819": {
+    "4960": {
       "op": "-",
       "defined_out": [
         "inner_txn_params%1%%param_Amount_idx_0#0",
@@ -3379,20 +3587,20 @@
         "inner_txn_params%1%%param_Amount_idx_0#0"
       ]
     },
-    "4820": {
+    "4961": {
       "op": "itxn_field Amount",
       "stack_out": [
         "res.CreatedApplicationID#0",
         "value%0#0"
       ]
     },
-    "4822": {
+    "4963": {
       "op": "itxn_field Receiver",
       "stack_out": [
         "res.CreatedApplicationID#0"
       ]
     },
-    "4824": {
+    "4965": {
       "op": "intc_0 // pay",
       "defined_out": [
         "pay",
@@ -3403,33 +3611,33 @@
         "pay"
       ]
     },
-    "4825": {
+    "4966": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "res.CreatedApplicationID#0"
       ]
     },
-    "4827": {
+    "4968": {
       "op": "intc_1 // 0",
       "stack_out": [
         "res.CreatedApplicationID#0",
         "0"
       ]
     },
-    "4828": {
+    "4969": {
       "op": "itxn_field Fee",
       "stack_out": [
         "res.CreatedApplicationID#0"
       ]
     },
-    "4830": {
+    "4971": {
       "op": "itxn_submit"
     },
-    "4831": {
+    "4972": {
       "retsub": true,
       "op": "retsub"
     },
-    "4832": {
+    "4973": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_commitment_bps",
       "params": {
         "commitment_bps#0": "uint64"
@@ -3438,8 +3646,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4835": {
-      "op": "bytec 6 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
+    "4976": {
+      "op": "bytec 7 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073",
       "defined_out": [
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
       ],
@@ -3447,7 +3655,7 @@
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073"
       ]
     },
-    "4837": {
+    "4978": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x70726f706f73616c5f636f6d6d69746d656e745f627073",
@@ -3458,15 +3666,15 @@
         "commitment_bps#0 (copy)"
       ]
     },
-    "4839": {
+    "4980": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4840": {
+    "4981": {
       "retsub": true,
       "op": "retsub"
     },
-    "4841": {
+    "4982": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_min_requested_amount",
       "params": {
         "min_requested_amount#0": "uint64"
@@ -3475,8 +3683,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4844": {
-      "op": "bytec 7 // 0x6d696e5f7265717565737465645f616d6f756e74",
+    "4985": {
+      "op": "bytec 8 // 0x6d696e5f7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x6d696e5f7265717565737465645f616d6f756e74"
       ],
@@ -3484,7 +3692,7 @@
         "0x6d696e5f7265717565737465645f616d6f756e74"
       ]
     },
-    "4846": {
+    "4987": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x6d696e5f7265717565737465645f616d6f756e74",
@@ -3495,15 +3703,15 @@
         "min_requested_amount#0 (copy)"
       ]
     },
-    "4848": {
+    "4989": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4849": {
+    "4990": {
       "retsub": true,
       "op": "retsub"
     },
-    "4850": {
+    "4991": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_small",
       "params": {
         "max_requested_amount#0": "uint64"
@@ -3512,8 +3720,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4853": {
-      "op": "bytec 8 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
+    "4994": {
+      "op": "bytec 9 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
       ],
@@ -3521,7 +3729,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c"
       ]
     },
-    "4855": {
+    "4996": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f736d616c6c",
@@ -3532,15 +3740,15 @@
         "max_requested_amount#0 (copy)"
       ]
     },
-    "4857": {
+    "4998": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4858": {
+    "4999": {
       "retsub": true,
       "op": "retsub"
     },
-    "4859": {
+    "5000": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_medium",
       "params": {
         "max_requested_amount#0": "uint64"
@@ -3549,8 +3757,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4862": {
-      "op": "bytec 9 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
+    "5003": {
+      "op": "bytec 10 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
       ],
@@ -3558,7 +3766,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d"
       ]
     },
-    "4864": {
+    "5005": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6d656469756d",
@@ -3569,15 +3777,15 @@
         "max_requested_amount#0 (copy)"
       ]
     },
-    "4866": {
+    "5007": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4867": {
+    "5008": {
       "retsub": true,
       "op": "retsub"
     },
-    "4868": {
+    "5009": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_max_requested_amount_large",
       "params": {
         "max_requested_amount#0": "uint64"
@@ -3586,8 +3794,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4871": {
-      "op": "bytec 10 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
+    "5012": {
+      "op": "bytec 11 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
       ],
@@ -3595,7 +3803,7 @@
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765"
       ]
     },
-    "4873": {
+    "5014": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x6d61785f7265717565737465645f616d6f756e745f6c61726765",
@@ -3606,15 +3814,15 @@
         "max_requested_amount#0 (copy)"
       ]
     },
-    "4875": {
+    "5016": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4876": {
+    "5017": {
       "retsub": true,
       "op": "retsub"
     },
-    "4877": {
+    "5018": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_publishing_fee",
       "params": {
         "publishing_fee_bps#0": "uint64"
@@ -3623,8 +3831,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4880": {
-      "op": "bytec 11 // 0x70726f706f73616c5f7075626c697368696e675f627073",
+    "5021": {
+      "op": "bytec 12 // 0x70726f706f73616c5f7075626c697368696e675f627073",
       "defined_out": [
         "0x70726f706f73616c5f7075626c697368696e675f627073"
       ],
@@ -3632,7 +3840,7 @@
         "0x70726f706f73616c5f7075626c697368696e675f627073"
       ]
     },
-    "4882": {
+    "5023": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x70726f706f73616c5f7075626c697368696e675f627073",
@@ -3643,15 +3851,15 @@
         "publishing_fee_bps#0 (copy)"
       ]
     },
-    "4884": {
+    "5025": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4885": {
+    "5026": {
       "retsub": true,
       "op": "retsub"
     },
-    "4886": {
+    "5027": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_small",
       "params": {
         "discussion_duration#0": "uint64"
@@ -3660,8 +3868,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4889": {
-      "op": "bytec 12 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
+    "5030": {
+      "op": "bytec 13 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
       ],
@@ -3669,7 +3877,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c"
       ]
     },
-    "4891": {
+    "5032": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f736d616c6c",
@@ -3680,15 +3888,15 @@
         "discussion_duration#0 (copy)"
       ]
     },
-    "4893": {
+    "5034": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4894": {
+    "5035": {
       "retsub": true,
       "op": "retsub"
     },
-    "4895": {
+    "5036": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_medium",
       "params": {
         "discussion_duration#0": "uint64"
@@ -3697,8 +3905,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4898": {
-      "op": "bytec 13 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
+    "5039": {
+      "op": "bytec 14 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
       ],
@@ -3706,7 +3914,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d"
       ]
     },
-    "4900": {
+    "5041": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6d656469756d",
@@ -3717,15 +3925,15 @@
         "discussion_duration#0 (copy)"
       ]
     },
-    "4902": {
+    "5043": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4903": {
+    "5044": {
       "retsub": true,
       "op": "retsub"
     },
-    "4904": {
+    "5045": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_discussion_duration_large",
       "params": {
         "discussion_duration#0": "uint64"
@@ -3734,8 +3942,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4907": {
-      "op": "bytec 14 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
+    "5048": {
+      "op": "bytec 15 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
       ],
@@ -3743,7 +3951,7 @@
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765"
       ]
     },
-    "4909": {
+    "5050": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x64697363757373696f6e5f6475726174696f6e5f6c61726765",
@@ -3754,15 +3962,15 @@
         "discussion_duration#0 (copy)"
       ]
     },
-    "4911": {
+    "5052": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4912": {
+    "5053": {
       "retsub": true,
       "op": "retsub"
     },
-    "4913": {
+    "5054": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_publisher",
       "params": {
         "committee_publisher#0": "bytes"
@@ -3771,8 +3979,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4916": {
-      "op": "bytec 15 // 0x636f6d6d69747465655f7075626c6973686572",
+    "5057": {
+      "op": "bytec 16 // 0x636f6d6d69747465655f7075626c6973686572",
       "defined_out": [
         "0x636f6d6d69747465655f7075626c6973686572"
       ],
@@ -3780,7 +3988,7 @@
         "0x636f6d6d69747465655f7075626c6973686572"
       ]
     },
-    "4918": {
+    "5059": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f7075626c6973686572",
@@ -3791,15 +3999,15 @@
         "committee_publisher#0 (copy)"
       ]
     },
-    "4920": {
+    "5061": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4921": {
+    "5062": {
       "retsub": true,
       "op": "retsub"
     },
-    "4922": {
+    "5063": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_proposal_fee",
       "params": {
         "proposal_fee#0": "uint64"
@@ -3808,7 +4016,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4925": {
+    "5066": {
       "op": "bytec_1 // 0x70726f706f73616c5f666565",
       "defined_out": [
         "0x70726f706f73616c5f666565"
@@ -3817,7 +4025,7 @@
         "0x70726f706f73616c5f666565"
       ]
     },
-    "4926": {
+    "5067": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x70726f706f73616c5f666565",
@@ -3828,15 +4036,15 @@
         "proposal_fee#0 (copy)"
       ]
     },
-    "4928": {
+    "5069": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4929": {
+    "5070": {
       "retsub": true,
       "op": "retsub"
     },
-    "4930": {
+    "5071": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_id",
       "params": {
         "committee_id#0": "bytes"
@@ -3845,7 +4053,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4933": {
+    "5074": {
       "op": "bytec_2 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -3854,7 +4062,7 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "4934": {
+    "5075": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f6964",
@@ -3865,15 +4073,15 @@
         "committee_id#0 (copy)"
       ]
     },
-    "4936": {
+    "5077": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4937": {
+    "5078": {
       "retsub": true,
       "op": "retsub"
     },
-    "4938": {
+    "5079": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id",
       "params": {},
       "block": "clear_committee_id",
@@ -3886,7 +4094,7 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "4939": {
+    "5080": {
       "op": "pushbytes 0x",
       "defined_out": [
         "0x",
@@ -3897,15 +4105,15 @@
         "0x"
       ]
     },
-    "4941": {
+    "5082": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4942": {
+    "5083": {
       "retsub": true,
       "op": "retsub"
     },
-    "4943": {
+    "5084": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_members",
       "params": {
         "committee_members#0": "uint64"
@@ -3914,8 +4122,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4946": {
-      "op": "bytec 17 // 0x636f6d6d69747465655f6d656d62657273",
+    "5087": {
+      "op": "bytec 18 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
       ],
@@ -3923,7 +4131,7 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "4948": {
+    "5089": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273",
@@ -3934,15 +4142,15 @@
         "committee_members#0 (copy)"
       ]
     },
-    "4950": {
+    "5091": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4951": {
+    "5092": {
       "retsub": true,
       "op": "retsub"
     },
-    "4952": {
+    "5093": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_committee_votes",
       "params": {
         "committee_votes#0": "uint64"
@@ -3951,8 +4159,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4955": {
-      "op": "bytec 18 // 0x636f6d6d69747465655f766f746573",
+    "5096": {
+      "op": "bytec 19 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
       ],
@@ -3960,7 +4168,7 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "4957": {
+    "5098": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573",
@@ -3971,15 +4179,15 @@
         "committee_votes#0 (copy)"
       ]
     },
-    "4959": {
+    "5100": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4960": {
+    "5101": {
       "retsub": true,
       "op": "retsub"
     },
-    "4961": {
+    "5102": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_small",
       "params": {
         "voting_duration#0": "uint64"
@@ -3988,8 +4196,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4964": {
-      "op": "bytec 19 // 0x766f74696e675f6475726174696f6e5f736d616c6c",
+    "5105": {
+      "op": "bytec 20 // 0x766f74696e675f6475726174696f6e5f736d616c6c",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f736d616c6c"
       ],
@@ -3997,7 +4205,7 @@
         "0x766f74696e675f6475726174696f6e5f736d616c6c"
       ]
     },
-    "4966": {
+    "5107": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f736d616c6c",
@@ -4008,15 +4216,15 @@
         "voting_duration#0 (copy)"
       ]
     },
-    "4968": {
+    "5109": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4969": {
+    "5110": {
       "retsub": true,
       "op": "retsub"
     },
-    "4970": {
+    "5111": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_medium",
       "params": {
         "voting_duration#0": "uint64"
@@ -4025,8 +4233,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4973": {
-      "op": "bytec 20 // 0x766f74696e675f6475726174696f6e5f6d656469756d",
+    "5114": {
+      "op": "bytec 21 // 0x766f74696e675f6475726174696f6e5f6d656469756d",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6d656469756d"
       ],
@@ -4034,7 +4242,7 @@
         "0x766f74696e675f6475726174696f6e5f6d656469756d"
       ]
     },
-    "4975": {
+    "5116": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6d656469756d",
@@ -4045,15 +4253,15 @@
         "voting_duration#0 (copy)"
       ]
     },
-    "4977": {
+    "5118": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4978": {
+    "5119": {
       "retsub": true,
       "op": "retsub"
     },
-    "4979": {
+    "5120": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_voting_duration_large",
       "params": {
         "voting_duration#0": "uint64"
@@ -4062,8 +4270,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4982": {
-      "op": "bytec 21 // 0x766f74696e675f6475726174696f6e5f6c61726765",
+    "5123": {
+      "op": "bytec 22 // 0x766f74696e675f6475726174696f6e5f6c61726765",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6c61726765"
       ],
@@ -4071,7 +4279,7 @@
         "0x766f74696e675f6475726174696f6e5f6c61726765"
       ]
     },
-    "4984": {
+    "5125": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x766f74696e675f6475726174696f6e5f6c61726765",
@@ -4082,15 +4290,15 @@
         "voting_duration#0 (copy)"
       ]
     },
-    "4986": {
+    "5127": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4987": {
+    "5128": {
       "retsub": true,
       "op": "retsub"
     },
-    "4988": {
+    "5129": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_small",
       "params": {
         "quorum#0": "uint64"
@@ -4099,8 +4307,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "4991": {
-      "op": "bytec 22 // 0x71756f72756d5f736d616c6c",
+    "5132": {
+      "op": "bytec 23 // 0x71756f72756d5f736d616c6c",
       "defined_out": [
         "0x71756f72756d5f736d616c6c"
       ],
@@ -4108,7 +4316,7 @@
         "0x71756f72756d5f736d616c6c"
       ]
     },
-    "4993": {
+    "5134": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x71756f72756d5f736d616c6c",
@@ -4119,15 +4327,15 @@
         "quorum#0 (copy)"
       ]
     },
-    "4995": {
+    "5136": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "4996": {
+    "5137": {
       "retsub": true,
       "op": "retsub"
     },
-    "4997": {
+    "5138": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_medium",
       "params": {
         "quorum#0": "uint64"
@@ -4136,8 +4344,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5000": {
-      "op": "bytec 23 // 0x71756f72756d5f6d656469756d",
+    "5141": {
+      "op": "bytec 24 // 0x71756f72756d5f6d656469756d",
       "defined_out": [
         "0x71756f72756d5f6d656469756d"
       ],
@@ -4145,7 +4353,7 @@
         "0x71756f72756d5f6d656469756d"
       ]
     },
-    "5002": {
+    "5143": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x71756f72756d5f6d656469756d",
@@ -4156,15 +4364,15 @@
         "quorum#0 (copy)"
       ]
     },
-    "5004": {
+    "5145": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5005": {
+    "5146": {
       "retsub": true,
       "op": "retsub"
     },
-    "5006": {
+    "5147": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_large",
       "params": {
         "quorum#0": "uint64"
@@ -4173,8 +4381,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5009": {
-      "op": "bytec 24 // 0x71756f72756d5f6c61726765",
+    "5150": {
+      "op": "bytec 25 // 0x71756f72756d5f6c61726765",
       "defined_out": [
         "0x71756f72756d5f6c61726765"
       ],
@@ -4182,7 +4390,7 @@
         "0x71756f72756d5f6c61726765"
       ]
     },
-    "5011": {
+    "5152": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x71756f72756d5f6c61726765",
@@ -4193,15 +4401,15 @@
         "quorum#0 (copy)"
       ]
     },
-    "5013": {
+    "5154": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5014": {
+    "5155": {
       "retsub": true,
       "op": "retsub"
     },
-    "5015": {
+    "5156": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_small",
       "params": {
         "weighted_quorum#0": "uint64"
@@ -4210,8 +4418,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5018": {
-      "op": "bytec 25 // 0x77656967687465645f71756f72756d5f736d616c6c",
+    "5159": {
+      "op": "bytec 26 // 0x77656967687465645f71756f72756d5f736d616c6c",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f736d616c6c"
       ],
@@ -4219,7 +4427,7 @@
         "0x77656967687465645f71756f72756d5f736d616c6c"
       ]
     },
-    "5020": {
+    "5161": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f736d616c6c",
@@ -4230,15 +4438,15 @@
         "weighted_quorum#0 (copy)"
       ]
     },
-    "5022": {
+    "5163": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5023": {
+    "5164": {
       "retsub": true,
       "op": "retsub"
     },
-    "5024": {
+    "5165": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_medium",
       "params": {
         "weighted_quorum#0": "uint64"
@@ -4247,8 +4455,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5027": {
-      "op": "bytec 26 // 0x77656967687465645f71756f72756d5f6d656469756d",
+    "5168": {
+      "op": "bytec 27 // 0x77656967687465645f71756f72756d5f6d656469756d",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6d656469756d"
       ],
@@ -4256,7 +4464,7 @@
         "0x77656967687465645f71756f72756d5f6d656469756d"
       ]
     },
-    "5029": {
+    "5170": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6d656469756d",
@@ -4267,15 +4475,15 @@
         "weighted_quorum#0 (copy)"
       ]
     },
-    "5031": {
+    "5172": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5032": {
+    "5173": {
       "retsub": true,
       "op": "retsub"
     },
-    "5033": {
+    "5174": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_large",
       "params": {
         "weighted_quorum#0": "uint64"
@@ -4284,8 +4492,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5036": {
-      "op": "bytec 27 // 0x77656967687465645f71756f72756d5f6c61726765",
+    "5177": {
+      "op": "bytec 28 // 0x77656967687465645f71756f72756d5f6c61726765",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6c61726765"
       ],
@@ -4293,7 +4501,7 @@
         "0x77656967687465645f71756f72756d5f6c61726765"
       ]
     },
-    "5038": {
+    "5179": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x77656967687465645f71756f72756d5f6c61726765",
@@ -4304,15 +4512,15 @@
         "weighted_quorum#0 (copy)"
       ]
     },
-    "5040": {
+    "5181": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5041": {
+    "5182": {
       "retsub": true,
       "op": "retsub"
     },
-    "5042": {
+    "5183": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.vote",
       "params": {
         "proposal_app#0": "uint64",
@@ -4324,10 +4532,10 @@
       "stack_in": [],
       "op": "proto 4 0"
     },
-    "5045": {
+    "5186": {
       "op": "itxn_begin"
     },
-    "5046": {
+    "5187": {
       "op": "frame_dig -4",
       "defined_out": [
         "proposal_app#0 (copy)"
@@ -4336,11 +4544,11 @@
         "proposal_app#0 (copy)"
       ]
     },
-    "5048": {
+    "5189": {
       "op": "itxn_field ApplicationID",
       "stack_out": []
     },
-    "5050": {
+    "5191": {
       "op": "pushbytes 0x1841a0d2 // method \"vote(address,uint64,uint64)string\"",
       "defined_out": [
         "Method(vote(address,uint64,uint64)string)"
@@ -4349,11 +4557,11 @@
         "Method(vote(address,uint64,uint64)string)"
       ]
     },
-    "5056": {
+    "5197": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5058": {
+    "5199": {
       "op": "frame_dig -3",
       "defined_out": [
         "voter#0 (copy)"
@@ -4362,11 +4570,11 @@
         "voter#0 (copy)"
       ]
     },
-    "5060": {
+    "5201": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5062": {
+    "5203": {
       "op": "frame_dig -2",
       "defined_out": [
         "approvals#0 (copy)"
@@ -4375,11 +4583,11 @@
         "approvals#0 (copy)"
       ]
     },
-    "5064": {
+    "5205": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5066": {
+    "5207": {
       "op": "frame_dig -1",
       "defined_out": [
         "rejections#0 (copy)"
@@ -4388,11 +4596,11 @@
         "rejections#0 (copy)"
       ]
     },
-    "5068": {
+    "5209": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5070": {
+    "5211": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl"
@@ -4401,11 +4609,11 @@
         "appl"
       ]
     },
-    "5071": {
+    "5212": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "5073": {
+    "5214": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0"
@@ -4414,17 +4622,17 @@
         "0"
       ]
     },
-    "5074": {
+    "5215": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "5076": {
+    "5217": {
       "op": "itxn_submit"
     },
-    "5077": {
+    "5218": {
       "op": "itxn LastLog"
     },
-    "5079": {
+    "5220": {
       "op": "dupn 2",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4436,7 +4644,7 @@
         "awst_tmp%0#0 (copy)"
       ]
     },
-    "5081": {
+    "5222": {
       "op": "extract 0 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4448,7 +4656,7 @@
         "tmp%1#0"
       ]
     },
-    "5084": {
+    "5225": {
       "op": "bytec_0 // 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -4462,7 +4670,7 @@
         "0x151f7c75"
       ]
     },
-    "5085": {
+    "5226": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4474,7 +4682,7 @@
         "tmp%2#0"
       ]
     },
-    "5086": {
+    "5227": {
       "error": "ARC4 prefix is valid",
       "op": "assert // ARC4 prefix is valid",
       "stack_out": [
@@ -4482,7 +4690,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5087": {
+    "5228": {
       "op": "extract 6 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4493,7 +4701,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5090": {
+    "5231": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4505,7 +4713,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5091": {
+    "5232": {
       "op": "len",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4518,7 +4726,7 @@
         "tmp%4#0"
       ]
     },
-    "5092": {
+    "5233": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4532,7 +4740,7 @@
         "tmp%4#0"
       ]
     },
-    "5093": {
+    "5234": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4542,7 +4750,7 @@
         "4"
       ]
     },
-    "5094": {
+    "5235": {
       "op": "<",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4557,7 +4765,7 @@
         "tmp%5#0"
       ]
     },
-    "5095": {
+    "5236": {
       "op": "bz vote_ternary_false@3",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4565,7 +4773,7 @@
         "tmp%4#0"
       ]
     },
-    "5098": {
+    "5239": {
       "op": "intc_1 // 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4580,7 +4788,7 @@
         "ternary_result%0#0"
       ]
     },
-    "5099": {
+    "5240": {
       "block": "vote_ternary_merge@4",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4596,7 +4804,7 @@
         "tmp%4#0"
       ]
     },
-    "5102": {
+    "5243": {
       "op": "intc_2 // 4",
       "defined_out": [
         "4"
@@ -4608,7 +4816,7 @@
         "4"
       ]
     },
-    "5103": {
+    "5244": {
       "op": "frame_dig 2",
       "defined_out": [
         "4",
@@ -4622,7 +4830,7 @@
         "tmp%4#0"
       ]
     },
-    "5105": {
+    "5246": {
       "op": "dup",
       "defined_out": [
         "4",
@@ -4638,7 +4846,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5106": {
+    "5247": {
       "op": "cover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4649,7 +4857,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5108": {
+    "5249": {
       "op": ">=",
       "defined_out": [
         "is_out_of_bounds%0#0",
@@ -4663,7 +4871,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5109": {
+    "5250": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4674,7 +4882,7 @@
         "4"
       ]
     },
-    "5110": {
+    "5251": {
       "op": "dig 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4686,7 +4894,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5112": {
+    "5253": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4698,7 +4906,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5114": {
+    "5255": {
       "op": "select",
       "defined_out": [
         "bounded_index%0#0",
@@ -4712,7 +4920,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5115": {
+    "5256": {
       "op": "frame_dig 1",
       "defined_out": [
         "awst_tmp%1#0",
@@ -4728,7 +4936,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5117": {
+    "5258": {
       "op": "swap",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4739,7 +4947,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5118": {
+    "5259": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4750,7 +4958,7 @@
         "tmp%4#0"
       ]
     },
-    "5120": {
+    "5261": {
       "op": "substring3",
       "defined_out": [
         "awst_tmp%1#0",
@@ -4764,8 +4972,8 @@
         "error_without_prefix#0"
       ]
     },
-    "5121": {
-      "op": "bytec_3 // \"Unauthorized\"",
+    "5262": {
+      "op": "bytec 4 // \"Unauthorized\"",
       "defined_out": [
         "\"Unauthorized\"",
         "awst_tmp%1#0",
@@ -4780,7 +4988,7 @@
         "\"Unauthorized\""
       ]
     },
-    "5122": {
+    "5264": {
       "op": "pushbytess \"Voter not found\" \"Voter already voted\" \"Votes exceeded\" \"Missing Config\" // \"Voter not found\", \"Voter already voted\", \"Votes exceeded\", \"Missing Config\"",
       "defined_out": [
         "\"Missing Config\"",
@@ -4804,8 +5012,8 @@
         "\"Missing Config\""
       ]
     },
-    "5190": {
-      "op": "bytec 4 // \"Wrong Proposal Status\"",
+    "5332": {
+      "op": "bytec 5 // \"Wrong Proposal Status\"",
       "defined_out": [
         "\"Missing Config\"",
         "\"Unauthorized\"",
@@ -4830,7 +5038,7 @@
         "\"Wrong Proposal Status\""
       ]
     },
-    "5192": {
+    "5334": {
       "op": "pushbytes \"Voting Period Expired\"",
       "defined_out": [
         "\"Missing Config\"",
@@ -4858,7 +5066,7 @@
         "\"Voting Period Expired\""
       ]
     },
-    "5215": {
+    "5357": {
       "op": "uncover 7",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4874,7 +5082,7 @@
         "error_without_prefix#0"
       ]
     },
-    "5217": {
+    "5359": {
       "op": "match vote_switch_case_0@6 vote_switch_case_1@7 vote_switch_case_2@8 vote_switch_case_3@9 vote_switch_case_4@10 vote_switch_case_5@11 vote_switch_case_6@12",
       "stack_out": [
         "awst_tmp%0#0",
@@ -4882,11 +5090,11 @@
         "tmp%4#0"
       ]
     },
-    "5233": {
+    "5375": {
       "error": "Unknown error",
       "op": "err // Unknown error"
     },
-    "5234": {
+    "5376": {
       "block": "vote_switch_case_6@12",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4896,7 +5104,7 @@
       "error": "Voting Period Expired",
       "op": "err // Voting Period Expired"
     },
-    "5235": {
+    "5377": {
       "block": "vote_switch_case_5@11",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4906,7 +5114,7 @@
       "error": "Wrong Proposal Status",
       "op": "err // Wrong Proposal Status"
     },
-    "5236": {
+    "5378": {
       "block": "vote_switch_case_4@10",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4916,7 +5124,7 @@
       "error": "Missing Config",
       "op": "err // Missing Config"
     },
-    "5237": {
+    "5379": {
       "block": "vote_switch_case_3@9",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4926,7 +5134,7 @@
       "error": "Votes exceeded",
       "op": "err // Votes exceeded"
     },
-    "5238": {
+    "5380": {
       "block": "vote_switch_case_2@8",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4936,7 +5144,7 @@
       "error": "Voter already voted",
       "op": "err // Voter already voted"
     },
-    "5239": {
+    "5381": {
       "block": "vote_switch_case_1@7",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4946,7 +5154,7 @@
       "error": "Voter not found",
       "op": "err // Voter not found"
     },
-    "5240": {
+    "5382": {
       "block": "vote_switch_case_0@6",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4956,7 +5164,7 @@
       "error": "Unauthorized",
       "op": "err // Unauthorized"
     },
-    "5241": {
+    "5383": {
       "block": "vote_after_if_else@14",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4966,7 +5174,7 @@
       "retsub": true,
       "op": "retsub"
     },
-    "5242": {
+    "5384": {
       "block": "vote_ternary_false@3",
       "stack_in": [
         "awst_tmp%0#0",
@@ -4984,7 +5192,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5244": {
+    "5386": {
       "op": "extract 6 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -4997,8 +5205,8 @@
         "tmp%6#0"
       ]
     },
-    "5247": {
-      "op": "bytec 5 // \"ERR:\"",
+    "5389": {
+      "op": "bytec 6 // \"ERR:\"",
       "defined_out": [
         "\"ERR:\"",
         "awst_tmp%0#0",
@@ -5012,7 +5220,7 @@
         "\"ERR:\""
       ]
     },
-    "5249": {
+    "5391": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5025,10 +5233,10 @@
         "ternary_result%0#0"
       ]
     },
-    "5250": {
+    "5392": {
       "op": "b vote_ternary_merge@4"
     },
-    "5253": {
+    "5395": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_xgov_reviewer",
       "params": {
         "xgov_reviewer#0": "bytes"
@@ -5037,8 +5245,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5256": {
-      "op": "bytec 28 // 0x78676f765f7265766965776572",
+    "5398": {
+      "op": "bytec 29 // 0x78676f765f7265766965776572",
       "defined_out": [
         "0x78676f765f7265766965776572"
       ],
@@ -5046,7 +5254,7 @@
         "0x78676f765f7265766965776572"
       ]
     },
-    "5258": {
+    "5400": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x78676f765f7265766965776572",
@@ -5057,15 +5265,15 @@
         "xgov_reviewer#0 (copy)"
       ]
     },
-    "5260": {
+    "5402": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5261": {
+    "5403": {
       "retsub": true,
       "op": "retsub"
     },
-    "5262": {
+    "5404": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.fund",
       "params": {
         "proposal_app#0": "uint64"
@@ -5074,10 +5282,10 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5265": {
+    "5407": {
       "op": "itxn_begin"
     },
-    "5266": {
+    "5408": {
       "op": "frame_dig -1",
       "defined_out": [
         "proposal_app#0 (copy)"
@@ -5086,11 +5294,11 @@
         "proposal_app#0 (copy)"
       ]
     },
-    "5268": {
+    "5410": {
       "op": "itxn_field ApplicationID",
       "stack_out": []
     },
-    "5270": {
+    "5412": {
       "op": "pushbytes 0x8a5e4c80 // method \"fund()string\"",
       "defined_out": [
         "Method(fund()string)"
@@ -5099,11 +5307,11 @@
         "Method(fund()string)"
       ]
     },
-    "5276": {
+    "5418": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5278": {
+    "5420": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl"
@@ -5112,11 +5320,11 @@
         "appl"
       ]
     },
-    "5279": {
+    "5421": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "5281": {
+    "5423": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0"
@@ -5125,17 +5333,17 @@
         "0"
       ]
     },
-    "5282": {
+    "5424": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "5284": {
+    "5426": {
       "op": "itxn_submit"
     },
-    "5285": {
+    "5427": {
       "op": "itxn LastLog"
     },
-    "5287": {
+    "5429": {
       "op": "dupn 2",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5147,7 +5355,7 @@
         "awst_tmp%0#0 (copy)"
       ]
     },
-    "5289": {
+    "5431": {
       "op": "extract 0 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5159,7 +5367,7 @@
         "tmp%1#0"
       ]
     },
-    "5292": {
+    "5434": {
       "op": "bytec_0 // 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -5173,7 +5381,7 @@
         "0x151f7c75"
       ]
     },
-    "5293": {
+    "5435": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5185,7 +5393,7 @@
         "tmp%2#0"
       ]
     },
-    "5294": {
+    "5436": {
       "error": "ARC4 prefix is valid",
       "op": "assert // ARC4 prefix is valid",
       "stack_out": [
@@ -5193,7 +5401,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5295": {
+    "5437": {
       "op": "extract 6 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5204,7 +5412,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5298": {
+    "5440": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5216,7 +5424,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5299": {
+    "5441": {
       "op": "len",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5229,7 +5437,7 @@
         "tmp%4#0"
       ]
     },
-    "5300": {
+    "5442": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5243,7 +5451,7 @@
         "tmp%4#0"
       ]
     },
-    "5301": {
+    "5443": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5253,7 +5461,7 @@
         "4"
       ]
     },
-    "5302": {
+    "5444": {
       "op": "<",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5268,7 +5476,7 @@
         "tmp%5#0"
       ]
     },
-    "5303": {
+    "5445": {
       "op": "bz fund_ternary_false@3",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5276,7 +5484,7 @@
         "tmp%4#0"
       ]
     },
-    "5306": {
+    "5448": {
       "op": "intc_1 // 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5291,7 +5499,7 @@
         "ternary_result%0#0"
       ]
     },
-    "5307": {
+    "5449": {
       "block": "fund_ternary_merge@4",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5307,7 +5515,7 @@
         "tmp%4#0"
       ]
     },
-    "5310": {
+    "5452": {
       "op": "intc_2 // 4",
       "defined_out": [
         "4"
@@ -5319,7 +5527,7 @@
         "4"
       ]
     },
-    "5311": {
+    "5453": {
       "op": "frame_dig 2",
       "defined_out": [
         "4",
@@ -5333,7 +5541,7 @@
         "tmp%4#0"
       ]
     },
-    "5313": {
+    "5455": {
       "op": "dup",
       "defined_out": [
         "4",
@@ -5349,7 +5557,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5314": {
+    "5456": {
       "op": "cover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5360,7 +5568,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5316": {
+    "5458": {
       "op": ">=",
       "defined_out": [
         "is_out_of_bounds%0#0",
@@ -5374,7 +5582,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5317": {
+    "5459": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5385,7 +5593,7 @@
         "4"
       ]
     },
-    "5318": {
+    "5460": {
       "op": "dig 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5397,7 +5605,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5320": {
+    "5462": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5409,7 +5617,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5322": {
+    "5464": {
       "op": "select",
       "defined_out": [
         "bounded_index%0#0",
@@ -5423,7 +5631,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5323": {
+    "5465": {
       "op": "frame_dig 1",
       "defined_out": [
         "awst_tmp%1#0",
@@ -5439,7 +5647,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5325": {
+    "5467": {
       "op": "swap",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5450,7 +5658,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5326": {
+    "5468": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5461,7 +5669,7 @@
         "tmp%4#0"
       ]
     },
-    "5328": {
+    "5470": {
       "op": "substring3",
       "defined_out": [
         "awst_tmp%1#0",
@@ -5475,8 +5683,8 @@
         "error_without_prefix#0"
       ]
     },
-    "5329": {
-      "op": "bytec_3 // \"Unauthorized\"",
+    "5471": {
+      "op": "bytec 4 // \"Unauthorized\"",
       "defined_out": [
         "\"Unauthorized\"",
         "awst_tmp%1#0",
@@ -5491,8 +5699,8 @@
         "\"Unauthorized\""
       ]
     },
-    "5330": {
-      "op": "bytec 4 // \"Wrong Proposal Status\"",
+    "5473": {
+      "op": "bytec 5 // \"Wrong Proposal Status\"",
       "defined_out": [
         "\"Unauthorized\"",
         "\"Wrong Proposal Status\"",
@@ -5509,7 +5717,7 @@
         "\"Wrong Proposal Status\""
       ]
     },
-    "5332": {
+    "5475": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5520,7 +5728,7 @@
         "error_without_prefix#0"
       ]
     },
-    "5334": {
+    "5477": {
       "op": "match fund_switch_case_0@6 fund_switch_case_1@7",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5528,11 +5736,11 @@
         "tmp%4#0"
       ]
     },
-    "5340": {
+    "5483": {
       "error": "Unknown error",
       "op": "err // Unknown error"
     },
-    "5341": {
+    "5484": {
       "block": "fund_switch_case_1@7",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5542,7 +5750,7 @@
       "error": "Wrong Proposal Status",
       "op": "err // Wrong Proposal Status"
     },
-    "5342": {
+    "5485": {
       "block": "fund_switch_case_0@6",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5552,7 +5760,7 @@
       "error": "Unauthorized",
       "op": "err // Unauthorized"
     },
-    "5343": {
+    "5486": {
       "block": "fund_after_if_else@9",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5562,7 +5770,7 @@
       "retsub": true,
       "op": "retsub"
     },
-    "5344": {
+    "5487": {
       "block": "fund_ternary_false@3",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5580,7 +5788,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5346": {
+    "5489": {
       "op": "extract 6 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5593,8 +5801,8 @@
         "tmp%6#0"
       ]
     },
-    "5349": {
-      "op": "bytec 5 // \"ERR:\"",
+    "5492": {
+      "op": "bytec 6 // \"ERR:\"",
       "defined_out": [
         "\"ERR:\"",
         "awst_tmp%0#0",
@@ -5608,7 +5816,7 @@
         "\"ERR:\""
       ]
     },
-    "5351": {
+    "5494": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5621,10 +5829,10 @@
         "ternary_result%0#0"
       ]
     },
-    "5352": {
+    "5495": {
       "op": "b fund_ternary_merge@4"
     },
-    "5355": {
+    "5498": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_cooldown_duration",
       "params": {
         "cooldown_duration#0": "uint64"
@@ -5633,8 +5841,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5358": {
-      "op": "bytec 29 // 0x636f6f6c5f646f776e5f6475726174696f6e",
+    "5501": {
+      "op": "bytec 30 // 0x636f6f6c5f646f776e5f6475726174696f6e",
       "defined_out": [
         "0x636f6f6c5f646f776e5f6475726174696f6e"
       ],
@@ -5642,7 +5850,7 @@
         "0x636f6f6c5f646f776e5f6475726174696f6e"
       ]
     },
-    "5360": {
+    "5503": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6f6c5f646f776e5f6475726174696f6e",
@@ -5653,15 +5861,15 @@
         "cooldown_duration#0 (copy)"
       ]
     },
-    "5362": {
+    "5505": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "5363": {
+    "5506": {
       "retsub": true,
       "op": "retsub"
     },
-    "5364": {
+    "5507": {
       "subroutine": "smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.delete_proposal",
       "params": {
         "proposal_app#0": "uint64"
@@ -5670,10 +5878,10 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "5367": {
+    "5510": {
       "op": "itxn_begin"
     },
-    "5368": {
+    "5511": {
       "op": "pushint 5 // DeleteApplication",
       "defined_out": [
         "DeleteApplication"
@@ -5682,11 +5890,11 @@
         "DeleteApplication"
       ]
     },
-    "5370": {
+    "5513": {
       "op": "itxn_field OnCompletion",
       "stack_out": []
     },
-    "5372": {
+    "5515": {
       "op": "frame_dig -1",
       "defined_out": [
         "proposal_app#0 (copy)"
@@ -5695,11 +5903,11 @@
         "proposal_app#0 (copy)"
       ]
     },
-    "5374": {
+    "5517": {
       "op": "itxn_field ApplicationID",
       "stack_out": []
     },
-    "5376": {
+    "5519": {
       "op": "pushbytes 0x1feb95da // method \"delete()string\"",
       "defined_out": [
         "Method(delete()string)"
@@ -5708,11 +5916,11 @@
         "Method(delete()string)"
       ]
     },
-    "5382": {
+    "5525": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "5384": {
+    "5527": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl"
@@ -5721,11 +5929,11 @@
         "appl"
       ]
     },
-    "5385": {
+    "5528": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "5387": {
+    "5530": {
       "op": "intc_1 // 0",
       "defined_out": [
         "0"
@@ -5734,17 +5942,17 @@
         "0"
       ]
     },
-    "5388": {
+    "5531": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "5390": {
+    "5533": {
       "op": "itxn_submit"
     },
-    "5391": {
+    "5534": {
       "op": "itxn LastLog"
     },
-    "5393": {
+    "5536": {
       "op": "dupn 2",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5756,7 +5964,7 @@
         "awst_tmp%0#0 (copy)"
       ]
     },
-    "5395": {
+    "5538": {
       "op": "extract 0 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5768,7 +5976,7 @@
         "tmp%1#0"
       ]
     },
-    "5398": {
+    "5541": {
       "op": "bytec_0 // 0x151f7c75",
       "defined_out": [
         "0x151f7c75",
@@ -5782,7 +5990,7 @@
         "0x151f7c75"
       ]
     },
-    "5399": {
+    "5542": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5794,7 +6002,7 @@
         "tmp%2#0"
       ]
     },
-    "5400": {
+    "5543": {
       "error": "ARC4 prefix is valid",
       "op": "assert // ARC4 prefix is valid",
       "stack_out": [
@@ -5802,7 +6010,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5401": {
+    "5544": {
       "op": "extract 6 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5813,7 +6021,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5404": {
+    "5547": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5825,7 +6033,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5405": {
+    "5548": {
       "op": "len",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5838,7 +6046,7 @@
         "tmp%4#0"
       ]
     },
-    "5406": {
+    "5549": {
       "op": "dup",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5852,7 +6060,7 @@
         "tmp%4#0"
       ]
     },
-    "5407": {
+    "5550": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5862,7 +6070,7 @@
         "4"
       ]
     },
-    "5408": {
+    "5551": {
       "op": "<",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5877,7 +6085,7 @@
         "tmp%5#0"
       ]
     },
-    "5409": {
+    "5552": {
       "op": "bz delete_proposal_ternary_false@3",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5885,7 +6093,7 @@
         "tmp%4#0"
       ]
     },
-    "5412": {
+    "5555": {
       "op": "intc_1 // 0",
       "defined_out": [
         "awst_tmp%0#0",
@@ -5900,7 +6108,7 @@
         "ternary_result%0#0"
       ]
     },
-    "5413": {
+    "5556": {
       "block": "delete_proposal_ternary_merge@4",
       "stack_in": [
         "awst_tmp%0#0",
@@ -5916,7 +6124,7 @@
         "tmp%4#0"
       ]
     },
-    "5416": {
+    "5559": {
       "op": "intc_2 // 4",
       "defined_out": [
         "4"
@@ -5928,7 +6136,7 @@
         "4"
       ]
     },
-    "5417": {
+    "5560": {
       "op": "frame_dig 2",
       "defined_out": [
         "4",
@@ -5942,7 +6150,7 @@
         "tmp%4#0"
       ]
     },
-    "5419": {
+    "5562": {
       "op": "dup",
       "defined_out": [
         "4",
@@ -5958,7 +6166,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5420": {
+    "5563": {
       "op": "cover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5969,7 +6177,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5422": {
+    "5565": {
       "op": ">=",
       "defined_out": [
         "is_out_of_bounds%0#0",
@@ -5983,7 +6191,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5423": {
+    "5566": {
       "op": "intc_2 // 4",
       "stack_out": [
         "awst_tmp%0#0",
@@ -5994,7 +6202,7 @@
         "4"
       ]
     },
-    "5424": {
+    "5567": {
       "op": "dig 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6006,7 +6214,7 @@
         "tmp%4#0 (copy)"
       ]
     },
-    "5426": {
+    "5569": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6018,7 +6226,7 @@
         "is_out_of_bounds%0#0"
       ]
     },
-    "5428": {
+    "5571": {
       "op": "select",
       "defined_out": [
         "bounded_index%0#0",
@@ -6032,7 +6240,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5429": {
+    "5572": {
       "op": "frame_dig 1",
       "defined_out": [
         "awst_tmp%1#0",
@@ -6048,7 +6256,7 @@
         "awst_tmp%1#0"
       ]
     },
-    "5431": {
+    "5574": {
       "op": "swap",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6059,7 +6267,7 @@
         "bounded_index%0#0"
       ]
     },
-    "5432": {
+    "5575": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6070,7 +6278,7 @@
         "tmp%4#0"
       ]
     },
-    "5434": {
+    "5577": {
       "op": "substring3",
       "defined_out": [
         "awst_tmp%1#0",
@@ -6084,8 +6292,8 @@
         "error_without_prefix#0"
       ]
     },
-    "5435": {
-      "op": "bytec_3 // \"Unauthorized\"",
+    "5578": {
+      "op": "bytec 4 // \"Unauthorized\"",
       "defined_out": [
         "\"Unauthorized\"",
         "awst_tmp%1#0",
@@ -6100,8 +6308,8 @@
         "\"Unauthorized\""
       ]
     },
-    "5436": {
-      "op": "bytec 4 // \"Wrong Proposal Status\"",
+    "5580": {
+      "op": "bytec 5 // \"Wrong Proposal Status\"",
       "defined_out": [
         "\"Unauthorized\"",
         "\"Wrong Proposal Status\"",
@@ -6118,7 +6326,7 @@
         "\"Wrong Proposal Status\""
       ]
     },
-    "5438": {
+    "5582": {
       "op": "uncover 2",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6129,7 +6337,7 @@
         "error_without_prefix#0"
       ]
     },
-    "5440": {
+    "5584": {
       "op": "match delete_proposal_switch_case_0@6 delete_proposal_switch_case_1@7",
       "stack_out": [
         "awst_tmp%0#0",
@@ -6137,11 +6345,11 @@
         "tmp%4#0"
       ]
     },
-    "5446": {
+    "5590": {
       "error": "Unknown error",
       "op": "err // Unknown error"
     },
-    "5447": {
+    "5591": {
       "block": "delete_proposal_switch_case_1@7",
       "stack_in": [
         "awst_tmp%0#0",
@@ -6151,7 +6359,7 @@
       "error": "Wrong Proposal Status",
       "op": "err // Wrong Proposal Status"
     },
-    "5448": {
+    "5592": {
       "block": "delete_proposal_switch_case_0@6",
       "stack_in": [
         "awst_tmp%0#0",
@@ -6161,7 +6369,7 @@
       "error": "Unauthorized",
       "op": "err // Unauthorized"
     },
-    "5449": {
+    "5593": {
       "block": "delete_proposal_after_if_else@9",
       "stack_in": [
         "awst_tmp%0#0",
@@ -6171,7 +6379,7 @@
       "retsub": true,
       "op": "retsub"
     },
-    "5450": {
+    "5594": {
       "block": "delete_proposal_ternary_false@3",
       "stack_in": [
         "awst_tmp%0#0",
@@ -6189,7 +6397,7 @@
         "awst_tmp%0#0"
       ]
     },
-    "5452": {
+    "5596": {
       "op": "extract 6 4",
       "defined_out": [
         "awst_tmp%0#0",
@@ -6202,8 +6410,8 @@
         "tmp%6#0"
       ]
     },
-    "5455": {
-      "op": "bytec 5 // \"ERR:\"",
+    "5599": {
+      "op": "bytec 6 // \"ERR:\"",
       "defined_out": [
         "\"ERR:\"",
         "awst_tmp%0#0",
@@ -6217,7 +6425,7 @@
         "\"ERR:\""
       ]
     },
-    "5457": {
+    "5601": {
       "op": "==",
       "defined_out": [
         "awst_tmp%0#0",
@@ -6230,7 +6438,7 @@
         "ternary_result%0#0"
       ]
     },
-    "5458": {
+    "5602": {
       "op": "b delete_proposal_ternary_merge@4"
     }
   }
