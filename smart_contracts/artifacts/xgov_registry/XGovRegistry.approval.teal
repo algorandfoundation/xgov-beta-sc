@@ -2933,25 +2933,21 @@ withdraw_funds:
 // smart_contracts.xgov_registry.contract.XGovRegistry.get_state() -> bytes:
 get_state:
     // smart_contracts/xgov_registry/contract.py:941
-    // paused_registry=arc4.Bool(self.paused_registry.value == UInt64(1)),
+    // paused_registry=arc4.Bool(bool(self.paused_registry.value)),
     intc_0 // 0
     bytec_0 // 0x7061757365645f7265676973747279
     app_global_get_ex
     assert // check self.paused_registry exists
-    intc_1 // 1
-    ==
     bytec 7 // 0x00
     intc_0 // 0
     uncover 2
     setbit
     // smart_contracts/xgov_registry/contract.py:942
-    // paused_proposals=arc4.Bool(self.paused_proposals.value == UInt64(1)),
+    // paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
     intc_0 // 0
     bytec 8 // 0x7061757365645f70726f706f73616c73
     app_global_get_ex
     assert // check self.paused_proposals exists
-    intc_1 // 1
-    ==
     bytec 7 // 0x00
     intc_0 // 0
     uncover 2
@@ -3267,8 +3263,8 @@ get_state:
     itob
     // smart_contracts/xgov_registry/contract.py:940-990
     // return typ.TypedGlobalState(
-    //     paused_registry=arc4.Bool(self.paused_registry.value == UInt64(1)),
-    //     paused_proposals=arc4.Bool(self.paused_proposals.value == UInt64(1)),
+    //     paused_registry=arc4.Bool(bool(self.paused_registry.value)),
+    //     paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
     //     xgov_manager=self.xgov_manager.value,
     //     xgov_payor=self.xgov_payor.value,
     //     xgov_reviewer=self.xgov_reviewer.value,
