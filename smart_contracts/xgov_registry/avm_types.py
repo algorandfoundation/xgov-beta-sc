@@ -6,8 +6,8 @@ from ..common import abi_types as ptyp
 
 
 class TypedGlobalState(arc4.Struct):
-    paused_registry: arc4.UInt64
-    paused_proposals: arc4.UInt64
+    paused_registry: arc4.Bool
+    paused_proposals: arc4.Bool
     xgov_manager: arc4.Address
     xgov_payor: arc4.Address
     xgov_reviewer: arc4.Address

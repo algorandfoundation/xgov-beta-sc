@@ -938,8 +938,8 @@ class XGovRegistry(
         """
 
         return typ.TypedGlobalState(
-            paused_registry=arc4.UInt64(self.paused_registry.value),
-            paused_proposals=arc4.UInt64(self.paused_proposals.value),
+            paused_registry=arc4.Bool(self.paused_registry.value == UInt64(1)),
+            paused_proposals=arc4.Bool(self.paused_proposals.value == UInt64(1)),
             xgov_manager=self.xgov_manager.value,
             xgov_payor=self.xgov_payor.value,
             xgov_reviewer=self.xgov_reviewer.value,
