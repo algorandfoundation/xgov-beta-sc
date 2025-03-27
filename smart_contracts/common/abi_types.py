@@ -2,9 +2,9 @@ import typing
 
 from algopy import arc4
 
-# corresponds to CID_LENGTH in ./constants.py. We cannot use a variable here because as it causes type errors which
-# fails compilation.
-Cid = arc4.StaticArray[arc4.Byte, typing.Literal[36]]
+# corresponds to METADATA_HASH_LENGTH in ./constants.py. We cannot use a variable here because as it causes type errors
+# which fails compilation.
+MetadataHash = arc4.StaticArray[arc4.Byte, typing.Literal[32]]
 
 Error = arc4.String
 
@@ -18,7 +18,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     proposer: arc4.Address
     registry_app_id: arc4.UInt64
     title: arc4.String
-    cid: Cid
+    metadata_hash: MetadataHash
     submission_ts: arc4.UInt64
     finalization_ts: arc4.UInt64
     vote_open_ts: arc4.UInt64
@@ -28,7 +28,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     funding_type: arc4.UInt64
     requested_amount: arc4.UInt64
     locked_amount: arc4.UInt64
-    committee_id: Cid
+    committee_id: MetadataHash
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
     voted_members: arc4.UInt64

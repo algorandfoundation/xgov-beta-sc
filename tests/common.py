@@ -3,6 +3,7 @@ from algosdk.encoding import decode_address
 from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.constants import (
     BPS,
+    METADATA_HASH_LENGTH,
 )
 from smart_contracts.xgov_registry_mock.config import (
     MIN_REQUESTED_AMOUNT,
@@ -22,12 +23,12 @@ def get_voter_box_key(voter_address: str) -> bytes:
     return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
-DEFAULT_COMMITTEE_ID = b"\x01" * 36
+DEFAULT_COMMITTEE_ID = b"\x01" * METADATA_HASH_LENGTH
 DEFAULT_COMMITTEE_MEMBERS = 20
 DEFAULT_COMMITTEE_VOTES = 200
 
 REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 PROPOSAL_TITLE = "Test Proposal"
-PROPOSAL_CID = b"\x01" * 36
+PROPOSAL_METADATA_HASH = b"\x01" * METADATA_HASH_LENGTH
 DEFAULT_FOCUS = 42

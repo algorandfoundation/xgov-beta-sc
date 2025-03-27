@@ -33,7 +33,7 @@ from tests.common import (
 )
 from tests.proposal.common import (
     INITIAL_FUNDS,
-    PROPOSAL_CID,
+    PROPOSAL_METADATA_HASH,
     PROPOSAL_TITLE,
 )
 from tests.utils import time_warp
@@ -161,7 +161,7 @@ def xgov_registry_client(
     )
 
     client.declare_committee(
-        cid=DEFAULT_COMMITTEE_ID,
+        committee_id=DEFAULT_COMMITTEE_ID,
         size=DEFAULT_COMMITTEE_MEMBERS,
         votes=DEFAULT_COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -560,7 +560,7 @@ def voting_proposal_client(
             signer=proposer.signer,
         ),
         title=PROPOSAL_TITLE,
-        cid=PROPOSAL_CID,
+        metadata_hash=PROPOSAL_METADATA_HASH,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
         focus=DEFAULT_FOCUS,
@@ -682,7 +682,7 @@ def voting_proposal_client_requested_too_much(
             signer=proposer.signer,
         ),
         title=PROPOSAL_TITLE,
-        cid=PROPOSAL_CID,
+        metadata_hash=PROPOSAL_METADATA_HASH,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
         focus=DEFAULT_FOCUS,

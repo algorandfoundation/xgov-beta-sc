@@ -13,7 +13,7 @@ PROPOSAL_MBR: Final[int] = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_
 GS_KEY_PROPOSER: Final[bytes] = b"proposer"
 GS_KEY_REGISTRY_APP_ID: Final[bytes] = b"registry_app_id"
 GS_KEY_TITLE: Final[bytes] = b"title"
-GS_KEY_CID: Final[bytes] = b"cid"
+GS_KEY_METADATA_HASH: Final[bytes] = b"metadata_hash"
 GS_KEY_SUBMISSION_TS: Final[bytes] = b"submission_timestamp"
 GS_KEY_FINALIZATION_TS: Final[bytes] = b"finalization_timestamp"
 GS_KEY_VOTE_OPEN_TS: Final[bytes] = b"vote_opening_timestamp"
@@ -34,3 +34,4 @@ GS_KEY_COOL_DOWN_START_TS: Final[bytes] = b"cool_down_start_ts"
 
 # Boxes
 VOTER_BOX_KEY_PREFIX: Final[str] = "V"
+METADATA_BOX_KEY: Final[str] = "M"

@@ -44,15 +44,15 @@ main:
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:33
-    // key=prop_cfg.GS_KEY_CID,
-    pushbytes 0x636964
+    // key=prop_cfg.GS_KEY_METADATA_HASH,
+    pushbytes 0x6d657461646174615f68617368
     // smart_contracts/proposal_mock/contract.py:32
-    // typ.Cid.from_bytes(b""),
+    // typ.MetadataHash.from_bytes(b""),
     bytec_0 // 0x
     // smart_contracts/proposal_mock/contract.py:31-34
-    // self.cid = GlobalState(
-    //     typ.Cid.from_bytes(b""),
-    //     key=prop_cfg.GS_KEY_CID,
+    // self.metadata_hash = GlobalState(
+    //     typ.MetadataHash.from_bytes(b""),
+    //     key=prop_cfg.GS_KEY_METADATA_HASH,
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:37
@@ -143,11 +143,11 @@ main:
     // key=prop_cfg.GS_KEY_COMMITTEE_ID,
     bytec 5 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal_mock/contract.py:64
-    // typ.Cid.from_bytes(b""),
+    // typ.MetadataHash.from_bytes(b""),
     bytec_0 // 0x
     // smart_contracts/proposal_mock/contract.py:63-66
     // self.committee_id = GlobalState(
-    //     typ.Cid.from_bytes(b""),
+    //     typ.MetadataHash.from_bytes(b""),
     //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -217,7 +217,7 @@ main_after_if_else@2:
     // class ProposalMock(ARC4Contract):
     txn NumAppArgs
     bz main_after_if_else@11
-    pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0xa4ddde0c 0xe94a444d 0xbb8e1d68 // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[36],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64)void"
+    pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64)void"
     txna ApplicationArgs 0
     match main_create_route@5 main_set_status_route@6 main_set_requested_amount_route@7 main_set_committee_details_route@8 main_release_funds_route@9 main_vote_route@10
 
@@ -228,7 +228,7 @@ main_after_if_else@11:
     return
 
 main_vote_route@10:
-    // smart_contracts/proposal_mock/contract.py:111
+    // smart_contracts/proposal_mock/contract.py:113
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -239,7 +239,7 @@ main_vote_route@10:
     return
 
 main_release_funds_route@9:
-    // smart_contracts/proposal_mock/contract.py:107
+    // smart_contracts/proposal_mock/contract.py:109
     // @arc4.abimethod()
     txn OnCompletion
     !
@@ -372,23 +372,25 @@ set_requested_amount:
     retsub
 
 
-// smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details(cid: bytes, size: uint64, votes: uint64) -> void:
+// smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details(metadata_hash: bytes, size: uint64, votes: uint64) -> void:
 set_committee_details:
-    // smart_contracts/proposal_mock/contract.py:101-102
+    // smart_contracts/proposal_mock/contract.py:101-104
     // @arc4.abimethod()
-    // def set_committee_details(self, cid: typ.Cid, size: UInt64, votes: UInt64) -> None:
+    // def set_committee_details(
+    //     self, metadata_hash: typ.MetadataHash, size: UInt64, votes: UInt64
+    // ) -> None:
     proto 3 0
-    // smart_contracts/proposal_mock/contract.py:103
-    // self.committee_id.value = cid.copy()
+    // smart_contracts/proposal_mock/contract.py:105
+    // self.committee_id.value = metadata_hash.copy()
     bytec 5 // 0x636f6d6d69747465655f6964
     frame_dig -3
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:104
+    // smart_contracts/proposal_mock/contract.py:106
     // self.committee_members.value = size
     bytec 6 // 0x636f6d6d69747465655f6d656d62657273
     frame_dig -2
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:105
+    // smart_contracts/proposal_mock/contract.py:107
     // self.committee_votes.value = votes
     bytec 7 // 0x636f6d6d69747465655f766f746573
     frame_dig -1

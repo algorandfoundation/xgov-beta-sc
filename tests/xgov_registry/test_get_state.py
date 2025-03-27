@@ -18,7 +18,7 @@ def test_get_state_success(
 ) -> None:
 
     xgov_registry_client.declare_committee(
-        cid=COMMITTEE_ID,
+        committee_id=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(

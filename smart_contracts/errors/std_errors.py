@@ -10,7 +10,7 @@ WRONG_ON_COMPLETE = "Wrong On Complete Action"
 UNAUTHORIZED = "Unauthorized"
 INACTIVE_FUND = "Opt-In Fund is Inactive"
 
-WRONG_CID_LENGTH = "Wrong CID length"
+WRONG_METADATA_HASH_LENGTH = "Wrong Metadata hash length"
 WRONG_TITLE_LENGTH = "Wrong Title length"
 WRONG_FUNDING_TYPE = "Wrong Funding Type"
 WRONG_MIN_REQUESTED_AMOUNT = (
@@ -63,3 +63,7 @@ VOTING_ONGOING = "Voting Ongoing"
 VOTER_NOT_FOUND = "Voter not found"
 VOTER_ALREADY_VOTED = "Voter already voted"
 VOTES_EXCEEDED = "Votes exceeded"
+
+EMPTY_PAYLOAD = "Empty payload"
+WRONG_APP_ID = "Wrong App ID"
+WRONG_METHOD_CALL = "Wrong Method Call"

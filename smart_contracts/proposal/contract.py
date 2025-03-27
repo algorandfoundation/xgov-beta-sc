@@ -5,6 +5,7 @@ from algopy import (
     Application,
     ARC4Contract,
     BoxMap,
+    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -16,8 +17,9 @@ from algopy import (
     gtxn,
     itxn,
     subroutine,
+    urange,
 )
-from algopy.op import AppGlobal
+from algopy.op import AppGlobal, GTxn
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
@@ -58,9 +60,9 @@ class Proposal(
             String(),
             key=prop_cfg.GS_KEY_TITLE,
         )
-        self.cid = GlobalState(
-            typ.Cid.from_bytes(b""),
-            key=prop_cfg.GS_KEY_CID,
+        self.metadata_hash = GlobalState(
+            typ.MetadataHash.from_bytes(b""),
+            key=prop_cfg.GS_KEY_METADATA_HASH,
         )
         self.submission_ts = GlobalState(
             UInt64(),
@@ -99,7 +101,7 @@ class Proposal(
             key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
         )
         self.committee_id = GlobalState(
-            typ.Cid.from_bytes(b""),
+            typ.MetadataHash.from_bytes(b""),
             key=prop_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
@@ -136,6 +138,10 @@ class Proposal(
         )
         self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
+
+        self.metadata = BoxRef(
+            key=prop_cfg.METADATA_BOX_KEY,
+        )
 
     @subroutine
     def is_voting_open(self) -> tuple[bool, typ.Error]:
@@ -320,10 +326,10 @@ class Proposal(
     @subroutine
     def verify_and_set_committee(self) -> None:
 
-        committee_id = typ.Cid.from_bytes(
+        committee_id = typ.MetadataHash.from_bytes(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
         )
-        assert committee_id != typ.Cid.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+        assert committee_id != typ.MetadataHash.from_bytes(b""), err.EMPTY_COMMITTEE_ID
 
         committee_members, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
@@ -342,10 +348,14 @@ class Proposal(
         self.committee_votes.value = committee_votes
 
     @subroutine
-    def finalize_check_authorization(self) -> None:
-
+    def assert_draft_and_proposer(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
+    def finalize_check_authorization(self) -> None:
+
+        self.assert_draft_and_proposer()
 
         discussion_duration = Global.latest_timestamp - self.submission_ts.value
         minimum_discussion_duration = self.get_discussion_duration(
@@ -356,21 +366,38 @@ class Proposal(
 
     @subroutine
     def drop_check_authorization(self) -> None:
-        assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+        self.assert_draft_and_proposer()
 
     @subroutine
-    def updateable_input_validation(self, title: String, cid: typ.Cid) -> None:
+    def upload_metadata_check_authorization(self) -> None:
+        self.assert_draft_and_proposer()
+
+    @subroutine
+    def upload_metadata_input_validation(self, payload: arc4.DynamicBytes) -> None:
+        assert payload.length > 0, err.EMPTY_PAYLOAD
+
+    @subroutine
+    def assert_same_app_and_method(self, group_index: UInt64) -> None:
+        assert (
+            GTxn.application_id(group_index) == Global.current_application_id
+        ), err.WRONG_APP_ID
+        assert GTxn.application_args(group_index, 0) == Txn.application_args(
+            0
+        ), err.WRONG_METHOD_CALL
+
+    @subroutine
+    def updateable_input_validation(
+        self, title: String, metadata_hash: typ.MetadataHash
+    ) -> None:
         assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
         assert title != "", err.WRONG_TITLE_LENGTH
         assert (
-            cid.length == const.CID_LENGTH
-        ), err.WRONG_CID_LENGTH  # redundant, protected by type
+            metadata_hash.length == const.METADATA_HASH_LENGTH
+        ), err.WRONG_METADATA_HASH_LENGTH  # redundant, protected by type
 
     @subroutine
     def update_check_authorization(self) -> None:
-        assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+        self.assert_draft_and_proposer()
 
     @subroutine
     def submit_check_authorization(self) -> None:
@@ -381,12 +408,12 @@ class Proposal(
     def submit_input_validation(
         self,
         title: String,
-        cid: typ.Cid,
+        metadata_hash: typ.MetadataHash,
         funding_type: UInt64,
         requested_amount: UInt64,
     ) -> None:
 
-        self.updateable_input_validation(title, cid)
+        self.updateable_input_validation(title, metadata_hash)
 
         assert (
             funding_type == enm.FUNDING_PROACTIVE
@@ -534,7 +561,7 @@ class Proposal(
         self,
         payment: gtxn.PaymentTransaction,
         title: arc4.String,
-        cid: typ.Cid,
+        metadata_hash: typ.MetadataHash,
         funding_type: arc4.UInt64,
         requested_amount: arc4.UInt64,
         focus: arc4.UInt8,
@@ -544,7 +571,7 @@ class Proposal(
         Args:
             payment (gtxn.PaymentTransaction): Commitment payment transaction from the proposer to the contract
             title (String): Proposal title, max TITLE_MAX_BYTES bytes
-            cid (typ.Cid): IPFS V1 CID
+            metadata_hash (typ.MetadataHash): SHA-256 hash of the proposal metadata
             funding_type (UInt64): Funding type (Proactive / Retroactive)
             requested_amount (UInt64): Requested amount in microAlgos
             focus (UInt8): Proposal focus area
@@ -554,7 +581,7 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
-            err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
+            err.WRONG_METADATA_HASH_LENGTH: If the Metadata hash length is not equal to METADATA_HASH_LENGTH
             err.WRONG_FUNDING_TYPE: If the funding type is not FUNDING_PROACTIVE or FUNDING_RETROACTIVE
             err.WRONG_MIN_REQUESTED_AMOUNT: If the requested amount is less than the minimum requested amount
             err.WRONG_MAX_REQUESTED_AMOUNT: If the requested amount is more than the maximum requested amount
@@ -566,12 +593,12 @@ class Proposal(
         self.submit_check_authorization()
 
         self.submit_input_validation(
-            title.native, cid, funding_type.native, requested_amount.native
+            title.native, metadata_hash, funding_type.native, requested_amount.native
         )
         self.submit_payment_validation(payment, requested_amount.native)
 
         self.title.value = title.native
-        self.cid.value = cid.copy()
+        self.metadata_hash.value = metadata_hash.copy()
         self.set_category(requested_amount.native)
         self.funding_type.value = funding_type.native
         self.requested_amount.value = requested_amount.native
@@ -583,26 +610,61 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def update(self, title: arc4.String, cid: typ.Cid) -> None:
+    def update(self, title: arc4.String, metadata_hash: typ.MetadataHash) -> None:
         """Update the proposal.
 
         Args:
             title (String): Proposal title, max TITLE_MAX_BYTES bytes
-            cid (typ.Cid): IPFS V1 CID
+            metadata_hash (typ.MetadataHash): SHA-256 hash of the proposal metadata
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
-            err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
+            err.WRONG_METADATA_HASH_LENGTH: If the Metadata hash length is not equal to METADATA_HASH_LENGTH
 
         """
         self.update_check_authorization()
 
-        self.updateable_input_validation(title.native, cid)
+        self.updateable_input_validation(title.native, metadata_hash)
 
         self.title.value = title.native
-        self.cid.value = cid.copy()
+        self.metadata_hash.value = metadata_hash.copy()
+
+    @arc4.abimethod()
+    def upload_metadata(self, payload: arc4.DynamicBytes) -> None:
+        """Upload the proposal metadata.
+
+        Args:
+            payload (DynamicBytes): Metadata payload
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
+            err.EMPTY_PAYLOAD: If the payload is empty
+            err.WRONG_APP_ID: If a transaction in the group has a different app id
+            err.WRONG_METHOD_CALL: If a transaction in the group has a different method call
+        """
+
+        self.upload_metadata_check_authorization()
+        self.upload_metadata_input_validation(payload)
+
+        if Txn.group_index == 0:
+            # Check that the entire group calls the same app and method
+            for i in urange(1, Global.group_size):
+                self.assert_same_app_and_method(i)
+
+            # write the metadata to the box
+            self.metadata.delete()
+            self.metadata.put(payload.native)
+        else:
+            # Check that the first transaction in the group calls the same app and method
+            self.assert_same_app_and_method(UInt64(0))
+
+            # append the metadata to the box
+            old_size = self.metadata.length
+            self.metadata.resize(self.metadata.length + payload.length)
+            self.metadata.replace(old_size, payload.native)
 
     @arc4.abimethod()
     def drop(self) -> None:
@@ -620,7 +682,7 @@ class Proposal(
         )
 
         self.title.value = String()
-        self.cid.value = typ.Cid.from_bytes(b"")
+        self.metadata_hash.value = typ.MetadataHash.from_bytes(b"")
         self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
         self.focus.value = UInt64(0)
         self.funding_type.value = UInt64(enm.FUNDING_NULL)
@@ -908,7 +970,7 @@ class Proposal(
             proposer=arc4.Address(self.proposer.value),
             registry_app_id=arc4.UInt64(self.registry_app_id.value),
             title=arc4.String(self.title.value),
-            cid=self.cid.value.copy(),
+            metadata_hash=self.metadata_hash.value.copy(),
             submission_ts=arc4.UInt64(self.submission_ts.value),
             finalization_ts=arc4.UInt64(self.finalization_ts.value),
             vote_open_ts=arc4.UInt64(self.vote_open_ts.value),

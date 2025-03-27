@@ -19,7 +19,7 @@ def test_declare_committee_success(
     xgov_registry_client: XGovRegistryClient, committee_manager: AddressAndSigner
 ) -> None:
     xgov_registry_client.declare_committee(
-        cid=COMMITTEE_ID,
+        committee_id=COMMITTEE_ID,
         size=COMMITTEE_SIZE,
         votes=COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
@@ -43,7 +43,7 @@ def test_declare_committee_not_manager(
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.declare_committee(
-            cid=COMMITTEE_ID,
+            committee_id=COMMITTEE_ID,
             size=COMMITTEE_SIZE,
             votes=COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(

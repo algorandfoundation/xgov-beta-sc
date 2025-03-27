@@ -127,7 +127,9 @@ def test_funded_proposal(
         global_state.funding_category == get_state_result.return_value.funding_category
     )
     assert global_state.focus == get_state_result.return_value.focus
-    assert global_state.cid.as_bytes == bytes(get_state_result.return_value.cid)
+    assert global_state.metadata_hash.as_bytes == bytes(
+        get_state_result.return_value.metadata_hash
+    )
     assert global_state.committee_id.as_bytes == bytes(
         get_state_result.return_value.committee_id
     )
