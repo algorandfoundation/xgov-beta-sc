@@ -33,6 +33,7 @@ from tests.proposal.common import (
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for submit on other statuses
 
@@ -760,4 +761,37 @@ def test_submit_funding_category_large_3(
         algorand_client,
         proposal_client.app_address,
         locked_amount + PROPOSAL_PARTIAL_FEE,
+    )
+
+
+def test_submit_paused_registry_error(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+) -> None:
+    requested_amount = MAX_REQUESTED_AMOUNT_LARGE
+    locked_amount = get_locked_amount(requested_amount)
+
+    xgov_registry_mock_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        submit_proposal(
+            proposal_client,
+            algorand_client,
+            proposer,
+            xgov_registry_mock_client.app_id,
+            requested_amount=requested_amount,
+            locked_amount=locked_amount,
+        )
+
+    xgov_registry_mock_client.resume_registry()
+
+    submit_proposal(
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        requested_amount=requested_amount,
+        locked_amount=locked_amount,
     )

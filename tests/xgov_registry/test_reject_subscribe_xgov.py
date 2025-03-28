@@ -25,7 +25,6 @@ def test_reject_subscribe_xgov_success(
     sp = algorand_client.get_suggested_params()
 
     request_id = before_global_state.request_id - 1
-    print("requestid ", request_id)
 
     xgov_registry_client.reject_subscribe_xgov(
         request_id=request_id,

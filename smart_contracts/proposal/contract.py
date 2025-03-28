@@ -477,6 +477,15 @@ class Proposal(
         return value
 
     @subroutine
+    def check_registry_not_paused(self) -> None:
+        registry_paused, error = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
+        )
+
+        assert error == typ.Error(""), err.MISSING_CONFIG
+        assert not registry_paused, err.PAUSED_REGISTRY
+
+    @subroutine
     def is_creator(self) -> bool:
         return Txn.sender == Global.creator_address
 
@@ -563,6 +572,9 @@ class Proposal(
             err.WRONG_LOCKED_AMOUNT: If the amount in the payment transaction is not equal to the expected locked amount
 
         """
+
+        self.check_registry_not_paused()
+
         self.submit_check_authorization()
 
         self.submit_input_validation(
@@ -597,6 +609,9 @@ class Proposal(
             err.WRONG_CID_LENGTH: If the CID length is not equal to CID_LENGTH
 
         """
+
+        self.check_registry_not_paused()
+
         self.update_check_authorization()
 
         self.updateable_input_validation(title.native, cid)
@@ -613,6 +628,8 @@ class Proposal(
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
 
         """
+        self.check_registry_not_paused()
+
         self.drop_check_authorization()
 
         self.transfer_locked_amount(
@@ -642,6 +659,8 @@ class Proposal(
             err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
 
         """
+        self.check_registry_not_paused()
+
         self.finalize_check_authorization()
 
         self.verify_and_set_committee()
@@ -725,6 +744,8 @@ class Proposal(
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
 
         """
+        self.check_registry_not_paused()
+
         error = self.vote_check_authorization()
         if error != typ.Error(""):
             return error
@@ -761,6 +782,8 @@ class Proposal(
             err.VOTING_ONGOING: If the voting period is still ongoing
 
         """
+        self.check_registry_not_paused()
+
         self.scrutiny_check_authorization()
 
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
@@ -890,6 +913,7 @@ class Proposal(
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DECOMMISSIONED
 
         """
+
         error = self.delete_check_authorization()
         if error != typ.Error(""):
             return error

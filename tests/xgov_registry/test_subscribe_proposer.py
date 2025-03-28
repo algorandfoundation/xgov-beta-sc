@@ -173,3 +173,78 @@ def test_subscribe_proposer_wrong_amount(
                 boxes=[(0, proposer_box_name(random_account.address))],
             ),
         )
+
+
+def test_subscribe_proposer_paused_registry_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    random_account: AddressAndSigner,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+    sp = algorand_client.get_suggested_params()
+
+    before_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    xgov_registry_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.subscribe_proposer(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=random_account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.proposer_fee,
+                    ),
+                ),
+                signer=random_account.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=random_account.address,
+                signer=random_account.signer,
+                suggested_params=sp,
+                boxes=[(0, proposer_box_name(random_account.address))],
+            ),
+        )
+
+    xgov_registry_client.resume_registry()
+
+    xgov_registry_client.subscribe_proposer(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=random_account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.proposer_fee,
+                ),
+            ),
+            signer=random_account.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=random_account.address,
+            signer=random_account.signer,
+            suggested_params=sp,
+            boxes=[(0, proposer_box_name(random_account.address))],
+        ),
+    )
+
+    after_info = xgov_registry_client.algod_client.account_info(
+        xgov_registry_client.app_address,
+    )
+
+    assert (before_info["amount"] + global_state.proposer_fee) == after_info["amount"]  # type: ignore
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=proposer_box_name(random_account.address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("(bool,bool,uint64)")
+    active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
+
+    assert not active_proposal  # type: ignore
+    assert not kyc_status  # type: ignore
+    assert kyc_expiring == 0  # type: ignore

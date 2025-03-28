@@ -16,6 +16,7 @@ from tests.proposal.common import (
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
+from tests.xgov_registry.common import LogicErrorType
 
 
 def test_vote_success(
@@ -1022,4 +1023,110 @@ def test_vote_exceeded(
                 "AAAAAAAAAAoA",
             )
         ],
+    )
+
+
+def test_vote_paused_registry_error(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    committee_publisher: AddressAndSigner,
+    committee_members: list[AddressAndSigner],
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+
+    xgov_registry_mock_client.pause_registry()
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        proposal_client.finalize(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                suggested_params=sp,
+            ),
+        )
+
+    xgov_registry_mock_client.resume_registry()
+
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[committee_publisher.address],
+            suggested_params=sp,
+        ),
+    )
+
+    for committee_member in committee_members:
+        proposal_client.assign_voter(
+            voter=committee_member.address,
+            voting_power=10,
+            transaction_parameters=TransactionParameters(
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(committee_member.address),
+                    )
+                ],
+            ),
+        )
+
+    xgov_registry_mock_client.vote(
+        proposal_app=proposal_client.app_id,
+        voter=committee_members[0].address,
+        approvals=10,
+        rejections=0,
+        transaction_parameters=TransactionParameters(
+            sender=committee_members[0].address,
+            signer=committee_members[0].signer,
+            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    get_voter_box_key(committee_members[0].address),
+                )
+            ],
+            suggested_params=sp,
+        ),
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_voting_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        voted_members=1,
+        approvals=10,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[
+            (
+                get_voter_box_key(committee_member.address),
+                "AAAAAAAAAAoA",
+            )
+            for committee_member in committee_members[1:]
+        ]
+        + [(get_voter_box_key(committee_members[0].address), "AAAAAAAAAAqA")],
     )

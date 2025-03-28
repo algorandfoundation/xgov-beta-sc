@@ -2,7 +2,7 @@ from typing import Final
 
 # State Schema
 GLOBAL_BYTES: Final[int] = 8
-GLOBAL_UINTS: Final[int] = 31
+GLOBAL_UINTS: Final[int] = 33
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -16,6 +16,8 @@ GS_KEY_COMMITTEE_MANAGER: Final[bytes] = b"committee_manager"
 GS_KEY_COMMITTEE_PUBLISHER: Final[bytes] = b"committee_publisher"
 GS_KEY_XGOV_FEE: Final[bytes] = b"xgov_fee"
 GS_KEY_XGOVS: Final[bytes] = b"xgovs"
+GS_KEY_PAUSED_REGISTRY: Final[bytes] = b"paused_registry"
+GS_KEY_PAUSED_PROPOSALS: Final[bytes] = b"paused_proposals"
 GS_KEY_PROPOSER_FEE: Final[bytes] = b"proposer_fee"
 GS_KEY_PROPOSAL_FEE: Final[bytes] = b"proposal_fee"
 GS_KEY_PROPOSAL_PUBLISHING_BPS: Final[bytes] = b"proposal_publishing_bps"
