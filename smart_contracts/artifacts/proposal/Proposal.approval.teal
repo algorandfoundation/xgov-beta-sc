@@ -2897,6 +2897,11 @@ get_state:
     app_global_get_ex
     assert // check self.focus exists
     itob
+    dup
+    bitlen
+    pushint 8 // 8
+    <=
+    assert // overflow
     extract 7 1
     // smart_contracts/proposal/contract.py:942
     // funding_type=arc4.UInt64(self.funding_type.value),
