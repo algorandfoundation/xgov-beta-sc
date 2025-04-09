@@ -909,6 +909,9 @@ class Proposal(
             if voter.native in self.voters:
                 del self.voters[voter.native]
 
+        # delete metadata box if it exists
+        self.metadata.delete()
+
         # if all voters are removed, refund the treasury and decommission the proposal
         if Global.current_application_address.total_boxes == UInt64(0):
             # refund the locked amount to the proposer
