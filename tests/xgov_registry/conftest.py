@@ -33,7 +33,6 @@ from tests.common import (
 )
 from tests.proposal.common import (
     INITIAL_FUNDS,
-    PROPOSAL_METADATA_HASH,
     PROPOSAL_TITLE,
 )
 from tests.utils import time_warp
@@ -560,7 +559,6 @@ def voting_proposal_client(
             signer=proposer.signer,
         ),
         title=PROPOSAL_TITLE,
-        metadata_hash=PROPOSAL_METADATA_HASH,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
         focus=DEFAULT_FOCUS,
@@ -682,7 +680,6 @@ def voting_proposal_client_requested_too_much(
             signer=proposer.signer,
         ),
         title=PROPOSAL_TITLE,
-        metadata_hash=PROPOSAL_METADATA_HASH,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=requested_amount,
         focus=DEFAULT_FOCUS,

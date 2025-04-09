@@ -133,7 +133,7 @@ class XGovRegistry(
 
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
 
-        self.committee_id = GlobalState(ctyp.MetadataHash, key=cfg.GS_KEY_COMMITTEE_ID)
+        self.committee_id = GlobalState(ctyp.CommitteeID, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
 
@@ -650,7 +650,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def declare_committee(
-        self, committee_id: ctyp.MetadataHash, size: arc4.UInt64, votes: arc4.UInt64
+        self, committee_id: ctyp.CommitteeID, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.

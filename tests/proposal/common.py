@@ -34,7 +34,6 @@ from tests.common import (
     DEFAULT_COMMITTEE_VOTES,
     DEFAULT_FOCUS,
     LOCKED_AMOUNT,
-    PROPOSAL_METADATA_HASH,
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
     get_voter_box_key,
@@ -54,7 +53,6 @@ def assert_proposal_global_state(
     registry_app_id: int,
     status: int = STATUS_EMPTY,
     title: str = "",
-    metadata_hash: bytes = b"",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
     funding_type: int = FUNDING_NULL,
@@ -72,7 +70,6 @@ def assert_proposal_global_state(
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
-    assert global_state.metadata_hash.as_bytes == metadata_hash
     assert global_state.status == status
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
@@ -111,7 +108,6 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
     # Define common parameters that are shared across statuses
     common_defaults = {
         "title": PROPOSAL_TITLE,
-        "metadata_hash": PROPOSAL_METADATA_HASH,
         "funding_type": FUNDING_PROACTIVE,
         "requested_amount": REQUESTED_AMOUNT,
         "locked_amount": LOCKED_AMOUNT,
@@ -345,7 +341,6 @@ def submit_proposal(
     payment_sender: AddressAndSigner = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
-    metadata_hash: bytes = PROPOSAL_METADATA_HASH,
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,
@@ -369,7 +364,6 @@ def submit_proposal(
             signer=payment_sender.signer,
         ),
         title=title,
-        metadata_hash=metadata_hash,
         funding_type=funding_type,
         focus=focus,
         requested_amount=requested_amount,
