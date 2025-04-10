@@ -10,7 +10,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
     ProposalClient,
 )
-from smart_contracts.proposal.config import PROPOSAL_MBR
+from smart_contracts.proposal.config import METADATA_BOX_KEY, PROPOSAL_MBR
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -381,7 +381,7 @@ def decommission_proposal(
     committee_publisher: AddressAndSigner,
     sp: SuggestedParams,
     xgov_registry_app_id: int,
-    bulks: int = 7,
+    bulks: int = 6,
 ) -> None:
     for i in range(1 + len(committee_members) // bulks):
         proposal_client.decommission(
@@ -398,6 +398,12 @@ def decommission_proposal(
                         get_voter_box_key(cm.address),
                     )
                     for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ]
+                + [
+                    (
+                        0,
+                        METADATA_BOX_KEY,
+                    )
                 ],
                 suggested_params=sp,
             ),
