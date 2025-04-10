@@ -317,8 +317,10 @@ def test_assign_voter_voter_already_assigned(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
-        + [(voter_box_key, "AAAAAAAAAAoA")],
+        expected_boxes=[
+            (METADATA_BOX_KEY.encode(), METADATA_B64),
+            (voter_box_key, "AAAAAAAAAAoA"),
+        ],
     )
 
 
