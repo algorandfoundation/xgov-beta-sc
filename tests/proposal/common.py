@@ -345,7 +345,7 @@ def submit_proposal(
     payment_sender: AddressAndSigner = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
-    metadata: bytes = b"",
+    metadata: bytes = b"METADATA",
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,

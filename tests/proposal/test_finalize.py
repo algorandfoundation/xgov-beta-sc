@@ -45,7 +45,6 @@ def test_finalize_success(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -105,7 +104,6 @@ def test_finalize_not_proposer(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -192,7 +190,6 @@ def test_finalize_twice(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -250,7 +247,6 @@ def test_finalize_too_early(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -264,7 +260,7 @@ def test_finalize_too_early(
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
                 accounts=[committee_publisher.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -296,7 +292,7 @@ def test_finalize_no_metadata(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        # leaving metadata unset; no upload.
+        metadata=b"",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -333,7 +329,6 @@ def test_finalize_wrong_committee_id(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -383,7 +378,6 @@ def test_finalize_wrong_committee_members(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -437,7 +431,6 @@ def test_finalize_wrong_committee_votes(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()

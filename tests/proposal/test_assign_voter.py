@@ -8,9 +8,10 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for assign_voter on other statuses
-from tests.common import get_voter_box_key
+from tests.common import METADATA_B64, get_voter_box_key
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -56,6 +57,7 @@ def test_assign_voter_success(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -90,7 +92,10 @@ def test_assign_voter_success(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[(voter_box_key, "AAAAAAAAAAoA")],
+        expected_boxes=[
+            (voter_box_key, "AAAAAAAAAAoA"),
+            (METADATA_BOX_KEY.encode(), METADATA_B64),
+        ],
     )
 
 
@@ -122,6 +127,7 @@ def test_assign_voter_assign_all_voters(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -153,7 +159,8 @@ def test_assign_voter_assign_all_voters(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
+        + [
             (
                 get_voter_box_key(committee_member.address),
                 "AAAAAAAAAAoA",
@@ -191,6 +198,7 @@ def test_assign_voter_not_committee_publisher(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -222,7 +230,7 @@ def test_assign_voter_not_committee_publisher(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[],  # no voter boxes
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)],  # no voter boxes
     )
 
 
@@ -254,6 +262,7 @@ def test_assign_voter_voter_already_assigned(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -308,7 +317,8 @@ def test_assign_voter_voter_already_assigned(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[(voter_box_key, "AAAAAAAAAAoA")],
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
+        + [(voter_box_key, "AAAAAAAAAAoA")],
     )
 
 
@@ -340,6 +350,7 @@ def test_assign_voter_invalid_voting_power(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -374,7 +385,7 @@ def test_assign_voter_invalid_voting_power(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[],  # no voter boxes
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)],  # no voter boxes
     )
 
 
@@ -475,7 +486,7 @@ def test_assign_voter_draft_proposal(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[],  # no voter box
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)],  # no voter box
     )
 
 
@@ -507,6 +518,7 @@ def test_assign_voter_voting_power_mismatch(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -597,6 +609,7 @@ def test_assign_voter_voting_open(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -647,7 +660,8 @@ def test_assign_voter_voting_open(
     assert_boxes(
         algorand_client=algorand_client,
         app_id=proposal_client.app_id,
-        expected_boxes=[
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
+        + [
             (
                 get_voter_box_key(committee_member.address),
                 "AAAAAAAAAAoA",

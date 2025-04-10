@@ -8,6 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import get_voter_box_key
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
@@ -92,6 +93,7 @@ def test_scrutiny_final_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -138,6 +140,7 @@ def test_scrutiny_voting_ongoing_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -199,6 +202,7 @@ def test_scrutiny_voting_ongoing_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -279,6 +283,7 @@ def test_scrutiny_voting_ongoing_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -357,6 +362,7 @@ def test_scrutiny_twice(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -459,6 +465,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -596,6 +603,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -733,6 +741,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -871,6 +880,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1010,6 +1020,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1149,6 +1160,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1288,6 +1300,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1427,6 +1440,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1566,6 +1580,7 @@ def test_scrutiny_after_time_approve_small_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1662,6 +1677,7 @@ def test_scrutiny_after_time_approve_small_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1778,6 +1794,7 @@ def test_scrutiny_after_time_approve_small_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -1914,6 +1931,7 @@ def test_scrutiny_after_time_approve_small_4(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2051,6 +2069,7 @@ def test_scrutiny_after_time_approve_small_5(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2168,6 +2187,7 @@ def test_scrutiny_after_time_reject_small_1(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2243,6 +2263,7 @@ def test_scrutiny_after_time_reject_small_2(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2339,6 +2360,7 @@ def test_scrutiny_after_time_reject_small_3(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2437,6 +2459,7 @@ def test_scrutiny_after_time_reject_small_4(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2555,6 +2578,7 @@ def test_scrutiny_after_time_reject_small_5(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2674,6 +2698,7 @@ def test_scrutiny_after_time_reject_small_6(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2771,6 +2796,7 @@ def test_scrutiny_after_time_reject_small_7(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2869,6 +2895,7 @@ def test_scrutiny_after_time_reject_small_8(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -2968,6 +2995,7 @@ def test_scrutiny_after_time_reject_small_9(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -3086,6 +3114,7 @@ def test_scrutiny_after_time_reject_small_10(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -3203,6 +3232,7 @@ def test_scrutiny_after_time_reject_small_11(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 

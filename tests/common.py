@@ -23,6 +23,8 @@ def get_voter_box_key(voter_address: str) -> bytes:
     return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
+METADATA_B64 = "TUVUQURBVEE="
+
 DEFAULT_COMMITTEE_ID = b"\x01" * COMMITTEE_ID_LENGTH
 DEFAULT_COMMITTEE_MEMBERS = 20
 DEFAULT_COMMITTEE_VOTES = 200

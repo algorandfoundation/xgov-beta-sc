@@ -23,6 +23,7 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.proposal import enums as enm
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -34,6 +35,7 @@ from tests.common import (
 from tests.proposal.common import (
     INITIAL_FUNDS,
     PROPOSAL_TITLE,
+    upload_metadata,
 )
 from tests.utils import time_warp
 from tests.xgov_registry.common import (
@@ -570,6 +572,8 @@ def voting_proposal_client(
         ),
     )
 
+    upload_metadata(proposal_client, proposer, b"METADATA")
+
     reg_gs = xgov_registry_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
     submission_ts = proposal_client.get_global_state().submission_ts
@@ -582,6 +586,7 @@ def voting_proposal_client(
             foreign_apps=[xgov_registry_client.app_id],
             accounts=[deployer.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -691,6 +696,8 @@ def voting_proposal_client_requested_too_much(
         ),
     )
 
+    upload_metadata(proposal_client, proposer, b"METADATA")
+
     reg_gs = xgov_registry_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_xlarge
     submission_ts = proposal_client.get_global_state().submission_ts
@@ -703,6 +710,7 @@ def voting_proposal_client_requested_too_much(
             foreign_apps=[xgov_registry_client.app_id],
             accounts=[deployer.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 

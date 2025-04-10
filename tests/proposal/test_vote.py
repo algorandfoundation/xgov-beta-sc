@@ -8,6 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import get_voter_box_key
 from tests.proposal.common import (
     assert_boxes,
@@ -47,6 +48,7 @@ def test_vote_success(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -139,6 +141,7 @@ def test_vote_not_committee_member(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -204,6 +207,7 @@ def test_vote_already_voted(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -390,6 +394,7 @@ def test_vote_finalized_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -445,6 +450,7 @@ def test_vote_voting_expired(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -542,6 +548,7 @@ def test_vote_reject(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -639,6 +646,7 @@ def test_vote_null(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -736,6 +744,7 @@ def test_vote_mixed(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -874,6 +883,7 @@ def test_vote_mixed_same_vote_call(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -965,6 +975,7 @@ def test_vote_exceeded(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
