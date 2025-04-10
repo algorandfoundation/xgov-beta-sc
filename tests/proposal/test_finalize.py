@@ -30,6 +30,7 @@ from tests.proposal.common import (
 
 # TODO add tests for finalize on other statuses
 from tests.utils import ERROR_TO_REGEX, get_latest_timestamp, time_warp
+from tests.xgov_registry.common import LogicErrorType
 
 
 def test_finalize_success(
@@ -468,4 +469,73 @@ def test_finalize_wrong_committee_votes(
         global_state,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
+    )
+
+
+def test_finalize_paused_registry_error(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee_publisher: AddressAndSigner,
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    publishing_fee = relative_to_absolute_amount(
+        reg_gs.proposal_fee, reg_gs.publishing_fee_bps
+    )
+    committee_publisher_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
+        committee_publisher.address
+    )[
+        "amount"
+    ]
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+
+    xgov_registry_mock_client.pause_registry()
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        proposal_client.finalize(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                suggested_params=sp,
+            ),
+        )
+
+    xgov_registry_mock_client.resume_registry()
+
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[committee_publisher.address],
+            suggested_params=sp,
+        ),
+    )
+
+    assert_account_balance(
+        algorand_client=algorand_client,
+        address=committee_publisher.address,
+        expected_balance=committee_publisher_balance_before_finalize + publishing_fee,  # type: ignore
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_final_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
     )

@@ -18,6 +18,7 @@ from tests.proposal.common import (
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for drop on other statuses
 
@@ -208,4 +209,64 @@ def test_drop_not_proposer(
         algorand_client,
         proposal_client.app_address,
         LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+    )
+
+
+def test_drop_paused_registry_error(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
+        proposer.address
+    )[
+        "amount"
+    ]
+
+    xgov_registry_mock_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        proposal_client.drop(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                suggested_params=sp,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+            ),
+        )
+
+    xgov_registry_mock_client.resume_registry()
+
+    proposal_client.drop(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+        ),
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_empty_proposal_global_state(
+        global_state, proposer.address, xgov_registry_mock_client.app_id
+    )
+
+    assert_account_balance(
+        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+    )
+
+    assert_account_balance(
+        algorand_client,
+        proposer.address,
+        proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
     )

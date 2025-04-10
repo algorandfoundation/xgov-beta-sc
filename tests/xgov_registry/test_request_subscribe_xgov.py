@@ -158,3 +158,67 @@ def test_request_subscribe_xgov_wrong_amount(
                 foreign_apps=[xgov_subscriber_app.app_id],
             ),
         )
+
+
+def test_request_subscribe_xgov_paused_registry_error(
+    deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    algorand_client: AlgorandClient,
+) -> None:
+    global_state = xgov_registry_client.get_global_state()
+
+    xgov_registry_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.request_subscribe_xgov(
+            xgov_address=xgov_subscriber_app.app_address,
+            owner_address=deployer.address,
+            relation_type=0,
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=deployer.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=global_state.xgov_fee,
+                    ),
+                ),
+                signer=deployer.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                boxes=[
+                    (0, xgov_box_name(xgov_subscriber_app.app_address)),
+                    (0, request_box_name(global_state.request_id)),
+                ],
+                foreign_apps=[xgov_subscriber_app.app_id],
+            ),
+        )
+
+    xgov_registry_client.resume_registry()
+
+    xgov_registry_client.request_subscribe_xgov(
+        xgov_address=xgov_subscriber_app.app_address,
+        owner_address=deployer.address,
+        relation_type=0,
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=global_state.xgov_fee,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            boxes=[
+                (0, xgov_box_name(xgov_subscriber_app.app_address)),
+                (0, request_box_name(global_state.request_id)),
+            ],
+            foreign_apps=[xgov_subscriber_app.app_id],
+        ),
+    )

@@ -100,3 +100,51 @@ def test_set_voting_account_not_voting_account_or_xgov(
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )
+
+
+def test_set_voting_account_paused_registry_error(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    random_account: AddressAndSigner,
+    xgov: AddressAndSigner,
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    xgov_registry_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.set_voting_account(
+            xgov_address=xgov.address,
+            voting_address=random_account.address,
+            transaction_parameters=TransactionParameters(
+                sender=xgov.address,
+                signer=xgov.signer,
+                suggested_params=sp,
+                boxes=[(0, xgov_box_name(xgov.address))],
+            ),
+        )
+
+    xgov_registry_client.resume_registry()
+
+    xgov_registry_client.set_voting_account(
+        xgov_address=xgov.address,
+        voting_address=random_account.address,
+        transaction_parameters=TransactionParameters(
+            sender=xgov.address,
+            signer=xgov.signer,
+            suggested_params=sp,
+            boxes=[(0, xgov_box_name(xgov.address))],
+        ),
+    )
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(xgov.address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("address")
+    voting_address = box_abi.decode(box_value)  # type: ignore
+
+    assert random_account.address == voting_address  # type: ignore

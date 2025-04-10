@@ -19,6 +19,7 @@ from tests.proposal.common import (
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for update on other statuses
 
@@ -75,6 +76,7 @@ def test_update_twice(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -235,6 +237,59 @@ def test_update_wrong_title_2(
         global_state,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+    assert_account_balance(
+        algorand_client,
+        proposal_client.app_address,
+        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+    )
+
+
+def test_update_paused_registry_error(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    xgov_registry_mock_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        proposal_client.update(
+            title="Updated Test Proposal",
+            cid=b"\x02" * 36,
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+            ),
+        )
+
+    xgov_registry_mock_client.resume_registry()
+
+    proposal_client.update(
+        title="Updated Test Proposal",
+        cid=b"\x02" * 36,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+        ),
+    )
+
+    global_state = proposal_client.get_global_state()
+
+    assert_draft_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        title="Updated Test Proposal",
+        cid=b"\x02" * 36,
     )
 
     assert_account_balance(

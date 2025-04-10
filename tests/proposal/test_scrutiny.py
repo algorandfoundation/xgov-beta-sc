@@ -17,6 +17,7 @@ from tests.proposal.common import (
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
+from tests.xgov_registry.common import LogicErrorType
 
 
 def test_scrutiny_empty_proposal(
@@ -3310,3 +3311,35 @@ def test_scrutiny_after_time_reject_small_11(
         voted_members=1,
         approvals=48,
     )
+
+
+def test_scrutiny_paused_registry_error(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: AddressAndSigner,
+) -> None:
+
+    xgov_registry_mock_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        proposal_client.scrutiny(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+            ),
+        )
+
+    xgov_registry_mock_client.resume_registry()
+    # Should fail for non-paused_registry related reasons
+
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        proposal_client.scrutiny(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+            ),
+        )
