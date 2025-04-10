@@ -8,6 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for finalize on other statuses
 from tests.common import (
@@ -40,7 +41,11 @@ def test_finalize_success(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -67,6 +72,7 @@ def test_finalize_success(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY.encode())],
         ),
     )
 
@@ -95,7 +101,11 @@ def test_finalize_not_proposer(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -114,6 +124,7 @@ def test_finalize_not_proposer(
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -157,6 +168,7 @@ def test_finalize_empty_proposal(
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -176,7 +188,11 @@ def test_finalize_twice(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -194,6 +210,7 @@ def test_finalize_twice(
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
             accounts=[committee_publisher.address],
+            boxes=[(0, METADATA_BOX_KEY.encode())],
         ),
     )
 
@@ -229,7 +246,11 @@ def test_finalize_too_early(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -243,6 +264,7 @@ def test_finalize_too_early(
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -261,6 +283,43 @@ def test_finalize_too_early(
     )
 
 
+def test_finalize_no_metadata(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee_publisher: AddressAndSigner,
+) -> None:
+
+    submit_proposal(
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        # leaving metadata unset; no upload.
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.MISSING_METADATA]):
+        proposal_client.finalize(
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
+                suggested_params=sp,
+            ),
+        )
+
+
 def test_finalize_wrong_committee_id(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
@@ -270,7 +329,11 @@ def test_finalize_wrong_committee_id(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -289,6 +352,7 @@ def test_finalize_wrong_committee_id(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
         )
@@ -315,7 +379,11 @@ def test_finalize_wrong_committee_members(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -338,6 +406,7 @@ def test_finalize_wrong_committee_members(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
         )
@@ -364,7 +433,11 @@ def test_finalize_wrong_committee_votes(
 ) -> None:
 
     submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        metadata="SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -387,6 +460,7 @@ def test_finalize_wrong_committee_votes(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 accounts=[committee_publisher.address],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
         )

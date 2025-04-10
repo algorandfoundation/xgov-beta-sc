@@ -341,6 +341,7 @@ def submit_proposal(
     payment_sender: AddressAndSigner = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
+    metadata: str = "",
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,
@@ -373,6 +374,16 @@ def submit_proposal(
             foreign_apps=[registry_app_id],
         ),
     )
+
+    if metadata != "":
+        proposal_client.upload_metadata(
+            payload=metadata.encode(),
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                boxes=[(0, METADATA_BOX_KEY)],
+            ),
+        )
 
 
 def decommission_proposal(

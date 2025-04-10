@@ -678,6 +678,7 @@ class Proposal(
         Raises:
             err.UNAUTHORIZED: If the sender is not the proposer
             err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.MISSING_METADATA: The proposal description metadata is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.TOO_EARLY: If the proposal is finalized before the minimum time
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
@@ -696,6 +697,8 @@ class Proposal(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_FEE)
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
+
+        assert self.metadata, err.MISSING_METADATA
 
         publishing_fee_bps, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
