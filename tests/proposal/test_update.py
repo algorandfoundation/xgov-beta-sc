@@ -262,7 +262,6 @@ def test_update_paused_registry_error(
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         proposal_client.update(
             title="Updated Test Proposal",
-            cid=b"\x02" * 36,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -274,7 +273,6 @@ def test_update_paused_registry_error(
 
     proposal_client.update(
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -289,7 +287,6 @@ def test_update_paused_registry_error(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
     )
 
     assert_account_balance(

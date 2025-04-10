@@ -511,6 +511,7 @@ def test_finalize_paused_registry_error(
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 accounts=[committee_publisher.address],
                 suggested_params=sp,
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -523,6 +524,7 @@ def test_finalize_paused_registry_error(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
