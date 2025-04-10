@@ -10,6 +10,7 @@ WRONG_ON_COMPLETE = "Wrong On Complete Action"
 UNAUTHORIZED = "Unauthorized"
 INACTIVE_FUND = "Opt-In Fund is Inactive"
 
+WRONG_CID_LENGTH = "Wrong CID length"
 WRONG_TITLE_LENGTH = "Wrong Title length"
 WRONG_FUNDING_TYPE = "Wrong Funding Type"
 WRONG_MIN_REQUESTED_AMOUNT = (

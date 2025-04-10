@@ -182,11 +182,11 @@ main:
     // key=prop_cfg.GS_KEY_COMMITTEE_ID,
     bytec 21 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal/contract.py:100
-    // typ.CommitteeID.from_bytes(b""),
+    // typ.Bytes32.from_bytes(b""),
     bytec_2 // 0x
     // smart_contracts/proposal/contract.py:99-102
     // self.committee_id = GlobalState(
-    //     typ.CommitteeID.from_bytes(b""),
+    //     typ.Bytes32.from_bytes(b""),
     //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -1536,7 +1536,7 @@ finalize_after_if_else@7:
     bytec 21 // 0x636f6d6d69747465655f6964
     callsub get_bytes_from_registry_config
     // smart_contracts/proposal/contract.py:328
-    // assert committee_id != typ.CommitteeID.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+    // assert committee_id != typ.Bytes32.from_bytes(b""), err.EMPTY_COMMITTEE_ID
     dup
     bytec_2 // 0x
     !=

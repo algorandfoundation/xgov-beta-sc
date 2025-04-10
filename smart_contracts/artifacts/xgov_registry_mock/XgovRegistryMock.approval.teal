@@ -143,11 +143,11 @@ main:
     // key=reg_cfg.GS_KEY_COMMITTEE_ID,
     bytec_2 // 0x636f6d6d69747465655f6964
     // smart_contracts/xgov_registry_mock/contract.py:69
-    // CommitteeID.from_bytes(mock_cfg.COMMITTEE_ID),
+    // Bytes32.from_bytes(mock_cfg.COMMITTEE_ID),
     pushbytes 0x
     // smart_contracts/xgov_registry_mock/contract.py:68-71
     // self.committee_id = GlobalState(
-    //     CommitteeID.from_bytes(mock_cfg.COMMITTEE_ID),
+    //     Bytes32.from_bytes(mock_cfg.COMMITTEE_ID),
     //     key=reg_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -1118,7 +1118,7 @@ set_proposal_fee:
 set_committee_id:
     // smart_contracts/xgov_registry_mock/contract.py:274-275
     // @arc4.abimethod()
-    // def set_committee_id(self, committee_id: CommitteeID) -> None:
+    // def set_committee_id(self, committee_id: Bytes32) -> None:
     proto 1 0
     // smart_contracts/xgov_registry_mock/contract.py:283
     // self.committee_id.value = committee_id.copy()
@@ -1131,7 +1131,7 @@ set_committee_id:
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id() -> void:
 clear_committee_id:
     // smart_contracts/xgov_registry_mock/contract.py:291
-    // self.committee_id.value = CommitteeID.from_bytes(mock_cfg.COMMITTEE_ID)
+    // self.committee_id.value = Bytes32.from_bytes(mock_cfg.COMMITTEE_ID)
     bytec_2 // 0x636f6d6d69747465655f6964
     pushbytes 0x
     app_global_put

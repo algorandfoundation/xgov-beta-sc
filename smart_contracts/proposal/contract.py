@@ -97,7 +97,7 @@ class Proposal(
             key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
         )
         self.committee_id = GlobalState(
-            typ.CommitteeID.from_bytes(b""),
+            typ.Bytes32.from_bytes(b""),
             key=prop_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
@@ -322,10 +322,10 @@ class Proposal(
     @subroutine
     def verify_and_set_committee(self) -> None:
 
-        committee_id = typ.CommitteeID.from_bytes(
+        committee_id = typ.Bytes32.from_bytes(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
         )
-        assert committee_id != typ.CommitteeID.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+        assert committee_id != typ.Bytes32.from_bytes(b""), err.EMPTY_COMMITTEE_ID
 
         committee_members, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)

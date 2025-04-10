@@ -28,7 +28,7 @@ class TypedGlobalState(arc4.Struct):
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     outstanding_funds: arc4.UInt64
     pending_proposals: arc4.UInt64
-    committee_id: ptyp.CommitteeID
+    committee_id: ptyp.Bytes32
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
 

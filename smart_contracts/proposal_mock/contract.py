@@ -57,7 +57,7 @@ class ProposalMock(ARC4Contract):
             key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
         )
         self.committee_id = GlobalState(
-            typ.CommitteeID.from_bytes(b""),
+            typ.Bytes32.from_bytes(b""),
             key=prop_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
@@ -96,7 +96,7 @@ class ProposalMock(ARC4Contract):
 
     @arc4.abimethod()
     def set_committee_details(
-        self, metadata_hash: typ.CommitteeID, size: UInt64, votes: UInt64
+        self, metadata_hash: typ.Bytes32, size: UInt64, votes: UInt64
     ) -> None:
         self.committee_id.value = metadata_hash.copy()
         self.committee_members.value = size

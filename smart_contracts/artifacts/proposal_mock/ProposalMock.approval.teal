@@ -131,11 +131,11 @@ main:
     // key=prop_cfg.GS_KEY_COMMITTEE_ID,
     bytec 5 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal_mock/contract.py:60
-    // typ.CommitteeID.from_bytes(b""),
+    // typ.Bytes32.from_bytes(b""),
     bytec_2 // 0x
     // smart_contracts/proposal_mock/contract.py:59-62
     // self.committee_id = GlobalState(
-    //     typ.CommitteeID.from_bytes(b""),
+    //     typ.Bytes32.from_bytes(b""),
     //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
@@ -365,7 +365,7 @@ set_committee_details:
     // smart_contracts/proposal_mock/contract.py:97-100
     // @arc4.abimethod()
     // def set_committee_details(
-    //     self, metadata_hash: typ.CommitteeID, size: UInt64, votes: UInt64
+    //     self, metadata_hash: typ.Bytes32, size: UInt64, votes: UInt64
     // ) -> None:
     proto 3 0
     // smart_contracts/proposal_mock/contract.py:101
