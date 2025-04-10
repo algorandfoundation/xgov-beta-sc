@@ -1,3 +1,5 @@
+import uuid
+
 from algokit_utils import LogicError, TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -38,6 +40,8 @@ from tests.common import (
     REQUESTED_AMOUNT,
     get_voter_box_key,
 )
+
+MAX_UPLOAD_PAYLOAD_SIZE = 2042
 
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 
@@ -341,7 +345,7 @@ def submit_proposal(
     payment_sender: AddressAndSigner = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
-    metadata: str = "",
+    metadata: bytes = b"",
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,
@@ -375,15 +379,35 @@ def submit_proposal(
         ),
     )
 
-    if metadata != "":
-        proposal_client.upload_metadata(
-            payload=metadata.encode(),
+    if metadata != b"":
+        upload_metadata(
+            proposal_client,
+            proposer,
+            metadata,
+        )
+
+
+def upload_metadata(
+    proposal_client: ProposalClient,
+    proposer: AddressAndSigner,
+    metadata: bytes,
+) -> None:
+    composer = proposal_client.compose()
+
+    for i in range((len(metadata) // MAX_UPLOAD_PAYLOAD_SIZE) + 1):
+        composer.upload_metadata(
+            payload=metadata[
+                i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
+            ],
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
-                boxes=[(0, METADATA_BOX_KEY)],
+                boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
+                note=uuid.uuid4().bytes,
             ),
         )
+
+    composer.execute()
 
 
 def decommission_proposal(

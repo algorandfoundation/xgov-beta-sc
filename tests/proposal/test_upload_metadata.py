@@ -1,6 +1,5 @@
 import base64
 import json
-import uuid
 
 import pytest
 from algokit_utils import TransactionParameters
@@ -13,7 +12,12 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
-from tests.proposal.common import assert_boxes, logic_error_type, submit_proposal
+from tests.proposal.common import (
+    assert_boxes,
+    logic_error_type,
+    submit_proposal,
+    upload_metadata,
+)
 from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for upload on other statuses
@@ -54,13 +58,10 @@ def test_upload_success_1(
 
     payload = json.dumps({"o": "a" * 500}).encode()  # type: ignore
 
-    proposal_client.upload_metadata(
-        payload=payload,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
+    upload_metadata(
+        proposal_client,
+        proposer,
+        payload,
     )
 
     assert_boxes(
@@ -84,13 +85,10 @@ def test_upload_success_2(
 
     payload = json.dumps({"o": "a" * 1500}).encode()  # type: ignore
 
-    proposal_client.upload_metadata(
-        payload=payload,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
-        ),
+    upload_metadata(
+        proposal_client,
+        proposer,
+        payload,
     )
 
     assert_boxes(
@@ -114,20 +112,11 @@ def test_upload_success_3(
 
     payload = json.dumps({"o": "a" * 2500}).encode()  # type: ignore
 
-    composer = proposal_client.compose()
-
-    for i in range((len(payload) // max_payload_size) + 1):
-        composer.upload_metadata(
-            payload=payload[i * max_payload_size : (i + 1) * max_payload_size],
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
-                note=uuid.uuid4().bytes,
-            ),
-        )
-
-    composer.execute()
+    upload_metadata(
+        proposal_client,
+        proposer,
+        payload,
+    )
 
     assert_boxes(
         algorand_client=algorand_client,
@@ -151,13 +140,10 @@ def test_upload_not_proposer(
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        proposal_client.upload_metadata(
-            payload=b"payload",
-            transaction_parameters=TransactionParameters(
-                sender=not_proposer.address,
-                signer=not_proposer.signer,
-                boxes=[(0, METADATA_BOX_KEY)],
-            ),
+        upload_metadata(
+            proposal_client,
+            not_proposer,
+            b"ANY PAYLOAD",
         )
 
 
@@ -173,11 +159,8 @@ def test_empty_payload(
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.EMPTY_PAYLOAD]):
-        proposal_client.upload_metadata(
-            payload=b"",
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                boxes=[(0, METADATA_BOX_KEY)],
-            ),
+        upload_metadata(
+            proposal_client,
+            proposer,
+            b"",
         )

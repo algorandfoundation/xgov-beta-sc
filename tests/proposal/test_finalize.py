@@ -45,7 +45,7 @@ def test_finalize_success(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -105,7 +105,7 @@ def test_finalize_not_proposer(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -192,7 +192,7 @@ def test_finalize_twice(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -250,7 +250,7 @@ def test_finalize_too_early(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -333,7 +333,7 @@ def test_finalize_wrong_committee_id(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -383,7 +383,7 @@ def test_finalize_wrong_committee_members(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
@@ -437,7 +437,7 @@ def test_finalize_wrong_committee_votes(
         algorand_client,
         proposer,
         xgov_registry_mock_client.app_id,
-        metadata="SOME META",
+        metadata=b"SOME META",
     )
 
     sp = algorand_client.get_suggested_params()
