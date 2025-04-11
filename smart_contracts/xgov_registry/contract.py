@@ -21,6 +21,7 @@ import smart_contracts.errors.std_errors as err
 
 from ..common import abi_types as ctyp
 from ..proposal import config as pcfg
+from ..proposal import constants as pcts
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
 from . import avm_types as typ
@@ -136,7 +137,7 @@ class XGovRegistry(
 
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
 
-        self.committee_id = GlobalState(ctyp.Cid, key=cfg.GS_KEY_COMMITTEE_ID)
+        self.committee_id = GlobalState(ctyp.Bytes32, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
 
@@ -703,13 +704,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def declare_committee(
-        self, cid: ctyp.Cid, size: arc4.UInt64, votes: arc4.UInt64
+        self, committee_id: ctyp.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.
 
         Args:
-            id (ctyp.Cid): The ID of the xGov Committee
+            committee_id (ctyp.Bytes32): The ID of the xGov Committee
             size (arc4.UInt64): The size of the xGov Committee
             votes (arc4.UInt64): The voting power of the xGov Committee
 
@@ -718,8 +719,9 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
+        assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
 
-        self.committee_id.value = cid.copy()
+        self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.native
         self.committee_votes.value = votes.native
 

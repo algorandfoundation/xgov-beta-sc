@@ -1,3 +1,5 @@
+import uuid
+
 from algokit_utils import LogicError, TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
@@ -10,7 +12,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
     ProposalClient,
 )
-from smart_contracts.proposal.config import PROPOSAL_MBR
+from smart_contracts.proposal.config import METADATA_BOX_KEY, PROPOSAL_MBR
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -34,11 +36,12 @@ from tests.common import (
     DEFAULT_COMMITTEE_VOTES,
     DEFAULT_FOCUS,
     LOCKED_AMOUNT,
-    PROPOSAL_CID,
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
     get_voter_box_key,
 )
+
+MAX_UPLOAD_PAYLOAD_SIZE = 2042
 
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 
@@ -54,7 +57,6 @@ def assert_proposal_global_state(
     registry_app_id: int,
     status: int = STATUS_EMPTY,
     title: str = "",
-    cid: bytes = b"",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
     funding_type: int = FUNDING_NULL,
@@ -72,7 +74,6 @@ def assert_proposal_global_state(
 ) -> None:
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
-    assert global_state.cid.as_bytes == cid
     assert global_state.status == status
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
@@ -111,7 +112,6 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
     # Define common parameters that are shared across statuses
     common_defaults = {
         "title": PROPOSAL_TITLE,
-        "cid": PROPOSAL_CID,
         "funding_type": FUNDING_PROACTIVE,
         "requested_amount": REQUESTED_AMOUNT,
         "locked_amount": LOCKED_AMOUNT,
@@ -345,7 +345,7 @@ def submit_proposal(
     payment_sender: AddressAndSigner = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
-    cid: bytes = PROPOSAL_CID,
+    metadata: bytes = b"METADATA",
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
     requested_amount: int = REQUESTED_AMOUNT,
@@ -369,7 +369,6 @@ def submit_proposal(
             signer=payment_sender.signer,
         ),
         title=title,
-        cid=cid,
         funding_type=funding_type,
         focus=focus,
         requested_amount=requested_amount,
@@ -380,6 +379,36 @@ def submit_proposal(
         ),
     )
 
+    if metadata != b"":
+        upload_metadata(
+            proposal_client,
+            proposer,
+            metadata,
+        )
+
+
+def upload_metadata(
+    proposal_client: ProposalClient,
+    proposer: AddressAndSigner,
+    metadata: bytes,
+) -> None:
+    composer = proposal_client.compose()
+
+    for i in range((len(metadata) // MAX_UPLOAD_PAYLOAD_SIZE) + 1):
+        composer.upload_metadata(
+            payload=metadata[
+                i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
+                note=uuid.uuid4().bytes,
+            ),
+        )
+
+    composer.execute()
+
 
 def decommission_proposal(
     proposal_client: ProposalClient,
@@ -387,7 +416,7 @@ def decommission_proposal(
     committee_publisher: AddressAndSigner,
     sp: SuggestedParams,
     xgov_registry_app_id: int,
-    bulks: int = 7,
+    bulks: int = 6,
 ) -> None:
     for i in range(1 + len(committee_members) // bulks):
         proposal_client.decommission(
@@ -404,6 +433,12 @@ def decommission_proposal(
                         get_voter_box_key(cm.address),
                     )
                     for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ]
+                + [
+                    (
+                        0,
+                        METADATA_BOX_KEY,
+                    )
                 ],
                 suggested_params=sp,
             ),

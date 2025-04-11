@@ -8,6 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     assert_account_balance,
     assert_blocked_proposal_global_state,
@@ -90,6 +91,7 @@ def test_block_final_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
             accounts=[committee_publisher.address],
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -136,6 +138,7 @@ def test_block_voting_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -197,6 +200,7 @@ def test_block_rejected_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -271,6 +275,7 @@ def test_block_reviewed_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -373,6 +378,7 @@ def test_block_success(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -488,6 +494,7 @@ def test_block_twice(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -617,6 +624,7 @@ def test_block_not_reviewer(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 

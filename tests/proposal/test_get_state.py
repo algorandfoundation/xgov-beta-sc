@@ -7,6 +7,7 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     get_voter_box_key,
     submit_proposal,
@@ -42,6 +43,7 @@ def test_funded_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[committee_publisher.address],
             suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -127,7 +129,6 @@ def test_funded_proposal(
         global_state.funding_category == get_state_result.return_value.funding_category
     )
     assert global_state.focus == get_state_result.return_value.focus
-    assert global_state.cid.as_bytes == bytes(get_state_result.return_value.cid)
     assert global_state.committee_id.as_bytes == bytes(
         get_state_result.return_value.committee_id
     )

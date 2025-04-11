@@ -3,7 +3,7 @@
   "sources": [
     "../../proposal_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;AADe;AADvB;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADe;AADvB;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AAlER;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;AA8FK;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AANA;;AAAA;AAAA;AAAA;;AAAA;AApFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAoFK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;AAgFK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAvEL;;;AAuEK;;;AAAA;;AAAL;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADmB;AAD3B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AA9DR;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;AA4FK;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAgFK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAxEL;;;AAAA;AAwEK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAnEL;;;AAmEK;;;AAAA;;AAAL;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAIQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -14,7 +14,7 @@
       "op": "intcblock 0 1"
     },
     "5": {
-      "op": "bytecblock 0x 0x70726f706f736572 0x72656769737472795f6170705f6964 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573"
+      "op": "bytecblock 0x70726f706f736572 0x72656769737472795f6170705f6964 0x 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573"
     },
     "104": {
       "op": "txn ApplicationID",
@@ -30,7 +30,7 @@
       "stack_out": []
     },
     "109": {
-      "op": "bytec_1 // 0x70726f706f736572",
+      "op": "bytec_0 // 0x70726f706f736572",
       "defined_out": [
         "0x70726f706f736572"
       ],
@@ -54,7 +54,7 @@
       "stack_out": []
     },
     "113": {
-      "op": "bytec_2 // 0x72656769737472795f6170705f6964",
+      "op": "bytec_1 // 0x72656769737472795f6170705f6964",
       "defined_out": [
         "0x72656769737472795f6170705f6964"
       ],
@@ -87,7 +87,7 @@
       ]
     },
     "123": {
-      "op": "bytec_0 // \"\"",
+      "op": "bytec_2 // \"\"",
       "defined_out": [
         "\"\"",
         "0x7469746c65"
@@ -102,30 +102,6 @@
       "stack_out": []
     },
     "125": {
-      "op": "pushbytes 0x636964",
-      "defined_out": [
-        "0x636964"
-      ],
-      "stack_out": [
-        "0x636964"
-      ]
-    },
-    "130": {
-      "op": "bytec_0 // 0x",
-      "defined_out": [
-        "0x",
-        "0x636964"
-      ],
-      "stack_out": [
-        "0x636964",
-        "0x"
-      ]
-    },
-    "131": {
-      "op": "app_global_put",
-      "stack_out": []
-    },
-    "132": {
       "op": "pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
       "defined_out": [
         "0x7375626d697373696f6e5f74696d657374616d70"
@@ -134,18 +110,18 @@
         "0x7375626d697373696f6e5f74696d657374616d70"
       ]
     },
-    "154": {
+    "147": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x7375626d697373696f6e5f74696d657374616d70",
         "0"
       ]
     },
-    "155": {
+    "148": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "156": {
+    "149": {
       "op": "pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
       "defined_out": [
         "0x66696e616c697a6174696f6e5f74696d657374616d70"
@@ -154,18 +130,18 @@
         "0x66696e616c697a6174696f6e5f74696d657374616d70"
       ]
     },
-    "180": {
+    "173": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x66696e616c697a6174696f6e5f74696d657374616d70",
         "0"
       ]
     },
-    "181": {
+    "174": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "182": {
+    "175": {
       "op": "bytec_3 // 0x737461747573",
       "defined_out": [
         "0x737461747573"
@@ -174,18 +150,18 @@
         "0x737461747573"
       ]
     },
-    "183": {
+    "176": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x737461747573",
         "0"
       ]
     },
-    "184": {
+    "177": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "185": {
+    "178": {
       "op": "pushbytes 0x66756e64696e675f63617465676f7279",
       "defined_out": [
         "0x66756e64696e675f63617465676f7279"
@@ -194,18 +170,18 @@
         "0x66756e64696e675f63617465676f7279"
       ]
     },
-    "203": {
+    "196": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x66756e64696e675f63617465676f7279",
         "0"
       ]
     },
-    "204": {
+    "197": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "205": {
+    "198": {
       "op": "pushbytes 0x66756e64696e675f74797065",
       "defined_out": [
         "0x66756e64696e675f74797065"
@@ -214,18 +190,18 @@
         "0x66756e64696e675f74797065"
       ]
     },
-    "219": {
+    "212": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x66756e64696e675f74797065",
         "0"
       ]
     },
-    "220": {
+    "213": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "221": {
+    "214": {
       "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74"
@@ -234,18 +210,18 @@
         "0x7265717565737465645f616d6f756e74"
       ]
     },
-    "223": {
+    "216": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x7265717565737465645f616d6f756e74",
         "0"
       ]
     },
-    "224": {
+    "217": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "225": {
+    "218": {
       "op": "pushbytes 0x6c6f636b65645f616d6f756e74",
       "defined_out": [
         "0x6c6f636b65645f616d6f756e74"
@@ -254,18 +230,18 @@
         "0x6c6f636b65645f616d6f756e74"
       ]
     },
-    "240": {
+    "233": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x6c6f636b65645f616d6f756e74",
         "0"
       ]
     },
-    "241": {
+    "234": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "242": {
+    "235": {
       "op": "bytec 5 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -274,18 +250,22 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "244": {
-      "op": "bytec_0 // 0x",
+    "237": {
+      "op": "bytec_2 // 0x",
+      "defined_out": [
+        "0x",
+        "0x636f6d6d69747465655f6964"
+      ],
       "stack_out": [
         "0x636f6d6d69747465655f6964",
         "0x"
       ]
     },
-    "245": {
+    "238": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "246": {
+    "239": {
       "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
@@ -294,18 +274,18 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "248": {
+    "241": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x636f6d6d69747465655f6d656d62657273",
         "0"
       ]
     },
-    "249": {
+    "242": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "250": {
+    "243": {
       "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
@@ -314,18 +294,18 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "252": {
+    "245": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x636f6d6d69747465655f766f746573",
         "0"
       ]
     },
-    "253": {
+    "246": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "254": {
+    "247": {
       "op": "pushbytes 0x766f7465645f6d656d62657273",
       "defined_out": [
         "0x766f7465645f6d656d62657273"
@@ -334,18 +314,18 @@
         "0x766f7465645f6d656d62657273"
       ]
     },
-    "269": {
+    "262": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x766f7465645f6d656d62657273",
         "0"
       ]
     },
-    "270": {
+    "263": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "271": {
+    "264": {
       "op": "pushbytes 0x617070726f76616c73",
       "defined_out": [
         "0x617070726f76616c73"
@@ -354,18 +334,18 @@
         "0x617070726f76616c73"
       ]
     },
-    "282": {
+    "275": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x617070726f76616c73",
         "0"
       ]
     },
-    "283": {
+    "276": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "284": {
+    "277": {
       "op": "pushbytes 0x72656a656374696f6e73",
       "defined_out": [
         "0x72656a656374696f6e73"
@@ -374,18 +354,18 @@
         "0x72656a656374696f6e73"
       ]
     },
-    "296": {
+    "289": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x72656a656374696f6e73",
         "0"
       ]
     },
-    "297": {
+    "290": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "298": {
+    "291": {
       "block": "main_after_if_else@2",
       "stack_in": [],
       "op": "txn NumAppArgs",
@@ -396,16 +376,16 @@
         "tmp%0#2"
       ]
     },
-    "300": {
+    "293": {
       "op": "bz main_after_if_else@11",
       "stack_out": []
     },
-    "303": {
-      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0xa4ddde0c 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[36],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\"",
+    "296": {
+      "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\"",
       "defined_out": [
         "Method(create(address)void)",
         "Method(release_funds()void)",
-        "Method(set_committee_details(byte[36],uint64,uint64)void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(set_requested_amount(uint64)void)",
         "Method(set_status(uint64)void)",
         "Method(vote(address,uint64,uint64)void)"
@@ -414,17 +394,17 @@
         "Method(create(address)void)",
         "Method(set_status(uint64)void)",
         "Method(set_requested_amount(uint64)void)",
-        "Method(set_committee_details(byte[36],uint64,uint64)void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(release_funds()void)",
         "Method(vote(address,uint64,uint64)void)"
       ]
     },
-    "335": {
+    "328": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(create(address)void)",
         "Method(release_funds()void)",
-        "Method(set_committee_details(byte[36],uint64,uint64)void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(set_requested_amount(uint64)void)",
         "Method(set_status(uint64)void)",
         "Method(vote(address,uint64,uint64)void)",
@@ -434,17 +414,17 @@
         "Method(create(address)void)",
         "Method(set_status(uint64)void)",
         "Method(set_requested_amount(uint64)void)",
-        "Method(set_committee_details(byte[36],uint64,uint64)void)",
+        "Method(set_committee_details(byte[32],uint64,uint64)void)",
         "Method(release_funds()void)",
         "Method(vote(address,uint64,uint64)void)",
         "tmp%2#0"
       ]
     },
-    "338": {
+    "331": {
       "op": "match main_create_route@5 main_set_status_route@6 main_set_requested_amount_route@7 main_set_committee_details_route@8 main_release_funds_route@9 main_vote_route@10",
       "stack_out": []
     },
-    "352": {
+    "345": {
       "block": "main_after_if_else@11",
       "stack_in": [],
       "op": "intc_0 // 0",
@@ -455,11 +435,11 @@
         "tmp%0#0"
       ]
     },
-    "353": {
+    "346": {
       "op": "return",
       "stack_out": []
     },
-    "354": {
+    "347": {
       "block": "main_vote_route@10",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -470,7 +450,7 @@
         "tmp%27#0"
       ]
     },
-    "356": {
+    "349": {
       "op": "!",
       "defined_out": [
         "tmp%28#0"
@@ -479,12 +459,12 @@
         "tmp%28#0"
       ]
     },
-    "357": {
+    "350": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "358": {
+    "351": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%29#0"
@@ -493,12 +473,12 @@
         "tmp%29#0"
       ]
     },
-    "360": {
+    "353": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "361": {
+    "354": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -507,11 +487,11 @@
         "tmp%0#0"
       ]
     },
-    "362": {
+    "355": {
       "op": "return",
       "stack_out": []
     },
-    "363": {
+    "356": {
       "block": "main_release_funds_route@9",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -522,7 +502,7 @@
         "tmp%23#0"
       ]
     },
-    "365": {
+    "358": {
       "op": "!",
       "defined_out": [
         "tmp%24#0"
@@ -531,12 +511,12 @@
         "tmp%24#0"
       ]
     },
-    "366": {
+    "359": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "367": {
+    "360": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%25#0"
@@ -545,12 +525,12 @@
         "tmp%25#0"
       ]
     },
-    "369": {
+    "362": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "370": {
+    "363": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -559,11 +539,11 @@
         "tmp%0#0"
       ]
     },
-    "371": {
+    "364": {
       "op": "return",
       "stack_out": []
     },
-    "372": {
+    "365": {
       "block": "main_set_committee_details_route@8",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -574,7 +554,7 @@
         "tmp%17#0"
       ]
     },
-    "374": {
+    "367": {
       "op": "!",
       "defined_out": [
         "tmp%18#0"
@@ -583,12 +563,12 @@
         "tmp%18#0"
       ]
     },
-    "375": {
+    "368": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "376": {
+    "369": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%19#0"
@@ -597,74 +577,74 @@
         "tmp%19#0"
       ]
     },
-    "378": {
+    "371": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "379": {
+    "372": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
-        "reinterpret_bytes[36]%0#0"
+        "reinterpret_bytes[32]%1#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[36]%0#0"
+        "reinterpret_bytes[32]%1#0"
       ]
     },
-    "382": {
+    "375": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "reinterpret_bytes[8]%2#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "reinterpret_bytes[8]%2#0"
       ]
     },
-    "385": {
+    "378": {
       "op": "btoi",
       "defined_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "tmp%21#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "tmp%21#0"
       ]
     },
-    "386": {
+    "379": {
       "op": "txna ApplicationArgs 3",
       "defined_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "reinterpret_bytes[8]%3#0",
         "tmp%21#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "tmp%21#0",
         "reinterpret_bytes[8]%3#0"
       ]
     },
-    "389": {
+    "382": {
       "op": "btoi",
       "defined_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "tmp%21#0",
         "tmp%22#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[36]%0#0",
+        "reinterpret_bytes[32]%1#0",
         "tmp%21#0",
         "tmp%22#0"
       ]
     },
-    "390": {
+    "383": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
       "op": "callsub set_committee_details",
       "stack_out": []
     },
-    "393": {
+    "386": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -673,11 +653,11 @@
         "tmp%0#0"
       ]
     },
-    "394": {
+    "387": {
       "op": "return",
       "stack_out": []
     },
-    "395": {
+    "388": {
       "block": "main_set_requested_amount_route@7",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -688,7 +668,7 @@
         "tmp%12#0"
       ]
     },
-    "397": {
+    "390": {
       "op": "!",
       "defined_out": [
         "tmp%13#0"
@@ -697,12 +677,12 @@
         "tmp%13#0"
       ]
     },
-    "398": {
+    "391": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "399": {
+    "392": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%14#0"
@@ -711,12 +691,12 @@
         "tmp%14#0"
       ]
     },
-    "401": {
+    "394": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "402": {
+    "395": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%1#0"
@@ -725,7 +705,7 @@
         "reinterpret_bytes[8]%1#0"
       ]
     },
-    "405": {
+    "398": {
       "op": "btoi",
       "defined_out": [
         "tmp%16#0"
@@ -734,12 +714,12 @@
         "tmp%16#0"
       ]
     },
-    "406": {
+    "399": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
       "op": "callsub set_requested_amount",
       "stack_out": []
     },
-    "409": {
+    "402": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -748,11 +728,11 @@
         "tmp%0#0"
       ]
     },
-    "410": {
+    "403": {
       "op": "return",
       "stack_out": []
     },
-    "411": {
+    "404": {
       "block": "main_set_status_route@6",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -763,7 +743,7 @@
         "tmp%7#0"
       ]
     },
-    "413": {
+    "406": {
       "op": "!",
       "defined_out": [
         "tmp%8#0"
@@ -772,12 +752,12 @@
         "tmp%8#0"
       ]
     },
-    "414": {
+    "407": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "415": {
+    "408": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%9#0"
@@ -786,12 +766,12 @@
         "tmp%9#0"
       ]
     },
-    "417": {
+    "410": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "418": {
+    "411": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%0#0"
@@ -800,7 +780,7 @@
         "reinterpret_bytes[8]%0#0"
       ]
     },
-    "421": {
+    "414": {
       "op": "btoi",
       "defined_out": [
         "tmp%11#0"
@@ -809,12 +789,12 @@
         "tmp%11#0"
       ]
     },
-    "422": {
+    "415": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
       "op": "callsub set_status",
       "stack_out": []
     },
-    "425": {
+    "418": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -823,11 +803,11 @@
         "tmp%0#0"
       ]
     },
-    "426": {
+    "419": {
       "op": "return",
       "stack_out": []
     },
-    "427": {
+    "420": {
       "block": "main_create_route@5",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -838,7 +818,7 @@
         "tmp%3#0"
       ]
     },
-    "429": {
+    "422": {
       "op": "!",
       "defined_out": [
         "tmp%4#0"
@@ -847,12 +827,12 @@
         "tmp%4#0"
       ]
     },
-    "430": {
+    "423": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "431": {
+    "424": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%5#0"
@@ -861,7 +841,7 @@
         "tmp%5#0"
       ]
     },
-    "433": {
+    "426": {
       "op": "!",
       "defined_out": [
         "tmp%6#0"
@@ -870,12 +850,12 @@
         "tmp%6#0"
       ]
     },
-    "434": {
+    "427": {
       "error": "can only call when creating",
       "op": "assert // can only call when creating",
       "stack_out": []
     },
-    "435": {
+    "428": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%0#0"
@@ -884,12 +864,12 @@
         "reinterpret_bytes[32]%0#0"
       ]
     },
-    "438": {
+    "431": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.create",
       "op": "callsub create",
       "stack_out": []
     },
-    "441": {
+    "434": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -898,11 +878,11 @@
         "tmp%0#0"
       ]
     },
-    "442": {
+    "435": {
       "op": "return",
       "stack_out": []
     },
-    "443": {
+    "436": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.create",
       "params": {
         "proposer#0": "bytes"
@@ -911,8 +891,8 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "446": {
-      "op": "bytec_1 // 0x70726f706f736572",
+    "439": {
+      "op": "bytec_0 // 0x70726f706f736572",
       "defined_out": [
         "0x70726f706f736572"
       ],
@@ -920,7 +900,7 @@
         "0x70726f706f736572"
       ]
     },
-    "447": {
+    "440": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x70726f706f736572",
@@ -931,12 +911,12 @@
         "proposer#0 (copy)"
       ]
     },
-    "449": {
+    "442": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "450": {
-      "op": "bytec_2 // 0x72656769737472795f6170705f6964",
+    "443": {
+      "op": "bytec_1 // 0x72656769737472795f6170705f6964",
       "defined_out": [
         "0x72656769737472795f6170705f6964"
       ],
@@ -944,7 +924,7 @@
         "0x72656769737472795f6170705f6964"
       ]
     },
-    "451": {
+    "444": {
       "op": "global CallerApplicationID",
       "defined_out": [
         "0x72656769737472795f6170705f6964",
@@ -955,15 +935,15 @@
         "new_state_value%0#0"
       ]
     },
-    "453": {
+    "446": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "454": {
+    "447": {
       "retsub": true,
       "op": "retsub"
     },
-    "455": {
+    "448": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
       "params": {
         "status#0": "uint64"
@@ -972,7 +952,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "458": {
+    "451": {
       "op": "bytec_3 // 0x737461747573",
       "defined_out": [
         "0x737461747573"
@@ -981,7 +961,7 @@
         "0x737461747573"
       ]
     },
-    "459": {
+    "452": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x737461747573",
@@ -992,15 +972,15 @@
         "status#0 (copy)"
       ]
     },
-    "461": {
+    "454": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "462": {
+    "455": {
       "retsub": true,
       "op": "retsub"
     },
-    "463": {
+    "456": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
       "params": {
         "requested_amount#0": "uint64"
@@ -1009,7 +989,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "466": {
+    "459": {
       "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74"
@@ -1018,7 +998,7 @@
         "0x7265717565737465645f616d6f756e74"
       ]
     },
-    "468": {
+    "461": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74",
@@ -1029,18 +1009,18 @@
         "requested_amount#0 (copy)"
       ]
     },
-    "470": {
+    "463": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "471": {
+    "464": {
       "retsub": true,
       "op": "retsub"
     },
-    "472": {
+    "465": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
       "params": {
-        "cid#0": "bytes",
+        "metadata_hash#0": "bytes",
         "size#0": "uint64",
         "votes#0": "uint64"
       },
@@ -1048,7 +1028,7 @@
       "stack_in": [],
       "op": "proto 3 0"
     },
-    "475": {
+    "468": {
       "op": "bytec 5 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -1057,22 +1037,22 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "477": {
+    "470": {
       "op": "frame_dig -3",
       "defined_out": [
         "0x636f6d6d69747465655f6964",
-        "cid#0 (copy)"
+        "metadata_hash#0 (copy)"
       ],
       "stack_out": [
         "0x636f6d6d69747465655f6964",
-        "cid#0 (copy)"
+        "metadata_hash#0 (copy)"
       ]
     },
-    "479": {
+    "472": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "480": {
+    "473": {
       "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
@@ -1081,7 +1061,7 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "482": {
+    "475": {
       "op": "frame_dig -2",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273",
@@ -1092,11 +1072,11 @@
         "size#0 (copy)"
       ]
     },
-    "484": {
+    "477": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "485": {
+    "478": {
       "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
@@ -1105,7 +1085,7 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "487": {
+    "480": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573",
@@ -1116,11 +1096,11 @@
         "votes#0 (copy)"
       ]
     },
-    "489": {
+    "482": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "490": {
+    "483": {
       "retsub": true,
       "op": "retsub"
     }

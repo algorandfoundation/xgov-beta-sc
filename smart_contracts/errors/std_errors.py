@@ -29,6 +29,7 @@ WRONG_PROPOSAL_STATUS = "Wrong Proposal Status"
 TOO_EARLY = "Too early"
 
 MISSING_CONFIG = "Missing Config"
+MISSING_METADATA = "Missing Metadata"
 
 PENDING_PROPOSALS = "Pending proposals"
 WRONG_PAYMENT_AMOUNT = "Wrong payment amount"
@@ -64,5 +65,8 @@ VOTER_NOT_FOUND = "Voter not found"
 VOTER_ALREADY_VOTED = "Voter already voted"
 VOTES_EXCEEDED = "Votes exceeded"
 
+EMPTY_PAYLOAD = "Empty payload"
+WRONG_APP_ID = "Wrong App ID"
+WRONG_METHOD_CALL = "Wrong Method Call"
 PAUSED_REGISTRY = "Registry's non-admin methods are paused"
 PAUSED_PROPOSALS = "Creation of proposals is paused"

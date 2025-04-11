@@ -8,9 +8,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.constants import (
-    TITLE_MAX_BYTES,
-)
+from smart_contracts.proposal.constants import TITLE_MAX_BYTES
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -39,7 +37,6 @@ def test_update_success(
 
     proposal_client.update(
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -54,7 +51,6 @@ def test_update_success(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
     )
 
     assert_account_balance(
@@ -77,7 +73,6 @@ def test_update_twice(
 
     proposal_client.update(
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -87,7 +82,6 @@ def test_update_twice(
 
     proposal_client.update(
         title="Updated Test Proposal 2",
-        cid=b"\x03" * 36,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -102,7 +96,6 @@ def test_update_twice(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal 2",
-        cid=b"\x03" * 36,
     )
 
     assert_account_balance(
@@ -127,7 +120,6 @@ def test_update_not_proposer(
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.update(
             title="Updated Test Proposal",
-            cid=b"\x02" * 36,
             transaction_parameters=TransactionParameters(
                 sender=not_proposer.address,
                 signer=not_proposer.signer,
@@ -162,7 +154,6 @@ def test_update_empty_proposal(
     ):
         proposal_client.update(
             title="Updated Test Proposal",
-            cid=b"\x01" * 36,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -197,7 +188,6 @@ def test_update_wrong_title_1(
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         proposal_client.update(
             title="",
-            cid=b"\x02" * 36,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -234,7 +224,6 @@ def test_update_wrong_title_2(
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         proposal_client.update(
             title="a" * (TITLE_MAX_BYTES + 1),
-            cid=b"\x02" * 36,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -273,7 +262,6 @@ def test_update_paused_registry_error(
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         proposal_client.update(
             title="Updated Test Proposal",
-            cid=b"\x02" * 36,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -285,7 +273,6 @@ def test_update_paused_registry_error(
 
     proposal_client.update(
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -300,7 +287,6 @@ def test_update_paused_registry_error(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         title="Updated Test Proposal",
-        cid=b"\x02" * 36,
     )
 
     assert_account_balance(

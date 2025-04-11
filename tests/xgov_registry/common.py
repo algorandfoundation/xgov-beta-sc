@@ -10,6 +10,9 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     GlobalState,
     TypedGlobalState,
 )
+from smart_contracts.proposal.constants import (
+    COMMITTEE_ID_LENGTH,
+)
 from smart_contracts.xgov_registry.config import (
     PROPOSER_BOX_MAP_PREFIX,
     REQUEST_BOX_MAP_PREFIX,
@@ -50,7 +53,7 @@ WEIGHTED_QUORUM_SMALL = 200
 WEIGHTED_QUORUM_MEDIUM = 300
 WEIGHTED_QUORUM_LARGE = 400
 
-COMMITTEE_ID = bytes(36)
+COMMITTEE_ID = bytes(COMMITTEE_ID_LENGTH)
 COMMITTEE_SIZE = 10
 COMMITTEE_VOTES = 100
 

@@ -13,7 +13,7 @@ from algopy import (
 import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
-from ..common.abi_types import Cid
+from ..common.abi_types import Bytes32
 from ..proposal import config as prop_cfg
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
@@ -66,7 +66,7 @@ class XgovRegistryMock(ARC4Contract):
             key=reg_cfg.GS_KEY_PROPOSAL_FEE,
         )
         self.committee_id = GlobalState(
-            Cid.from_bytes(mock_cfg.COMMITTEE_ID),
+            Bytes32.from_bytes(mock_cfg.COMMITTEE_ID),
             key=reg_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
@@ -312,7 +312,7 @@ class XgovRegistryMock(ARC4Contract):
         self.proposal_fee.value = proposal_fee
 
     @arc4.abimethod()
-    def set_committee_id(self, committee_id: Cid) -> None:
+    def set_committee_id(self, committee_id: Bytes32) -> None:
         """
         Set the committee ID
 
@@ -328,7 +328,7 @@ class XgovRegistryMock(ARC4Contract):
         Clear the committee ID
 
         """
-        self.committee_id.value = Cid.from_bytes(mock_cfg.COMMITTEE_ID)
+        self.committee_id.value = Bytes32.from_bytes(mock_cfg.COMMITTEE_ID)
 
     @arc4.abimethod()
     def set_committee_members(self, committee_members: UInt64) -> None:
