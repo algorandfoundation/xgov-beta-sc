@@ -190,3 +190,10 @@ def test_paused_registry_error(
 
     # We unpause the xGov Registry due to `xgov_registry_mock_client` fixture "session" scope, to avoid flaky tests.
     xgov_registry_mock_client.resume_registry()
+
+    upload_metadata(
+        proposal_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        b"ANY PAYLOAD",
+    )
