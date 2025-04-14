@@ -180,12 +180,13 @@ def test_paused_registry_error(
 
     xgov_registry_mock_client.pause_registry()
 
-    payload = b"ANY PAYLOAD"
-
     with pytest.raises(logic_error_type, match=err.PAUSED_REGISTRY):
         upload_metadata(
             proposal_client,
             proposer,
             xgov_registry_mock_client.app_id,
-            payload,
+            b"ANY PAYLOAD",
         )
+
+    # We unpause the xGov Registry due to `xgov_registry_mock_client` fixture "session" scope, to avoid flaky tests.
+    xgov_registry_mock_client.resume_registry()
