@@ -379,10 +379,12 @@ def submit_proposal(
         ),
     )
 
+    # TODO: Remove the following once the `submit` method is updated with metadata
     if metadata != b"":
         upload_metadata(
             proposal_client,
             proposer,
+            registry_app_id,
             metadata,
         )
 
@@ -390,6 +392,7 @@ def submit_proposal(
 def upload_metadata(
     proposal_client: ProposalClient,
     proposer: AddressAndSigner,
+    registry_app_id: int,
     metadata: bytes,
 ) -> None:
     composer = proposal_client.compose()
@@ -402,6 +405,7 @@ def upload_metadata(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
+                foreign_apps=[registry_app_id],
                 boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
                 note=uuid.uuid4().bytes,
             ),
