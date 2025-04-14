@@ -2,7 +2,6 @@ import base64
 import json
 
 import pytest
-from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 
@@ -35,13 +34,11 @@ def test_empty_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.upload_metadata(
-            payload=b"payload",
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                boxes=[(0, METADATA_BOX_KEY)],
-            ),
+        upload_metadata(
+            proposal_client,
+            proposer,
+            xgov_registry_mock_client.app_id,
+            b"ANY PAYLOAD",
         )
 
 
@@ -61,6 +58,7 @@ def test_upload_success_1(
     upload_metadata(
         proposal_client,
         proposer,
+        xgov_registry_mock_client.app_id,
         payload,
     )
 
@@ -88,6 +86,7 @@ def test_upload_success_2(
     upload_metadata(
         proposal_client,
         proposer,
+        xgov_registry_mock_client.app_id,
         payload,
     )
 
@@ -115,6 +114,7 @@ def test_upload_success_3(
     upload_metadata(
         proposal_client,
         proposer,
+        xgov_registry_mock_client.app_id,
         payload,
     )
 
@@ -143,6 +143,7 @@ def test_upload_not_proposer(
         upload_metadata(
             proposal_client,
             not_proposer,
+            xgov_registry_mock_client.app_id,
             b"ANY PAYLOAD",
         )
 
@@ -162,5 +163,37 @@ def test_empty_payload(
         upload_metadata(
             proposal_client,
             proposer,
+            xgov_registry_mock_client.app_id,
             b"",
         )
+
+
+def test_paused_registry_error(
+    proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+) -> None:
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    xgov_registry_mock_client.pause_registry()
+
+    with pytest.raises(logic_error_type, match=err.PAUSED_REGISTRY):
+        upload_metadata(
+            proposal_client,
+            proposer,
+            xgov_registry_mock_client.app_id,
+            b"ANY PAYLOAD",
+        )
+
+    # We unpause the xGov Registry due to `xgov_registry_mock_client` fixture "session" scope, to avoid flaky tests.
+    xgov_registry_mock_client.resume_registry()
+
+    upload_metadata(
+        proposal_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+        b"ANY PAYLOAD",
+    )

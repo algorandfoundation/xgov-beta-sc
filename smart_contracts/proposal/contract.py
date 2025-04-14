@@ -574,6 +574,7 @@ class Proposal(
 
         Raises:
             err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_EMPTY
             err.WRONG_TITLE_LENGTH: If the title length is not within the limits
@@ -607,28 +608,6 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def update(self, title: arc4.String) -> None:
-        """Update the proposal.
-
-        Args:
-            title (String): Proposal title, max TITLE_MAX_BYTES bytes
-
-        Raises:
-            err.UNAUTHORIZED: If the sender is not the proposer
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
-            err.WRONG_TITLE_LENGTH: If the title length is not within the limits
-
-        """
-
-        self.check_registry_not_paused()
-
-        self.update_check_authorization()
-
-        self.updateable_input_validation(title.native)
-
-        self.title.value = title.native
-
-    @arc4.abimethod()
     def upload_metadata(self, payload: arc4.DynamicBytes) -> None:
         """Upload the proposal metadata.
 
@@ -636,12 +615,15 @@ class Proposal(
             payload (DynamicBytes): Metadata payload
 
         Raises:
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.EMPTY_PAYLOAD: If the payload is empty
             err.WRONG_APP_ID: If a transaction in the group has a different app id
             err.WRONG_METHOD_CALL: If a transaction in the group has a different method call
         """
+
+        self.check_registry_not_paused()
 
         self.upload_metadata_check_authorization()
         self.upload_metadata_input_validation(payload)
@@ -668,6 +650,7 @@ class Proposal(
         """Drop the proposal.
 
         Raises:
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
 
@@ -693,6 +676,7 @@ class Proposal(
         """Finalize the proposal.
 
         Raises:
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the proposer
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.MISSING_METADATA: The proposal description metadata is missing
@@ -781,6 +765,7 @@ class Proposal(
             rejections (arc4.UInt64): Number of rejections
 
         Raises:
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
             err.VOTER_ALREADY_VOTED: If the voter has already voted
@@ -823,6 +808,7 @@ class Proposal(
         """Scrutinize the proposal.
 
         Raises:
+            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTING_ONGOING: If the voting period is still ongoing
