@@ -663,13 +663,8 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        self.title.value = String()
-        self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_NULL)
-        self.focus.value = UInt64(0)
-        self.funding_type.value = UInt64(enm.FUNDING_NULL)
-        self.requested_amount.value = UInt64(0)
-        self.submission_ts.value = UInt64(0)
-        self.status.value = UInt64(enm.STATUS_EMPTY)
+        self.metadata.delete()
+        self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
 
     @arc4.abimethod()
     def finalize(self) -> None:
