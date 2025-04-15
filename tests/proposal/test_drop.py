@@ -2,16 +2,19 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.error import AlgodHTTPError
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
+    assert_decommissioned_proposal_global_state,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     logic_error_type,
@@ -21,6 +24,14 @@ from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for drop on other statuses
+
+NO_COMMITTEE = {
+    "committee_id": b"",
+    "committee_members": 0,
+    "committee_votes": 0,
+    "assigned_votes": 0,
+    "voters_count": 0,
+}
 
 
 def test_drop_success(
@@ -49,13 +60,14 @@ def test_drop_success(
             signer=proposer.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_mock_client.app_id],
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
     global_state = proposal_client.get_global_state()
 
-    assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+    assert_decommissioned_proposal_global_state(
+        global_state, proposer.address, xgov_registry_mock_client.app_id, **NO_COMMITTEE
     )
 
     assert_account_balance(
@@ -67,6 +79,11 @@ def test_drop_success(
         proposer.address,
         proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
     )
+
+    with pytest.raises(AlgodHTTPError, match="box not found"):
+        algorand_client.client.algod.application_box_by_name(
+            proposal_client.app_id, METADATA_BOX_KEY.encode()
+        )
 
 
 def test_drop_twice(
@@ -95,6 +112,7 @@ def test_drop_twice(
             signer=proposer.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_mock_client.app_id],
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
@@ -108,13 +126,14 @@ def test_drop_twice(
                 suggested_params=sp,
                 note="a",
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
     global_state = proposal_client.get_global_state()
 
-    assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+    assert_decommissioned_proposal_global_state(
+        global_state, proposer.address, xgov_registry_mock_client.app_id, **NO_COMMITTEE
     )
 
     assert_account_balance(
@@ -153,6 +172,7 @@ def test_drop_empty_proposal(
                 suggested_params=sp,
                 note="a",
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -194,6 +214,7 @@ def test_drop_not_proposer(
                 suggested_params=sp,
                 note="a",
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -241,6 +262,7 @@ def test_drop_paused_registry_error(
                 signer=proposer.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -252,13 +274,14 @@ def test_drop_paused_registry_error(
             signer=proposer.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_mock_client.app_id],
+            boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
 
     global_state = proposal_client.get_global_state()
 
-    assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+    assert_decommissioned_proposal_global_state(
+        global_state, proposer.address, xgov_registry_mock_client.app_id, **NO_COMMITTEE
     )
 
     assert_account_balance(
