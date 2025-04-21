@@ -53,14 +53,14 @@ def main(action: str, contract_name: str | None = None) -> None:
                 app_spec_path = output_dir / app_spec_file_name
                 if contract.deploy:
                     logger.info(f"Deploying app {contract.name}")
-                    deploy(app_spec_path, contract.deploy)
+                    deploy(app_spec_path, contract.deploy, deployer_initial_funds=3)
         case "all":
             for contract in filtered_contracts:
                 logger.info(f"Building app at {contract.path}")
                 app_spec_path = build(artifact_path / contract.name, contract.path)
                 if contract.deploy:
                     logger.info(f"Deploying {contract.path.name}")
-                    deploy(app_spec_path, contract.deploy)
+                    deploy(app_spec_path, contract.deploy, deployer_initial_funds=3)
 
 
 if __name__ == "__main__":
