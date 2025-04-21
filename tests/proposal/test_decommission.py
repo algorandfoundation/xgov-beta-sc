@@ -17,6 +17,7 @@ from tests.proposal.common import (
     get_voter_box_key,
     logic_error_type,
     submit_proposal,
+    unassign_voters,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
 
@@ -34,7 +35,6 @@ def test_decommission_empty_proposal(
     sp.min_fee *= 2  # type: ignore
 
     proposal_client.decommission(
-        voters=[],
         transaction_parameters=TransactionParameters(
             sender=committee_publisher.address,
             signer=committee_publisher.signer,
@@ -80,7 +80,6 @@ def test_decommission_draft_proposal(
     ]
 
     proposal_client.decommission(
-        voters=[],
         transaction_parameters=TransactionParameters(
             sender=committee_publisher.address,
             signer=committee_publisher.signer,
@@ -147,7 +146,6 @@ def test_decommission_final_proposal(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
@@ -215,7 +213,6 @@ def test_decommission_voting_proposal(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
@@ -312,7 +309,6 @@ def test_decommission_approved_proposal(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
@@ -419,7 +415,6 @@ def test_decommission_reviewed_proposal(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
@@ -498,9 +493,16 @@ def test_decommission_success_rejected_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
-    decommission_proposal(
+    unassign_voters(
         proposal_client,
         committee_members,
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+
+    decommission_proposal(
+        proposal_client,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
@@ -613,9 +615,16 @@ def test_decommission_success_blocked_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
-    decommission_proposal(
+    unassign_voters(
         proposal_client,
         committee_members,
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+
+    decommission_proposal(
+        proposal_client,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
@@ -741,9 +750,16 @@ def test_decommission_success_funded_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
-    decommission_proposal(
+    unassign_voters(
         proposal_client,
         committee_members,
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+
+    decommission_proposal(
+        proposal_client,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
@@ -829,7 +845,6 @@ def test_decommission_too_early(
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
@@ -910,7 +925,6 @@ def test_decommission_not_publisher(
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.decommission(
-            voters=[],
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,

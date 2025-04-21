@@ -896,11 +896,11 @@ class Proposal(
         return typ.Error("")
 
     @arc4.abimethod()
-    def decommission(self, voters: arc4.DynamicArray[arc4.Address]) -> None:
-        """Decommission the proposal.
+    def unassign_voters(self, voters: arc4.DynamicArray[arc4.Address]) -> None:
+        """Unassign voters from the proposal.
 
         Args:
-            voters: List of voters to be removed
+            voters: List of voters to be unassigned
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the committee publisher
@@ -914,25 +914,41 @@ class Proposal(
         # remove voters
         for voter in voters:
             if voter.native in self.voters:
+                self.voters_count -= 1
+                self.assigned_votes -= self.voters[voter.native].votes.native
                 del self.voters[voter.native]
+
+    @arc4.abimethod()
+    def decommission(self) -> None:
+        """Decommission the proposal.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.TOO_EARLY: If the proposal is still in the cool down period
+
+        """
+        self.decommission_check_authorization()
+
+        # check no assigned voters
+        assert self.voters_count == UInt64(0), err.VOTERS_ASSIGNED
 
         # delete metadata box if it exists
         self.metadata.delete()
 
-        # if all voters are removed, refund the treasury and decommission the proposal
-        if Global.current_application_address.total_boxes == UInt64(0):
-            # refund the locked amount to the proposer
-            # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
-            if self.status.value == enm.STATUS_DRAFT:
-                self.transfer_locked_amount(
-                    receiver=self.proposer.value,
-                )
-            reg_app = Application(self.registry_app_id.value)
-            self.pay(
-                receiver=reg_app.address,
-                amount=Global.current_application_address.balance,
+        # refund the locked amount to the proposer
+        # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
+        if self.status.value == enm.STATUS_DRAFT:
+            self.transfer_locked_amount(
+                receiver=self.proposer.value,
             )
-            self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+        reg_app = Application(self.registry_app_id.value)
+        self.pay(
+            receiver=reg_app.address,
+            amount=Global.current_application_address.balance,
+        )
+        self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
 
     @arc4.abimethod(allow_actions=("DeleteApplication",))
     def delete(self) -> typ.Error:

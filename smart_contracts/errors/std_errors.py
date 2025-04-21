@@ -64,6 +64,7 @@ VOTING_ONGOING = "Voting Ongoing"
 VOTER_NOT_FOUND = "Voter not found"
 VOTER_ALREADY_VOTED = "Voter already voted"
 VOTES_EXCEEDED = "Votes exceeded"
+VOTERS_ASSIGNED = "There are voters assigned to this proposal"
 
 EMPTY_PAYLOAD = "Empty payload"
 WRONG_APP_ID = "Wrong App ID"
