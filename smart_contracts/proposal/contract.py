@@ -939,6 +939,7 @@ class Proposal(
 
         # refund the locked amount for DRAFT proposals
         # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
+        # for EMPTY, FUNDED, or BLOCKED proposals, the locked amount is not refundable
         if self.status.value == enm.STATUS_DRAFT:
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
