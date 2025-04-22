@@ -937,7 +937,7 @@ class Proposal(
         # delete metadata box if it exists
         self.metadata.delete()
 
-        # refund the locked amount to the proposer
+        # refund the locked amount for DRAFT proposals
         # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
         if self.status.value == enm.STATUS_DRAFT:
             self.transfer_locked_amount(
