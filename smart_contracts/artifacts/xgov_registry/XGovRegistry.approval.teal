@@ -11,13 +11,13 @@ main:
     // # Preconditions
     // assert Txn.global_num_byte_slice == cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
     txn GlobalNumByteSlice
-    intc_2 // 8
+    pushint 28 // 28
     ==
     assert // Wrong Global Bytes allocation
     // smart_contracts/xgov_registry/contract.py:43
     // assert Txn.global_num_uint == cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    pushint 33 // 33
+    pushint 36 // 36
     ==
     assert // Wrong Global UInts allocation
     // smart_contracts/xgov_registry/contract.py:44
