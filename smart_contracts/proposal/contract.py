@@ -164,6 +164,15 @@ class Proposal(
         return typ.Error("")
 
     @subroutine
+    def unassign_voters_check_authorization(self) -> None:
+        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert (
+            self.status.value == enm.STATUS_FUNDED
+            or self.status.value == enm.STATUS_BLOCKED
+            or self.status.value == enm.STATUS_REJECTED
+        ), err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
     def decommission_check_authorization(self) -> None:
         assert self.is_committee_publisher(), err.UNAUTHORIZED
         assert (
@@ -906,10 +915,9 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the committee publisher
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.TOO_EARLY: If the proposal is still in the cool down period
 
         """
-        self.decommission_check_authorization()
+        self.unassign_voters_check_authorization()
 
         # remove voters
         for voter in voters:
