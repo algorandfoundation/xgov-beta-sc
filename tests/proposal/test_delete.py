@@ -14,6 +14,7 @@ from tests.proposal.common import (
     get_voter_box_key,
     logic_error_type,
     submit_proposal,
+    unassign_voters,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
 
@@ -734,9 +735,16 @@ def test_delete_success(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
-    decommission_proposal(
+    unassign_voters(
         proposal_client,
         committee_members,
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+
+    decommission_proposal(
+        proposal_client,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
@@ -822,9 +830,16 @@ def test_delete_not_registry(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
-    decommission_proposal(
+    unassign_voters(
         proposal_client,
         committee_members,
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+
+    decommission_proposal(
+        proposal_client,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,

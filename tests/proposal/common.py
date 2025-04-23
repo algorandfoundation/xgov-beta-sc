@@ -172,7 +172,6 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
         STATUS_DECOMMISSIONED: {
             "status": STATUS_DECOMMISSIONED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
     }.get(status, {})
@@ -414,7 +413,7 @@ def upload_metadata(
     composer.execute()
 
 
-def decommission_proposal(
+def unassign_voters(
     proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     committee_publisher: AddressAndSigner,
@@ -423,7 +422,7 @@ def decommission_proposal(
     bulks: int = 6,
 ) -> None:
     for i in range(1 + len(committee_members) // bulks):
-        proposal_client.decommission(
+        proposal_client.unassign_voters(
             voters=[
                 cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
             ],
@@ -437,13 +436,29 @@ def decommission_proposal(
                         get_voter_box_key(cm.address),
                     )
                     for cm in committee_members[i * bulks : (i + 1) * bulks]
-                ]
-                + [
-                    (
-                        0,
-                        METADATA_BOX_KEY,
-                    )
                 ],
                 suggested_params=sp,
             ),
         )
+
+
+def decommission_proposal(
+    proposal_client: ProposalClient,
+    committee_publisher: AddressAndSigner,
+    sp: SuggestedParams,
+    xgov_registry_app_id: int,
+) -> None:
+    proposal_client.decommission(
+        transaction_parameters=TransactionParameters(
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
+            foreign_apps=[xgov_registry_app_id],
+            boxes=[
+                (
+                    0,
+                    METADATA_BOX_KEY.encode(),
+                )
+            ],
+            suggested_params=sp,
+        ),
+    )
