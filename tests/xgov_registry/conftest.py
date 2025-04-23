@@ -572,7 +572,9 @@ def voting_proposal_client(
         ),
     )
 
-    upload_metadata(proposal_client, proposer, xgov_registry_client.app_id, b"METADATA")
+    composer = proposal_client.compose()
+    upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
+    composer.execute()
 
     reg_gs = xgov_registry_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
@@ -696,7 +698,9 @@ def voting_proposal_client_requested_too_much(
         ),
     )
 
-    upload_metadata(proposal_client, proposer, xgov_registry_client.app_id, b"METADATA")
+    composer = proposal_client.compose()
+    upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
+    composer.execute()
 
     reg_gs = xgov_registry_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_xlarge

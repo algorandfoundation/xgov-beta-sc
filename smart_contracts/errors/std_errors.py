@@ -67,7 +67,6 @@ VOTES_EXCEEDED = "Votes exceeded"
 VOTERS_ASSIGNED = "There are voters assigned to this proposal"
 
 EMPTY_PAYLOAD = "Empty payload"
-WRONG_APP_ID = "Wrong App ID"
-WRONG_METHOD_CALL = "Wrong Method Call"
+
 PAUSED_REGISTRY = "Registry's non-admin methods are paused"
 PAUSED_PROPOSALS = "Creation of proposals is paused"

@@ -17,9 +17,8 @@ from algopy import (
     gtxn,
     itxn,
     subroutine,
-    urange,
 )
-from algopy.op import AppGlobal, GTxn
+from algopy.op import AppGlobal
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
@@ -382,24 +381,6 @@ class Proposal(
         assert payload.length > 0, err.EMPTY_PAYLOAD
 
     @subroutine
-    def assert_same_app_and_method(self, group_index: UInt64) -> None:
-        assert (
-            GTxn.application_id(group_index) == Global.current_application_id
-        ), err.WRONG_APP_ID
-        assert GTxn.application_args(group_index, 0) == Txn.application_args(
-            0
-        ), err.WRONG_METHOD_CALL
-
-    @subroutine
-    def updateable_input_validation(self, title: String) -> None:
-        assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
-        assert title != "", err.WRONG_TITLE_LENGTH
-
-    @subroutine
-    def update_check_authorization(self) -> None:
-        self.assert_draft_and_proposer()
-
-    @subroutine
     def submit_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_EMPTY, err.WRONG_PROPOSAL_STATUS
@@ -411,7 +392,9 @@ class Proposal(
         funding_type: UInt64,
         requested_amount: UInt64,
     ) -> None:
-        self.updateable_input_validation(title)
+
+        assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
+        assert title != "", err.WRONG_TITLE_LENGTH
 
         assert (
             funding_type == enm.FUNDING_PROACTIVE
@@ -617,19 +600,20 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
-    def upload_metadata(self, payload: arc4.DynamicBytes) -> None:
+    def upload_metadata(
+        self, payload: arc4.DynamicBytes, is_first_in_group: bool  # noqa: FBT001
+    ) -> None:
         """Upload the proposal metadata.
 
         Args:
             payload (DynamicBytes): Metadata payload
+            is_first_in_group (bool): True if this is the first upload call in a group transaction
 
         Raises:
             err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the proposer
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.EMPTY_PAYLOAD: If the payload is empty
-            err.WRONG_APP_ID: If a transaction in the group has a different app id
-            err.WRONG_METHOD_CALL: If a transaction in the group has a different method call
         """
 
         self.check_registry_not_paused()
@@ -637,18 +621,11 @@ class Proposal(
         self.upload_metadata_check_authorization()
         self.upload_metadata_input_validation(payload)
 
-        if Txn.group_index == 0:
-            # Check that the entire group calls the same app and method
-            for i in urange(1, Global.group_size):
-                self.assert_same_app_and_method(i)
-
-            # write the metadata to the box
+        if is_first_in_group:
+            # clear and write the metadata to the box
             self.metadata.delete()
             self.metadata.put(payload.native)
         else:
-            # Check that the first transaction in the group calls the same app and method
-            self.assert_same_app_and_method(UInt64(0))
-
             # append the metadata to the box
             old_size = self.metadata.length
             self.metadata.resize(self.metadata.length + payload.length)
