@@ -42,7 +42,7 @@ from tests.common import (
     get_voter_box_key,
 )
 
-MAX_UPLOAD_PAYLOAD_SIZE = 2041
+MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 
@@ -381,7 +381,6 @@ def submit_proposal(
         ),
     )
 
-    # TODO: Remove the following once the `submit` method is updated with metadata
     if metadata != b"":
         upload_metadata(
             composer,

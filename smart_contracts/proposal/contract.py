@@ -601,7 +601,7 @@ class Proposal(
 
     @arc4.abimethod()
     def upload_metadata(
-        self, payload: arc4.DynamicBytes, is_first_in_group: bool  # noqa: FBT001
+        self, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool
     ) -> None:
         """Upload the proposal metadata.
 
