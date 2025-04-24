@@ -147,7 +147,9 @@ class XGovRegistry(
 
         # boxes
         self.xgov_box = BoxMap(
-            Account, arc4.Address, key_prefix=cfg.XGOV_BOX_MAP_PREFIX
+            Account,
+            typ.XGovBoxValue,
+            key_prefix=cfg.XGOV_BOX_MAP_PREFIX,
         )
 
         self.request_box = BoxMap(
@@ -439,7 +441,11 @@ class XGovRegistry(
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create box
-        self.xgov_box[Txn.sender] = voting_address
+        self.xgov_box[Txn.sender] = typ.XGovBoxValue(
+            voting_address=voting_address,
+            voted_proposals=arc4.UInt64(0),
+            last_vote_timestamp=arc4.UInt64(0),
+        )
         self.xgovs.value += 1
 
     @arc4.abimethod()
@@ -459,7 +465,7 @@ class XGovRegistry(
         # ensure the provided address is an xGov
         assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
         # get the voting address
-        voting_address = self.xgov_box[xgov_address.native].native
+        voting_address = self.xgov_box[xgov_address.native].voting_address.native
         # ensure the sender is the xGov or the voting address
         assert (
             xgov_address.native == Txn.sender or voting_address == Txn.sender
@@ -502,7 +508,11 @@ class XGovRegistry(
         # check payment
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
-        self.xgov_box[app_address] = voting_address
+        self.xgov_box[app_address] = typ.XGovBoxValue(
+            voting_address=voting_address,
+            voted_proposals=arc4.UInt64(0),
+            last_vote_timestamp=arc4.UInt64(0),
+        )
         self.xgovs.value += 1
 
     @arc4.abimethod()
@@ -525,7 +535,7 @@ class XGovRegistry(
         # ensure the provided app is an xGov
         assert app_address in self.xgov_box, err.UNAUTHORIZED
         # get the voting address
-        voting_address = self.xgov_box[app_address].native
+        voting_address = self.xgov_box[app_address].voting_address.native
         # ensure the sender is the app creator or the voting address
         assert (
             app_creator == Txn.sender or voting_address == Txn.sender
@@ -593,7 +603,11 @@ class XGovRegistry(
         # get the request
         request = self.request_box[request_id.native].copy()
         # create the xGov
-        self.xgov_box[request.xgov_addr.native] = request.owner_addr
+        self.xgov_box[request.xgov_addr.native] = typ.XGovBoxValue(
+            voting_address=request.owner_addr,
+            voted_proposals=arc4.UInt64(0),
+            last_vote_timestamp=arc4.UInt64(0),
+        )
         self.xgovs.value += 1
         # delete the request
         del self.request_box[request_id.native]
@@ -633,16 +647,17 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # Check if the sender is an xGov member
-        old_voting_address, exists = self.xgov_box.maybe(xgov_address.native)
+        exists = xgov_address.native in self.xgov_box
         assert exists, err.UNAUTHORIZED
+        xgov_box = self.xgov_box[xgov_address.native].copy()
 
         # Check that the sender is either the xGov or the voting address
         assert (
-            Txn.sender == old_voting_address or Txn.sender == xgov_address
+            Txn.sender == xgov_box.voting_address.native or Txn.sender == xgov_address
         ), err.UNAUTHORIZED
 
         # Update the voting account in the xGov box
-        self.xgov_box[xgov_address.native] = voting_address
+        self.xgov_box[xgov_address.native].voting_address = voting_address
 
     @arc4.abimethod()
     def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
@@ -816,11 +831,18 @@ class XGovRegistry(
         assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
 
         # make sure they're voting on behalf of an xGov
-        voting_address, exists = self.xgov_box.maybe(xgov_address.native)
+        exists = xgov_address.native in self.xgov_box
         assert exists, err.UNAUTHORIZED
+        xgov_box = self.xgov_box[xgov_address.native].copy()
+        self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
+            xgov_box.voted_proposals.native + UInt64(1)
+        )
+        self.xgov_box[xgov_address.native].last_vote_timestamp = arc4.UInt64(
+            Global.latest_timestamp
+        )
 
         # Verify the caller is using their voting address
-        assert Txn.sender == voting_address.native, err.MUST_BE_VOTING_ADDRESS
+        assert Txn.sender == xgov_box.voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
         arc4.abi_call(

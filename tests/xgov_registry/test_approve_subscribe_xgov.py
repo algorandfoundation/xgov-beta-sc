@@ -52,8 +52,8 @@ def test_approve_subscribe_xgov_success(
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("address")
-    voting_address = box_abi.decode(box_value)  # type: ignore
+    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
+    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
 
     assert deployer.address == voting_address  # type: ignore
 
