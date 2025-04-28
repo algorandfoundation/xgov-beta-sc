@@ -61,3 +61,9 @@ class ProposerBoxValue(arc4.Struct):
     active_proposal: arc4.Bool
     kyc_status: arc4.Bool
     kyc_expiring: arc4.UInt64
+
+
+class XGovBoxValue(arc4.Struct):
+    voting_address: arc4.Address
+    voted_proposals: arc4.UInt64
+    last_vote_timestamp: arc4.UInt64

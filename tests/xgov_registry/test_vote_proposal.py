@@ -1,7 +1,10 @@
+import base64
+
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk import abi
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -48,6 +51,18 @@ def test_vote_proposal_success(
             accounts=[committee_members[0].address],
         ),
     )
+
+    box_info = xgov_registry_client.algod_client.application_box_by_name(
+        application_id=xgov_registry_client.app_id,
+        box_name=xgov_box_name(committee_members[0].address),
+    )
+
+    box_value = base64.b64decode(box_info["value"])  # type: ignore
+    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
+    _, voted_proposals, last_vote_timestamp = box_abi.decode(box_value)  # type: ignore
+
+    assert voted_proposals == 1  # type: ignore
+    assert last_vote_timestamp > 0  # type: ignore
 
 
 def test_vote_proposal_not_in_voting_phase(
