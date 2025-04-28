@@ -1275,7 +1275,7 @@ upload_metadata:
     // smart_contracts/proposal/contract.py:602-605
     // @arc4.abimethod()
     // def upload_metadata(
-    //     self, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool  # noqa: FBT001
+    //     self, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool
     // ) -> None:
     proto 2 0
     // smart_contracts/proposal/contract.py:619
