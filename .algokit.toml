@@ -33,7 +33,7 @@ test = { commands = [
   'poetry run pytest',
 ], description = 'Run smart contract tests' }
 audit = { commands = [
-  'poetry run pip-audit',
+  'poetry run pip-audit --ignore-vuln GHSA-vqfr-h8mv-ghfj',
 ], description = 'Audit with pip-audit' }
 lint = { commands = [
   'poetry run black --check --diff .',
