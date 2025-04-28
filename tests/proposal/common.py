@@ -9,6 +9,7 @@ from algosdk.encoding import encode_address
 from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
+    Composer,
     GlobalState,
     ProposalClient,
 )
@@ -41,7 +42,7 @@ from tests.common import (
     get_voter_box_key,
 )
 
-MAX_UPLOAD_PAYLOAD_SIZE = 2042
+MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
 
@@ -356,7 +357,9 @@ def submit_proposal(
     if payment_receiver == "":
         payment_receiver = proposal_client.app_address
 
-    proposal_client.submit(
+    composer = proposal_client.compose()
+
+    composer.submit(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -378,29 +381,30 @@ def submit_proposal(
         ),
     )
 
-    # TODO: Remove the following once the `submit` method is updated with metadata
     if metadata != b"":
         upload_metadata(
-            proposal_client,
+            composer,
             proposer,
             registry_app_id,
             metadata,
         )
 
+    composer.execute()
+
 
 def upload_metadata(
-    proposal_client: ProposalClient,
+    proposal_client_composer: Composer,
     proposer: AddressAndSigner,
     registry_app_id: int,
     metadata: bytes,
 ) -> None:
-    composer = proposal_client.compose()
 
     for i in range((len(metadata) // MAX_UPLOAD_PAYLOAD_SIZE) + 1):
-        composer.upload_metadata(
+        proposal_client_composer.upload_metadata(
             payload=metadata[
                 i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
             ],
+            is_first_in_group=i == 0,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -409,8 +413,6 @@ def upload_metadata(
                 note=uuid.uuid4().bytes,
             ),
         )
-
-    composer.execute()
 
 
 def unassign_voters(
