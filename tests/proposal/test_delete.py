@@ -683,7 +683,7 @@ def test_delete_success(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
@@ -744,10 +744,10 @@ def test_delete_success(
     )
 
     decommission_proposal(
-        proposal_client,
+        xgov_registry_mock_client,
+        proposal_client.app_id,
         committee_publisher,
         sp,
-        xgov_registry_mock_client.app_id,
     )
 
     xgov_registry_mock_client.delete_proposal(
@@ -778,7 +778,7 @@ def test_delete_not_registry(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
@@ -839,10 +839,10 @@ def test_delete_not_registry(
     )
 
     decommission_proposal(
-        proposal_client,
+        xgov_registry_mock_client,
+        proposal_client.app_id,
         committee_publisher,
         sp,
-        xgov_registry_mock_client.app_id,
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):

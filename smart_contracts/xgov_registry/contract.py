@@ -8,6 +8,7 @@ from algopy import (
     Global,
     GlobalState,
     StateTotals,
+    String,
     Txn,
     UInt64,
     arc4,
@@ -904,9 +905,56 @@ class XGovRegistry(
 
         arc4.abi_call(proposal_contract.Proposal.fund, app_id=proposal_id.native)
 
+    @arc4.abimethod()
+    def decommission_proposal(self, proposal_id: arc4.UInt64) -> None:
+        """
+        Decommissions a Proposal.
+
+        Args:
+            proposal_id (arc4.UInt64): The application ID of the Proposal app to decommission
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.TOO_EARLY: If the proposal is still in the cool down period
+            err.VOTERS_ASSIGNED: If there are still assigned voters
+
+        """
+
+        assert (
+            arc4.Address(Txn.sender) == self.committee_publisher.value
+        ), err.UNAUTHORIZED
+
+        # Verify proposal_id is a genuine proposal created by this registry
+        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+
+        error, tx = arc4.abi_call(
+            proposal_contract.Proposal.decommission, app_id=proposal_id.native
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.MISSING_CONFIG:
+                    assert False, err.MISSING_CONFIG  # noqa
+                case err.TOO_EARLY:
+                    assert False, err.TOO_EARLY  # noqa
+                case err.VOTERS_ASSIGNED:
+                    assert False, err.VOTERS_ASSIGNED  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+
         # Decrement pending proposals count
-        # TODO: might happen on decommission as well
         self.pending_proposals.value -= 1
+
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
+            proposal_id.native, pcfg.GS_KEY_PROPOSER
+        )
+        proposer = arc4.Address(proposer_bytes)
 
         # Update proposer's active proposal status
         self.proposer_box[proposer.native].active_proposal = arc4.Bool(
