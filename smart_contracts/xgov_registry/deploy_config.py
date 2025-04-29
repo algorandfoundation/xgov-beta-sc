@@ -1,4 +1,5 @@
 import logging
+import os
 
 import algokit_utils
 from algosdk.v2client.algod import AlgodClient
@@ -34,3 +35,12 @@ def deploy(
         create_args=DeployCreate(args=CreateArgs(), extra_pages=3),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
     )
+
+    test_admin = os.environ["TEST_ADMIN"]
+    logger.info(f"Setting administrative roles to {test_admin}")
+    app_client.set_committee_manager(manager=test_admin)
+    app_client.set_committee_publisher(publisher=test_admin)
+    app_client.set_xgov_reviewer(reviewer=test_admin)
+    app_client.set_xgov_subscriber(subscriber=test_admin)
+    app_client.set_payor(payor=test_admin)
+    app_client.set_kyc_provider(provider=test_admin)

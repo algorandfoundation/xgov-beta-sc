@@ -14,6 +14,7 @@ from algokit_utils import (
     get_account,
     get_algod_client,
     get_indexer_client,
+    is_localnet,
 )
 from algosdk.transaction import PaymentTxn
 from algosdk.util import algos_to_microalgos
@@ -57,24 +58,27 @@ def deploy(
     deploy_callback(algod_client, indexer_client, app_spec, deployer)
 
     # upload app spec to ipfs
-    logger.info("Uploading AppSpec on IPFS")
-    jwt = ipfs.get_pinata_jwt().strip()
-    app_spec_cid = ipfs.upload_to_pinata(app_spec_path, jwt, app_spec.contract.name)
-    app_spec_url = ipfs.GATEWAY + app_spec_cid
-    logger.info(f"{app_spec.contract.name} AppSpec URL: {app_spec_url}")
+    if not is_localnet(algod_client):
+        logger.info("Uploading AppSpec on IPFS")
+        jwt = ipfs.get_pinata_jwt().strip()
+        app_spec_cid = ipfs.upload_to_pinata(app_spec_path, jwt, app_spec.contract.name)
+        app_spec_url = ipfs.GATEWAY + app_spec_cid
+        logger.info(f"{app_spec.contract.name} AppSpec URL: {app_spec_url}")
 
-    arc2_data: dict[str, str] = {
-        "app-spec-cid": app_spec_cid,
-        "app-spec-url": app_spec_url,
-    }
-    arc2_note = f"{app_spec.contract.name}:j" + json.dumps(arc2_data)
-    app_spec_txn = PaymentTxn(
-        sender=deployer.address,
-        sp=algod_client.suggested_params(),
-        receiver=deployer.address,
-        amt=0,
-        note=arc2_note.encode(),
-    )
-    logger.info(f"Notarizing AppSpec CID on {app_spec_txn.genesis_id}")
-    algod_client.send_transaction(app_spec_txn.sign(deployer.signer.private_key))
-    logger.info(f"{app_spec.contract.name} AppSpec TxnID: {app_spec_txn.get_txid()}")
+        arc2_data: dict[str, str] = {
+            "app-spec-cid": app_spec_cid,
+            "app-spec-url": app_spec_url,
+        }
+        arc2_note = f"{app_spec.contract.name}:j" + json.dumps(arc2_data)
+        app_spec_txn = PaymentTxn(
+            sender=deployer.address,
+            sp=algod_client.suggested_params(),
+            receiver=deployer.address,
+            amt=0,
+            note=arc2_note.encode(),
+        )
+        logger.info(f"Notarizing AppSpec CID on {app_spec_txn.genesis_id}")
+        algod_client.send_transaction(app_spec_txn.sign(deployer.signer.private_key))
+        logger.info(
+            f"{app_spec.contract.name} AppSpec TxnID: {app_spec_txn.get_txid()}"
+        )
