@@ -25,8 +25,18 @@ def test_pay_grant_proposal_success(
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
 ) -> None:
+
+    approved_proposal_client.review(
+        block=False,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp.min_fee *= 4  # type: ignore
 
     proposal_global_state = approved_proposal_client.get_global_state()
 
@@ -146,6 +156,16 @@ def test_pay_grant_proposal_invalid_kyc(
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
 ) -> None:
+
+    approved_proposal_client.review(
+        block=False,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
@@ -185,6 +205,16 @@ def test_pay_grant_proposal_expired_kyc(
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
 ) -> None:
+
+    approved_proposal_client.review(
+        block=False,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
@@ -224,6 +254,16 @@ def test_pay_grant_proposal_insufficient_funds(
     proposer: AddressAndSigner,
     approved_proposal_client_requested_too_much: ProposalClient,
 ) -> None:
+
+    approved_proposal_client_requested_too_much.review(
+        block=False,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
 
