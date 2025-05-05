@@ -11,6 +11,7 @@ from algokit_utils.beta.composer import PayParams
 from algokit_utils.config import config
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.encoding import encode_address
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -156,6 +157,13 @@ def xgov_registry_client(
 
     client.set_committee_publisher(
         publisher=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_reviewer(
+        reviewer=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
@@ -858,8 +866,8 @@ def approved_proposal_client_requested_too_much(
 
     voting_proposal_client_requested_too_much.scrutiny(
         transaction_parameters=TransactionParameters(
-            sender=committee_member.address,
-            signer=committee_member.signer,
+            sender=committee_members[0].address,
+            signer=committee_members[0].signer,
             foreign_apps=[
                 xgov_registry_client.app_id,
                 voting_proposal_client_requested_too_much.app_id,
@@ -875,6 +883,84 @@ def approved_proposal_client_requested_too_much(
     )
 
     return voting_proposal_client_requested_too_much
+
+
+@pytest.fixture(scope="function")
+def funded_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    approved_proposal_client: ProposalClient,
+    deployer: AddressAndSigner,
+) -> ProposalClient:
+
+    approved_proposal_client.review(
+        block=False,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 4  # type: ignore
+
+    proposer_address: str = encode_address(approved_proposal_client.get_global_state().proposer.as_bytes)  # type: ignore
+
+    xgov_registry_client.pay_grant_proposal(
+        proposal_id=approved_proposal_client.app_id,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            foreign_apps=[approved_proposal_client.app_id],
+            accounts=[proposer_address],
+            boxes=[
+                (
+                    0,
+                    proposer_box_name(proposer_address),
+                )
+            ],
+            suggested_params=sp,
+        ),
+    )
+
+    return approved_proposal_client
+
+
+@pytest.fixture(scope="function")
+def funded_unassigned_voters_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
+    funded_proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+    deployer: AddressAndSigner,
+) -> ProposalClient:
+
+    cooldown_duration = xgov_registry_client.get_global_state().cool_down_duration
+    cooldown_start_ts = funded_proposal_client.get_global_state().cool_down_start_ts
+    time_warp(cooldown_start_ts + cooldown_duration)
+
+    bulks = 6
+
+    for i in range(1 + len(committee_members) // bulks):
+        funded_proposal_client.unassign_voters(
+            voters=[
+                cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+                foreign_apps=[xgov_registry_client.app_id],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(cm.address),
+                    )
+                    for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
+            ),
+        )
+
+    return funded_proposal_client
 
 
 @pytest.fixture(scope="function")

@@ -125,7 +125,7 @@ def test_pay_grant_proposal_not_approved(
     sp.min_fee *= 3  # type: ignore
 
     # payout
-    with pytest.raises(LogicErrorType, match=err.PROPOSAL_IS_NOT_APPROVED):
+    with pytest.raises(LogicErrorType, match=err.PROPOSAL_WAS_NOT_REVIEWED):
         xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_client.app_id,
             transaction_parameters=TransactionParameters(

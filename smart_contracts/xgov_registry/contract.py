@@ -888,9 +888,8 @@ class XGovRegistry(
         requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
             proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
         )
-        # Verify the proposal is in the approved state
-        # TODO: Switch to STATUS_MILESTONE
-        assert status == UInt64(penm.STATUS_APPROVED), err.PROPOSAL_IS_NOT_APPROVED
+        # Verify the proposal is in the reviewed state
+        assert status == UInt64(penm.STATUS_REVIEWED), err.PROPOSAL_WAS_NOT_REVIEWED
 
         assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
 
