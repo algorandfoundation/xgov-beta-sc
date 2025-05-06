@@ -1,6 +1,7 @@
 name: Release xgov-beta-sc
 
 on:
+  workflow_dispatch:
   workflow_call:
   push:
     branches:
@@ -49,3 +50,16 @@ jobs:
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # Pinata API JWT to publish deployed App Spec on IPFS
           ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
+          # Registry configuration
+          XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE }}
+          XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE }}
+          XGOV_CFG_PROPOSAL_FEE: ${{ vars.PROPOSAL_FEE }}
+          XGOV_CFG_PROPOSAL_PUBLISHING_BPS: ${{ vars.PROPOSAL_PUBLISHING_BPS }}
+          XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.PROPOSAL_COMMITMENT_BPS }}
+          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT }}
+          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT }}
+          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION }}
+          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION }}
+          XGOV_CFG_COOL_DOWN_DURATION: ${{ vars.COOL_DOWN_DURATION }}
+          XGOV_CFG_QUORUM: ${{ vars.QUORUM }}
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM }}
