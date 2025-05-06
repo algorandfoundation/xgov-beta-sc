@@ -21,6 +21,7 @@ def deploy(
         DeployCreate,
         UpdateXgovRegistryArgs,
         XGovRegistryClient,
+        XGovRegistryConfig,
     )
 
     app_client = XGovRegistryClient(
@@ -46,3 +47,29 @@ def deploy(
     admin_roles.set_payor(payor=test_admin)
     admin_roles.set_kyc_provider(provider=test_admin)
     admin_roles.execute()
+
+    logger.info("Configuring xGov registry")
+    config = XGovRegistryConfig(
+        xgov_fee=int(os.environ["XGOV_CFG_XGOV_FEE"]),
+        proposer_fee=int(os.environ["XGOV_CFG_PROPOSER_FEE"]),
+        proposal_fee=int(os.environ["XGOV_CFG_PROPOSAL_FEE"]),
+        proposal_publishing_bps=int(os.environ["XGOV_CFG_PROPOSAL_PUBLISHING_BPS"]),
+        proposal_commitment_bps=int(os.environ["XGOV_CFG_PROPOSAL_COMMITMENT_BPS"]),
+        min_requested_amount=int(os.environ["XGOV_CFG_MIN_REQUESTED_AMOUNT"]),
+        max_requested_amount=[
+            int(num) for num in os.environ["XGOV_CFG_MAX_REQUESTED_AMOUNT"].split(",")
+        ],
+        discussion_duration=[
+            int(num) for num in os.environ["XGOV_CFG_DISCUSSION_DURATION"].split(",")
+        ],
+        voting_duration=[
+            int(num) for num in os.environ["XGOV_CFG_VOTING_DURATION"].split(",")
+        ],
+        cool_down_duration=int(os.environ["XGOV_CFG_COOL_DOWN_DURATION"]),
+        stale_proposal_duration=0,  # TODO remove
+        quorum=[int(num) for num in os.environ["XGOV_CFG_QUORUM"].split(",")],
+        weighted_quorum=[
+            int(num) for num in os.environ["XGOV_CFG_WEIGHTED_QUORUM"].split(",")
+        ],
+    )
+    app_client.config_xgov_registry(config=config)
