@@ -515,6 +515,45 @@ def proposal_client(
 
 
 @pytest.fixture(scope="function")
+def draft_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    proposal_client: ProposalClient,
+) -> ProposalClient:
+
+    requested_amount = 10_000_000
+
+    proposal_client.submit(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=get_locked_amount(requested_amount),
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        title=PROPOSAL_TITLE,
+        funding_type=enm.FUNDING_RETROACTIVE,
+        requested_amount=requested_amount,
+        focus=DEFAULT_FOCUS,
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_client.app_id],
+        ),
+    )
+
+    composer = proposal_client.compose()
+    upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
+    composer.execute()
+
+    return proposal_client
+
+
+@pytest.fixture(scope="function")
 def voting_proposal_client(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,

@@ -961,6 +961,50 @@ class XGovRegistry(
         )
 
     @arc4.abimethod()
+    def drop_proposal(self, proposal_id: arc4.UInt64) -> None:
+        """
+        Drops a Proposal.
+
+        Args:
+            proposal_id (arc4.UInt64): The application ID of the Proposal app to drop
+
+        Raises:
+            err.PAUSED_REGISTRY: If the registry is paused
+            err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
+            err.UNAUTHORIZED: If the sender is not the proposer
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
+        """
+
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+
+        # Verify proposal_id is a genuine proposal created by this registry
+        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
+            proposal_id.native, pcfg.GS_KEY_PROPOSER
+        )
+        proposer = Account(proposer_bytes)
+
+        assert Txn.sender == proposer, err.UNAUTHORIZED
+
+        error, tx = arc4.abi_call(
+            proposal_contract.Proposal.drop, app_id=proposal_id.native
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+
+        # Decrement pending proposals count
+        self.pending_proposals.value -= 1
+        # Update proposer's active proposal status
+        self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
+
+    @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
         """
         Deposits xGov program funds into the xGov Treasury (xGov Registry Account).

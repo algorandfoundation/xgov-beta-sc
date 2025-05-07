@@ -376,8 +376,11 @@ class Proposal(
         assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
 
     @subroutine
-    def drop_check_authorization(self) -> None:
-        self.assert_draft_and_proposer()
+    def drop_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+        if self.status.value != enm.STATUS_DRAFT:
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+        return typ.Error("")
 
     @subroutine
     def upload_metadata_check_authorization(self) -> None:
@@ -639,18 +642,18 @@ class Proposal(
             self.metadata.replace(old_size, payload.native)
 
     @arc4.abimethod()
-    def drop(self) -> None:
-        """Drop the proposal.
+    def drop(self) -> typ.Error:
+        """Drop the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Raises:
-            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
-            err.UNAUTHORIZED: If the sender is not the proposer
+            err.UNAUTHORIZED: If the sender is not the registry contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
 
         """
-        self.check_registry_not_paused()
 
-        self.drop_check_authorization()
+        error = self.drop_check_authorization()
+        if error != typ.Error(""):
+            return error
 
         self.transfer_locked_amount(
             receiver=self.proposer.value,
@@ -658,6 +661,8 @@ class Proposal(
 
         self.metadata.delete()
         self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+
+        return typ.Error("")
 
     @arc4.abimethod()
     def finalize(self) -> None:
@@ -753,7 +758,6 @@ class Proposal(
             rejections (arc4.UInt64): Number of rejections
 
         Raises:
-            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
             err.VOTER_ALREADY_VOTED: If the voter has already voted
@@ -763,7 +767,6 @@ class Proposal(
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
 
         """
-        self.check_registry_not_paused()
 
         error = self.vote_check_authorization()
         if error != typ.Error(""):
