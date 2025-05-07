@@ -104,7 +104,7 @@ def test_drop_proposal_not_proposer(
         )
 
 
-def test_decommission_invalid_proposal(
+def test_drop_invalid_proposal(
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
     deployer: AddressAndSigner,
@@ -133,6 +133,41 @@ def test_decommission_invalid_proposal(
                     ),
                     (
                         funded_unassigned_voters_proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    ),
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+
+def test_drop_paused_registry(
+    xgov_registry_client: XGovRegistryClient,
+    draft_proposal_client: ProposalClient,
+    proposer: AddressAndSigner,
+    algorand_client: AlgorandClient,
+) -> None:
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    xgov_registry_client.pause_registry()
+
+    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.drop_proposal(
+            proposal_id=draft_proposal_client.app_id,
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                foreign_apps=[draft_proposal_client.app_id],
+                accounts=[proposer.address],
+                boxes=[
+                    (
+                        0,
+                        proposer_box_name(proposer.address),
+                    ),
+                    (
+                        draft_proposal_client.app_id,
                         METADATA_BOX_KEY.encode(),
                     ),
                 ],
