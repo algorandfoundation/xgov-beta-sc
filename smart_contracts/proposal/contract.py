@@ -172,15 +172,17 @@ class Proposal(
         ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
-    def decommission_check_authorization(self) -> None:
-        assert self.is_committee_publisher(), err.UNAUTHORIZED
-        assert (
-            self.status.value == enm.STATUS_EMPTY
-            or self.status.value == enm.STATUS_DRAFT
-            or self.status.value == enm.STATUS_FUNDED
-            or self.status.value == enm.STATUS_BLOCKED
-            or self.status.value == enm.STATUS_REJECTED
-        ), err.WRONG_PROPOSAL_STATUS
+    def decommission_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+
+        if (
+            self.status.value != enm.STATUS_EMPTY
+            and self.status.value != enm.STATUS_DRAFT
+            and self.status.value != enm.STATUS_FUNDED
+            and self.status.value != enm.STATUS_BLOCKED
+            and self.status.value != enm.STATUS_REJECTED
+        ):
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
 
         if (
             self.status.value != enm.STATUS_EMPTY
@@ -189,12 +191,17 @@ class Proposal(
             cooldown_duration, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
             )
-            assert error == typ.Error(""), err.MISSING_CONFIG
-            assert (
-                self.cool_down_start_ts.value != 0
-                and Global.latest_timestamp
-                >= self.cool_down_start_ts.value + cooldown_duration
-            ), err.TOO_EARLY
+            if error != typ.Error(""):
+                return error
+
+            if (
+                self.cool_down_start_ts.value == 0
+                or Global.latest_timestamp
+                < self.cool_down_start_ts.value + cooldown_duration
+            ):
+                return typ.Error(err.ARC_65_PREFIX + err.TOO_EARLY)
+
+        return typ.Error("")
 
     @subroutine
     def delete_check_authorization(self) -> typ.Error:
@@ -369,8 +376,11 @@ class Proposal(
         assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
 
     @subroutine
-    def drop_check_authorization(self) -> None:
-        self.assert_draft_and_proposer()
+    def drop_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+        if self.status.value != enm.STATUS_DRAFT:
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+        return typ.Error("")
 
     @subroutine
     def upload_metadata_check_authorization(self) -> None:
@@ -632,18 +642,18 @@ class Proposal(
             self.metadata.replace(old_size, payload.native)
 
     @arc4.abimethod()
-    def drop(self) -> None:
-        """Drop the proposal.
+    def drop(self) -> typ.Error:
+        """Drop the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Raises:
-            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
-            err.UNAUTHORIZED: If the sender is not the proposer
+            err.UNAUTHORIZED: If the sender is not the registry contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
 
         """
-        self.check_registry_not_paused()
 
-        self.drop_check_authorization()
+        error = self.drop_check_authorization()
+        if error != typ.Error(""):
+            return error
 
         self.transfer_locked_amount(
             receiver=self.proposer.value,
@@ -651,6 +661,8 @@ class Proposal(
 
         self.metadata.delete()
         self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+
+        return typ.Error("")
 
     @arc4.abimethod()
     def finalize(self) -> None:
@@ -746,7 +758,6 @@ class Proposal(
             rejections (arc4.UInt64): Number of rejections
 
         Raises:
-            err.PAUSED_REGISTRY: Registry's non-admin methods are paused
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
             err.VOTER_ALREADY_VOTED: If the voter has already voted
@@ -756,7 +767,6 @@ class Proposal(
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
 
         """
-        self.check_registry_not_paused()
 
         error = self.vote_check_authorization()
         if error != typ.Error(""):
@@ -904,20 +914,24 @@ class Proposal(
                 del self.voters[voter.native]
 
     @arc4.abimethod()
-    def decommission(self) -> None:
-        """Decommission the proposal.
+    def decommission(self) -> typ.Error:
+        """Decommission the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the registry contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.TOO_EARLY: If the proposal is still in the cool down period
+            err.VOTERS_ASSIGNED: If there are still assigned voters
 
         """
-        self.decommission_check_authorization()
+        error = self.decommission_check_authorization()
+        if error != typ.Error(""):
+            return error
 
         # check no assigned voters
-        assert self.voters_count == UInt64(0), err.VOTERS_ASSIGNED
+        if self.voters_count > UInt64(0):
+            return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
 
         # delete metadata box if it exists
         self.metadata.delete()
@@ -935,6 +949,8 @@ class Proposal(
             amount=Global.current_application_address.balance,
         )
         self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+
+        return typ.Error("")
 
     @arc4.abimethod(allow_actions=("DeleteApplication",))
     def delete(self) -> typ.Error:

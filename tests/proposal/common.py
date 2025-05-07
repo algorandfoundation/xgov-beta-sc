@@ -13,6 +13,9 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
     ProposalClient,
 )
+from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
+    XgovRegistryMockClient,
+)
 from smart_contracts.proposal.config import METADATA_BOX_KEY, PROPOSAL_MBR
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
@@ -445,19 +448,20 @@ def unassign_voters(
 
 
 def decommission_proposal(
-    proposal_client: ProposalClient,
+    xgov_registry_client: XgovRegistryMockClient,
+    proposal_app_id: int,
     committee_publisher: AddressAndSigner,
     sp: SuggestedParams,
-    xgov_registry_app_id: int,
 ) -> None:
-    proposal_client.decommission(
+    xgov_registry_client.decommission_proposal(
+        proposal_app=proposal_app_id,
         transaction_parameters=TransactionParameters(
             sender=committee_publisher.address,
             signer=committee_publisher.signer,
-            foreign_apps=[xgov_registry_app_id],
+            foreign_apps=[proposal_app_id],
             boxes=[
                 (
-                    0,
+                    proposal_app_id,
                     METADATA_BOX_KEY.encode(),
                 )
             ],

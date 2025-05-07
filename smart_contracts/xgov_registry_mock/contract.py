@@ -576,3 +576,41 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def decommission_proposal(self, proposal_app: Application) -> None:
+        error, tx = arc4.abi_call(
+            Proposal.decommission,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.MISSING_CONFIG:
+                    assert False, err.MISSING_CONFIG  # noqa
+                case err.TOO_EARLY:
+                    assert False, err.TOO_EARLY  # noqa
+                case err.VOTERS_ASSIGNED:
+                    assert False, err.VOTERS_ASSIGNED  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def drop_proposal(self, proposal_app: Application) -> None:
+        error, tx = arc4.abi_call(
+            Proposal.drop,
+            app_id=proposal_app,
+            fee=0,
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa

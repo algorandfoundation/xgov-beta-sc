@@ -32,14 +32,20 @@ def test_decommission_empty_proposal(
     committee_publisher: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
-    proposal_client.decommission(
+    xgov_registry_mock_client.decommission_proposal(
+        proposal_app=proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=committee_publisher.address,
             signer=committee_publisher.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            boxes=[(0, METADATA_BOX_KEY)],
+            foreign_apps=[proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    METADATA_BOX_KEY.encode(),
+                )
+            ],
             suggested_params=sp,
         ),
     )
@@ -72,20 +78,26 @@ def test_decommission_draft_proposal(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp.min_fee *= 4  # type: ignore
 
     locked_amount = proposal_client.get_global_state().locked_amount
     proposer_balance = algorand_client.account.get_information(proposer.address)[  # type: ignore
         "amount"
     ]
 
-    proposal_client.decommission(
+    xgov_registry_mock_client.decommission_proposal(
+        proposal_app=proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=committee_publisher.address,
             signer=committee_publisher.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
+            foreign_apps=[proposal_client.app_id],
+            boxes=[
+                (
+                    proposal_client.app_id,
+                    METADATA_BOX_KEY.encode(),
+                )
+            ],
             accounts=[proposer.address],
-            boxes=[(0, METADATA_BOX_KEY)],
             suggested_params=sp,
         ),
     )
@@ -145,12 +157,20 @@ def test_decommission_final_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
             ),
         )
 
@@ -212,12 +232,20 @@ def test_decommission_voting_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
             ),
         )
 
@@ -308,12 +336,20 @@ def test_decommission_approved_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
             ),
         )
 
@@ -414,12 +450,20 @@ def test_decommission_reviewed_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
             ),
         )
 
@@ -441,7 +485,7 @@ def test_decommission_success_rejected_proposal(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
@@ -502,10 +546,10 @@ def test_decommission_success_rejected_proposal(
     )
 
     decommission_proposal(
-        proposal_client,
+        xgov_registry_mock_client,
+        proposal_client.app_id,
         committee_publisher,
         sp,
-        xgov_registry_mock_client.app_id,
     )
 
     global_state = proposal_client.get_global_state()
@@ -534,7 +578,7 @@ def test_decommission_success_blocked_proposal(
     )
 
     sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp.min_fee *= 3  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
@@ -624,10 +668,10 @@ def test_decommission_success_blocked_proposal(
     )
 
     decommission_proposal(
-        proposal_client,
+        xgov_registry_mock_client,
+        proposal_client.app_id,
         committee_publisher,
         sp,
-        xgov_registry_mock_client.app_id,
     )
 
     global_state = proposal_client.get_global_state()
@@ -759,10 +803,10 @@ def test_decommission_success_funded_proposal(
     )
 
     decommission_proposal(
-        proposal_client,
+        xgov_registry_mock_client,
+        proposal_client.app_id,
         committee_publisher,
         sp,
-        xgov_registry_mock_client.app_id,
     )
 
     global_state = proposal_client.get_global_state()
@@ -844,17 +888,25 @@ def test_decommission_too_early(
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
             ),
         )
 
 
-def test_decommission_not_publisher(
+def test_decommission_not_registry(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
@@ -1012,17 +1064,19 @@ def test_decommission_wrong_box_ref(
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTERS_ASSIGNED]):
-        proposal_client.decommission(
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
+                foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (
-                        0,
-                        get_voter_box_key(committee_members[-1].address),
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
                     )
                 ],
+                accounts=[proposer.address],
                 suggested_params=sp,
             ),
         )
