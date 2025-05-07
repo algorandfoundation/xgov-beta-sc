@@ -51,15 +51,15 @@ jobs:
           # Pinata API JWT to publish deployed App Spec on IPFS
           ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
           # Registry configuration
-          XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || 100_000_000  }} # defaults: 100 Algos
-          XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || 100_000_000  }} # defaults: 100 Algos
-          XGOV_CFG_PROPOSAL_FEE: ${{ vars.PROPOSAL_FEE || 100_000_000  }} # defaults: 100 Algos
+          XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || 100000000  }} # defaults: 100 Algos
+          XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || 100000000  }} # defaults: 100 Algos
+          XGOV_CFG_PROPOSAL_FEE: ${{ vars.PROPOSAL_FEE || 100000000  }} # defaults: 100 Algos
           XGOV_CFG_PROPOSAL_PUBLISHING_BPS: ${{ vars.PROPOSAL_PUBLISHING_BPS || 500  }} # defaults: 5%
           XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.PROPOSAL_COMMITMENT_BPS || 300  }} # defaults: 3%
-          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT || 10_000_000_000  }} # defaults: 10K Algos
-          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || 50_000_000_000,250_000_000_000,500_000_000_000  }} # defaults: 50K (S), 250K (M), 500K (L) Algos
-          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || 1_209_600,1_814_400,2_419_200,2_419_200  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
-          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || 1_209_600,1_814_400,2_419_200,2_419_200  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
-          XGOV_CFG_COOL_DOWN_DURATION: ${{ vars.COOL_DOWN_DURATION || 1_209_600  }} # defaults: 2 weeks in seconds
-          XGOV_CFG_QUORUM: ${{ vars.QUORUM || 1_000,1_500,2_000  }} # defaults: 10% (S), 15% (M), 20% (L)
-          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || 2_000,3_000,4_000  }} # defaults: 20% (S), 30% (M), 40% (L)
+          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT || 10000000000  }} # defaults: 10K Algos
+          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || 50000000000,250000000000,500000000000  }} # defaults: 50K (S), 250K (M), 500K (L) Algos
+          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || 1209600,1814400,2419200,2419200  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
+          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || 1209600,1814400,2419200,2419200  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
+          XGOV_CFG_COOL_DOWN_DURATION: ${{ vars.COOL_DOWN_DURATION || 1209600  }} # defaults: 2 weeks in seconds
+          XGOV_CFG_QUORUM: ${{ vars.QUORUM || 1000,1500,2000  }} # defaults: 10% (S), 15% (M), 20% (L)
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || 2000,3000,4000  }} # defaults: 20% (S), 30% (M), 40% (L)
