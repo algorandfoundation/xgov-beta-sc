@@ -9,6 +9,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 )
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
+    assign_voters,
     get_voter_box_key,
     submit_proposal,
 )
@@ -47,22 +48,15 @@ def test_funded_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(

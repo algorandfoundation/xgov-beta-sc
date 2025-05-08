@@ -135,6 +135,35 @@ def proposal_client(
     return client
 
 
+@pytest.fixture(scope="function")
+def alternative_proposal_client(
+    not_proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+) -> ProposalClient:
+    config.configure(
+        debug=True,
+        # trace_all=True,
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 3  # type: ignore
+
+    proposal_app_id = xgov_registry_mock_client.create_empty_proposal(
+        proposer=not_proposer.address,
+        transaction_parameters=TransactionParameters(
+            suggested_params=sp,
+        ),
+    )
+
+    client = ProposalClient(
+        algorand_client.client.algod,
+        app_id=proposal_app_id.return_value,
+    )
+
+    return client
+
+
 @pytest.fixture(scope="session")
 def committee_publisher(algorand_client: AlgorandClient) -> AddressAndSigner:
     account = algorand_client.account.random()

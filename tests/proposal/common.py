@@ -419,28 +419,91 @@ def upload_metadata(
 
 
 def unassign_voters(
-    proposal_client: ProposalClient,
+    proposal_client_composer: Composer,
     committee_members: list[AddressAndSigner],
     committee_publisher: AddressAndSigner,
     sp: SuggestedParams,
     xgov_registry_app_id: int,
-    bulks: int = 6,
+    bulks: int = 8,
 ) -> None:
-    for i in range(1 + len(committee_members) // bulks):
-        proposal_client.unassign_voters(
+    proposal_client_composer.unassign_voters(
+        voters=[cm.address for cm in committee_members[: bulks - 1]],
+        transaction_parameters=TransactionParameters(
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
+            foreign_apps=[xgov_registry_app_id],
+            boxes=[
+                (
+                    0,
+                    get_voter_box_key(cm.address),
+                )
+                for cm in committee_members[: bulks - 1]
+            ],
+            suggested_params=sp,
+        ),
+    )
+    rest_of_committee_members = committee_members[bulks - 1 :]
+    for i in range(1 + len(rest_of_committee_members) // bulks):
+        proposal_client_composer.unassign_voters(
             voters=[
-                cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                cm.address
+                for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
             ],
             transaction_parameters=TransactionParameters(
                 sender=committee_publisher.address,
                 signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_app_id],
                 boxes=[
                     (
                         0,
                         get_voter_box_key(cm.address),
                     )
-                    for cm in committee_members[i * bulks : (i + 1) * bulks]
+                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+
+def assign_voters(
+    proposal_client_composer: Composer,
+    committee_members: list[AddressAndSigner],
+    committee_publisher: AddressAndSigner,
+    sp: SuggestedParams,
+    xgov_registry_app_id: int,
+    bulks: int = 8,
+) -> None:
+    proposal_client_composer.assign_voters(
+        voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]],
+        transaction_parameters=TransactionParameters(
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
+            foreign_apps=[xgov_registry_app_id],
+            boxes=[
+                (
+                    0,
+                    get_voter_box_key(cm.address),
+                )
+                for cm in committee_members[: bulks - 1]
+            ],
+            suggested_params=sp,
+        ),
+    )
+    rest_of_committee_members = committee_members[bulks - 1 :]
+    for i in range(1 + len(rest_of_committee_members) // bulks):
+        proposal_client_composer.assign_voters(
+            voters=[
+                (cm.address, 10)
+                for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(cm.address),
+                    )
+                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
                 ],
                 suggested_params=sp,
             ),
