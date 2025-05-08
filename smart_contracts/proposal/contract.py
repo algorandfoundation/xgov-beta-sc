@@ -24,6 +24,7 @@ from algopy.op import AppGlobal, GTxn
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
 
+from ..common.abi_types import CommitteeMember
 from ..xgov_registry import config as reg_cfg
 from . import config as prop_cfg
 from . import constants as const
@@ -763,17 +764,14 @@ class Proposal(
     @arc4.abimethod()
     def assign_voters(
         self,
-        voters: arc4.DynamicArray[arc4.Address],
-        voting_power: arc4.DynamicArray[arc4.UInt64],
+        voters: arc4.DynamicArray[CommitteeMember],
     ) -> None:
         """Assign multiple voters to the proposal.
 
         Args:
-            voters (DynamicArray[Address]): List of voter addresses
-            voting_power (UInt64): Voting power
+            voters (DynamicArray[CommitteeMember]): List of voter addresses with their voting power
 
         Raises:
-            err.ARRAYS_SIZE_MISMATCH: If the size of the voters and voting power arrays do not match
             err.UNAUTHORIZED: If the sender is not the committee publisher
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
@@ -785,12 +783,9 @@ class Proposal(
 
         """
 
-        assert voters.length == voting_power.length, err.ARRAYS_SIZE_MISMATCH
+        self.assign_voter_check_authorization()
 
         if Txn.group_index == 0:
-            # Check auth only on the first in group. This is an optimization to better utilize the ref arrays limit.
-            # (we need the reg app id to get the committee publisher address)
-            self.assign_voter_check_authorization()
             # Check that the entire group calls the same app and method
             for i in urange(1, Global.group_size):
                 self.assert_same_app_and_method(i)
@@ -799,9 +794,7 @@ class Proposal(
             self.assert_same_app_and_method(UInt64(0))
 
         for i in urange(voters.length):
-            voter = voters[i]
-            voter_voting_power = voting_power[i]
-            self._assign_voter(voter.native, voter_voting_power.native)
+            self._assign_voter(voters[i].address.native, voters[i].voting_power.native)
 
     @arc4.abimethod()
     def vote(
@@ -963,10 +956,8 @@ class Proposal(
             err.WRONG_METHOD_CALL: If the method call is not as expected
 
         """
+        self.unassign_voters_check_authorization()
         if Txn.group_index == 0:
-            # Check auth only on the first in group. This is an optimization to better utilize the ref arrays limit.
-            # (we need the reg app id to get the committee publisher address)
-            self.unassign_voters_check_authorization()
             # Check that the entire group calls the same app and method
             for i in urange(1, Global.group_size):
                 self.assert_same_app_and_method(i)

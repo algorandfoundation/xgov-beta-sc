@@ -71,7 +71,5 @@ EMPTY_PAYLOAD = "Empty payload"
 PAUSED_REGISTRY = "Registry's non-admin methods are paused"
 PAUSED_PROPOSALS = "Creation of proposals is paused"
 
-ARRAYS_SIZE_MISMATCH = "Arrays size mismatch"
-
 WRONG_APP_ID = "Wrong App ID"
 WRONG_METHOD_CALL = "Wrong Method Call"

@@ -241,60 +241,6 @@ def test_assign_voters_draft_proposal(
     )
 
 
-def test_assign_voters_arrays_size_mismatch(
-    proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
-) -> None:
-
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.ARRAYS_SIZE_MISMATCH]
-    ):
-        proposal_client.assign_voters(
-            voters=[cm.address for cm in committee_members[:7]],
-            voting_power=[10 for _ in committee_members[:6]],
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(cm.address),
-                    )
-                    for cm in committee_members[:7]
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-
 def test_assign_voters_voting_open(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
