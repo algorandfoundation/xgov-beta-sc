@@ -750,3 +750,84 @@ def test_unassign_not_same_method_2(
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_METHOD_CALL]):
         composer.execute()
+
+
+def test_unassign_one_call_not_publisher(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    committee_publisher: AddressAndSigner,
+    committee_members: list[AddressAndSigner],
+    xgov_reviewer: AddressAndSigner,
+) -> None:
+    submit_proposal(
+        proposal_client,
+        algorand_client,
+        proposer,
+        xgov_registry_mock_client.app_id,
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[committee_publisher.address],
+            suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
+        ),
+    )
+
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
+
+    voting_duration = reg_gs.voting_duration_small
+    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
+
+    proposal_client.scrutiny(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            suggested_params=sp,
+        ),
+    )
+
+    cooldown_duration = reg_gs.cooldown_duration
+    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
+    time_warp(cooldown_start_ts + cooldown_duration)
+
+    composer = proposal_client.compose()
+    unassign_voters(
+        composer,
+        committee_members[:-1],
+        committee_publisher,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+    unassign_voters(
+        composer,
+        committee_members[-1:],
+        proposer,
+        sp,
+        xgov_registry_mock_client.app_id,
+    )
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+        composer.execute()
