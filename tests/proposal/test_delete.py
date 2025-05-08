@@ -10,6 +10,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
+    assign_voters,
     decommission_proposal,
     get_voter_box_key,
     logic_error_type,
@@ -145,35 +146,28 @@ def test_delete_voting_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
+
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        xgov_registry_mock_client.delete_proposal(
+            proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
+                sender=proposer.address,
+                signer=proposer.signer,
+                suggested_params=sp,
+                foreign_apps=[proposal_client.app_id],
             ),
         )
-
-        with pytest.raises(
-            logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        ):
-            xgov_registry_mock_client.delete_proposal(
-                proposal_app=proposal_client.app_id,
-                transaction_parameters=TransactionParameters(
-                    sender=proposer.address,
-                    signer=proposer.signer,
-                    suggested_params=sp,
-                    foreign_apps=[proposal_client.app_id],
-                ),
-            )
 
 
 def test_delete_approved_proposal(
@@ -207,22 +201,15 @@ def test_delete_approved_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -302,22 +289,15 @@ def test_delete_reviewed_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -406,22 +386,15 @@ def test_delete_rejected_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -482,22 +455,15 @@ def test_delete_blocked_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -587,22 +553,15 @@ def test_delete_funded_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -701,22 +660,15 @@ def test_delete_success(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -735,13 +687,15 @@ def test_delete_success(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     decommission_proposal(
         xgov_registry_mock_client,
@@ -796,22 +750,15 @@ def test_delete_not_registry(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -830,13 +777,15 @@ def test_delete_not_registry(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     decommission_proposal(
         xgov_registry_mock_client,

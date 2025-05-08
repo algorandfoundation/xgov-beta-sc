@@ -13,6 +13,7 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_decommissioned_proposal_global_state,
     assert_empty_proposal_global_state,
+    assign_voters,
     decommission_proposal,
     get_voter_box_key,
     logic_error_type,
@@ -212,22 +213,15 @@ def test_decommission_voting_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -284,22 +278,15 @@ def test_decommission_approved_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -389,22 +376,15 @@ def test_decommission_reviewed_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -503,22 +483,15 @@ def test_decommission_success_rejected_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -537,13 +510,15 @@ def test_decommission_success_rejected_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     decommission_proposal(
         xgov_registry_mock_client,
@@ -596,22 +571,15 @@ def test_decommission_success_blocked_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -659,13 +627,15 @@ def test_decommission_success_blocked_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     decommission_proposal(
         xgov_registry_mock_client,
@@ -722,22 +692,15 @@ def test_decommission_success_funded_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -794,13 +757,15 @@ def test_decommission_success_funded_proposal(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members,
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     decommission_proposal(
         xgov_registry_mock_client,
@@ -857,22 +822,15 @@ def test_decommission_too_early(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -941,22 +899,15 @@ def test_decommission_not_registry(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -1021,22 +972,15 @@ def test_decommission_wrong_box_ref(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -1055,13 +999,15 @@ def test_decommission_wrong_box_ref(
     cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
     time_warp(cooldown_start_ts + cooldown_duration)
 
+    composer = proposal_client.compose()
     unassign_voters(
-        proposal_client,
+        composer,
         committee_members[:-1],
         committee_publisher,
         sp,
         xgov_registry_mock_client.app_id,
     )
+    composer.execute()
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTERS_ASSIGNED]):
         xgov_registry_mock_client.decommission_proposal(

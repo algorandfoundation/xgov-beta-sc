@@ -17,8 +17,9 @@ from algopy import (
     gtxn,
     itxn,
     subroutine,
+    urange,
 )
-from algopy.op import AppGlobal
+from algopy.op import AppGlobal, GTxn
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
@@ -542,6 +543,15 @@ class Proposal(
         self.pay(receiver, self.locked_amount.value)
         self.locked_amount.value = UInt64(0)
 
+    @subroutine
+    def assert_same_app_and_method(self, group_index: UInt64) -> None:
+        assert (
+            GTxn.application_id(group_index) == Global.current_application_id
+        ), err.WRONG_APP_ID
+        assert GTxn.application_args(group_index, 0) == Txn.application_args(
+            0
+        ), err.WRONG_METHOD_CALL
+
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> None:
         """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
@@ -710,6 +720,25 @@ class Proposal(
             amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
         )
 
+    @subroutine
+    def _assign_voter(self, voter: Account, voting_power: UInt64) -> None:
+        self.assign_voter_input_validation(voter, voting_power)
+
+        self.voters[voter] = typ.VoterBox(
+            votes=arc4.UInt64(voting_power),
+            voted=arc4.Bool(False),  # noqa: FBT003
+        )
+
+        self.voters_count += 1
+        self.assigned_votes += voting_power
+
+        if self.voters_count == self.committee_members.value:
+            assert (
+                self.assigned_votes == self.committee_votes.value
+            ), err.VOTING_POWER_MISMATCH
+            self.status.value = UInt64(enm.STATUS_VOTING)
+            self.vote_open_ts.value = Global.latest_timestamp
+
     @arc4.abimethod()
     def assign_voter(self, voter: arc4.Address, voting_power: arc4.UInt64) -> None:
         """Assign a voter to the proposal.
@@ -729,22 +758,50 @@ class Proposal(
         """
         self.assign_voter_check_authorization()
 
-        self.assign_voter_input_validation(voter.native, voting_power.native)
+        self._assign_voter(voter.native, voting_power.native)
 
-        self.voters[voter.native] = typ.VoterBox(
-            votes=voting_power,
-            voted=arc4.Bool(False),  # noqa: FBT003
-        )
+    @arc4.abimethod()
+    def assign_voters(
+        self,
+        voters: arc4.DynamicArray[arc4.Address],
+        voting_power: arc4.DynamicArray[arc4.UInt64],
+    ) -> None:
+        """Assign multiple voters to the proposal.
 
-        self.voters_count += 1
-        self.assigned_votes += voting_power.native
+        Args:
+            voters (DynamicArray[Address]): List of voter addresses
+            voting_power (UInt64): Voting power
 
-        if self.voters_count == self.committee_members.value:
-            assert (
-                self.assigned_votes == self.committee_votes.value
-            ), err.VOTING_POWER_MISMATCH
-            self.status.value = UInt64(enm.STATUS_VOTING)
-            self.vote_open_ts.value = Global.latest_timestamp
+        Raises:
+            err.ARRAYS_SIZE_MISMATCH: If the size of the voters and voting power arrays do not match
+            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
+            err.WRONG_APP_ID: If the app ID is not as expected
+            err.WRONG_METHOD_CALL: If the method call is not as expected
+            err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
+            err.INVALID_VOTING_POWER: If the voting power is not within the limits
+            err.VOTING_POWER_MISMATCH: If the total voting power does not match the committee votes
+
+        """
+
+        assert voters.length == voting_power.length, err.ARRAYS_SIZE_MISMATCH
+
+        if Txn.group_index == 0:
+            # Check auth only on the first in group. This is an optimization to better utilize the ref arrays limit.
+            # (we need the reg app id to get the committee publisher address)
+            self.assign_voter_check_authorization()
+            # Check that the entire group calls the same app and method
+            for i in urange(1, Global.group_size):
+                self.assert_same_app_and_method(i)
+        else:
+            # Check that the first transaction in the group calls the same app and method
+            self.assert_same_app_and_method(UInt64(0))
+
+        for i in urange(voters.length):
+            voter = voters[i]
+            voter_voting_power = voting_power[i]
+            self._assign_voter(voter.native, voter_voting_power.native)
 
     @arc4.abimethod()
     def vote(
@@ -902,9 +959,20 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the committee publisher
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.WRONG_APP_ID: If the app ID is not as expected
+            err.WRONG_METHOD_CALL: If the method call is not as expected
 
         """
-        self.unassign_voters_check_authorization()
+        if Txn.group_index == 0:
+            # Check auth only on the first in group. This is an optimization to better utilize the ref arrays limit.
+            # (we need the reg app id to get the committee publisher address)
+            self.unassign_voters_check_authorization()
+            # Check that the entire group calls the same app and method
+            for i in urange(1, Global.group_size):
+                self.assert_same_app_and_method(i)
+        else:
+            # Check that the first transaction in the group calls the same app and method
+            self.assert_same_app_and_method(UInt64(0))
 
         # remove voters
         for voter in voters:

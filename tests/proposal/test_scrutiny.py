@@ -13,6 +13,7 @@ from tests.common import get_voter_box_key
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
     assert_rejected_proposal_global_state,
+    assign_voters,
     logic_error_type,
     submit_proposal,
 )
@@ -145,22 +146,15 @@ def test_scrutiny_voting_ongoing_1(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
         proposal_client.scrutiny(
@@ -207,22 +201,15 @@ def test_scrutiny_voting_ongoing_2(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     xgov_registry_mock_client.vote(
         proposal_app=proposal_client.app_id,
@@ -288,22 +275,15 @@ def test_scrutiny_voting_ongoing_3(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:-1]:
         xgov_registry_mock_client.vote(
@@ -367,22 +347,15 @@ def test_scrutiny_twice(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members:
         xgov_registry_mock_client.vote(
@@ -470,22 +443,15 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 1
     num_of_rejections = 0
@@ -608,22 +574,15 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 2
     num_of_rejections = 1
@@ -746,22 +705,15 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 11
     num_of_rejections = 9
@@ -885,22 +837,15 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 0
     num_of_rejections = 0
@@ -1025,22 +970,15 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 0
     num_of_rejections = 1
@@ -1165,22 +1103,15 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 1
     num_of_rejections = 1
@@ -1305,22 +1236,15 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 1
     num_of_rejections = 2
@@ -1445,22 +1369,15 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     num_of_approvals = 10
     num_of_rejections = 10
@@ -1585,22 +1502,15 @@ def test_scrutiny_after_time_approve_small_1(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -1682,22 +1592,15 @@ def test_scrutiny_after_time_approve_small_2(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
@@ -1799,22 +1702,15 @@ def test_scrutiny_after_time_approve_small_3(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -1936,22 +1832,15 @@ def test_scrutiny_after_time_approve_small_4(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2074,22 +1963,15 @@ def test_scrutiny_after_time_approve_small_5(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
@@ -2192,22 +2074,15 @@ def test_scrutiny_after_time_reject_small_1(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -2268,22 +2143,15 @@ def test_scrutiny_after_time_reject_small_2(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     xgov_registry_mock_client.vote(
         proposal_app=proposal_client.app_id,
@@ -2365,22 +2233,15 @@ def test_scrutiny_after_time_reject_small_3(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2464,22 +2325,15 @@ def test_scrutiny_after_time_reject_small_4(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2583,22 +2437,15 @@ def test_scrutiny_after_time_reject_small_5(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
@@ -2703,22 +2550,15 @@ def test_scrutiny_after_time_reject_small_6(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     xgov_registry_mock_client.vote(
         proposal_app=proposal_client.app_id,
@@ -2801,22 +2641,15 @@ def test_scrutiny_after_time_reject_small_7(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2900,22 +2733,15 @@ def test_scrutiny_after_time_reject_small_8(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
@@ -3000,22 +2826,15 @@ def test_scrutiny_after_time_reject_small_9(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -3119,22 +2938,15 @@ def test_scrutiny_after_time_reject_small_10(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(

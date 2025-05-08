@@ -13,6 +13,7 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     assert_reviewed_proposal_global_state,
+    assign_voters,
     get_voter_box_key,
     logic_error_type,
     submit_proposal,
@@ -141,22 +142,15 @@ def test_review_voting_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -203,22 +197,15 @@ def test_review_rejected_proposal(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = proposal_client.get_global_state().vote_open_ts
@@ -278,22 +265,15 @@ def test_review_success(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -379,22 +359,15 @@ def test_review_twice(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -493,22 +466,15 @@ def test_review_not_reviewer(
         ),
     )
 
-    for committee_member in committee_members:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-            ),
-        )
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        committee_publisher=committee_publisher,
+        committee_members=committee_members,
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
