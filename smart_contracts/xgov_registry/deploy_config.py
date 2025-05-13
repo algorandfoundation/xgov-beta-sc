@@ -65,8 +65,6 @@ def deploy(
         voting_duration=[
             int(num) for num in os.environ["XGOV_CFG_VOTING_DURATION"].split(",")
         ],
-        cool_down_duration=int(os.environ["XGOV_CFG_COOL_DOWN_DURATION"]),
-        stale_proposal_duration=0,  # TODO remove
         quorum=[int(num) for num in os.environ["XGOV_CFG_QUORUM"].split(",")],
         weighted_quorum=[
             int(num) for num in os.environ["XGOV_CFG_WEIGHTED_QUORUM"].split(",")

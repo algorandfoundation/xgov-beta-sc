@@ -117,10 +117,6 @@ class XgovRegistryMock(ARC4Contract):
             arc4.Address(mock_cfg.XGOV_REVIEWER),
             key=reg_cfg.GS_KEY_XGOV_REVIEWER,
         )
-        self.cooldown_duration = GlobalState(
-            UInt64(mock_cfg.COOL_DOWN_DURATION),
-            key=reg_cfg.GS_KEY_COOL_DOWN_DURATION,
-        )
         self.paused_registry = GlobalState(
             UInt64(0),
             key=reg_cfg.GS_KEY_PAUSED_REGISTRY,
@@ -549,17 +545,6 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def set_cooldown_duration(self, cooldown_duration: UInt64) -> None:
-        """
-        Set the cooldown duration
-
-        Args:
-            cooldown_duration (UInt64): The cooldown duration
-
-        """
-        self.cooldown_duration.value = cooldown_duration
-
-    @arc4.abimethod()
     def delete_proposal(self, proposal_app: Application) -> None:
         error, tx = arc4.abi_call(
             Proposal.delete,
@@ -592,8 +577,6 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case err.MISSING_CONFIG:
                     assert False, err.MISSING_CONFIG  # noqa
-                case err.TOO_EARLY:
-                    assert False, err.TOO_EARLY  # noqa
                 case err.VOTERS_ASSIGNED:
                     assert False, err.VOTERS_ASSIGNED  # noqa
                 case _:

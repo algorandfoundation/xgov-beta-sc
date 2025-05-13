@@ -115,13 +115,6 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_VOTING_DURATION_XLARGE
         )
 
-        self.cool_down_duration = GlobalState(
-            UInt64(), key=cfg.GS_KEY_COOL_DOWN_DURATION
-        )
-        self.stale_proposal_duration = GlobalState(
-            UInt64(), key=cfg.GS_KEY_STALE_PROPOSAL_DURATION
-        )
-
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
         self.quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM)
         self.quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_LARGE)
@@ -396,8 +389,6 @@ class XGovRegistry(
         self.voting_duration_medium.value = config.voting_duration[1].native
         self.voting_duration_large.value = config.voting_duration[2].native
         self.voting_duration_xlarge.value = config.voting_duration[3].native
-
-        self.cool_down_duration.value = config.cool_down_duration.native
 
         self.quorum_small.value = config.quorum[0].native
         self.quorum_medium.value = config.quorum[1].native
@@ -917,7 +908,6 @@ class XGovRegistry(
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.TOO_EARLY: If the proposal is still in the cool down period
             err.VOTERS_ASSIGNED: If there are still assigned voters
 
         """
@@ -940,8 +930,6 @@ class XGovRegistry(
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case err.MISSING_CONFIG:
                     assert False, err.MISSING_CONFIG  # noqa
-                case err.TOO_EARLY:
-                    assert False, err.TOO_EARLY  # noqa
                 case err.VOTERS_ASSIGNED:
                     assert False, err.VOTERS_ASSIGNED  # noqa
                 case _:
@@ -1085,8 +1073,6 @@ class XGovRegistry(
                 arc4.UInt64(self.voting_duration_large.value),
                 arc4.UInt64(self.voting_duration_xlarge.value),
             ),
-            cool_down_duration=arc4.UInt64(self.cool_down_duration.value),
-            stale_proposal_duration=arc4.UInt64(self.stale_proposal_duration.value),
             quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.quorum_small.value),
                 arc4.UInt64(self.quorum_medium.value),

@@ -683,10 +683,6 @@ def test_delete_success(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -772,10 +768,6 @@ def test_delete_not_registry(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(

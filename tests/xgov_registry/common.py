@@ -42,9 +42,6 @@ VOTING_DURATION_MEDIUM = 172800
 VOTING_DURATION_LARGE = 259200
 VOTING_DURATION_XLARGE = 345600
 
-COOL_DOWN_DURATION = 86400
-STALE_PROPOSAL_DURATION = 86400 * 14
-
 QUORUM_SMALL = 100
 QUORUM_MEDIUM = 200
 QURUM_LARGE = 300
@@ -114,7 +111,6 @@ def assert_registry_config(
     voting_duration_medium: int,
     voting_duration_large: int,
     voting_duration_xlarge: int,
-    cool_down_duration: int,
     quorum_small: int,
     quorum_medium: int,
     quorum_large: int,
@@ -138,7 +134,6 @@ def assert_registry_config(
     assert global_state.voting_duration_medium == voting_duration_medium
     assert global_state.voting_duration_large == voting_duration_large
     assert global_state.voting_duration_xlarge == voting_duration_xlarge
-    assert global_state.cool_down_duration == cool_down_duration
     assert global_state.quorum_small == quorum_small
     assert global_state.quorum_medium == quorum_medium
     assert global_state.quorum_large == quorum_large
@@ -176,8 +171,6 @@ def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> 
     assert global_state.voting_duration_medium == get_state.voting_duration[1]
     assert global_state.voting_duration_large == get_state.voting_duration[2]
     assert global_state.voting_duration_xlarge == get_state.voting_duration[3]
-    assert global_state.cool_down_duration == get_state.cool_down_duration
-    assert global_state.stale_proposal_duration == get_state.stale_proposal_duration
     assert global_state.quorum_small == get_state.quorum[0]
     assert global_state.quorum_medium == get_state.quorum[1]
     assert global_state.quorum_large == get_state.quorum[2]

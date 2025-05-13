@@ -1,6 +1,7 @@
 from typing import Final
 
 # State Schema
+#  Total of 64 (max out global state) to allow updates of the contract without breaking
 GLOBAL_BYTES: Final[int] = 28
 GLOBAL_UINTS: Final[int] = 36
 LOCAL_BYTES: Final[int] = 0
@@ -34,8 +35,6 @@ GS_KEY_VOTING_DURATION_SMALL: Final[bytes] = b"voting_duration_small"
 GS_KEY_VOTING_DURATION_MEDIUM: Final[bytes] = b"voting_duration_medium"
 GS_KEY_VOTING_DURATION_LARGE: Final[bytes] = b"voting_duration_large"
 GS_KEY_VOTING_DURATION_XLARGE: Final[bytes] = b"voting_duration_xlarge"
-GS_KEY_COOL_DOWN_DURATION: Final[bytes] = b"cool_down_duration"
-GS_KEY_STALE_PROPOSAL_DURATION: Final[bytes] = b"stale_proposal_duration"
 GS_KEY_QUORUM_SMALL: Final[bytes] = b"quorum_small"
 GS_KEY_QUORUM_MEDIUM: Final[bytes] = b"quorum_medium"
 GS_KEY_QUORUM_LARGE: Final[bytes] = b"quorum_large"

@@ -506,10 +506,6 @@ def test_decommission_success_rejected_proposal(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -622,10 +618,6 @@ def test_decommission_success_blocked_proposal(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(
@@ -753,10 +745,6 @@ def test_decommission_success_funded_proposal(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -785,83 +773,6 @@ def test_decommission_success_funded_proposal(
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
-
-
-def test_decommission_too_early(
-    proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
-) -> None:
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            suggested_params=sp,
-        ),
-    )
-
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
-        xgov_registry_mock_client.decommission_proposal(
-            proposal_app=proposal_client.app_id,
-            transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
-                foreign_apps=[proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
-                accounts=[proposer.address],
-                suggested_params=sp,
-            ),
-        )
 
 
 def test_decommission_not_registry(
@@ -921,10 +832,6 @@ def test_decommission_not_registry(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         proposal_client.decommission(
@@ -994,10 +901,6 @@ def test_decommission_wrong_box_ref(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(

@@ -53,7 +53,6 @@ def test_config_xgov_registry_success(
         voting_duration_medium=xgov_registry_config.voting_duration[1],
         voting_duration_large=xgov_registry_config.voting_duration[2],
         voting_duration_xlarge=xgov_registry_config.voting_duration[3],
-        cool_down_duration=xgov_registry_config.cool_down_duration,
         quorum_small=xgov_registry_config.quorum[0],
         quorum_medium=xgov_registry_config.quorum[1],
         quorum_large=xgov_registry_config.quorum[2],
