@@ -2,6 +2,12 @@ name: Release xgov-beta-sc
 
 on:
   workflow_dispatch:
+    inputs:
+      fresh-deploy:
+        description: "Deploy fresh contract to fnet"
+        required: false
+        default: "false"
+        type: boolean
   workflow_call:
   push:
     branches:
@@ -50,6 +56,8 @@ jobs:
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # Pinata API JWT to publish deployed App Spec on IPFS
           ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
+          # Should the contract be deployed fresh?
+          XGOV_REG_FRESH_DEPLOY: ${{ github.event.inputs.fresh-deploy || 'false' }}
           # Registry configuration
           XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || '100_000_000'  }} # defaults: 100 Algos
           XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || '100_000_000'  }} # defaults: 100 Algos

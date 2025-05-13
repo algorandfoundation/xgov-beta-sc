@@ -30,9 +30,15 @@ def deploy(
         indexer_client=indexer_client,
     )
 
+    fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
+
     app_client.deploy(
         on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
-        on_update=algokit_utils.OnUpdate.UpdateApp,
+        on_update=(
+            algokit_utils.OnUpdate.UpdateApp
+            if not fresh_deploy
+            else algokit_utils.OnUpdate.AppendApp
+        ),
         create_args=DeployCreate(args=CreateArgs(), extra_pages=3),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
     )
