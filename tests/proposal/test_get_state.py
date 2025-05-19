@@ -131,10 +131,6 @@ def test_funded_proposal(
         == get_state_result.return_value.committee_members
     )
     assert global_state.committee_votes == get_state_result.return_value.committee_votes
-    assert (
-        global_state.cool_down_start_ts
-        == get_state_result.return_value.cool_down_start_ts
-    )
     assert global_state.finalization_ts == get_state_result.return_value.finalization_ts
     assert global_state.funding_type == get_state_result.return_value.funding_type
     assert global_state.locked_amount == get_state_result.return_value.locked_amount

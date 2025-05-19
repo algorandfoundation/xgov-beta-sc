@@ -103,10 +103,6 @@ def test_unassign_unauthorized(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         composer = proposal_client.compose()
         unassign_voters(
@@ -176,10 +172,6 @@ def test_unassign_no_voters(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(
@@ -257,10 +249,6 @@ def test_unassign_one_voter(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(
@@ -341,10 +329,6 @@ def test_unassign_all_voters(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -423,10 +407,6 @@ def test_unassign_metadata_ref(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     with pytest.raises(logic_error_type, match="invalid Box reference"):
         proposal_client.unassign_voters(
@@ -558,13 +538,6 @@ def test_unassign__not_same_app(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = max(
-        proposal_client.get_global_state().cool_down_start_ts,
-        alternative_proposal_client.get_global_state().cool_down_start_ts,
-    )
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -648,10 +621,6 @@ def test_unassign_not_same_method(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     composer.get_state(
         transaction_parameters=TransactionParameters(
@@ -729,10 +698,6 @@ def test_unassign_not_same_method_2(
         ),
     )
 
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
-
     composer = proposal_client.compose()
     unassign_voters(
         composer,
@@ -809,10 +774,6 @@ def test_unassign_one_call_not_publisher(
             suggested_params=sp,
         ),
     )
-
-    cooldown_duration = reg_gs.cooldown_duration
-    cooldown_start_ts = proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     composer = proposal_client.compose()
     unassign_voters(

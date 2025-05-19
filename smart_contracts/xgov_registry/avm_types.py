@@ -24,8 +24,6 @@ class TypedGlobalState(arc4.Struct):
     max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     discussion_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
     voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    cool_down_duration: arc4.UInt64
-    stale_proposal_duration: arc4.UInt64
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     outstanding_funds: arc4.UInt64
@@ -45,8 +43,6 @@ class XGovRegistryConfig(arc4.Struct):
     max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     discussion_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
     voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    cool_down_duration: arc4.UInt64
-    stale_proposal_duration: arc4.UInt64
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
 

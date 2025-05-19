@@ -2,7 +2,7 @@ from typing import Final
 
 # State Schema
 GLOBAL_BYTES: Final[int] = 3
-GLOBAL_UINTS: Final[int] = 19
+GLOBAL_UINTS: Final[int] = 18
 LOCAL_BYTES: Final[int] = 0
 LOCAL_UINTS: Final[int] = 0
 
@@ -30,7 +30,6 @@ GS_KEY_VOTED_MEMBERS: Final[bytes] = b"voted_members"
 GS_KEY_APPROVALS: Final[bytes] = b"approvals"
 GS_KEY_REJECTIONS: Final[bytes] = b"rejections"
 GS_KEY_NULLS: Final[bytes] = b"nulls"
-GS_KEY_COOL_DOWN_START_TS: Final[bytes] = b"cool_down_start_ts"
 
 # Boxes
 VOTER_BOX_KEY_PREFIX: Final[str] = "V"

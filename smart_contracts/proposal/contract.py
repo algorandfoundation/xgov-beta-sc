@@ -125,10 +125,6 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_NULLS,
         )
-        self.cool_down_start_ts = GlobalState(
-            UInt64(),
-            key=prop_cfg.GS_KEY_COOL_DOWN_START_TS,
-        )
 
         self.voters = BoxMap(
             Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
@@ -185,23 +181,6 @@ class Proposal(
             and self.status.value != enm.STATUS_REJECTED
         ):
             return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-
-        if (
-            self.status.value != enm.STATUS_EMPTY
-            and self.status.value != enm.STATUS_DRAFT
-        ):
-            cooldown_duration, error = self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_COOL_DOWN_DURATION)
-            )
-            if error != typ.Error(""):
-                return error
-
-            if (
-                self.cool_down_start_ts.value == 0
-                or Global.latest_timestamp
-                < self.cool_down_start_ts.value + cooldown_duration
-            ):
-                return typ.Error(err.ARC_65_PREFIX + err.TOO_EARLY)
 
         return typ.Error("")
 
@@ -887,7 +866,6 @@ class Proposal(
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
             )
-            self.cool_down_start_ts.value = Global.latest_timestamp
 
     @arc4.abimethod()
     def review(self, block: bool) -> None:  # noqa: FBT001
@@ -913,7 +891,6 @@ class Proposal(
                 receiver=reg_app.address,
             )
 
-            self.cool_down_start_ts.value = Global.latest_timestamp
         else:
             self.status.value = UInt64(enm.STATUS_REVIEWED)
 
@@ -936,8 +913,6 @@ class Proposal(
         self.transfer_locked_amount(
             receiver=self.proposer.value,
         )
-
-        self.cool_down_start_ts.value = Global.latest_timestamp
 
         return typ.Error("")
 
@@ -980,7 +955,6 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.TOO_EARLY: If the proposal is still in the cool down period
             err.VOTERS_ASSIGNED: If there are still assigned voters
 
         """
@@ -1055,5 +1029,4 @@ class Proposal(
             approvals=arc4.UInt64(self.approvals.value),
             rejections=arc4.UInt64(self.rejections.value),
             nulls=arc4.UInt64(self.nulls.value),
-            cool_down_start_ts=arc4.UInt64(self.cool_down_start_ts.value),
         )

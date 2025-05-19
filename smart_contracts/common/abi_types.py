@@ -34,7 +34,6 @@ class ProposalTypedGlobalState(arc4.Struct):
     approvals: arc4.UInt64
     rejections: arc4.UInt64
     nulls: arc4.UInt64
-    cool_down_start_ts: arc4.UInt64
 
 
 class CommitteeMember(arc4.Struct):

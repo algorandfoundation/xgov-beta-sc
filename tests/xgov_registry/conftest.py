@@ -40,7 +40,6 @@ from tests.proposal.common import (
 )
 from tests.utils import time_warp
 from tests.xgov_registry.common import (
-    COOL_DOWN_DURATION,
     DEPOSIT_AMOUNT,
     DISCUSSION_DURATION_LARGE,
     DISCUSSION_DURATION_MEDIUM,
@@ -57,7 +56,6 @@ from tests.xgov_registry.common import (
     QUORUM_MEDIUM,
     QUORUM_SMALL,
     QURUM_LARGE,
-    STALE_PROPOSAL_DURATION,
     VOTING_DURATION_LARGE,
     VOTING_DURATION_MEDIUM,
     VOTING_DURATION_SMALL,
@@ -354,8 +352,6 @@ def xgov_registry_config() -> XGovRegistryConfig:
             VOTING_DURATION_LARGE,
             VOTING_DURATION_XLARGE,
         ],
-        cool_down_duration=COOL_DOWN_DURATION,
-        stale_proposal_duration=STALE_PROPOSAL_DURATION,
         quorum=[
             QUORUM_SMALL,
             QUORUM_MEDIUM,
@@ -973,10 +969,6 @@ def funded_unassigned_voters_proposal_client(
     committee_members: list[AddressAndSigner],
     deployer: AddressAndSigner,
 ) -> ProposalClient:
-
-    cooldown_duration = xgov_registry_client.get_global_state().cool_down_duration
-    cooldown_start_ts = funded_proposal_client.get_global_state().cool_down_start_ts
-    time_warp(cooldown_start_ts + cooldown_duration)
 
     bulks = 6
 
