@@ -1030,3 +1030,7 @@ class Proposal(
             rejections=arc4.UInt64(self.rejections.value),
             nulls=arc4.UInt64(self.nulls.value),
         )
+
+    @arc4.abimethod()
+    def op_up(self) -> None:
+        return
