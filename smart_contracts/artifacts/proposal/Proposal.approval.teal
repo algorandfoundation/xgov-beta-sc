@@ -285,12 +285,12 @@ main_after_if_else@2:
     //     ),
     // ):
     txn NumAppArgs
-    bz main_after_if_else@20
-    pushbytess 0xcc694eaa 0x1ec3853f 0x7143994f 0x7371321a 0x23d8b7ce 0x74e6557e 0x0d9ab0d7 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x2ac19b05 0x69ecf4a2 0x1feb95da 0x9a7067fa // method "create(address)void", method "submit(pay,string,uint64,uint64,uint8)void", method "upload_metadata(byte[],bool)void", method "drop()string", method "finalize()void", method "assign_voter(address,uint64)void", method "assign_voters((address,uint64)[])void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "unassign_voters(address[])void", method "decommission()string", method "delete()string", method "get_state()(address,uint64,string,uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64)"
+    bz main_after_if_else@21
+    pushbytess 0xcc694eaa 0x1ec3853f 0x7143994f 0x7371321a 0x23d8b7ce 0x74e6557e 0x0d9ab0d7 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x2ac19b05 0x69ecf4a2 0x1feb95da 0x9a7067fa 0xdbd83dd9 // method "create(address)void", method "submit(pay,string,uint64,uint64,uint8)void", method "upload_metadata(byte[],bool)void", method "drop()string", method "finalize()void", method "assign_voter(address,uint64)void", method "assign_voters((address,uint64)[])void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "unassign_voters(address[])void", method "decommission()string", method "delete()string", method "get_state()(address,uint64,string,uint64,uint64,uint64,uint64,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64)", method "op_up()void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_submit_route@6 main_upload_metadata_route@7 main_drop_route@8 main_finalize_route@9 main_assign_voter_route@10 main_assign_voters_route@11 main_vote_route@12 main_scrutiny_route@13 main_review_route@14 main_fund_route@15 main_unassign_voters_route@16 main_decommission_route@17 main_delete_route@18 main_get_state_route@19
+    match main_create_route@5 main_submit_route@6 main_upload_metadata_route@7 main_drop_route@8 main_finalize_route@9 main_assign_voter_route@10 main_assign_voters_route@11 main_vote_route@12 main_scrutiny_route@13 main_review_route@14 main_fund_route@15 main_unassign_voters_route@16 main_decommission_route@17 main_delete_route@18 main_get_state_route@19 main_op_up_route@20
 
-main_after_if_else@20:
+main_after_if_else@21:
     // smart_contracts/proposal/contract.py:34-42
     // class Proposal(
     //     ARC4Contract,
@@ -302,6 +302,17 @@ main_after_if_else@20:
     //     ),
     // ):
     intc_0 // 0
+    return
+
+main_op_up_route@20:
+    // smart_contracts/proposal/contract.py:1034
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    intc_1 // 1
     return
 
 main_get_state_route@19:
