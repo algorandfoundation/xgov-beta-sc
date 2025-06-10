@@ -1034,6 +1034,29 @@ class XGovRegistry(
             fee=0,
         ).submit()
 
+    @arc4.abimethod()
+    def withdraw_balance(self) -> None:
+        """ "
+        Withdraw outstanding Algos, excluding MBR and outstanding funds, from the xGov Registry.
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
+
+        # Calculate the amount to withdraw
+        amount = (
+            Global.current_application_address.balance
+            - Global.current_application_address.min_balance
+            - self.outstanding_funds.value
+        )
+
+        assert amount > 0, err.INSUFFICIENT_FUNDS
+        itxn.Payment(
+            receiver=self.xgov_manager.value.native,
+            amount=amount,
+            fee=0,
+        ).submit()
+
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.TypedGlobalState:
         """
