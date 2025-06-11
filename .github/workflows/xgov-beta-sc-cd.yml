@@ -47,8 +47,8 @@ jobs:
           # set git user and email as test invoke git
           git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
 
-      - name: Deploy to fnet
-        run: algokit project deploy fnet
+      - name: Deploy to testnet
+        run: algokit project deploy testnet
         env:
           # This is the account that becomes the creator of the contract
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
@@ -66,7 +66,7 @@ jobs:
           XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.PROPOSAL_COMMITMENT_BPS || '300'  }} # defaults: 3%
           XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT || '10_000_000_000'  }} # defaults: 10K Algos
           XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || '50_000_000_000,250_000_000_000,500_000_000_000'  }} # defaults: 50K (S), 250K (M), 500K (L) Algos
-          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || '1_209_600,1_814_400,2_419_200,2_419_200'  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
-          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '1_209_600,1_814_400,2_419_200,2_419_200'  }} # defaults: 2 (S), 3 (M), 4 (L), 4 (XL) weeks in seconds
+          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || '259_200,259_200,259_200,259_200'  }} # defaults: 3 (S), 3 (M), 3 (L), 3 (XL) days in seconds
+          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '172_800,172_800,172_800,172_800'  }} # defaults: 2 (S), 2 (M), 2 (L), 2 (XL) days in seconds
           XGOV_CFG_QUORUM: ${{ vars.QUORUM || '1_000,1_500,2_000'  }} # defaults: 10% (S), 15% (M), 20% (L)
           XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '2_000,3_000,4_000'  }} # defaults: 20% (S), 30% (M), 40% (L)

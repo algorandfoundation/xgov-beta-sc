@@ -44,10 +44,11 @@ def deploy(
     )
 
     test_admin = os.environ["TEST_ADMIN"]
+    test_committee_publisher = os.environ["TEST_COMMITTEE_PUBLISHER"]
     logger.info(f"Setting administrative roles to {test_admin}")
     admin_roles = app_client.compose()
     admin_roles.set_committee_manager(manager=test_admin)
-    admin_roles.set_committee_publisher(publisher=test_admin)
+    admin_roles.set_committee_publisher(publisher=test_committee_publisher)
     admin_roles.set_xgov_reviewer(reviewer=test_admin)
     admin_roles.set_xgov_subscriber(subscriber=test_admin)
     admin_roles.set_payor(payor=test_admin)
