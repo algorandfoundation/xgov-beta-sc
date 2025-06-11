@@ -1036,8 +1036,14 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def withdraw_balance(self) -> None:
-        """ "
+        """
         Withdraw outstanding Algos, excluding MBR and outstanding funds, from the xGov Registry.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Manager
+            err.INSUFFICIENT_FUNDS: If there are no funds to withdraw
+            err.INSUFFICIENT_FEE: If the fee is not enough to cover the inner transaction to send the funds back
+
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
