@@ -167,6 +167,7 @@ class Proposal(
             self.status.value == enm.STATUS_FUNDED
             or self.status.value == enm.STATUS_BLOCKED
             or self.status.value == enm.STATUS_REJECTED
+            or self.status.value == enm.STATUS_FINAL
         ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
