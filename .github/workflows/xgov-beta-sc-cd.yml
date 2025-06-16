@@ -66,7 +66,7 @@ jobs:
           XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.PROPOSAL_COMMITMENT_BPS || '300'  }} # defaults: 3%
           XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT || '10_000_000_000'  }} # defaults: 10K Algos
           XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || '50_000_000_000,250_000_000_000,500_000_000_000'  }} # defaults: 50K (S), 250K (M), 500K (L) Algos
-          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || '259_200,259_200,259_200,259_200'  }} # defaults: 3 (S), 3 (M), 3 (L), 3 (XL) days in seconds
-          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '172_800,172_800,172_800,172_800'  }} # defaults: 2 (S), 2 (M), 2 (L), 2 (XL) days in seconds
+          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || '60,60,60,60'  }} # defaults: 1 (S), 1 (M), 1 (L), 1 (XL) minute in seconds
+          XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '7_200,7_200,7_200,7_200'  }} # defaults: 2 (S), 2 (M), 2 (L), 2 (XL) hours in seconds
           XGOV_CFG_QUORUM: ${{ vars.QUORUM || '1_000,1_500,2_000'  }} # defaults: 10% (S), 15% (M), 20% (L)
           XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '2_000,3_000,4_000'  }} # defaults: 20% (S), 30% (M), 40% (L)
