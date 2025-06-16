@@ -545,24 +545,6 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def delete_proposal(self, proposal_app: Application) -> None:
-        error, tx = arc4.abi_call(
-            Proposal.delete,
-            app_id=proposal_app,
-            fee=0,
-        )
-
-        if error.native.startswith(err.ARC_65_PREFIX):
-            error_without_prefix = String.from_bytes(error.native.bytes[4:])
-            match error_without_prefix:
-                case err.UNAUTHORIZED:
-                    assert False, err.UNAUTHORIZED  # noqa
-                case err.WRONG_PROPOSAL_STATUS:
-                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-                case _:
-                    assert False, "Unknown error"  # noqa
-
-    @arc4.abimethod()
     def decommission_proposal(self, proposal_app: Application) -> None:
         error, tx = arc4.abi_call(
             Proposal.decommission,

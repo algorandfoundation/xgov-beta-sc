@@ -24,6 +24,7 @@ def test_delete_empty_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    committee_publisher: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -31,13 +32,12 @@ def test_delete_empty_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -46,6 +46,7 @@ def test_delete_draft_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    committee_publisher: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
     submit_proposal(
@@ -57,13 +58,12 @@ def test_delete_draft_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -101,13 +101,12 @@ def test_delete_final_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -159,13 +158,12 @@ def test_delete_voting_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -246,13 +244,12 @@ def test_delete_approved_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -343,13 +340,12 @@ def test_delete_reviewed_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -412,13 +408,12 @@ def test_delete_rejected_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -510,13 +505,12 @@ def test_delete_blocked_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -610,20 +604,19 @@ def test_delete_funded_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            foreign_apps=[proposal_client.app_id],
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        xgov_registry_mock_client.delete_proposal(
-            proposal_app=proposal_client.app_id,
+        proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
+                sender=committee_publisher.address,
+                signer=committee_publisher.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
 
@@ -700,13 +693,12 @@ def test_delete_success(
         sp,
     )
 
-    xgov_registry_mock_client.delete_proposal(
-        proposal_app=proposal_client.app_id,
+    proposal_client.delete_delete(
         transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
+            sender=committee_publisher.address,
+            signer=committee_publisher.signer,
             suggested_params=sp,
-            foreign_apps=[proposal_client.app_id],
+            foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
 
@@ -714,7 +706,7 @@ def test_delete_success(
         algorand_client.client.algod.application_info(proposal_client.app_id)
 
 
-def test_delete_not_registry(
+def test_delete_not_committee_publisher(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
@@ -792,6 +784,6 @@ def test_delete_not_registry(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
