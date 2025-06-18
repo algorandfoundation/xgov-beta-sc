@@ -376,6 +376,7 @@ class XGovRegistry(
         self.proposal_publishing_bps.value = config.proposal_publishing_bps.native
         self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
 
+        self.min_requested_amount.value = config.min_requested_amount.native
         self.max_requested_amount_small.value = config.max_requested_amount[0].native
         self.max_requested_amount_medium.value = config.max_requested_amount[1].native
         self.max_requested_amount_large.value = config.max_requested_amount[2].native

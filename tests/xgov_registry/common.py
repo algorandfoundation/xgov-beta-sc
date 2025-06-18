@@ -100,6 +100,7 @@ def assert_registry_config(
     proposal_commitment_bps: int,
     proposer_fee: int,
     proposal_fee: int,
+    min_requested_amount: int,
     max_requested_amount_small: int,
     max_requested_amount_medium: int,
     max_requested_amount_large: int,
@@ -123,6 +124,7 @@ def assert_registry_config(
     assert global_state.proposal_commitment_bps == proposal_commitment_bps
     assert global_state.proposer_fee == proposer_fee
     assert global_state.proposal_fee == proposal_fee
+    assert global_state.min_requested_amount == min_requested_amount
     assert global_state.max_requested_amount_small == max_requested_amount_small
     assert global_state.max_requested_amount_medium == max_requested_amount_medium
     assert global_state.max_requested_amount_large == max_requested_amount_large
@@ -160,6 +162,7 @@ def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> 
     assert global_state.proposal_commitment_bps == get_state.proposal_commitment_bps
     assert global_state.proposer_fee == get_state.proposer_fee
     assert global_state.proposal_fee == get_state.proposal_fee
+    assert global_state.min_requested_amount == get_state.min_requested_amount
     assert global_state.max_requested_amount_small == get_state.max_requested_amount[0]
     assert global_state.max_requested_amount_medium == get_state.max_requested_amount[1]
     assert global_state.max_requested_amount_large == get_state.max_requested_amount[2]
