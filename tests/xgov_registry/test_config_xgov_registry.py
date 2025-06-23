@@ -42,6 +42,7 @@ def test_config_xgov_registry_success(
         proposal_commitment_bps=xgov_registry_config.proposal_commitment_bps,
         proposer_fee=xgov_registry_config.proposer_fee,
         proposal_fee=xgov_registry_config.proposal_fee,
+        min_requested_amount=xgov_registry_config.min_requested_amount,
         max_requested_amount_small=xgov_registry_config.max_requested_amount[0],
         max_requested_amount_medium=xgov_registry_config.max_requested_amount[1],
         max_requested_amount_large=xgov_registry_config.max_requested_amount[2],
