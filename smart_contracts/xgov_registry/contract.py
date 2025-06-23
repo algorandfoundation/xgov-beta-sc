@@ -5,10 +5,12 @@ from algopy import (
     Application,
     ARC4Contract,
     BoxMap,
+    Bytes,
     Global,
     GlobalState,
     StateTotals,
     String,
+    TemplateVar,
     Txn,
     UInt64,
     arc4,
@@ -155,6 +157,10 @@ class XGovRegistry(
         self.proposer_box = BoxMap(
             Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
         )
+
+    @subroutine
+    def entropy(self) -> Bytes:
+        return TemplateVar[Bytes]("entropy")  # trick to allow fresh deployment
 
     @subroutine
     def is_xgov_manager(self) -> bool:

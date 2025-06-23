@@ -116,6 +116,7 @@ def xgov_registry_client(
         sender=deployer.address,
         creator=deployer,
         indexer_client=algorand_client.client.indexer,
+        template_values={"entropy": b""},
     )
 
     client.create_create(
