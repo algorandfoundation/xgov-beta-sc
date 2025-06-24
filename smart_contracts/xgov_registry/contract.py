@@ -5,10 +5,12 @@ from algopy import (
     Application,
     ARC4Contract,
     BoxMap,
+    Bytes,
     Global,
     GlobalState,
     StateTotals,
     String,
+    TemplateVar,
     Txn,
     UInt64,
     arc4,
@@ -157,6 +159,10 @@ class XGovRegistry(
         )
 
     @subroutine
+    def entropy(self) -> Bytes:
+        return TemplateVar[Bytes]("entropy")  # trick to allow fresh deployment
+
+    @subroutine
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value.native
 
@@ -212,6 +218,7 @@ class XGovRegistry(
         """
 
         self.xgov_manager.value = arc4.Address(Txn.sender)
+        assert self.entropy() == TemplateVar[Bytes]("entropy")
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
