@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       fresh-deploy:
-        description: "Deploy fresh contract to fnet"
+        description: "Deploy fresh contract"
         required: false
         default: "false"
         type: boolean
@@ -18,10 +18,10 @@ jobs:
     name: Validate xgov-beta-sc
     uses: ./.github/workflows/xgov-beta-sc-ci.yml
     secrets: inherit
-  deploy-fnet:
+  deploy-testnet:
     runs-on: "ubuntu-latest"
     needs: validate
-    environment: contract-fnet
+    environment: contract-testnet
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

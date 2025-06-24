@@ -1,5 +1,6 @@
 import logging
 import os
+import random
 
 import algokit_utils
 from algosdk.v2client.algod import AlgodClient
@@ -30,7 +31,14 @@ def deploy(
         indexer_client=indexer_client,
     )
 
+    template_values = {"entropy": b""}
+
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
+    if fresh_deploy:
+        logger.info("Fresh deployment requested")
+        template_values = {
+            "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
+        }
 
     app_client.deploy(
         on_schema_break=algokit_utils.OnSchemaBreak.AppendApp,
@@ -41,6 +49,7 @@ def deploy(
         ),
         create_args=DeployCreate(args=CreateArgs(), extra_pages=3),
         update_args=Deploy(args=UpdateXgovRegistryArgs()),
+        template_values=template_values,
     )
 
     test_admin = os.environ["TEST_ADMIN"]
