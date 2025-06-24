@@ -186,12 +186,9 @@ class Proposal(
         return typ.Error("")
 
     @subroutine
-    def delete_check_authorization(self) -> typ.Error:
-        assert self.is_registry_call(), err.UNAUTHORIZED
-        if self.status.value != enm.STATUS_DECOMMISSIONED:
-            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-
-        return typ.Error("")
+    def delete_check_authorization(self) -> None:
+        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert self.status.value == enm.STATUS_DECOMMISSIONED, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def vote_check_authorization(self) -> typ.Error:
@@ -987,20 +984,16 @@ class Proposal(
         return typ.Error("")
 
     @arc4.abimethod(allow_actions=("DeleteApplication",))
-    def delete(self) -> typ.Error:
-        """Delete the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+    def delete(self) -> None:
+        """Delete the proposal.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.UNAUTHORIZED: If the sender is not the committee publisher
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DECOMMISSIONED
 
         """
 
-        error = self.delete_check_authorization()
-        if error != typ.Error(""):
-            return error
-
-        return typ.Error("")
+        self.delete_check_authorization()
 
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.ProposalTypedGlobalState:
