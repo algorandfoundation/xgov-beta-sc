@@ -314,12 +314,12 @@ main_after_if_else@2:
     //     ),
     // ):
     txn NumAppArgs
-    bz main_after_if_else@39
-    pushbytess 0x4c5c61ba 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x11cf9720 0xd4216b6e 0xba8520f2 0x1677b30e 0xaa348d0d 0x653a0bdb 0x4956c1ab 0xa082cef8 0x76725559 0xe9553f8d 0x04f9322b 0x45077390 0x3c31bc02 0x0d2c7891 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0xdb27b9af 0x913ec7db 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x00b3cef5 // method "create()void", method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "set_xgov_manager(address)void", method "set_payor(address)void", method "set_xgov_reviewer(address)void", method "set_xgov_subscriber(address)void", method "set_kyc_provider(address)void", method "set_committee_manager(address)void", method "set_committee_publisher(address)void", method "config_xgov_registry((uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3]))void", method "update_xgov_registry()void", method "subscribe_xgov(address,pay)void", method "unsubscribe_xgov(address)void", method "subscribe_xgov_app(uint64,address,pay)void", method "unsubscribe_xgov_app(uint64)void", method "request_subscribe_xgov(address,address,uint64,pay)void", method "approve_subscribe_xgov(uint64)void", method "reject_subscribe_xgov(uint64)void", method "set_voting_account(address,address)void", method "subscribe_proposer(pay)void", method "set_proposer_kyc(address,bool,uint64)void", method "declare_committee(byte[32],uint64,uint64)void", method "open_proposal(pay)uint64", method "vote_proposal(uint64,address,uint64,uint64)void", method "pay_grant_proposal(uint64)void", method "decommission_proposal(uint64)void", method "drop_proposal(uint64)void", method "deposit_funds(pay)void", method "withdraw_funds(uint64)void", method "withdraw_balance()void", method "get_state()(bool,bool,address,address,address,address,address,address,address,uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3],uint64,uint64,byte[32],uint64,uint64)"
+    bz main_after_if_else@40
+    pushbytess 0x4c5c61ba 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x11cf9720 0xd4216b6e 0xba8520f2 0x1677b30e 0xaa348d0d 0x653a0bdb 0x4956c1ab 0xa082cef8 0x76725559 0xe9553f8d 0x04f9322b 0x45077390 0x3c31bc02 0x0d2c7891 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0xdb27b9af 0x913ec7db 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x00b3cef5 0x26983200 // method "create()void", method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "set_xgov_manager(address)void", method "set_payor(address)void", method "set_xgov_reviewer(address)void", method "set_xgov_subscriber(address)void", method "set_kyc_provider(address)void", method "set_committee_manager(address)void", method "set_committee_publisher(address)void", method "config_xgov_registry((uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3]))void", method "update_xgov_registry()void", method "subscribe_xgov(address,pay)void", method "unsubscribe_xgov(address)void", method "subscribe_xgov_app(uint64,address,pay)void", method "unsubscribe_xgov_app(uint64)void", method "request_subscribe_xgov(address,address,uint64,pay)void", method "approve_subscribe_xgov(uint64)void", method "reject_subscribe_xgov(uint64)void", method "set_voting_account(address,address)void", method "subscribe_proposer(pay)void", method "set_proposer_kyc(address,bool,uint64)void", method "declare_committee(byte[32],uint64,uint64)void", method "open_proposal(pay)uint64", method "vote_proposal(uint64,address,uint64,uint64)void", method "pay_grant_proposal(uint64)void", method "decommission_proposal(uint64)void", method "drop_proposal(uint64)void", method "deposit_funds(pay)void", method "withdraw_funds(uint64)void", method "withdraw_balance()void", method "get_state()(bool,bool,address,address,address,address,address,address,address,uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3],uint64,uint64,byte[32],uint64,uint64)", method "is_proposal(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 main_set_xgov_manager_route@10 main_set_payor_route@11 main_set_xgov_reviewer_route@12 main_set_xgov_subscriber_route@13 main_set_kyc_provider_route@14 main_set_committee_manager_route@15 main_set_committee_publisher_route@16 main_config_xgov_registry_route@17 main_update_xgov_registry_route@18 main_subscribe_xgov_route@19 main_unsubscribe_xgov_route@20 main_subscribe_xgov_app_route@21 main_unsubscribe_xgov_app_route@22 main_request_subscribe_xgov_route@23 main_approve_subscribe_xgov_route@24 main_reject_subscribe_xgov_route@25 main_set_voting_account_route@26 main_subscribe_proposer_route@27 main_set_proposer_kyc_route@28 main_declare_committee_route@29 main_open_proposal_route@30 main_vote_proposal_route@31 main_pay_grant_proposal_route@32 main_decommission_proposal_route@33 main_drop_proposal_route@34 main_deposit_funds_route@35 main_withdraw_funds_route@36 main_withdraw_balance_route@37 main_get_state_route@38
+    match main_create_route@5 main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 main_set_xgov_manager_route@10 main_set_payor_route@11 main_set_xgov_reviewer_route@12 main_set_xgov_subscriber_route@13 main_set_kyc_provider_route@14 main_set_committee_manager_route@15 main_set_committee_publisher_route@16 main_config_xgov_registry_route@17 main_update_xgov_registry_route@18 main_subscribe_xgov_route@19 main_unsubscribe_xgov_route@20 main_subscribe_xgov_app_route@21 main_unsubscribe_xgov_app_route@22 main_request_subscribe_xgov_route@23 main_approve_subscribe_xgov_route@24 main_reject_subscribe_xgov_route@25 main_set_voting_account_route@26 main_subscribe_proposer_route@27 main_set_proposer_kyc_route@28 main_declare_committee_route@29 main_open_proposal_route@30 main_vote_proposal_route@31 main_pay_grant_proposal_route@32 main_decommission_proposal_route@33 main_drop_proposal_route@34 main_deposit_funds_route@35 main_withdraw_funds_route@36 main_withdraw_balance_route@37 main_get_state_route@38 main_is_proposal_route@39
 
-main_after_if_else@39:
+main_after_if_else@40:
     // smart_contracts/xgov_registry/contract.py:34-42
     // class XGovRegistry(
     //     ARC4Contract,
@@ -331,6 +331,31 @@ main_after_if_else@39:
     //     ),
     // ):
     intc_0 // 0
+    return
+
+main_is_proposal_route@39:
+    // smart_contracts/xgov_registry/contract.py:1130
+    // @arc4.abimethod()
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/xgov_registry/contract.py:34-42
+    // class XGovRegistry(
+    //     ARC4Contract,
+    //     state_totals=StateTotals(
+    //         global_bytes=cfg.GLOBAL_BYTES,
+    //         global_uints=cfg.GLOBAL_UINTS,
+    //         local_bytes=cfg.LOCAL_BYTES,
+    //         local_uints=cfg.LOCAL_UINTS,
+    //     ),
+    // ):
+    txna ApplicationArgs 1
+    // smart_contracts/xgov_registry/contract.py:1130
+    // @arc4.abimethod()
+    callsub is_proposal
+    intc_1 // 1
     return
 
 main_get_state_route@38:
@@ -1174,11 +1199,11 @@ is_xgov_subscriber:
     retsub
 
 
-// smart_contracts.xgov_registry.contract.XGovRegistry.is_proposal(proposal_id: bytes) -> uint64:
-is_proposal:
+// smart_contracts.xgov_registry.contract.XGovRegistry._is_proposal(proposal_id: bytes) -> uint64:
+_is_proposal:
     // smart_contracts/xgov_registry/contract.py:181-182
     // @subroutine
-    // def is_proposal(self, proposal_id: arc4.UInt64) -> bool:
+    // def _is_proposal(self, proposal_id: arc4.UInt64) -> bool:
     proto 1 1
     // smart_contracts/xgov_registry/contract.py:184
     // Application(proposal_id.native).creator
@@ -2702,9 +2727,9 @@ vote_proposal:
     assert // Registry's non-admin methods are paused
     // smart_contracts/xgov_registry/contract.py:824-825
     // # verify proposal id is genuine proposal
-    // assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+    // assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
     frame_dig -4
-    callsub is_proposal
+    callsub _is_proposal
     assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:829
     // proposal_id.native, pcfg.GS_KEY_STATUS
@@ -2854,9 +2879,9 @@ pay_grant_proposal:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:876-877
     // # Verify proposal_id is a genuine proposal created by this registry
-    // assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+    // assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
     frame_dig -1
-    callsub is_proposal
+    callsub _is_proposal
     assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:881
     // proposal_id.native, pcfg.GS_KEY_STATUS
@@ -3029,9 +3054,9 @@ decommission_proposal:
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:927-928
     // # Verify proposal_id is a genuine proposal created by this registry
-    // assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+    // assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
     frame_dig -1
-    callsub is_proposal
+    callsub _is_proposal
     assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:930-932
     // error, tx = arc4.abi_call(
@@ -3208,9 +3233,9 @@ drop_proposal:
     assert // Registry's non-admin methods are paused
     // smart_contracts/xgov_registry/contract.py:976-977
     // # Verify proposal_id is a genuine proposal created by this registry
-    // assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+    // assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
     frame_dig -1
-    callsub is_proposal
+    callsub _is_proposal
     assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:980
     // proposal_id.native, pcfg.GS_KEY_PROPOSER
@@ -3951,4 +3976,18 @@ get_state:
     concat
     swap
     concat
+    retsub
+
+
+// smart_contracts.xgov_registry.contract.XGovRegistry.is_proposal(proposal_id: bytes) -> void:
+is_proposal:
+    // smart_contracts/xgov_registry/contract.py:1130-1131
+    // @arc4.abimethod()
+    // def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+    proto 1 0
+    // smart_contracts/xgov_registry/contract.py:1132
+    // assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+    frame_dig -1
+    callsub _is_proposal
+    assert // Invalid proposal
     retsub
