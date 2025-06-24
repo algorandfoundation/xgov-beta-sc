@@ -579,3 +579,7 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+        return
