@@ -173,7 +173,7 @@ class XGovRegistry(
         return self.pending_proposals.value == 0
 
     @subroutine
-    def is_proposal(self, proposal_id: arc4.UInt64) -> bool:
+    def _is_proposal(self, proposal_id: arc4.UInt64) -> bool:
         return (
             Application(proposal_id.native).creator
             == Global.current_application_address
@@ -815,7 +815,7 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # verify proposal id is genuine proposal
-        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         # Verify the proposal is in the voting state
         status, status_exists = op.AppGlobal.get_ex_uint64(
@@ -867,7 +867,7 @@ class XGovRegistry(
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
         status, status_exists = op.AppGlobal.get_ex_uint64(
@@ -918,7 +918,7 @@ class XGovRegistry(
         ), err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.decommission, app_id=proposal_id.native
@@ -967,7 +967,7 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self.is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
 
         proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
             proposal_id.native, pcfg.GS_KEY_PROPOSER
@@ -1119,3 +1119,7 @@ class XGovRegistry(
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
         )
+
+    @arc4.abimethod()
+    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
