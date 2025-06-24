@@ -218,6 +218,7 @@ class XGovRegistry(
         """
 
         self.xgov_manager.value = arc4.Address(Txn.sender)
+        assert self.entropy() == TemplateVar[Bytes]("entropy")
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
