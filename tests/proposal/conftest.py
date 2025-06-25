@@ -73,8 +73,8 @@ def committee_member(algorand_client: AlgorandClient) -> AddressAndSigner:
 @pytest.fixture(scope="session")
 def xgov_registry_mock_client(
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> XgovRegistryMockClient:
     config.configure(
         debug=True,
@@ -97,8 +97,8 @@ def xgov_registry_mock_client(
         ),
     )
 
-    client.set_committee_publisher(committee_publisher=committee_publisher.address)
-    client.set_xgov_reviewer(xgov_reviewer=xgov_reviewer.address)
+    client.set_xgov_daemon(xgov_daemon=xgov_daemon.address)
+    client.set_xgov_council(xgov_council=xgov_council.address)
     client.set_committee_id(committee_id=DEFAULT_COMMITTEE_ID)
     client.set_committee_members(committee_members=DEFAULT_COMMITTEE_MEMBERS)
     client.set_committee_votes(committee_votes=DEFAULT_COMMITTEE_VOTES)
@@ -165,7 +165,7 @@ def alternative_proposal_client(
 
 
 @pytest.fixture(scope="session")
-def committee_publisher(algorand_client: AlgorandClient) -> AddressAndSigner:
+def xgov_daemon(algorand_client: AlgorandClient) -> AddressAndSigner:
     account = algorand_client.account.random()
 
     ensure_funded(
@@ -179,7 +179,7 @@ def committee_publisher(algorand_client: AlgorandClient) -> AddressAndSigner:
 
 
 @pytest.fixture(scope="session")
-def xgov_reviewer(algorand_client: AlgorandClient) -> AddressAndSigner:
+def xgov_council(algorand_client: AlgorandClient) -> AddressAndSigner:
     account = algorand_client.account.random()
 
     ensure_funded(
@@ -193,7 +193,7 @@ def xgov_reviewer(algorand_client: AlgorandClient) -> AddressAndSigner:
 
 
 @pytest.fixture(scope="session")
-def not_xgov_reviewer(algorand_client: AlgorandClient) -> AddressAndSigner:
+def not_xgov_council(algorand_client: AlgorandClient) -> AddressAndSigner:
     account = algorand_client.account.random()
 
     ensure_funded(

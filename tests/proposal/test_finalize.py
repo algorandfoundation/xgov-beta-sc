@@ -38,7 +38,7 @@ def test_finalize_success(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -57,8 +57,8 @@ def test_finalize_success(
     publishing_fee = relative_to_absolute_amount(
         reg_gs.proposal_fee, reg_gs.publishing_fee_bps
     )
-    committee_publisher_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
-        committee_publisher.address
+    xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
+        xgov_daemon.address
     )[
         "amount"
     ]
@@ -70,7 +70,7 @@ def test_finalize_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY.encode())],
         ),
@@ -78,8 +78,8 @@ def test_finalize_success(
 
     assert_account_balance(
         algorand_client=algorand_client,
-        address=committee_publisher.address,
-        expected_balance=committee_publisher_balance_before_finalize + publishing_fee,  # type: ignore
+        address=xgov_daemon.address,
+        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()
@@ -97,7 +97,7 @@ def test_finalize_not_proposer(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     not_proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -122,7 +122,7 @@ def test_finalize_not_proposer(
                 signer=not_proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
@@ -147,7 +147,7 @@ def test_finalize_empty_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
@@ -166,7 +166,7 @@ def test_finalize_empty_proposal(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
@@ -183,7 +183,7 @@ def test_finalize_twice(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -207,7 +207,7 @@ def test_finalize_twice(
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             boxes=[(0, METADATA_BOX_KEY.encode())],
         ),
     )
@@ -221,7 +221,7 @@ def test_finalize_twice(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 note="Second finalize",
             ),
         )
@@ -240,7 +240,7 @@ def test_finalize_too_early(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -260,7 +260,7 @@ def test_finalize_too_early(
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 suggested_params=sp,
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
@@ -285,7 +285,7 @@ def test_finalize_no_metadata(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -310,7 +310,7 @@ def test_finalize_no_metadata(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
@@ -322,7 +322,7 @@ def test_finalize_wrong_committee_id(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -347,7 +347,7 @@ def test_finalize_wrong_committee_id(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
@@ -371,7 +371,7 @@ def test_finalize_wrong_committee_members(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -400,7 +400,7 @@ def test_finalize_wrong_committee_members(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
@@ -424,7 +424,7 @@ def test_finalize_wrong_committee_votes(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -453,7 +453,7 @@ def test_finalize_wrong_committee_votes(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 boxes=[(0, METADATA_BOX_KEY.encode())],
                 suggested_params=sp,
             ),
@@ -477,7 +477,7 @@ def test_finalize_paused_registry_error(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
 ) -> None:
 
     submit_proposal(
@@ -493,8 +493,8 @@ def test_finalize_paused_registry_error(
     publishing_fee = relative_to_absolute_amount(
         reg_gs.proposal_fee, reg_gs.publishing_fee_bps
     )
-    committee_publisher_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
-        committee_publisher.address
+    xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
+        xgov_daemon.address
     )[
         "amount"
     ]
@@ -509,7 +509,7 @@ def test_finalize_paused_registry_error(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_daemon.address],
                 suggested_params=sp,
                 boxes=[(0, METADATA_BOX_KEY)],
             ),
@@ -522,7 +522,7 @@ def test_finalize_paused_registry_error(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -530,8 +530,8 @@ def test_finalize_paused_registry_error(
 
     assert_account_balance(
         algorand_client=algorand_client,
-        address=committee_publisher.address,
-        expected_balance=committee_publisher_balance_before_finalize + publishing_fee,  # type: ignore
+        address=xgov_daemon.address,
+        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()

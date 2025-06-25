@@ -11,7 +11,7 @@ from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import LogicErrorType, decode_address, xgov_box_name
 
 
-def test_set_xgov_reviewer_success(
+def test_set_xgov_council_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
@@ -20,8 +20,8 @@ def test_set_xgov_reviewer_success(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    xgov_registry_client.set_xgov_reviewer(
-        reviewer=random_account.address,
+    xgov_registry_client.set_xgov_council(
+        council=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -32,10 +32,10 @@ def test_set_xgov_reviewer_success(
 
     global_state = xgov_registry_client.get_global_state()
 
-    assert global_state.xgov_reviewer.as_bytes == decode_address(random_account.address)  # type: ignore
+    assert global_state.xgov_council.as_bytes == decode_address(random_account.address)  # type: ignore
 
 
-def test_set_xgov_reviewer_not_manager(
+def test_set_xgov_council_not_manager(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
@@ -44,8 +44,8 @@ def test_set_xgov_reviewer_not_manager(
     sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.set_xgov_reviewer(
-            reviewer=random_account.address,
+        xgov_registry_client.set_xgov_council(
+            council=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,

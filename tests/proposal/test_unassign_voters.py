@@ -27,7 +27,7 @@ def test_unassign_empty_proposal(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -39,7 +39,7 @@ def test_unassign_empty_proposal(
         unassign_voters(
             composer,
             committee_members,
-            committee_publisher,
+            xgov_daemon,
             sp,
             xgov_registry_mock_client.app_id,
         )
@@ -51,9 +51,9 @@ def test_unassign_unauthorized(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -75,7 +75,7 @@ def test_unassign_unauthorized(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -84,7 +84,7 @@ def test_unassign_unauthorized(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -121,9 +121,9 @@ def test_unassign_no_voters(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -145,7 +145,7 @@ def test_unassign_no_voters(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -154,7 +154,7 @@ def test_unassign_no_voters(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -178,7 +178,7 @@ def test_unassign_no_voters(
     unassign_voters(
         composer,
         [],
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -198,9 +198,9 @@ def test_unassign_one_voter(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -222,7 +222,7 @@ def test_unassign_one_voter(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -231,7 +231,7 @@ def test_unassign_one_voter(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -255,7 +255,7 @@ def test_unassign_one_voter(
     unassign_voters(
         composer,
         committee_members[:1],
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -277,9 +277,9 @@ def test_unassign_all_voters(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -301,7 +301,7 @@ def test_unassign_all_voters(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -310,7 +310,7 @@ def test_unassign_all_voters(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -334,7 +334,7 @@ def test_unassign_all_voters(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -356,9 +356,9 @@ def test_unassign_metadata_ref(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -380,7 +380,7 @@ def test_unassign_metadata_ref(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -389,7 +389,7 @@ def test_unassign_metadata_ref(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -413,8 +413,8 @@ def test_unassign_metadata_ref(
         proposal_client.unassign_voters(
             voters=[committee_members[0].address],
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 boxes=[
                     (
@@ -442,9 +442,9 @@ def test_unassign__not_same_app(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     not_proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -477,7 +477,7 @@ def test_unassign__not_same_app(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -488,7 +488,7 @@ def test_unassign__not_same_app(
             sender=not_proposer.address,
             signer=not_proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -497,7 +497,7 @@ def test_unassign__not_same_app(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -507,7 +507,7 @@ def test_unassign__not_same_app(
     composer = alternative_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -543,7 +543,7 @@ def test_unassign__not_same_app(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -552,7 +552,7 @@ def test_unassign__not_same_app(
     unassign_voters(
         alternative_composer,
         committee_members,
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -569,9 +569,9 @@ def test_unassign_not_same_method(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -593,7 +593,7 @@ def test_unassign_not_same_method(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -602,7 +602,7 @@ def test_unassign_not_same_method(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -625,14 +625,14 @@ def test_unassign_not_same_method(
     composer = proposal_client.compose()
     composer.get_state(
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_daemon.address,
+            signer=xgov_daemon.signer,
         ),
     )
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -646,9 +646,9 @@ def test_unassign_not_same_method_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -670,7 +670,7 @@ def test_unassign_not_same_method_2(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -679,7 +679,7 @@ def test_unassign_not_same_method_2(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -703,14 +703,14 @@ def test_unassign_not_same_method_2(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
     composer.get_state(
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_daemon.address,
+            signer=xgov_daemon.signer,
         ),
     )
 
@@ -718,14 +718,14 @@ def test_unassign_not_same_method_2(
         composer.execute()
 
 
-def test_unassign_one_call_not_publisher(
+def test_unassign_one_call_not_xgov_daemon(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -747,7 +747,7 @@ def test_unassign_one_call_not_publisher(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -756,7 +756,7 @@ def test_unassign_one_call_not_publisher(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -780,7 +780,7 @@ def test_unassign_one_call_not_publisher(
     unassign_voters(
         composer,
         committee_members[:-1],
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -800,9 +800,9 @@ def test_unassign_final_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -824,7 +824,7 @@ def test_unassign_final_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -833,7 +833,7 @@ def test_unassign_final_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members[:1],
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -844,7 +844,7 @@ def test_unassign_final_proposal(
     unassign_voters(
         composer,
         committee_members[:1],
-        committee_publisher,
+        xgov_daemon,
         sp,
         xgov_registry_mock_client.app_id,
     )

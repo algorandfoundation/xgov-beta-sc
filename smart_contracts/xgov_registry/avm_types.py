@@ -10,11 +10,11 @@ class TypedGlobalState(arc4.Struct):
     paused_proposals: arc4.Bool
     xgov_manager: arc4.Address
     xgov_payor: arc4.Address
-    xgov_reviewer: arc4.Address
+    xgov_council: arc4.Address
     xgov_subscriber: arc4.Address
     kyc_provider: arc4.Address
     committee_manager: arc4.Address
-    committee_publisher: arc4.Address
+    xgov_daemon: arc4.Address
     xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
     proposal_fee: arc4.UInt64

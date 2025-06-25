@@ -57,9 +57,9 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
         )
-        self.committee_publisher = GlobalState(
-            arc4.Address(mock_cfg.COMMITTEE_PUBLISHER),
-            key=reg_cfg.GS_KEY_COMMITTEE_PUBLISHER,
+        self.xgov_daemon = GlobalState(
+            arc4.Address(mock_cfg.XGOV_DAEMON),
+            key=reg_cfg.GS_KEY_XGOV_DAEMON,
         )
         self.proposal_fee = GlobalState(
             UInt64(mock_cfg.PROPOSAL_FEE),
@@ -113,9 +113,9 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(mock_cfg.WEIGHTED_QUORUM_LARGE_BPS),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
         )
-        self.xgov_reviewer = GlobalState(
-            arc4.Address(mock_cfg.XGOV_REVIEWER),
-            key=reg_cfg.GS_KEY_XGOV_REVIEWER,
+        self.xgov_council = GlobalState(
+            arc4.Address(mock_cfg.XGOV_COUNCIL),
+            key=reg_cfg.GS_KEY_XGOV_COUNCIL,
         )
         self.paused_registry = GlobalState(
             UInt64(0),
@@ -286,15 +286,15 @@ class XgovRegistryMock(ARC4Contract):
         self.discussion_duration_large.value = discussion_duration
 
     @arc4.abimethod()
-    def set_committee_publisher(self, committee_publisher: arc4.Address) -> None:
+    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
         """
-        Set the committee publisher
+        Set the xGov Daemon
 
         Args:
-            committee_publisher (arc4.Address): The committee publisher
+            xgov_daemon (arc4.Address): The xGov Daemon
 
         """
-        self.committee_publisher.value = committee_publisher
+        self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
     def set_proposal_fee(self, proposal_fee: UInt64) -> None:
@@ -504,15 +504,15 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def set_xgov_reviewer(self, xgov_reviewer: arc4.Address) -> None:
+    def set_xgov_council(self, xgov_council: arc4.Address) -> None:
         """
-        Set the XGov reviewer
+        Set the XGov council
 
         Args:
-            xgov_reviewer (arc4.Address): The XGov reviewer
+            xgov_council (arc4.Address): The XGov council
 
         """
-        self.xgov_reviewer.value = xgov_reviewer
+        self.xgov_council.value = xgov_council
 
     @arc4.abimethod()
     def fund(self, proposal_app: Application) -> None:

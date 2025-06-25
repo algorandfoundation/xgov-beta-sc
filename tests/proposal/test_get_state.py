@@ -21,9 +21,9 @@ def test_funded_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -42,7 +42,7 @@ def test_funded_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -51,7 +51,7 @@ def test_funded_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -93,8 +93,8 @@ def test_funded_proposal(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )

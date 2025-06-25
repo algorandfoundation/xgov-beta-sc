@@ -149,7 +149,7 @@ class Proposal(
 
     @subroutine
     def review_check_authorization(self) -> None:
-        assert self.is_reviewer(), err.UNAUTHORIZED
+        assert self.is_council(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
@@ -162,7 +162,7 @@ class Proposal(
 
     @subroutine
     def unassign_voters_check_authorization(self) -> None:
-        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert self.is_xgov_daemon(), err.UNAUTHORIZED
         assert (
             self.status.value == enm.STATUS_FUNDED
             or self.status.value == enm.STATUS_BLOCKED
@@ -187,7 +187,7 @@ class Proposal(
 
     @subroutine
     def delete_check_authorization(self) -> None:
-        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert self.is_xgov_daemon(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_DECOMMISSIONED, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
@@ -237,7 +237,7 @@ class Proposal(
 
     @subroutine
     def assign_voter_check_authorization(self) -> None:
-        assert self.is_committee_publisher(), err.UNAUTHORIZED
+        assert self.is_xgov_daemon(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
@@ -491,17 +491,15 @@ class Proposal(
         return Txn.sender == self.proposer.value
 
     @subroutine
-    def is_reviewer(self) -> bool:
+    def is_council(self) -> bool:
         return Txn.sender == Account(
-            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_REVIEWER))
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
         )
 
     @subroutine
-    def is_committee_publisher(self) -> bool:
+    def is_xgov_daemon(self) -> bool:
         return Txn.sender == Account(
-            self.get_bytes_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
-            )
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
         )
 
     @subroutine
@@ -691,9 +689,7 @@ class Proposal(
 
         self.pay(
             receiver=Account(
-                self.get_bytes_from_registry_config(
-                    Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
-                )
+                self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
             ),
             amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
         )
@@ -726,7 +722,7 @@ class Proposal(
             voting_power (UInt64): Voting power
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
             err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
@@ -749,7 +745,7 @@ class Proposal(
             voters (DynamicArray[CommitteeMember]): List of voter addresses with their voting power
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
             err.WRONG_APP_ID: If the app ID is not as expected
@@ -873,7 +869,7 @@ class Proposal(
             block (bool): Whether to block the proposal or not
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xgov reviewer
+            err.UNAUTHORIZED: If the sender is not the xgov council
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
             err.MISSING_CONFIG: If one of the required configuration values is missing
 
@@ -922,7 +918,7 @@ class Proposal(
             voters: List of voters to be unassigned
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_APP_ID: If the app ID is not as expected
@@ -988,7 +984,7 @@ class Proposal(
         """Delete the proposal.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DECOMMISSIONED
 
         """
