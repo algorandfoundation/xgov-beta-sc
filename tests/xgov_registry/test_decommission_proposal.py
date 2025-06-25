@@ -71,7 +71,7 @@ def test_decommission_funded_proposal_success(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_proposal_not_xgov_backend(
+def test_decommission_proposal_not_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
     committee_manager: AddressAndSigner,

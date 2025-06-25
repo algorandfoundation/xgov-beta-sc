@@ -154,8 +154,8 @@ def xgov_registry_client(
         ),
     )
 
-    client.set_xgov_backend(
-        xgov_backend=deployer.address,
+    client.set_xgov_daemon(
+        xgov_daemon=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),

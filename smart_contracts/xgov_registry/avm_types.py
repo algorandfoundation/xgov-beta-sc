@@ -14,7 +14,7 @@ class TypedGlobalState(arc4.Struct):
     xgov_subscriber: arc4.Address
     kyc_provider: arc4.Address
     committee_manager: arc4.Address
-    xgov_backend: arc4.Address
+    xgov_daemon: arc4.Address
     xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
     proposal_fee: arc4.UInt64

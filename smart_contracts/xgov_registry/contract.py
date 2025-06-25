@@ -62,7 +62,7 @@ class XGovRegistry(
         self.committee_manager = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
         )
-        self.xgov_backend = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_BACKEND)
+        self.xgov_daemon = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_DAEMON)
 
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
         self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
@@ -345,19 +345,19 @@ class XGovRegistry(
         self.committee_manager.value = manager
 
     @arc4.abimethod()
-    def set_xgov_backend(self, xgov_backend: arc4.Address) -> None:
+    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
         """
-        Sets the xGov Backend.
+        Sets the xGov Daemon.
 
         Args:
-            xgov_backend (arc4.Address): Address of the new xGov Backend
+            xgov_daemon (arc4.Address): Address of the new xGov Daemon
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.xgov_backend.value = xgov_backend
+        self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
     def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
@@ -910,7 +910,7 @@ class XGovRegistry(
             proposal_id (arc4.UInt64): The application ID of the Proposal app to decommission
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xGov Backend
+            err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
@@ -918,7 +918,7 @@ class XGovRegistry(
 
         """
 
-        assert arc4.Address(Txn.sender) == self.xgov_backend.value, err.UNAUTHORIZED
+        assert arc4.Address(Txn.sender) == self.xgov_daemon.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
@@ -1082,7 +1082,7 @@ class XGovRegistry(
             xgov_subscriber=self.xgov_subscriber.value,
             kyc_provider=self.kyc_provider.value,
             committee_manager=self.committee_manager.value,
-            xgov_backend=self.xgov_backend.value,
+            xgov_daemon=self.xgov_daemon.value,
             xgov_fee=arc4.UInt64(self.xgov_fee.value),
             proposer_fee=arc4.UInt64(self.proposer_fee.value),
             proposal_fee=arc4.UInt64(self.proposal_fee.value),

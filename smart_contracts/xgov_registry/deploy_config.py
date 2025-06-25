@@ -53,11 +53,11 @@ def deploy(
     )
 
     test_admin = os.environ["TEST_ADMIN"]
-    test_xgov_backend = os.environ["TEST_XGOV_BACKEND"]
+    test_xgov_daemon = os.environ["TEST_XGOV_DAEMON"]
     logger.info(f"Setting administrative roles to {test_admin}")
     admin_roles = app_client.compose()
     admin_roles.set_committee_manager(manager=test_admin)
-    admin_roles.set_xgov_backend(xgov_backend=test_xgov_backend)
+    admin_roles.set_xgov_daemon(xgov_daemon=test_xgov_daemon)
     admin_roles.set_xgov_council(council=test_admin)
     admin_roles.set_xgov_subscriber(subscriber=test_admin)
     admin_roles.set_payor(payor=test_admin)

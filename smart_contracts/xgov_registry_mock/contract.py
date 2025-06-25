@@ -57,9 +57,9 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
         )
-        self.xgov_backend = GlobalState(
-            arc4.Address(mock_cfg.XGOV_BACKEND),
-            key=reg_cfg.GS_KEY_XGOV_BACKEND,
+        self.xgov_daemon = GlobalState(
+            arc4.Address(mock_cfg.XGOV_DAEMON),
+            key=reg_cfg.GS_KEY_XGOV_DAEMON,
         )
         self.proposal_fee = GlobalState(
             UInt64(mock_cfg.PROPOSAL_FEE),
@@ -286,15 +286,15 @@ class XgovRegistryMock(ARC4Contract):
         self.discussion_duration_large.value = discussion_duration
 
     @arc4.abimethod()
-    def set_xgov_backend(self, xgov_backend: arc4.Address) -> None:
+    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
         """
-        Set the xGov Backend
+        Set the xGov Daemon
 
         Args:
-            xgov_backend (arc4.Address): The xGov Backend
+            xgov_daemon (arc4.Address): The xGov Daemon
 
         """
-        self.xgov_backend.value = xgov_backend
+        self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
     def set_proposal_fee(self, proposal_fee: UInt64) -> None:

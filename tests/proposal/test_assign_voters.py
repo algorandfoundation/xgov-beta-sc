@@ -35,7 +35,7 @@ def test_assign_voters_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -56,7 +56,7 @@ def test_assign_voters_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -65,7 +65,7 @@ def test_assign_voters_success(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -94,12 +94,12 @@ def test_assign_voters_success(
     )
 
 
-def test_assign_voters_not_xgov_backend(
+def test_assign_voters_not_xgov_daemon(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
 
@@ -120,7 +120,7 @@ def test_assign_voters_not_xgov_backend(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -130,7 +130,7 @@ def test_assign_voters_not_xgov_backend(
         composer = proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
-            xgov_backend=proposer,
+            xgov_daemon=proposer,
             committee_members=[committee_member],
             xgov_registry_app_id=xgov_registry_mock_client.app_id,
             sp=sp,
@@ -157,7 +157,7 @@ def test_assign_voters_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -169,7 +169,7 @@ def test_assign_voters_empty_proposal(
         composer = proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
-            xgov_backend=xgov_backend,
+            xgov_daemon=xgov_daemon,
             committee_members=[committee_member],
             xgov_registry_app_id=xgov_registry_mock_client.app_id,
             sp=sp,
@@ -196,7 +196,7 @@ def test_assign_voters_draft_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
 ) -> None:
 
@@ -213,7 +213,7 @@ def test_assign_voters_draft_proposal(
         composer = proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
-            xgov_backend=xgov_backend,
+            xgov_daemon=xgov_daemon,
             committee_members=[committee_member],
             xgov_registry_app_id=xgov_registry_mock_client.app_id,
             sp=sp,
@@ -246,7 +246,7 @@ def test_assign_voters_voting_open(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -267,7 +267,7 @@ def test_assign_voters_voting_open(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -276,7 +276,7 @@ def test_assign_voters_voting_open(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -289,7 +289,7 @@ def test_assign_voters_voting_open(
         composer = proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
-            xgov_backend=xgov_backend,
+            xgov_daemon=xgov_daemon,
             committee_members=committee_members[:1],
             xgov_registry_app_id=xgov_registry_mock_client.app_id,
             sp=sp,
@@ -325,7 +325,7 @@ def test_assign_voters_not_same_app(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     not_proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -357,7 +357,7 @@ def test_assign_voters_not_same_app(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -368,7 +368,7 @@ def test_assign_voters_not_same_app(
             sender=not_proposer.address,
             signer=not_proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -377,7 +377,7 @@ def test_assign_voters_not_same_app(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -386,7 +386,7 @@ def test_assign_voters_not_same_app(
     alternative_composer = alternative_proposal_client.compose()
     assign_voters(
         proposal_client_composer=alternative_composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -404,7 +404,7 @@ def test_assign_voters_not_same_method(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -425,7 +425,7 @@ def test_assign_voters_not_same_method(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -434,13 +434,13 @@ def test_assign_voters_not_same_method(
     composer = proposal_client.compose()
     composer.get_state(
         transaction_parameters=TransactionParameters(
-            sender=xgov_backend.address,
-            signer=xgov_backend.signer,
+            sender=xgov_daemon.address,
+            signer=xgov_daemon.signer,
         ),
     )
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -455,7 +455,7 @@ def test_assign_voters_not_same_method_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -476,7 +476,7 @@ def test_assign_voters_not_same_method_2(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -485,15 +485,15 @@ def test_assign_voters_not_same_method_2(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
     )
     composer.get_state(
         transaction_parameters=TransactionParameters(
-            sender=xgov_backend.address,
-            signer=xgov_backend.signer,
+            sender=xgov_daemon.address,
+            signer=xgov_daemon.signer,
         ),
     )
 
@@ -501,12 +501,12 @@ def test_assign_voters_not_same_method_2(
         composer.execute()
 
 
-def test_assign_voters_one_call_not_xgov_backend(
+def test_assign_voters_one_call_not_xgov_daemon(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_backend: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -527,7 +527,7 @@ def test_assign_voters_one_call_not_xgov_backend(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_backend.address],
+            accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -536,14 +536,14 @@ def test_assign_voters_one_call_not_xgov_backend(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=xgov_backend,
+        xgov_daemon=xgov_daemon,
         committee_members=committee_members[:-1],
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
     )
     assign_voters(
         proposal_client_composer=composer,
-        xgov_backend=proposer,
+        xgov_daemon=proposer,
         committee_members=[committee_members[-1]],
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
