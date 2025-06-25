@@ -26,7 +26,7 @@ def test_vote_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -48,7 +48,7 @@ def test_vote_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -57,7 +57,7 @@ def test_vote_success(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -112,7 +112,7 @@ def test_vote_not_committee_member(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -134,7 +134,7 @@ def test_vote_not_committee_member(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -143,7 +143,7 @@ def test_vote_not_committee_member(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -171,7 +171,7 @@ def test_vote_already_voted(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -193,7 +193,7 @@ def test_vote_already_voted(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -202,7 +202,7 @@ def test_vote_already_voted(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -278,7 +278,7 @@ def test_vote_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -312,7 +312,7 @@ def test_vote_draft_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -351,7 +351,7 @@ def test_vote_finalized_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -373,7 +373,7 @@ def test_vote_finalized_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -407,7 +407,7 @@ def test_vote_voting_expired(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -429,7 +429,7 @@ def test_vote_voting_expired(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -438,7 +438,7 @@ def test_vote_voting_expired(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -498,7 +498,7 @@ def test_vote_reject(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -520,7 +520,7 @@ def test_vote_reject(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -529,7 +529,7 @@ def test_vote_reject(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -589,7 +589,7 @@ def test_vote_null(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -611,7 +611,7 @@ def test_vote_null(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -620,7 +620,7 @@ def test_vote_null(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -680,7 +680,7 @@ def test_vote_mixed(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -702,7 +702,7 @@ def test_vote_mixed(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -711,7 +711,7 @@ def test_vote_mixed(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -812,7 +812,7 @@ def test_vote_mixed_same_vote_call(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -834,7 +834,7 @@ def test_vote_mixed_same_vote_call(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -843,7 +843,7 @@ def test_vote_mixed_same_vote_call(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -897,7 +897,7 @@ def test_vote_exceeded(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -919,7 +919,7 @@ def test_vote_exceeded(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -928,7 +928,7 @@ def test_vote_exceeded(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -980,7 +980,7 @@ def test_vote_paused_registry_error(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -1004,7 +1004,7 @@ def test_vote_paused_registry_error(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[committee_publisher.address],
+                accounts=[xgov_backend.address],
                 suggested_params=sp,
                 boxes=[(0, METADATA_BOX_KEY)],
             ),
@@ -1017,7 +1017,7 @@ def test_vote_paused_registry_error(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -1026,7 +1026,7 @@ def test_vote_paused_registry_error(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,

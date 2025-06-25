@@ -421,7 +421,7 @@ def upload_metadata(
 def unassign_voters(
     proposal_client_composer: Composer,
     committee_members: list[AddressAndSigner],
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     sp: SuggestedParams,
     xgov_registry_app_id: int,
     bulks: int = 8,
@@ -429,8 +429,8 @@ def unassign_voters(
     proposal_client_composer.unassign_voters(
         voters=[cm.address for cm in committee_members[: bulks - 1]],
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             foreign_apps=[xgov_registry_app_id],
             boxes=[
                 (
@@ -450,8 +450,8 @@ def unassign_voters(
                 for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
             ],
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 boxes=[
                     (
                         0,
@@ -467,7 +467,7 @@ def unassign_voters(
 def assign_voters(
     proposal_client_composer: Composer,
     committee_members: list[AddressAndSigner],
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     sp: SuggestedParams,
     xgov_registry_app_id: int,
     bulks: int = 8,
@@ -475,8 +475,8 @@ def assign_voters(
     proposal_client_composer.assign_voters(
         voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]],
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             foreign_apps=[xgov_registry_app_id],
             boxes=[
                 (
@@ -496,8 +496,8 @@ def assign_voters(
                 for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
             ],
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 boxes=[
                     (
                         0,
@@ -513,14 +513,14 @@ def assign_voters(
 def decommission_proposal(
     xgov_registry_client: XgovRegistryMockClient,
     proposal_app_id: int,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     sp: SuggestedParams,
 ) -> None:
     xgov_registry_client.decommission_proposal(
         proposal_app=proposal_app_id,
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             foreign_apps=[proposal_app_id],
             boxes=[
                 (

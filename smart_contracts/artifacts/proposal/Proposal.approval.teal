@@ -4,7 +4,7 @@
 // smart_contracts.proposal.contract.Proposal.__algopy_entrypoint_with_init() -> uint64:
 main:
     intcblock 0 1 10 20 10000
-    bytecblock 0x0000 0x737461747573 0x 0x70726f706f736572 0x66756e64696e675f63617465676f7279 "M" 0x72656769737472795f6170705f6964 0x636f6d6d69747465655f6d656d62657273 "voters_count" 0x636f6d6d69747465655f766f746573 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 "assigned_votes" 0x6c6f636b65645f616d6f756e74 0x6e756c6c73 0x151f7c75 0x7375626d697373696f6e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x636f6d6d69747465655f6964 0x00 0x00194552523a57726f6e672050726f706f73616c20537461747573 0x7469746c65 0x66696e616c697a6174696f6e5f74696d657374616d70 0x666f637573 0x66756e64696e675f74797065 0x7265717565737465645f616d6f756e74 "V" 0x636f6d6d69747465655f7075626c6973686572
+    bytecblock 0x0000 0x737461747573 0x 0x70726f706f736572 0x66756e64696e675f63617465676f7279 "M" 0x72656769737472795f6170705f6964 0x636f6d6d69747465655f6d656d62657273 "voters_count" 0x636f6d6d69747465655f766f746573 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 "assigned_votes" 0x6c6f636b65645f616d6f756e74 0x6e756c6c73 0x151f7c75 0x7375626d697373696f6e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x636f6d6d69747465655f6964 0x00 0x00194552523a57726f6e672050726f706f73616c20537461747573 0x7469746c65 0x66696e616c697a6174696f6e5f74696d657374616d70 0x666f637573 0x66756e64696e675f74797065 0x7265717565737465645f616d6f756e74 "V" 0x78676f765f6261636b656e64
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/proposal/contract.py:46
@@ -750,8 +750,8 @@ is_voting_open_else_body@7:
 // smart_contracts.proposal.contract.Proposal.assign_voter_check_authorization() -> void:
 assign_voter_check_authorization:
     // smart_contracts/proposal/contract.py:240
-    // assert self.is_committee_publisher(), err.UNAUTHORIZED
-    callsub is_committee_publisher
+    // assert self.is_xgov_backend(), err.UNAUTHORIZED
+    callsub is_xgov_backend
     assert // Unauthorized
     // smart_contracts/proposal/contract.py:241
     // assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
@@ -919,23 +919,23 @@ is_proposer:
     retsub
 
 
-// smart_contracts.proposal.contract.Proposal.is_committee_publisher() -> uint64:
-is_committee_publisher:
+// smart_contracts.proposal.contract.Proposal.is_xgov_backend() -> uint64:
+is_xgov_backend:
     // smart_contracts/proposal/contract.py:501
     // return Txn.sender == Account(
     txn Sender
     // smart_contracts/proposal/contract.py:503
-    // Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
-    bytec 28 // 0x636f6d6d69747465655f7075626c6973686572
+    // Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
+    bytec 28 // 0x78676f765f6261636b656e64
     // smart_contracts/proposal/contract.py:502-504
     // self.get_bytes_from_registry_config(
-    //     Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+    //     Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
     // )
     callsub get_bytes_from_registry_config
     // smart_contracts/proposal/contract.py:501-505
     // return Txn.sender == Account(
     //     self.get_bytes_from_registry_config(
-    //         Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+    //         Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
     //     )
     // )
     dup
@@ -1651,17 +1651,17 @@ finalize_after_if_else@7:
     ==
     assert // Missing Config
     // smart_contracts/proposal/contract.py:695
-    // Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
-    bytec 28 // 0x636f6d6d69747465655f7075626c6973686572
+    // Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
+    bytec 28 // 0x78676f765f6261636b656e64
     // smart_contracts/proposal/contract.py:694-696
     // self.get_bytes_from_registry_config(
-    //     Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+    //     Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
     // )
     callsub get_bytes_from_registry_config
     // smart_contracts/proposal/contract.py:693-697
     // receiver=Account(
     //     self.get_bytes_from_registry_config(
-    //         Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+    //         Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
     //     )
     // ),
     dup
@@ -1679,7 +1679,7 @@ finalize_after_if_else@7:
     // self.pay(
     //     receiver=Account(
     //         self.get_bytes_from_registry_config(
-    //             Bytes(reg_cfg.GS_KEY_COMMITTEE_PUBLISHER)
+    //             Bytes(reg_cfg.GS_KEY_XGOV_BACKEND)
     //         )
     //     ),
     //     amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
@@ -2516,12 +2516,12 @@ review:
     // return Txn.sender == Account(
     txn Sender
     // smart_contracts/proposal/contract.py:496
-    // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_REVIEWER))
-    pushbytes 0x78676f765f7265766965776572
+    // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
+    pushbytes 0x78676f765f636f756e63696c
     callsub get_bytes_from_registry_config
     // smart_contracts/proposal/contract.py:495-497
     // return Txn.sender == Account(
-    //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_REVIEWER))
+    //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
     // )
     dup
     len
@@ -2530,7 +2530,7 @@ review:
     assert // Address length is 32 bytes
     ==
     // smart_contracts/proposal/contract.py:152
-    // assert self.is_reviewer(), err.UNAUTHORIZED
+    // assert self.is_council(), err.UNAUTHORIZED
     assert // Unauthorized
     // smart_contracts/proposal/contract.py:153
     // assert self.status.value == enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
@@ -2659,8 +2659,8 @@ unassign_voters:
     bytec_2 // ""
     dupn 3
     // smart_contracts/proposal/contract.py:165
-    // assert self.is_committee_publisher(), err.UNAUTHORIZED
-    callsub is_committee_publisher
+    // assert self.is_xgov_backend(), err.UNAUTHORIZED
+    callsub is_xgov_backend
     assert // Unauthorized
     // smart_contracts/proposal/contract.py:167
     // self.status.value == enm.STATUS_FUNDED
@@ -3050,8 +3050,8 @@ decommission_after_if_else@13:
 // smart_contracts.proposal.contract.Proposal.delete() -> void:
 delete:
     // smart_contracts/proposal/contract.py:190
-    // assert self.is_committee_publisher(), err.UNAUTHORIZED
-    callsub is_committee_publisher
+    // assert self.is_xgov_backend(), err.UNAUTHORIZED
+    callsub is_xgov_backend
     assert // Unauthorized
     // smart_contracts/proposal/contract.py:191
     // assert self.status.value == enm.STATUS_DECOMMISSIONED, err.WRONG_PROPOSAL_STATUS

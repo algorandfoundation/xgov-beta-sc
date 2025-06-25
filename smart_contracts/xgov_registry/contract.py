@@ -56,15 +56,13 @@ class XGovRegistry(
             arc4.Address(), key=cfg.GS_KEY_XGOV_SUBSCRIBER
         )
         self.xgov_payor = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_PAYOR)
-        self.xgov_reviewer = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_REVIEWER)
+        self.xgov_council = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_COUNCIL)
 
         self.kyc_provider = GlobalState(arc4.Address(), key=cfg.GS_KEY_KYC_PROVIDER)
         self.committee_manager = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
         )
-        self.committee_publisher = GlobalState(
-            arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER
-        )
+        self.xgov_backend = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_BACKEND)
 
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
         self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
@@ -287,19 +285,19 @@ class XGovRegistry(
         self.xgov_payor.value = payor
 
     @arc4.abimethod()
-    def set_xgov_reviewer(self, reviewer: arc4.Address) -> None:
+    def set_xgov_council(self, council: arc4.Address) -> None:
         """
-        Sets the xGov Reviewer.
+        Sets the xGov Council.
 
         Args:
-            reviewer (arc4.Address): Address of the new xGov Reviewer
+            council (arc4.Address): Address of the new xGov Council
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.xgov_reviewer.value = reviewer
+        self.xgov_council.value = council
 
     @arc4.abimethod()
     def set_xgov_subscriber(self, subscriber: arc4.Address) -> None:
@@ -347,19 +345,19 @@ class XGovRegistry(
         self.committee_manager.value = manager
 
     @arc4.abimethod()
-    def set_committee_publisher(self, publisher: arc4.Address) -> None:
+    def set_xgov_backend(self, xgov_backend: arc4.Address) -> None:
         """
-        Sets the Committee Publisher.
+        Sets the xGov Backend.
 
         Args:
-            publisher (arc4.Address): Address of the new Committee Publisher
+            xgov_backend (arc4.Address): Address of the new xGov Backend
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        self.committee_publisher.value = publisher
+        self.xgov_backend.value = xgov_backend
 
     @arc4.abimethod()
     def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
@@ -912,7 +910,7 @@ class XGovRegistry(
             proposal_id (arc4.UInt64): The application ID of the Proposal app to decommission
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the committee publisher
+            err.UNAUTHORIZED: If the sender is not the xGov Backend
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
@@ -920,9 +918,7 @@ class XGovRegistry(
 
         """
 
-        assert (
-            arc4.Address(Txn.sender) == self.committee_publisher.value
-        ), err.UNAUTHORIZED
+        assert arc4.Address(Txn.sender) == self.xgov_backend.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
@@ -1082,11 +1078,11 @@ class XGovRegistry(
             paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
             xgov_manager=self.xgov_manager.value,
             xgov_payor=self.xgov_payor.value,
-            xgov_reviewer=self.xgov_reviewer.value,
+            xgov_council=self.xgov_council.value,
             xgov_subscriber=self.xgov_subscriber.value,
             kyc_provider=self.kyc_provider.value,
             committee_manager=self.committee_manager.value,
-            committee_publisher=self.committee_publisher.value,
+            xgov_backend=self.xgov_backend.value,
             xgov_fee=arc4.UInt64(self.xgov_fee.value),
             proposer_fee=arc4.UInt64(self.proposer_fee.value),
             proposal_fee=arc4.UInt64(self.proposal_fee.value),

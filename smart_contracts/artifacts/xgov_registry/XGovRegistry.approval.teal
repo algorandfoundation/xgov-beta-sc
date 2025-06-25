@@ -4,7 +4,7 @@
 // smart_contracts.xgov_registry.contract.XGovRegistry.__algopy_entrypoint_with_init() -> uint64:
 main:
     intcblock 0 1 4 8
-    bytecblock 0x7061757365645f7265676973747279 0x78676f7673 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78 0x78676f765f6d616e61676572 0x151f7c75 0x00 0x0000000000000000 0x7061757365645f70726f706f73616c73 0x70726f706f73616c5f666565 0x78676f765f73756273637269626572 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x636f6d6d69747465655f7075626c6973686572 0x78676f765f666565 0x70726f706f7365725f666565 0x726571756573745f6964 0x78676f765f7265766965776572 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x72 0x70726f706f736572 0x636f6d6d69747465655f6964 0x737461747573 "Wrong Proposal Status" "ERR:" TMPL_entropy
+    bytecblock 0x7061757365645f7265676973747279 0x78676f7673 0x6f75747374616e64696e675f66756e6473 0x70 0x70656e64696e675f70726f706f73616c73 0x78 0x78676f765f6d616e61676572 0x151f7c75 0x00 0x0000000000000000 0x7061757365645f70726f706f73616c73 0x70726f706f73616c5f666565 0x78676f765f73756273637269626572 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x78676f765f6261636b656e64 0x78676f765f666565 0x70726f706f7365725f666565 0x726571756573745f6964 0x78676f765f636f756e63696c 0x70726f706f73616c5f7075626c697368696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x72 0x70726f706f736572 0x636f6d6d69747465655f6964 0x737461747573 "Wrong Proposal Status" "ERR:" TMPL_entropy
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/xgov_registry/contract.py:44-45
@@ -61,8 +61,8 @@ main:
     global ZeroAddress
     app_global_put
     // smart_contracts/xgov_registry/contract.py:59
-    // self.xgov_reviewer = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_REVIEWER)
-    bytec 20 // 0x78676f765f7265766965776572
+    // self.xgov_council = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_COUNCIL)
+    bytec 20 // 0x78676f765f636f756e63696c
     global ZeroAddress
     app_global_put
     // smart_contracts/xgov_registry/contract.py:61
@@ -80,12 +80,12 @@ main:
     // )
     app_global_put
     // smart_contracts/xgov_registry/contract.py:66
-    // arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER
-    bytec 16 // 0x636f6d6d69747465655f7075626c6973686572
+    // arc4.Address(), key=cfg.GS_KEY_XGOV_BACKEND
+    bytec 16 // 0x78676f765f6261636b656e64
     global ZeroAddress
     // smart_contracts/xgov_registry/contract.py:65-67
-    // self.committee_publisher = GlobalState(
-    //     arc4.Address(), key=cfg.GS_KEY_COMMITTEE_PUBLISHER
+    // self.xgov_backend = GlobalState(
+    //     arc4.Address(), key=cfg.GS_KEY_XGOV_BACKEND
     // )
     app_global_put
     // smart_contracts/xgov_registry/contract.py:69
@@ -315,9 +315,9 @@ main_after_if_else@2:
     // ):
     txn NumAppArgs
     bz main_after_if_else@40
-    pushbytess 0x4c5c61ba 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x11cf9720 0xd4216b6e 0xba8520f2 0x1677b30e 0xaa348d0d 0x653a0bdb 0x4956c1ab 0xa082cef8 0x76725559 0xe9553f8d 0x04f9322b 0x45077390 0x3c31bc02 0x0d2c7891 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0xdb27b9af 0x913ec7db 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x00b3cef5 0x26983200 // method "create()void", method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "set_xgov_manager(address)void", method "set_payor(address)void", method "set_xgov_reviewer(address)void", method "set_xgov_subscriber(address)void", method "set_kyc_provider(address)void", method "set_committee_manager(address)void", method "set_committee_publisher(address)void", method "config_xgov_registry((uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3]))void", method "update_xgov_registry()void", method "subscribe_xgov(address,pay)void", method "unsubscribe_xgov(address)void", method "subscribe_xgov_app(uint64,address,pay)void", method "unsubscribe_xgov_app(uint64)void", method "request_subscribe_xgov(address,address,uint64,pay)void", method "approve_subscribe_xgov(uint64)void", method "reject_subscribe_xgov(uint64)void", method "set_voting_account(address,address)void", method "subscribe_proposer(pay)void", method "set_proposer_kyc(address,bool,uint64)void", method "declare_committee(byte[32],uint64,uint64)void", method "open_proposal(pay)uint64", method "vote_proposal(uint64,address,uint64,uint64)void", method "pay_grant_proposal(uint64)void", method "decommission_proposal(uint64)void", method "drop_proposal(uint64)void", method "deposit_funds(pay)void", method "withdraw_funds(uint64)void", method "withdraw_balance()void", method "get_state()(bool,bool,address,address,address,address,address,address,address,uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3],uint64,uint64,byte[32],uint64,uint64)", method "is_proposal(uint64)void"
+    pushbytess 0x4c5c61ba 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x37d6adf1 0xd4216b6e 0xba8520f2 0x1677b30e 0x037a074b 0x653a0bdb 0x4956c1ab 0xa082cef8 0x76725559 0xe9553f8d 0x04f9322b 0x45077390 0x3c31bc02 0x0d2c7891 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0xdb27b9af 0x913ec7db 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x00b3cef5 0x26983200 // method "create()void", method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "set_xgov_manager(address)void", method "set_payor(address)void", method "set_xgov_council(address)void", method "set_xgov_subscriber(address)void", method "set_kyc_provider(address)void", method "set_committee_manager(address)void", method "set_xgov_backend(address)void", method "config_xgov_registry((uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3]))void", method "update_xgov_registry()void", method "subscribe_xgov(address,pay)void", method "unsubscribe_xgov(address)void", method "subscribe_xgov_app(uint64,address,pay)void", method "unsubscribe_xgov_app(uint64)void", method "request_subscribe_xgov(address,address,uint64,pay)void", method "approve_subscribe_xgov(uint64)void", method "reject_subscribe_xgov(uint64)void", method "set_voting_account(address,address)void", method "subscribe_proposer(pay)void", method "set_proposer_kyc(address,bool,uint64)void", method "declare_committee(byte[32],uint64,uint64)void", method "open_proposal(pay)uint64", method "vote_proposal(uint64,address,uint64,uint64)void", method "pay_grant_proposal(uint64)void", method "decommission_proposal(uint64)void", method "drop_proposal(uint64)void", method "deposit_funds(pay)void", method "withdraw_funds(uint64)void", method "withdraw_balance()void", method "get_state()(bool,bool,address,address,address,address,address,address,address,uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3],uint64,uint64,byte[32],uint64,uint64)", method "is_proposal(uint64)void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 main_set_xgov_manager_route@10 main_set_payor_route@11 main_set_xgov_reviewer_route@12 main_set_xgov_subscriber_route@13 main_set_kyc_provider_route@14 main_set_committee_manager_route@15 main_set_committee_publisher_route@16 main_config_xgov_registry_route@17 main_update_xgov_registry_route@18 main_subscribe_xgov_route@19 main_unsubscribe_xgov_route@20 main_subscribe_xgov_app_route@21 main_unsubscribe_xgov_app_route@22 main_request_subscribe_xgov_route@23 main_approve_subscribe_xgov_route@24 main_reject_subscribe_xgov_route@25 main_set_voting_account_route@26 main_subscribe_proposer_route@27 main_set_proposer_kyc_route@28 main_declare_committee_route@29 main_open_proposal_route@30 main_vote_proposal_route@31 main_pay_grant_proposal_route@32 main_decommission_proposal_route@33 main_drop_proposal_route@34 main_deposit_funds_route@35 main_withdraw_funds_route@36 main_withdraw_balance_route@37 main_get_state_route@38 main_is_proposal_route@39
+    match main_create_route@5 main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 main_set_xgov_manager_route@10 main_set_payor_route@11 main_set_xgov_council_route@12 main_set_xgov_subscriber_route@13 main_set_kyc_provider_route@14 main_set_committee_manager_route@15 main_set_xgov_backend_route@16 main_config_xgov_registry_route@17 main_update_xgov_registry_route@18 main_subscribe_xgov_route@19 main_unsubscribe_xgov_route@20 main_subscribe_xgov_app_route@21 main_unsubscribe_xgov_app_route@22 main_request_subscribe_xgov_route@23 main_approve_subscribe_xgov_route@24 main_reject_subscribe_xgov_route@25 main_set_voting_account_route@26 main_subscribe_proposer_route@27 main_set_proposer_kyc_route@28 main_declare_committee_route@29 main_open_proposal_route@30 main_vote_proposal_route@31 main_pay_grant_proposal_route@32 main_decommission_proposal_route@33 main_drop_proposal_route@34 main_deposit_funds_route@35 main_withdraw_funds_route@36 main_withdraw_balance_route@37 main_get_state_route@38 main_is_proposal_route@39
 
 main_after_if_else@40:
     // smart_contracts/xgov_registry/contract.py:34-42
@@ -936,7 +936,7 @@ main_config_xgov_registry_route@17:
     intc_1 // 1
     return
 
-main_set_committee_publisher_route@16:
+main_set_xgov_backend_route@16:
     // smart_contracts/xgov_registry/contract.py:349
     // @arc4.abimethod()
     txn OnCompletion
@@ -957,7 +957,7 @@ main_set_committee_publisher_route@16:
     txna ApplicationArgs 1
     // smart_contracts/xgov_registry/contract.py:349
     // @arc4.abimethod()
-    callsub set_committee_publisher
+    callsub set_xgov_backend
     intc_1 // 1
     return
 
@@ -1036,7 +1036,7 @@ main_set_xgov_subscriber_route@13:
     intc_1 // 1
     return
 
-main_set_xgov_reviewer_route@12:
+main_set_xgov_council_route@12:
     // smart_contracts/xgov_registry/contract.py:289
     // @arc4.abimethod()
     txn OnCompletion
@@ -1057,7 +1057,7 @@ main_set_xgov_reviewer_route@12:
     txna ApplicationArgs 1
     // smart_contracts/xgov_registry/contract.py:289
     // @arc4.abimethod()
-    callsub set_xgov_reviewer
+    callsub set_xgov_council
     intc_1 // 1
     return
 
@@ -1438,19 +1438,19 @@ set_payor:
     retsub
 
 
-// smart_contracts.xgov_registry.contract.XGovRegistry.set_xgov_reviewer(reviewer: bytes) -> void:
-set_xgov_reviewer:
+// smart_contracts.xgov_registry.contract.XGovRegistry.set_xgov_council(council: bytes) -> void:
+set_xgov_council:
     // smart_contracts/xgov_registry/contract.py:289-290
     // @arc4.abimethod()
-    // def set_xgov_reviewer(self, reviewer: arc4.Address) -> None:
+    // def set_xgov_council(self, council: arc4.Address) -> None:
     proto 1 0
     // smart_contracts/xgov_registry/contract.py:301
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:302
-    // self.xgov_reviewer.value = reviewer
-    bytec 20 // 0x78676f765f7265766965776572
+    // self.xgov_council.value = council
+    bytec 20 // 0x78676f765f636f756e63696c
     frame_dig -1
     app_global_put
     retsub
@@ -1510,19 +1510,19 @@ set_committee_manager:
     retsub
 
 
-// smart_contracts.xgov_registry.contract.XGovRegistry.set_committee_publisher(publisher: bytes) -> void:
-set_committee_publisher:
+// smart_contracts.xgov_registry.contract.XGovRegistry.set_xgov_backend(xgov_backend: bytes) -> void:
+set_xgov_backend:
     // smart_contracts/xgov_registry/contract.py:349-350
     // @arc4.abimethod()
-    // def set_committee_publisher(self, publisher: arc4.Address) -> None:
+    // def set_xgov_backend(self, xgov_backend: arc4.Address) -> None:
     proto 1 0
     // smart_contracts/xgov_registry/contract.py:361
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:362
-    // self.committee_publisher.value = publisher
-    bytec 16 // 0x636f6d6d69747465655f7075626c6973686572
+    // self.xgov_backend.value = xgov_backend
+    bytec 16 // 0x78676f765f6261636b656e64
     frame_dig -1
     app_global_put
     retsub
@@ -2624,7 +2624,7 @@ open_proposal:
     itxn_field ExtraProgramPages
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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)
+    pushbytes base64(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)
     itxn_field ApprovalProgramPages
     pushbytes 0xcc694eaa // method "create(address)void"
     itxn_field ApplicationArgs
@@ -3040,16 +3040,16 @@ decommission_proposal:
     // def decommission_proposal(self, proposal_id: arc4.UInt64) -> None:
     proto 1 0
     // smart_contracts/xgov_registry/contract.py:924
-    // arc4.Address(Txn.sender) == self.committee_publisher.value
+    // arc4.Address(Txn.sender) == self.xgov_backend.value
     txn Sender
     intc_0 // 0
-    bytec 16 // 0x636f6d6d69747465655f7075626c6973686572
+    bytec 16 // 0x78676f765f6261636b656e64
     app_global_get_ex
-    assert // check self.committee_publisher exists
+    assert // check self.xgov_backend exists
     ==
     // smart_contracts/xgov_registry/contract.py:923-925
     // assert (
-    //     arc4.Address(Txn.sender) == self.committee_publisher.value
+    //     arc4.Address(Txn.sender) == self.xgov_backend.value
     // ), err.UNAUTHORIZED
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:927-928
@@ -3591,11 +3591,11 @@ get_state:
     app_global_get_ex
     assert // check self.xgov_payor exists
     // smart_contracts/xgov_registry/contract.py:1085
-    // xgov_reviewer=self.xgov_reviewer.value,
+    // xgov_council=self.xgov_council.value,
     intc_0 // 0
-    bytec 20 // 0x78676f765f7265766965776572
+    bytec 20 // 0x78676f765f636f756e63696c
     app_global_get_ex
-    assert // check self.xgov_reviewer exists
+    assert // check self.xgov_council exists
     // smart_contracts/xgov_registry/contract.py:1086
     // xgov_subscriber=self.xgov_subscriber.value,
     intc_0 // 0
@@ -3615,11 +3615,11 @@ get_state:
     app_global_get_ex
     assert // check self.committee_manager exists
     // smart_contracts/xgov_registry/contract.py:1089
-    // committee_publisher=self.committee_publisher.value,
+    // xgov_backend=self.xgov_backend.value,
     intc_0 // 0
-    bytec 16 // 0x636f6d6d69747465655f7075626c6973686572
+    bytec 16 // 0x78676f765f6261636b656e64
     app_global_get_ex
-    assert // check self.committee_publisher exists
+    assert // check self.xgov_backend exists
     // smart_contracts/xgov_registry/contract.py:1090
     // xgov_fee=arc4.UInt64(self.xgov_fee.value),
     intc_0 // 0
@@ -3879,11 +3879,11 @@ get_state:
     //     paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
     //     xgov_manager=self.xgov_manager.value,
     //     xgov_payor=self.xgov_payor.value,
-    //     xgov_reviewer=self.xgov_reviewer.value,
+    //     xgov_council=self.xgov_council.value,
     //     xgov_subscriber=self.xgov_subscriber.value,
     //     kyc_provider=self.kyc_provider.value,
     //     committee_manager=self.committee_manager.value,
-    //     committee_publisher=self.committee_publisher.value,
+    //     xgov_backend=self.xgov_backend.value,
     //     xgov_fee=arc4.UInt64(self.xgov_fee.value),
     //     proposer_fee=arc4.UInt64(self.proposer_fee.value),
     //     proposal_fee=arc4.UInt64(self.proposal_fee.value),

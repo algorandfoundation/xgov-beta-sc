@@ -24,7 +24,7 @@ def test_delete_empty_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
@@ -34,8 +34,8 @@ def test_delete_empty_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -46,7 +46,7 @@ def test_delete_draft_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
     submit_proposal(
@@ -60,8 +60,8 @@ def test_delete_draft_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -72,7 +72,7 @@ def test_delete_final_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
 
@@ -91,7 +91,7 @@ def test_delete_final_proposal(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
@@ -103,8 +103,8 @@ def test_delete_final_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -116,8 +116,8 @@ def test_delete_voting_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_council: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -139,7 +139,7 @@ def test_delete_voting_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -148,7 +148,7 @@ def test_delete_voting_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -160,8 +160,8 @@ def test_delete_voting_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -173,7 +173,7 @@ def test_delete_approved_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     submit_proposal(
@@ -193,7 +193,7 @@ def test_delete_approved_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -202,7 +202,7 @@ def test_delete_approved_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -246,8 +246,8 @@ def test_delete_approved_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -259,8 +259,8 @@ def test_delete_reviewed_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
+    xgov_council: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     submit_proposal(
@@ -280,7 +280,7 @@ def test_delete_reviewed_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -289,7 +289,7 @@ def test_delete_reviewed_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -331,8 +331,8 @@ def test_delete_reviewed_proposal(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -342,8 +342,8 @@ def test_delete_reviewed_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -355,9 +355,9 @@ def test_delete_rejected_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -376,7 +376,7 @@ def test_delete_rejected_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -385,7 +385,7 @@ def test_delete_rejected_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -410,8 +410,8 @@ def test_delete_rejected_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -423,9 +423,9 @@ def test_delete_blocked_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -444,7 +444,7 @@ def test_delete_blocked_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -453,7 +453,7 @@ def test_delete_blocked_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -495,8 +495,8 @@ def test_delete_blocked_proposal(
     proposal_client.review(
         block=True,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
         ),
@@ -507,8 +507,8 @@ def test_delete_blocked_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -520,9 +520,9 @@ def test_delete_funded_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -541,7 +541,7 @@ def test_delete_funded_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -550,7 +550,7 @@ def test_delete_funded_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -592,8 +592,8 @@ def test_delete_funded_proposal(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -613,8 +613,8 @@ def test_delete_funded_proposal(
     ):
         proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
@@ -626,9 +626,9 @@ def test_delete_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -647,7 +647,7 @@ def test_delete_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -656,7 +656,7 @@ def test_delete_success(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -680,7 +680,7 @@ def test_delete_success(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -689,14 +689,14 @@ def test_delete_success(
     decommission_proposal(
         xgov_registry_mock_client,
         proposal_client.app_id,
-        committee_publisher,
+        xgov_backend,
         sp,
     )
 
     proposal_client.delete_delete(
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
@@ -706,14 +706,14 @@ def test_delete_success(
         algorand_client.client.algod.application_info(proposal_client.app_id)
 
 
-def test_delete_not_committee_publisher(
+def test_delete_not_xgov_backend(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -732,7 +732,7 @@ def test_delete_not_committee_publisher(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -741,7 +741,7 @@ def test_delete_not_committee_publisher(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -765,7 +765,7 @@ def test_delete_not_committee_publisher(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -774,7 +774,7 @@ def test_delete_not_committee_publisher(
     decommission_proposal(
         xgov_registry_mock_client,
         proposal_client.app_id,
-        committee_publisher,
+        xgov_backend,
         sp,
     )
 

@@ -25,7 +25,7 @@ def test_review_empty_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -33,8 +33,8 @@ def test_review_empty_proposal(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
@@ -44,7 +44,7 @@ def test_review_draft_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
     submit_proposal(
@@ -57,8 +57,8 @@ def test_review_draft_proposal(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
@@ -68,9 +68,9 @@ def test_review_final_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -90,7 +90,7 @@ def test_review_final_proposal(
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             boxes=[(0, METADATA_BOX_KEY)],
         ),
     )
@@ -101,8 +101,8 @@ def test_review_final_proposal(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
@@ -113,8 +113,8 @@ def test_review_voting_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_council: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -136,7 +136,7 @@ def test_review_voting_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -145,7 +145,7 @@ def test_review_voting_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -158,8 +158,8 @@ def test_review_voting_proposal(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
@@ -170,9 +170,9 @@ def test_review_rejected_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -191,7 +191,7 @@ def test_review_rejected_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -200,7 +200,7 @@ def test_review_rejected_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -226,8 +226,8 @@ def test_review_rejected_proposal(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
@@ -238,9 +238,9 @@ def test_review_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -259,7 +259,7 @@ def test_review_success(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -268,7 +268,7 @@ def test_review_success(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -310,8 +310,8 @@ def test_review_success(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -332,9 +332,9 @@ def test_review_twice(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -353,7 +353,7 @@ def test_review_twice(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -362,7 +362,7 @@ def test_review_twice(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -404,8 +404,8 @@ def test_review_twice(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -416,8 +416,8 @@ def test_review_twice(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=xgov_reviewer.address,
-                signer=xgov_reviewer.signer,
+                sender=xgov_council.address,
+                signer=xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
                 note="Second review",
             ),
@@ -434,14 +434,14 @@ def test_review_twice(
     )
 
 
-def test_review_not_reviewer(
+def test_review_not_council(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    not_xgov_reviewer: AddressAndSigner,
+    not_xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
@@ -460,7 +460,7 @@ def test_review_not_reviewer(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -469,7 +469,7 @@ def test_review_not_reviewer(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -512,8 +512,8 @@ def test_review_not_reviewer(
         proposal_client.review(
             block=False,
             transaction_parameters=TransactionParameters(
-                sender=not_xgov_reviewer.address,
-                signer=not_xgov_reviewer.signer,
+                sender=not_xgov_council.address,
+                signer=not_xgov_council.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )

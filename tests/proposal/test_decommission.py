@@ -30,7 +30,7 @@ def test_decommission_empty_proposal(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
@@ -38,8 +38,8 @@ def test_decommission_empty_proposal(
     xgov_registry_mock_client.decommission_proposal(
         proposal_app=proposal_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             foreign_apps=[proposal_client.app_id],
             boxes=[
                 (
@@ -67,7 +67,7 @@ def test_decommission_draft_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
 
@@ -89,8 +89,8 @@ def test_decommission_draft_proposal(
     xgov_registry_mock_client.decommission_proposal(
         proposal_app=proposal_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=committee_publisher.address,
-            signer=committee_publisher.signer,
+            sender=xgov_backend.address,
+            signer=xgov_backend.signer,
             foreign_apps=[proposal_client.app_id],
             boxes=[
                 (
@@ -126,7 +126,7 @@ def test_decommission_final_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     proposer: AddressAndSigner,
 ) -> None:
 
@@ -148,7 +148,7 @@ def test_decommission_final_proposal(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
@@ -161,8 +161,8 @@ def test_decommission_final_proposal(
         xgov_registry_mock_client.decommission_proposal(
             proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (
@@ -181,8 +181,8 @@ def test_decommission_voting_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_council: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
 
@@ -207,7 +207,7 @@ def test_decommission_voting_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -216,7 +216,7 @@ def test_decommission_voting_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -229,8 +229,8 @@ def test_decommission_voting_proposal(
         xgov_registry_mock_client.decommission_proposal(
             proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (
@@ -249,7 +249,7 @@ def test_decommission_approved_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     submit_proposal(
@@ -272,7 +272,7 @@ def test_decommission_approved_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -281,7 +281,7 @@ def test_decommission_approved_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -326,8 +326,8 @@ def test_decommission_approved_proposal(
         xgov_registry_mock_client.decommission_proposal(
             proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (
@@ -346,8 +346,8 @@ def test_decommission_reviewed_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
-    xgov_reviewer: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
+    xgov_council: AddressAndSigner,
     committee_members: list[AddressAndSigner],
 ) -> None:
     submit_proposal(
@@ -370,7 +370,7 @@ def test_decommission_reviewed_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -379,7 +379,7 @@ def test_decommission_reviewed_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -421,8 +421,8 @@ def test_decommission_reviewed_proposal(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -433,8 +433,8 @@ def test_decommission_reviewed_proposal(
         xgov_registry_mock_client.decommission_proposal(
             proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (
@@ -453,9 +453,9 @@ def test_decommission_success_rejected_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -477,7 +477,7 @@ def test_decommission_success_rejected_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -486,7 +486,7 @@ def test_decommission_success_rejected_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -510,7 +510,7 @@ def test_decommission_success_rejected_proposal(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -519,7 +519,7 @@ def test_decommission_success_rejected_proposal(
     decommission_proposal(
         xgov_registry_mock_client,
         proposal_client.app_id,
-        committee_publisher,
+        xgov_backend,
         sp,
     )
 
@@ -537,9 +537,9 @@ def test_decommission_success_blocked_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -561,7 +561,7 @@ def test_decommission_success_blocked_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -570,7 +570,7 @@ def test_decommission_success_blocked_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -612,8 +612,8 @@ def test_decommission_success_blocked_proposal(
     proposal_client.review(
         block=True,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
         ),
@@ -623,7 +623,7 @@ def test_decommission_success_blocked_proposal(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -632,7 +632,7 @@ def test_decommission_success_blocked_proposal(
     decommission_proposal(
         xgov_registry_mock_client,
         proposal_client.app_id,
-        committee_publisher,
+        xgov_backend,
         sp,
     )
 
@@ -654,9 +654,9 @@ def test_decommission_success_funded_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -678,7 +678,7 @@ def test_decommission_success_funded_proposal(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -687,7 +687,7 @@ def test_decommission_success_funded_proposal(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -729,8 +729,8 @@ def test_decommission_success_funded_proposal(
     proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=xgov_reviewer.address,
-            signer=xgov_reviewer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
         ),
     )
@@ -749,7 +749,7 @@ def test_decommission_success_funded_proposal(
     unassign_voters(
         composer,
         committee_members,
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -758,7 +758,7 @@ def test_decommission_success_funded_proposal(
     decommission_proposal(
         xgov_registry_mock_client,
         proposal_client.app_id,
-        committee_publisher,
+        xgov_backend,
         sp,
     )
 
@@ -780,9 +780,9 @@ def test_decommission_not_registry(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -804,7 +804,7 @@ def test_decommission_not_registry(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -813,7 +813,7 @@ def test_decommission_not_registry(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -849,9 +849,9 @@ def test_decommission_wrong_box_ref(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    committee_publisher: AddressAndSigner,
+    xgov_backend: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_reviewer: AddressAndSigner,
+    xgov_council: AddressAndSigner,
 ) -> None:
     submit_proposal(
         proposal_client,
@@ -873,7 +873,7 @@ def test_decommission_wrong_box_ref(
             sender=proposer.address,
             signer=proposer.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[committee_publisher.address],
+            accounts=[xgov_backend.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
         ),
@@ -882,7 +882,7 @@ def test_decommission_wrong_box_ref(
     composer = proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
-        committee_publisher=committee_publisher,
+        xgov_backend=xgov_backend,
         committee_members=committee_members,
         xgov_registry_app_id=xgov_registry_mock_client.app_id,
         sp=sp,
@@ -906,7 +906,7 @@ def test_decommission_wrong_box_ref(
     unassign_voters(
         composer,
         committee_members[:-1],
-        committee_publisher,
+        xgov_backend,
         sp,
         xgov_registry_mock_client.app_id,
     )
@@ -916,8 +916,8 @@ def test_decommission_wrong_box_ref(
         xgov_registry_mock_client.decommission_proposal(
             proposal_app=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=committee_publisher.address,
-                signer=committee_publisher.signer,
+                sender=xgov_backend.address,
+                signer=xgov_backend.signer,
                 foreign_apps=[proposal_client.app_id],
                 boxes=[
                     (

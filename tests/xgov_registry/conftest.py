@@ -154,15 +154,15 @@ def xgov_registry_client(
         ),
     )
 
-    client.set_committee_publisher(
-        publisher=deployer.address,
+    client.set_xgov_backend(
+        xgov_backend=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
-    client.set_xgov_reviewer(
-        reviewer=deployer.address,
+    client.set_xgov_council(
+        council=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
