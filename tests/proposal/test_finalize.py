@@ -54,8 +54,8 @@ def test_finalize_success(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    publishing_fee = relative_to_absolute_amount(
-        reg_gs.proposal_fee, reg_gs.publishing_fee_bps
+    daemon_ops_funding_bps = relative_to_absolute_amount(
+        reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
     xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
         xgov_daemon.address
@@ -79,7 +79,7 @@ def test_finalize_success(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()
@@ -490,8 +490,8 @@ def test_finalize_paused_registry_error(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    publishing_fee = relative_to_absolute_amount(
-        reg_gs.proposal_fee, reg_gs.publishing_fee_bps
+    daemon_ops_funding_bps = relative_to_absolute_amount(
+        reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
     xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
         xgov_daemon.address
@@ -531,7 +531,7 @@ def test_finalize_paused_registry_error(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()

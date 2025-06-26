@@ -34,7 +34,7 @@ def test_vote_proposal_success(
     xgov_registry_client.vote_proposal(
         proposal_id=voting_proposal_client.app_id,
         xgov_address=committee_members[0].address,
-        approval_votes=COMMITTEE_VOTES,
+        approval_votes=10,
         rejection_votes=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
@@ -199,7 +199,7 @@ def test_vote_proposal_paused_registry_error(
         xgov_registry_client.vote_proposal(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=committee_members[0].address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=10,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_members[0].address,
@@ -222,7 +222,7 @@ def test_vote_proposal_paused_registry_error(
     xgov_registry_client.vote_proposal(
         proposal_id=voting_proposal_client.app_id,
         xgov_address=committee_members[0].address,
-        approval_votes=COMMITTEE_VOTES,
+        approval_votes=10,
         rejection_votes=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,

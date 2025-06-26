@@ -236,7 +236,7 @@ class Proposal(
         ), err.VOTING_ONGOING
 
     @subroutine
-    def assign_voter_check_authorization(self) -> None:
+    def assign_voters_check_authorization(self) -> None:
         assert self.is_xgov_daemon(), err.UNAUTHORIZED
         assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
 
@@ -675,15 +675,15 @@ class Proposal(
         self.status.value = UInt64(enm.STATUS_FINAL)
         self.finalization_ts.value = Global.latest_timestamp
 
-        proposal_fee, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_PROPOSAL_FEE)
+        open_proposal_fee, error = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
         assert self.metadata, err.MISSING_METADATA
 
-        publishing_fee_bps, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS)
+        daemon_ops_funding_bps, error = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
@@ -691,7 +691,9 @@ class Proposal(
             receiver=Account(
                 self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
             ),
-            amount=self.relative_to_absolute_amount(proposal_fee, publishing_fee_bps),
+            amount=self.relative_to_absolute_amount(
+                open_proposal_fee, daemon_ops_funding_bps
+            ),
         )
 
     @subroutine
@@ -712,27 +714,6 @@ class Proposal(
             ), err.VOTING_POWER_MISMATCH
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
-
-    @arc4.abimethod()
-    def assign_voter(self, voter: arc4.Address, voting_power: arc4.UInt64) -> None:
-        """Assign a voter to the proposal.
-
-        Args:
-            voter (arc4.Address): Voter address
-            voting_power (UInt64): Voting power
-
-        Raises:
-            err.UNAUTHORIZED: If the sender is not the xGov Daemon
-            err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
-            err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
-            err.INVALID_VOTING_POWER: If the voting power is not within the limits
-            err.VOTING_POWER_MISMATCH: If the total voting power does not match the committee votes
-
-        """
-        self.assign_voter_check_authorization()
-
-        self._assign_voter(voter.native, voting_power.native)
 
     @arc4.abimethod()
     def assign_voters(
@@ -756,7 +737,7 @@ class Proposal(
 
         """
 
-        self.assign_voter_check_authorization()
+        self.assign_voters_check_authorization()
 
         if Txn.group_index == 0:
             # Check that the entire group calls the same app and method

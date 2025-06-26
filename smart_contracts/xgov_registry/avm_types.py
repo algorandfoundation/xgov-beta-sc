@@ -17,8 +17,8 @@ class TypedGlobalState(arc4.Struct):
     xgov_daemon: arc4.Address
     xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
-    proposal_fee: arc4.UInt64
-    proposal_publishing_bps: arc4.UInt64
+    open_proposal_fee: arc4.UInt64
+    daemon_ops_funding_bps: arc4.UInt64
     proposal_commitment_bps: arc4.UInt64
     min_requested_amount: arc4.UInt64
     max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
@@ -36,8 +36,8 @@ class TypedGlobalState(arc4.Struct):
 class XGovRegistryConfig(arc4.Struct):
     xgov_fee: arc4.UInt64
     proposer_fee: arc4.UInt64
-    proposal_fee: arc4.UInt64
-    proposal_publishing_bps: arc4.UInt64
+    open_proposal_fee: arc4.UInt64
+    daemon_ops_funding_bps: arc4.UInt64
     proposal_commitment_bps: arc4.UInt64
     min_requested_amount: arc4.UInt64
     max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]

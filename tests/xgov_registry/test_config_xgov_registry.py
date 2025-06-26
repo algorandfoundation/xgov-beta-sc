@@ -38,10 +38,10 @@ def test_config_xgov_registry_success(
     assert_registry_config(
         global_state=global_state,
         xgov_fee=xgov_registry_config.xgov_fee,
-        proposal_publishing_bps=xgov_registry_config.proposal_publishing_bps,
+        daemon_ops_funding_bps=xgov_registry_config.daemon_ops_funding_bps,
         proposal_commitment_bps=xgov_registry_config.proposal_commitment_bps,
         proposer_fee=xgov_registry_config.proposer_fee,
-        proposal_fee=xgov_registry_config.proposal_fee,
+        open_proposal_fee=xgov_registry_config.open_proposal_fee,
         min_requested_amount=xgov_registry_config.min_requested_amount,
         max_requested_amount_small=xgov_registry_config.max_requested_amount[0],
         max_requested_amount_medium=xgov_registry_config.max_requested_amount[1],
@@ -97,7 +97,7 @@ def test_config_xgov_registry_pending_proposals(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,

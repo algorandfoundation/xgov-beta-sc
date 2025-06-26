@@ -68,8 +68,8 @@ def deploy(
     config = XGovRegistryConfig(
         xgov_fee=int(os.environ["XGOV_CFG_XGOV_FEE"]),
         proposer_fee=int(os.environ["XGOV_CFG_PROPOSER_FEE"]),
-        proposal_fee=int(os.environ["XGOV_CFG_PROPOSAL_FEE"]),
-        proposal_publishing_bps=int(os.environ["XGOV_CFG_PROPOSAL_PUBLISHING_BPS"]),
+        open_proposal_fee=int(os.environ["XGOV_CFG_OPEN_PROPOSAL_FEE"]),
+        daemon_ops_funding_bps=int(os.environ["XGOV_CFG_DAEMON_OPS_FUNDING_BPS"]),
         proposal_commitment_bps=int(os.environ["XGOV_CFG_PROPOSAL_COMMITMENT_BPS"]),
         min_requested_amount=int(os.environ["XGOV_CFG_MIN_REQUESTED_AMOUNT"]),
         max_requested_amount=[

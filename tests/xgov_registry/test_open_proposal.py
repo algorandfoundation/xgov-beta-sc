@@ -55,7 +55,7 @@ def test_open_proposal_success(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -90,7 +90,7 @@ def test_open_proposal_not_a_proposer(
                     PayParams(
                         sender=random_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=random_account.signer,
@@ -144,7 +144,7 @@ def test_open_proposal_active_proposal(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -164,7 +164,7 @@ def test_open_proposal_active_proposal(
                     PayParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=proposer.signer,
@@ -208,7 +208,7 @@ def test_open_proposal_wrong_fee(
                     PayParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=proposer.signer,
@@ -298,7 +298,7 @@ def test_open_proposal_wrong_recipient(
                     PayParams(
                         sender=proposer.address,
                         receiver=proposer.address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=proposer.signer,
@@ -357,7 +357,7 @@ def test_open_proposal_paused_registry_error(
                     PayParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=proposer.signer,
@@ -378,7 +378,7 @@ def test_open_proposal_paused_registry_error(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -441,7 +441,7 @@ def test_open_proposal_paused_proposal_error(
                     PayParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposal_fee,
+                        amount=global_state.open_proposal_fee,
                     ),
                 ),
                 signer=proposer.signer,
@@ -462,7 +462,7 @@ def test_open_proposal_paused_proposal_error(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,

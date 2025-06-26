@@ -40,6 +40,7 @@ from tests.proposal.common import (
 )
 from tests.utils import time_warp
 from tests.xgov_registry.common import (
+    DAEMON_OPS_FUNDING_BPS,
     DEPOSIT_AMOUNT,
     DISCUSSION_DURATION_LARGE,
     DISCUSSION_DURATION_MEDIUM,
@@ -49,9 +50,8 @@ from tests.xgov_registry.common import (
     MAX_REQUESTED_AMOUNT_MEDIUM,
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
+    OPEN_PROPOSAL_FEE,
     PROPOSAL_COMMITMENT_BPS,
-    PROPOSAL_FEE,
-    PROPOSAL_PUBLISHING_BPS,
     PROPOSER_FEE,
     QUORUM_MEDIUM,
     QUORUM_SMALL,
@@ -168,18 +168,18 @@ def xgov_registry_client(
         ),
     )
 
-    client.declare_committee(
-        committee_id=DEFAULT_COMMITTEE_ID,
-        size=DEFAULT_COMMITTEE_MEMBERS,
-        votes=DEFAULT_COMMITTEE_VOTES,
+    # Call the config_xgov_registry method
+    client.config_xgov_registry(
+        config=xgov_registry_config,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
     )
 
-    # Call the config_xgov_registry method
-    client.config_xgov_registry(
-        config=xgov_registry_config,
+    client.declare_committee(
+        committee_id=DEFAULT_COMMITTEE_ID,
+        size=DEFAULT_COMMITTEE_MEMBERS,
+        votes=DEFAULT_COMMITTEE_VOTES,
         transaction_parameters=TransactionParameters(
             sender=deployer.address, signer=deployer.signer, suggested_params=sp
         ),
@@ -335,8 +335,8 @@ def xgov_registry_config() -> XGovRegistryConfig:
     return XGovRegistryConfig(
         xgov_fee=XGOV_FEE,
         proposer_fee=PROPOSER_FEE,
-        proposal_fee=PROPOSAL_FEE,
-        proposal_publishing_bps=PROPOSAL_PUBLISHING_BPS,
+        open_proposal_fee=OPEN_PROPOSAL_FEE,
+        daemon_ops_funding_bps=DAEMON_OPS_FUNDING_BPS,
         proposal_commitment_bps=PROPOSAL_COMMITMENT_BPS,
         min_requested_amount=MIN_REQUESTED_AMOUNT,
         max_requested_amount=[
@@ -491,7 +491,7 @@ def proposal_client(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -572,7 +572,7 @@ def voting_proposal_client(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -660,9 +660,8 @@ def voting_proposal_client(
             ),
         )
 
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
+        proposal_client.assign_voters(
+            voters=[(committee_member.address, 10)],
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
@@ -698,7 +697,7 @@ def voting_proposal_client_requested_too_much(
                 PayParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposal_fee,
+                    amount=global_state.open_proposal_fee,
                 ),
             ),
             signer=proposer.signer,
@@ -786,9 +785,8 @@ def voting_proposal_client_requested_too_much(
             ),
         )
 
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=10,
+        proposal_client.assign_voters(
+            voters=[(committee_member.address, 10)],
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,

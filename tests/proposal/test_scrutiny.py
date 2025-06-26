@@ -3049,9 +3049,8 @@ def test_scrutiny_after_time_reject_small_11(
         ),
     )
 
-    proposal_client.assign_voter(
-        voter=committee_members[0].address,
-        voting_power=48,
+    proposal_client.assign_voters(
+        voters=[(committee_members[0].address, 48)],
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
             signer=xgov_daemon.signer,
@@ -3066,9 +3065,8 @@ def test_scrutiny_after_time_reject_small_11(
     )
 
     for committee_member in committee_members[1:]:
-        proposal_client.assign_voter(
-            voter=committee_member.address,
-            voting_power=8,
+        proposal_client.assign_voters(
+            voters=[(committee_member.address, 8)],
             transaction_parameters=TransactionParameters(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
