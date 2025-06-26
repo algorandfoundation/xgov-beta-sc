@@ -98,6 +98,115 @@ def committee_manager(
 
 
 @pytest.fixture(scope="function")
+def xgov_registry_client_committee_not_declared(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+    xgov_registry_config: XGovRegistryConfig,
+) -> XGovRegistryClient:
+    config.configure(
+        debug=True,
+        # trace_all=True,
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    client = XGovRegistryClient(
+        algorand_client.client.algod,
+        sender=deployer.address,
+        creator=deployer,
+        indexer_client=algorand_client.client.indexer,
+        template_values={"entropy": b""},
+    )
+
+    client.create_create(
+        transaction_parameters=CreateTransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=client.app_address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+
+    client.set_xgov_subscriber(
+        subscriber=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_payor(
+        payor=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_committee_manager(
+        manager=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_daemon(
+        xgov_daemon=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_council(
+        council=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    # Call the config_xgov_registry method
+    client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.deposit_funds(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=deployer.address,
+                    receiver=client.app_address,
+                    amount=10_000_001,
+                ),
+            ),
+            signer=deployer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    client.set_kyc_provider(
+        provider=deployer.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    return client
+
+
+@pytest.fixture(scope="function")
 def xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,

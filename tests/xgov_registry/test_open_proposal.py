@@ -478,3 +478,80 @@ def test_open_proposal_paused_proposal_error(
     after_global_state = xgov_registry_client.get_global_state()
 
     assert after_global_state.pending_proposals == (global_state.pending_proposals + 1)
+
+
+def test_open_proposal_no_committee_declared(
+    xgov_registry_client_committee_not_declared: XGovRegistryClient,
+    xgov_registry_config: XGovRegistryConfig,
+    algorand_client: AlgorandClient,
+    deployer: Account,
+    proposer: AddressAndSigner,
+) -> None:
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    # Call the config_xgov_registry method
+    xgov_registry_client_committee_not_declared.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    global_state = xgov_registry_client_committee_not_declared.get_global_state()
+
+    sp = algorand_client.get_suggested_params()
+
+    xgov_registry_client_committee_not_declared.subscribe_proposer(
+        payment=TransactionWithSigner(
+            txn=algorand_client.transactions.payment(
+                PayParams(
+                    sender=proposer.address,
+                    receiver=xgov_registry_client_committee_not_declared.app_address,
+                    amount=global_state.proposer_fee,
+                ),
+            ),
+            signer=proposer.signer,
+        ),
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            suggested_params=sp,
+            boxes=[(0, proposer_box_name(proposer.address))],
+        ),
+    )
+
+    sp.min_fee *= 3  # type: ignore
+
+    xgov_registry_client_committee_not_declared.set_proposer_kyc(
+        proposer=proposer.address,
+        kyc_status=True,
+        kyc_expiring=18446744073709551615,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            boxes=[(0, proposer_box_name(proposer.address))],
+        ),
+    )
+
+    with pytest.raises(LogicErrorType):
+        xgov_registry_client_committee_not_declared.open_proposal(
+            payment=TransactionWithSigner(
+                txn=algorand_client.transactions.payment(
+                    PayParams(
+                        sender=proposer.address,
+                        receiver=xgov_registry_client_committee_not_declared.app_address,
+                        amount=global_state.open_proposal_fee,
+                    ),
+                ),
+                signer=proposer.signer,
+            ),
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                suggested_params=sp,
+                boxes=[(0, proposer_box_name(proposer.address))],
+            ),
+        )

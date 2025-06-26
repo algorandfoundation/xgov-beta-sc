@@ -542,6 +542,8 @@ class Proposal(
         self.proposer.value = proposer.native
         self.registry_app_id.value = Global.caller_application_id
 
+        self.verify_and_set_committee()
+
     @arc4.abimethod()
     def submit(
         self,
@@ -669,8 +671,6 @@ class Proposal(
         self.check_registry_not_paused()
 
         self.finalize_check_authorization()
-
-        self.verify_and_set_committee()
 
         self.status.value = UInt64(enm.STATUS_FINAL)
         self.finalization_ts.value = Global.latest_timestamp
