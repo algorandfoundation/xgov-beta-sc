@@ -11,6 +11,12 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryConfig,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.xgov_registry.constants import (
+    ACCOUNT_MBR,
+    BPS,
+    MAX_MBR_PER_APP,
+    MAX_MBR_PER_BOX,
+)
 from tests.xgov_registry.common import (
     LogicErrorType,
     assert_registry_config,
@@ -111,6 +117,29 @@ def test_config_xgov_registry_pending_proposals(
     )
 
     with pytest.raises(LogicErrorType, match=err.NO_PENDING_PROPOSALS):
+        xgov_registry_client.config_xgov_registry(
+            config=xgov_registry_config,
+            transaction_parameters=TransactionParameters(
+                sender=deployer.address,
+                signer=deployer.signer,
+            ),
+        )
+
+
+def test_config_xgov_registry_open_proposal_fee_too_low(
+    xgov_registry_client: XGovRegistryClient,
+    deployer: Account,
+    xgov_registry_config: XGovRegistryConfig,
+) -> None:
+
+    daemon_ops_funding_bps = xgov_registry_config.daemon_ops_funding_bps
+    xgov_registry_config.open_proposal_fee = (
+        (MAX_MBR_PER_APP + MAX_MBR_PER_BOX + ACCOUNT_MBR)
+        * BPS
+        // (BPS - daemon_ops_funding_bps)
+    )
+
+    with pytest.raises(LogicErrorType, match=err.INVALID_OPEN_PROPOSAL_FEE):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(

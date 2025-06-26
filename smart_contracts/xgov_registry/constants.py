@@ -2,7 +2,11 @@
 
 from typing import Final
 
+BPS: Final[int] = 10_000
+
 # Reference: https://developer.algorand.org/docs/get-details/parameter_tables/
+
+ACCOUNT_MBR: Final[int] = 100_000  # 0.1 ALGO in microAlgos
 
 MAX_PAGES_PER_APP: Final[int] = 4
 MAX_GLOBAL_STATE_ENTRIES: Final[int] = 64

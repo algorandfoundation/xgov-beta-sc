@@ -75,3 +75,5 @@ WRONG_APP_ID = "Wrong App ID"
 WRONG_METHOD_CALL = "Wrong Method Call"
 
 COMMITTEE_SIZE_TOO_LARGE = "Committee size is too large"
+
+INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"

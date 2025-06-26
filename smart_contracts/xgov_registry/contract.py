@@ -30,6 +30,8 @@ from ..proposal import enums as penm
 from . import avm_types as typ
 from . import config as cfg
 from .constants import (
+    ACCOUNT_MBR,
+    BPS,
     MAX_MBR_PER_APP,
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
@@ -220,17 +222,34 @@ class XGovRegistry(
         )
 
     @subroutine
-    def set_max_committee_size(self, open_proposal_fee: UInt64) -> None:
+    def relative_to_absolute_amount(
+        self, amount: UInt64, fraction_in_bps: UInt64
+    ) -> UInt64:
+        return amount * fraction_in_bps // BPS
+
+    @subroutine
+    def set_max_committee_size(
+        self, open_proposal_fee: UInt64, daemon_ops_funding_bps: UInt64
+    ) -> None:
         """
         Sets the maximum committee size based on the open proposal fee.
 
         Args:
             open_proposal_fee (UInt64): The open proposal fee to calculate the maximum committee size
+            daemon_ops_funding_bps (UInt64): The basis points for daemon operations funding
         """
 
-        mbr_available_for_committee = (
-            open_proposal_fee - MAX_MBR_PER_APP - MAX_MBR_PER_BOX
+        daemon_ops_funding = self.relative_to_absolute_amount(
+            open_proposal_fee, daemon_ops_funding_bps
         )
+
+        to_substract = (
+            UInt64(MAX_MBR_PER_APP + MAX_MBR_PER_BOX + ACCOUNT_MBR) + daemon_ops_funding
+        )
+
+        assert open_proposal_fee > to_substract, err.INVALID_OPEN_PROPOSAL_FEE
+
+        mbr_available_for_committee = open_proposal_fee - to_substract
 
         per_voter_mbr = (
             UInt64(pcfg.VOTER_BOX_KEY_SIZE + pcfg.VOTER_BOX_VALUE_SIZE)
@@ -404,7 +423,9 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
-        self.set_max_committee_size(config.open_proposal_fee.native)
+        self.set_max_committee_size(
+            config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
+        )
 
         self.xgov_fee.value = config.xgov_fee.native
         self.proposer_fee.value = config.proposer_fee.native
