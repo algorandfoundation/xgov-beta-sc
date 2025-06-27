@@ -3,6 +3,7 @@
 from algopy import (
     Application,
     ARC4Contract,
+    Global,
     GlobalState,
     String,
     UInt64,
@@ -14,7 +15,6 @@ import smart_contracts.errors.std_errors as err
 from smart_contracts.proposal.contract import Proposal
 
 from ..common.abi_types import Bytes32
-from ..proposal import config as prop_cfg
 from ..xgov_registry import config as reg_cfg
 from . import config as mock_cfg
 
@@ -41,9 +41,9 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
         )
-        self.publishing_fee_bps = GlobalState(
-            UInt64(mock_cfg.PUBLISHING_FEE_BPS),
-            key=reg_cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS,
+        self.daemon_ops_funding_bps = GlobalState(
+            UInt64(mock_cfg.DAEMON_OPS_FUNDING_BPS),
+            key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
         )
         self.discussion_duration_small = GlobalState(
             UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
@@ -61,9 +61,9 @@ class XgovRegistryMock(ARC4Contract):
             arc4.Address(mock_cfg.XGOV_DAEMON),
             key=reg_cfg.GS_KEY_XGOV_DAEMON,
         )
-        self.proposal_fee = GlobalState(
-            UInt64(mock_cfg.PROPOSAL_FEE),
-            key=reg_cfg.GS_KEY_PROPOSAL_FEE,
+        self.open_proposal_fee = GlobalState(
+            UInt64(mock_cfg.OPEN_PROPOSAL_FEE),
+            key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
         )
         self.committee_id = GlobalState(
             Bytes32.from_bytes(mock_cfg.COMMITTEE_ID),
@@ -173,14 +173,16 @@ class XgovRegistryMock(ARC4Contract):
             UInt64: The ID of the created proposal
 
         """
+        mbr_before = Global.current_application_address.min_balance
         res = arc4.arc4_create(
             Proposal,
             proposer,
         )
+        mbr_after = Global.current_application_address.min_balance
 
         itxn.Payment(
             receiver=res.created_app.address,
-            amount=self.proposal_fee.value - prop_cfg.PROPOSAL_MBR,
+            amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
             fee=0,
         ).submit()
 
@@ -242,15 +244,15 @@ class XgovRegistryMock(ARC4Contract):
         self.max_requested_amount_large.value = max_requested_amount
 
     @arc4.abimethod()
-    def set_publishing_fee(self, publishing_fee_bps: UInt64) -> None:
+    def set_daemon_ops_funding_bps(self, daemon_ops_funding_bps: UInt64) -> None:
         """
-        Set the publishing fee
+        Set the daemon operations funding in basis points
 
         Args:
-            publishing_fee_bps (UInt64): The publishing fee
+            daemon_ops_funding_bps (UInt64): The daemon operations funding in basis points
 
         """
-        self.publishing_fee_bps.value = publishing_fee_bps
+        self.daemon_ops_funding_bps.value = daemon_ops_funding_bps
 
     @arc4.abimethod()
     def set_discussion_duration_small(self, discussion_duration: UInt64) -> None:
@@ -297,15 +299,15 @@ class XgovRegistryMock(ARC4Contract):
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def set_proposal_fee(self, proposal_fee: UInt64) -> None:
+    def set_open_proposal_fee(self, open_proposal_fee: UInt64) -> None:
         """
-        Set the proposal fee
+        Set the fee to open a proposal
 
         Args:
-            proposal_fee (UInt64): The proposal fee
+            open_proposal_fee (UInt64): The proposal fee
 
         """
-        self.proposal_fee.value = proposal_fee
+        self.open_proposal_fee.value = open_proposal_fee
 
     @arc4.abimethod()
     def set_committee_id(self, committee_id: Bytes32) -> None:

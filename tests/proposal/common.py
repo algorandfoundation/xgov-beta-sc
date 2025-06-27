@@ -16,7 +16,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
-from smart_contracts.proposal.config import METADATA_BOX_KEY, PROPOSAL_MBR
+from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS, METADATA_BOX_KEY
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -33,7 +33,7 @@ from smart_contracts.proposal.enums import (
     STATUS_REVIEWED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry_mock.config import PROPOSAL_FEE
+from smart_contracts.xgov_registry_mock.config import OPEN_PROPOSAL_FEE
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -47,7 +47,9 @@ from tests.common import (
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
-PROPOSAL_PARTIAL_FEE = PROPOSAL_FEE - PROPOSAL_MBR
+
+PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
+PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 logic_error_type: type[LogicError] = LogicError
 
@@ -138,7 +140,7 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
 
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
-        STATUS_DRAFT: {"status": STATUS_DRAFT},
+        STATUS_DRAFT: {"status": STATUS_DRAFT, **committee_defaults},
         STATUS_FINAL: {"status": STATUS_FINAL, **committee_defaults},
         STATUS_VOTING: {
             "status": STATUS_VOTING,
@@ -211,6 +213,9 @@ def assert_empty_proposal_global_state(
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
         status=STATUS_EMPTY if not decommissioned else STATUS_DECOMMISSIONED,
+        committee_id=DEFAULT_COMMITTEE_ID,
+        committee_members=DEFAULT_COMMITTEE_MEMBERS,
+        committee_votes=DEFAULT_COMMITTEE_VOTES,
     )
 
 

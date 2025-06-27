@@ -51,3 +51,19 @@ def test_declare_committee_not_manager(
                 signer=random_account.signer,
             ),
         )
+
+
+def test_declare_committee_too_large(
+    xgov_registry_client: XGovRegistryClient, committee_manager: AddressAndSigner
+) -> None:
+    max_committee_size = xgov_registry_client.get_global_state().max_committee_size
+    with pytest.raises(LogicErrorType, match=err.COMMITTEE_SIZE_TOO_LARGE):
+        xgov_registry_client.declare_committee(
+            committee_id=COMMITTEE_ID,
+            size=max_committee_size + 1,
+            votes=COMMITTEE_VOTES,
+            transaction_parameters=TransactionParameters(
+                sender=committee_manager.address,
+                signer=committee_manager.signer,
+            ),
+        )

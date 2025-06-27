@@ -58,9 +58,6 @@ def test_drop_proposal_success(
         xgov_registry_client.app_id,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=10_000_000,
-        committee_id=b"",
-        committee_members=0,
-        committee_votes=0,
     )
 
     pending_proposals_after = xgov_registry_client.get_global_state().pending_proposals

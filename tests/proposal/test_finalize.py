@@ -12,9 +12,6 @@ from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for finalize on other statuses
 from tests.common import (
-    DEFAULT_COMMITTEE_ID,
-    DEFAULT_COMMITTEE_MEMBERS,
-    DEFAULT_COMMITTEE_VOTES,
     relative_to_absolute_amount,
 )
 from tests.proposal.common import (
@@ -54,8 +51,8 @@ def test_finalize_success(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    publishing_fee = relative_to_absolute_amount(
-        reg_gs.proposal_fee, reg_gs.publishing_fee_bps
+    daemon_ops_funding_bps = relative_to_absolute_amount(
+        reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
     xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
         xgov_daemon.address
@@ -79,7 +76,7 @@ def test_finalize_success(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()
@@ -317,161 +314,6 @@ def test_finalize_no_metadata(
         )
 
 
-def test_finalize_wrong_committee_id(
-    proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-) -> None:
-
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    xgov_registry_mock_client.clear_committee_id()  # invalid committee id
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.EMPTY_COMMITTEE_ID]):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-                suggested_params=sp,
-            ),
-        )
-
-    xgov_registry_mock_client.set_committee_id(
-        committee_id=DEFAULT_COMMITTEE_ID
-    )  # restore
-
-    global_state = proposal_client.get_global_state()
-
-    assert_draft_proposal_global_state(
-        global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        proposer_address=proposer.address,
-    )
-
-
-def test_finalize_wrong_committee_members(
-    proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-) -> None:
-
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    xgov_registry_mock_client.set_committee_members(
-        committee_members=0
-    )  # invalid committee members
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_COMMITTEE_MEMBERS]
-    ):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-                suggested_params=sp,
-            ),
-        )
-
-    xgov_registry_mock_client.set_committee_members(
-        committee_members=DEFAULT_COMMITTEE_MEMBERS
-    )  # restore
-
-    global_state = proposal_client.get_global_state()
-
-    assert_draft_proposal_global_state(
-        global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        proposer_address=proposer.address,
-    )
-
-
-def test_finalize_wrong_committee_votes(
-    proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-) -> None:
-
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    xgov_registry_mock_client.set_committee_votes(
-        committee_votes=0
-    )  # invalid committee votes
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_COMMITTEE_VOTES]
-    ):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-                suggested_params=sp,
-            ),
-        )
-
-    xgov_registry_mock_client.set_committee_votes(
-        committee_votes=DEFAULT_COMMITTEE_VOTES
-    )  # restore
-
-    global_state = proposal_client.get_global_state()
-
-    assert_draft_proposal_global_state(
-        global_state,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        proposer_address=proposer.address,
-    )
-
-
 def test_finalize_paused_registry_error(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
@@ -490,8 +332,8 @@ def test_finalize_paused_registry_error(
     reg_gs = xgov_registry_mock_client.get_global_state()
     discussion_duration = reg_gs.discussion_duration_small
 
-    publishing_fee = relative_to_absolute_amount(
-        reg_gs.proposal_fee, reg_gs.publishing_fee_bps
+    daemon_ops_funding_bps = relative_to_absolute_amount(
+        reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
     xgov_daemon_balance_before_finalize = algorand_client.account.get_information(  # type: ignore
         xgov_daemon.address
@@ -531,7 +373,7 @@ def test_finalize_paused_registry_error(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_finalize + publishing_fee,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
     global_state = proposal_client.get_global_state()

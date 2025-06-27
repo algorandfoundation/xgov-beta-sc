@@ -109,9 +109,6 @@ def test_decommission_draft_proposal(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        committee_id=b"",
-        committee_members=0,
-        committee_votes=0,
         voters_count=0,
         assigned_votes=0,
     )

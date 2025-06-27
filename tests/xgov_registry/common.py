@@ -23,8 +23,8 @@ LogicErrorType: type[LogicError] = LogicError
 
 XGOV_FEE = 1_000_000
 PROPOSER_FEE = 10_000_000
-PROPOSAL_FEE = 100_000_000
-PROPOSAL_PUBLISHING_BPS = 1_000
+OPEN_PROPOSAL_FEE = 100_000_000
+DAEMON_OPS_FUNDING_BPS = 1_000
 PROPOSAL_COMMITMENT_BPS = 100
 MIN_REQUESTED_AMOUNT = 1_000
 
@@ -96,10 +96,10 @@ def assert_registry_config(
     global_state: GlobalState,
     *,
     xgov_fee: int,
-    proposal_publishing_bps: int,
+    daemon_ops_funding_bps: int,
     proposal_commitment_bps: int,
     proposer_fee: int,
-    proposal_fee: int,
+    open_proposal_fee: int,
     min_requested_amount: int,
     max_requested_amount_small: int,
     max_requested_amount_medium: int,
@@ -120,10 +120,10 @@ def assert_registry_config(
     weighted_quorum_large: int,
 ) -> None:
     assert global_state.xgov_fee == xgov_fee
-    assert global_state.proposal_publishing_bps == proposal_publishing_bps
+    assert global_state.daemon_ops_funding_bps == daemon_ops_funding_bps
     assert global_state.proposal_commitment_bps == proposal_commitment_bps
     assert global_state.proposer_fee == proposer_fee
-    assert global_state.proposal_fee == proposal_fee
+    assert global_state.open_proposal_fee == open_proposal_fee
     assert global_state.min_requested_amount == min_requested_amount
     assert global_state.max_requested_amount_small == max_requested_amount_small
     assert global_state.max_requested_amount_medium == max_requested_amount_medium
@@ -158,10 +158,10 @@ def assert_committee(
 
 def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> None:
     assert global_state.xgov_fee == get_state.xgov_fee
-    assert global_state.proposal_publishing_bps == get_state.proposal_publishing_bps
+    assert global_state.daemon_ops_funding_bps == get_state.daemon_ops_funding_bps
     assert global_state.proposal_commitment_bps == get_state.proposal_commitment_bps
     assert global_state.proposer_fee == get_state.proposer_fee
-    assert global_state.proposal_fee == get_state.proposal_fee
+    assert global_state.open_proposal_fee == get_state.open_proposal_fee
     assert global_state.min_requested_amount == get_state.min_requested_amount
     assert global_state.max_requested_amount_small == get_state.max_requested_amount[0]
     assert global_state.max_requested_amount_medium == get_state.max_requested_amount[1]

@@ -61,8 +61,8 @@ jobs:
           # Registry configuration
           XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || '100_000_000'  }} # defaults: 100 Algos
           XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || '100_000_000'  }} # defaults: 100 Algos
-          XGOV_CFG_PROPOSAL_FEE: ${{ vars.PROPOSAL_FEE || '100_000_000'  }} # defaults: 100 Algos
-          XGOV_CFG_PROPOSAL_PUBLISHING_BPS: ${{ vars.PROPOSAL_PUBLISHING_BPS || '500'  }} # defaults: 5%
+          XGOV_CFG_OPEN_PROPOSAL_FEE: ${{ vars.OPEN_PROPOSAL_FEE || '100_000_000'  }} # defaults: 100 Algos
+          XGOV_CFG_DAEMON_OPS_FUNDING_BPS: ${{ vars.DAEMON_OPS_FUNDING_BPS || '500'  }} # defaults: 5%
           XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.PROPOSAL_COMMITMENT_BPS || '300'  }} # defaults: 3%
           XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MIN_REQUESTED_AMOUNT || '10_000_000'  }} # defaults: 10 Algos
           XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || '50_000_000_000,250_000_000_000,500_000_000_000'  }} # defaults: 50K (S), 250K (M), 500K (L) Algos

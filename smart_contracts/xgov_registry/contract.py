@@ -29,6 +29,14 @@ from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
 from . import avm_types as typ
 from . import config as cfg
+from .constants import (
+    ACCOUNT_MBR,
+    BPS,
+    MAX_MBR_PER_APP,
+    MAX_MBR_PER_BOX,
+    PER_BOX_MBR,
+    PER_BYTE_IN_BOX_MBR,
+)
 
 
 class XGovRegistry(
@@ -67,9 +75,9 @@ class XGovRegistry(
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
         self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
-        self.proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSAL_FEE)
-        self.proposal_publishing_bps = GlobalState(
-            UInt64(), key=cfg.GS_KEY_PROPOSAL_PUBLISHING_BPS
+        self.open_proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_OPEN_PROPOSAL_FEE)
+        self.daemon_ops_funding_bps = GlobalState(
+            UInt64(), key=cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS
         )
         self.proposal_commitment_bps = GlobalState(
             UInt64(), key=cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS
@@ -156,6 +164,10 @@ class XGovRegistry(
             Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
         )
 
+        self.max_committee_size = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
+        )
+
     @subroutine
     def entropy(self) -> Bytes:
         return TemplateVar[Bytes]("entropy")  # trick to allow fresh deployment
@@ -208,6 +220,42 @@ class XGovRegistry(
             self.proposer_box[address].kyc_status.native
             and self.proposer_box[address].kyc_expiring.native > Global.latest_timestamp
         )
+
+    @subroutine
+    def relative_to_absolute_amount(
+        self, amount: UInt64, fraction_in_bps: UInt64
+    ) -> UInt64:
+        return amount * fraction_in_bps // BPS
+
+    @subroutine
+    def set_max_committee_size(
+        self, open_proposal_fee: UInt64, daemon_ops_funding_bps: UInt64
+    ) -> None:
+        """
+        Sets the maximum committee size based on the open proposal fee.
+
+        Args:
+            open_proposal_fee (UInt64): The open proposal fee to calculate the maximum committee size
+            daemon_ops_funding_bps (UInt64): The basis points for daemon operations funding
+        """
+
+        daemon_ops_funding = self.relative_to_absolute_amount(
+            open_proposal_fee, daemon_ops_funding_bps
+        )
+
+        to_substract = (
+            UInt64(MAX_MBR_PER_APP + MAX_MBR_PER_BOX + ACCOUNT_MBR) + daemon_ops_funding
+        )
+
+        assert open_proposal_fee > to_substract, err.INVALID_OPEN_PROPOSAL_FEE
+
+        mbr_available_for_committee = open_proposal_fee - to_substract
+
+        per_voter_mbr = (
+            UInt64(pcfg.VOTER_BOX_KEY_SIZE + pcfg.VOTER_BOX_VALUE_SIZE)
+        ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
+
+        self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
 
     @arc4.abimethod(create="require")
     def create(self) -> None:
@@ -375,10 +423,14 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
+        self.set_max_committee_size(
+            config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
+        )
+
         self.xgov_fee.value = config.xgov_fee.native
         self.proposer_fee.value = config.proposer_fee.native
-        self.proposal_fee.value = config.proposal_fee.native
-        self.proposal_publishing_bps.value = config.proposal_publishing_bps.native
+        self.open_proposal_fee.value = config.open_proposal_fee.native
+        self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.native
         self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
 
         self.min_requested_amount.value = config.min_requested_amount.native
@@ -729,10 +781,15 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Manager
+            err.WRONG_CID_LENGTH: If the committee ID is not of the correct length
+            err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
+        assert (
+            size.native <= self.max_committee_size.value
+        ), err.COMMITTEE_SIZE_TOO_LARGE
 
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.native
@@ -752,7 +809,7 @@ class XGovRegistry(
             err.INVALID_KYC: If the Proposer does not have valid KYC
             err.INSUFFICIENT_FEE: If the fee for the current transaction doesn't cover the inner transaction fees
             err.WRONG_RECEIVER: If the payment receiver is not the xGov Registry address
-            err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the proposal_fee global state key
+            err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the open_proposal_fee global state key
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
@@ -773,18 +830,22 @@ class XGovRegistry(
         assert (
             payment.receiver == Global.current_application_address
         ), err.WRONG_RECEIVER
-        assert payment.amount == self.proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
+        assert payment.amount == self.open_proposal_fee.value, err.WRONG_PAYMENT_AMOUNT
+
+        mbr_before = Global.current_application_address.balance
 
         # Create the Proposal App
         res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
 
+        mbr_after = Global.current_application_address.balance
+
         # Update proposer state
         self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
-        # Transfer funds to the new Proposal App
+        # Transfer funds to the new Proposal App, excluding the MBR needed for the Proposal App
         itxn.Payment(
             receiver=res.created_app.address,
-            amount=self.proposal_fee.value - pcfg.PROPOSAL_MBR,
+            amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
             fee=0,
         ).submit()
 
@@ -815,6 +876,13 @@ class XGovRegistry(
             err.PROPOSAL_IS_NOT_VOTING: If the Proposal is not in a voting session
             err.UNAUTHORIZED: If the xGov_address is not an xGov
             err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
+            err.PAUSED_REGISTRY: If the xGov Registry is paused
+            err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
+            err.VOTER_ALREADY_VOTED: If the xGov has already voted on this Proposal
+            err.VOTES_EXCEEDED: If the total votes exceed the maximum allowed
+            err.VOTING_PERIOD_EXPIRED: If the voting period for the Proposal has expired
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
@@ -843,13 +911,31 @@ class XGovRegistry(
         assert Txn.sender == xgov_box.voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
-        arc4.abi_call(
+        error, tx = arc4.abi_call(
             proposal_contract.Proposal.vote,
             xgov_address,
             approval_votes,
             rejection_votes,
             app_id=proposal_id.native,
         )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.MISSING_CONFIG:
+                    assert False, err.MISSING_CONFIG  # noqa
+                case err.VOTER_NOT_FOUND:
+                    assert False, err.VOTER_NOT_FOUND  # noqa
+                case err.VOTER_ALREADY_VOTED:
+                    assert False, err.VOTER_ALREADY_VOTED  # noqa
+                case err.VOTES_EXCEEDED:
+                    assert False, err.VOTES_EXCEEDED  # noqa
+                case err.VOTING_PERIOD_EXPIRED:
+                    assert False, err.VOTING_PERIOD_EXPIRED  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
     def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -866,6 +952,7 @@ class XGovRegistry(
             err.WRONG_PROPOSER: If the Proposer on the proposal is not found
             err.INVALID_KYC: If the Proposer KYC is invalid or expired
             err.INSUFFICIENT_TREASURY_FUNDS: If the xGov Registry does not have enough funds for the disbursement
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
         """
 
         # Verify the caller is the xGov Payor
@@ -899,7 +986,17 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        arc4.abi_call(proposal_contract.Proposal.fund, app_id=proposal_id.native)
+        error, tx = arc4.abi_call(
+            proposal_contract.Proposal.fund, app_id=proposal_id.native
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
     def decommission_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -1085,8 +1182,8 @@ class XGovRegistry(
             xgov_daemon=self.xgov_daemon.value,
             xgov_fee=arc4.UInt64(self.xgov_fee.value),
             proposer_fee=arc4.UInt64(self.proposer_fee.value),
-            proposal_fee=arc4.UInt64(self.proposal_fee.value),
-            proposal_publishing_bps=arc4.UInt64(self.proposal_publishing_bps.value),
+            open_proposal_fee=arc4.UInt64(self.open_proposal_fee.value),
+            daemon_ops_funding_bps=arc4.UInt64(self.daemon_ops_funding_bps.value),
             proposal_commitment_bps=arc4.UInt64(self.proposal_commitment_bps.value),
             min_requested_amount=arc4.UInt64(self.min_requested_amount.value),
             max_requested_amount=arc4.StaticArray[arc4.UInt64, t.Literal[3]](

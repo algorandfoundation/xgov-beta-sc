@@ -65,7 +65,9 @@ def test_drop_success(
     global_state = proposal_client.get_global_state()
 
     assert_decommissioned_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id, **NO_COMMITTEE
+        global_state,
+        proposer.address,
+        xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(
@@ -131,7 +133,9 @@ def test_drop_twice(
     global_state = proposal_client.get_global_state()
 
     assert_decommissioned_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id, **NO_COMMITTEE
+        global_state,
+        proposer.address,
+        xgov_registry_mock_client.app_id,
     )
 
     assert_account_balance(
