@@ -53,14 +53,32 @@ def test_request_subscribe_xgov_already_xgov(
     deployer: Account,
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    app_xgov: XGovSubscriberAppMockClient,
+    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
 
+    before_global_state = xgov_registry_client.get_global_state()
+
+    request_id = before_global_state.request_id - 1
+
+    xgov_registry_client.approve_subscribe_xgov(
+        request_id=request_id,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            boxes=[
+                (0, request_box_name(request_id)),
+                (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
+            ],
+            foreign_apps=[app_xgov_subscribe_requested.app_id],
+        ),
+    )
+
     with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
         xgov_registry_client.request_subscribe_xgov(
-            xgov_address=app_xgov.app_address,
+            xgov_address=app_xgov_subscribe_requested.app_address,
             owner_address=deployer.address,
             relation_type=0,
             payment=TransactionWithSigner(
@@ -78,10 +96,10 @@ def test_request_subscribe_xgov_already_xgov(
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[
-                    (0, xgov_box_name(app_xgov.app_address)),
+                    (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
                     (0, request_box_name(global_state.request_id)),
                 ],
-                foreign_apps=[app_xgov.app_id],
+                foreign_apps=[app_xgov_subscribe_requested.app_id],
             ),
         )
 
