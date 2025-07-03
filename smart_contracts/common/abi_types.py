@@ -22,6 +22,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     finalization_ts: arc4.UInt64
     vote_open_ts: arc4.UInt64
     status: arc4.UInt64
+    decommissioned: arc4.Bool
     funding_category: arc4.UInt64
     focus: arc4.UInt8
     funding_type: arc4.UInt64
