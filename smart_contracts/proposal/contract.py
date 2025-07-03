@@ -680,7 +680,7 @@ class Proposal(
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
-        assert self.metadata, err.MISSING_METADATA
+        assert self.metadata.length > 0, err.MISSING_METADATA
 
         daemon_ops_funding_bps, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
