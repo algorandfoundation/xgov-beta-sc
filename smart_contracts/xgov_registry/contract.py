@@ -257,6 +257,20 @@ class XGovRegistry(
 
         self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
 
+    @subroutine
+    def decrement_pending_proposals(self, proposal_id: UInt64) -> None:
+        # Decrement pending proposals count
+        self.pending_proposals.value -= 1
+
+        # Update proposer's active proposal status
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
+            proposal_id, pcfg.GS_KEY_PROPOSER
+        )
+        proposer = arc4.Address(proposer_bytes)
+        self.proposer_box[proposer.native].active_proposal = arc4.Bool(
+            False  # noqa: FBT003
+        )
+
     @arc4.abimethod(create="require")
     def create(self) -> None:
         """
@@ -966,18 +980,7 @@ class XGovRegistry(
                 case _:
                     assert False, "Unknown error"  # noqa
 
-        # Decrement pending proposals count
-        self.pending_proposals.value -= 1
-
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
-            proposal_id.native, pcfg.GS_KEY_PROPOSER
-        )
-        proposer = arc4.Address(proposer_bytes)
-
-        # Update proposer's active proposal status
-        self.proposer_box[proposer.native].active_proposal = arc4.Bool(
-            False  # noqa: FBT003
-        )
+        self.decrement_pending_proposals(proposal_id.native)
 
     @arc4.abimethod()
     def drop_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -1018,10 +1021,7 @@ class XGovRegistry(
                 case _:
                     assert False, "Unknown error"  # noqa
 
-        # Decrement pending proposals count
-        self.pending_proposals.value -= 1
-        # Update proposer's active proposal status
-        self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
+        self.decrement_pending_proposals(proposal_id.native)
 
     @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:

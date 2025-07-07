@@ -11,8 +11,11 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     assert_account_balance,
-    assert_decommissioned_proposal_global_state,
+    assert_blocked_proposal_global_state,
+    assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
+    assert_funded_proposal_global_state,
+    assert_rejected_proposal_global_state,
     assign_voters,
     decommission_proposal,
     get_voter_box_key,
@@ -62,6 +65,27 @@ def test_decommission_empty_proposal(
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
 
+    # Test that decommission cannot be replayed from this state
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
+            transaction_parameters=TransactionParameters(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                suggested_params=sp,
+                note="replay decommissioning",
+            ),
+        )
+
 
 def test_decommission_draft_proposal(
     proposal_client: ProposalClient,
@@ -105,18 +129,39 @@ def test_decommission_draft_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        voters_count=0,
-        assigned_votes=0,
+        decommissioned=True,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
     assert_account_balance(
         algorand_client, proposer.address, proposer_balance + locked_amount  # type: ignore
     )
+
+    # Test that decommission cannot be replayed from this state
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        xgov_registry_mock_client.decommission_proposal(
+            proposal_app=proposal_client.app_id,
+            transaction_parameters=TransactionParameters(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                foreign_apps=[proposal_client.app_id],
+                boxes=[
+                    (
+                        proposal_client.app_id,
+                        METADATA_BOX_KEY.encode(),
+                    )
+                ],
+                accounts=[proposer.address],
+                suggested_params=sp,
+                note="replay decommissioning",
+            ),
+        )
 
 
 def test_decommission_final_proposal(
@@ -522,11 +567,26 @@ def test_decommission_success_rejected_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+    assert_rejected_proposal_global_state(
+        global_state,
+        proposer.address,
+        xgov_registry_mock_client.app_id,
+        decommissioned=True,
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    # Test that decommission cannot be replayed from this state
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        decommission_proposal(
+            xgov_registry_mock_client,
+            proposal_client.app_id,
+            xgov_daemon,
+            sp,
+            note="replay decommissioning",
+        )
 
 
 def test_decommission_success_blocked_proposal(
@@ -635,15 +695,28 @@ def test_decommission_success_blocked_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_blocked_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
+        decommissioned=True,
         voted_members=len(committee_members[:4]),
         approvals=10 * len(committee_members[:4]),
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    # Test that decommission cannot be replayed from this state
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        decommission_proposal(
+            xgov_registry_mock_client,
+            proposal_client.app_id,
+            xgov_daemon,
+            sp,
+            note="replay decommissioning",
+        )
 
 
 def test_decommission_success_funded_proposal(
@@ -761,15 +834,28 @@ def test_decommission_success_funded_proposal(
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_funded_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
+        decommissioned=True,
         voted_members=len(committee_members[:4]),
         approvals=10 * len(committee_members[:4]),
     )
 
     assert_account_balance(algorand_client, proposal_client.app_address, 0)
+
+    # Test that decommission cannot be replayed from this state
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        decommission_proposal(
+            xgov_registry_mock_client,
+            proposal_client.app_id,
+            xgov_daemon,
+            sp,
+            note="replay decommissioning",
+        )
 
 
 def test_decommission_not_registry(

@@ -49,6 +49,7 @@ class Proposal(
         assert Txn.local_num_byte_slice == prop_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == prop_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
+        # Global Variables
         self.proposer = GlobalState(
             Account(),
             key=prop_cfg.GS_KEY_PROPOSER,
@@ -76,6 +77,10 @@ class Proposal(
         self.status = GlobalState(
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
+        )
+        self.decommissioned = GlobalState(
+            False,  # noqa: FBT003
+            key=prop_cfg.GS_KEY_DECOMMISSIONED,
         )
         self.funding_category = GlobalState(
             UInt64(enm.FUNDING_CATEGORY_NULL),
@@ -125,13 +130,13 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_NULLS,
         )
-
-        self.voters = BoxMap(
-            Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
-        )
         self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
 
+        # Boxes
+        self.voters = BoxMap(
+            Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
+        )
         self.metadata = BoxRef(
             key=prop_cfg.METADATA_BOX_KEY,
         )
@@ -168,13 +173,13 @@ class Proposal(
             or self.status.value == enm.STATUS_BLOCKED
             or self.status.value == enm.STATUS_REJECTED
             or self.status.value == enm.STATUS_FINAL
-        ), err.WRONG_PROPOSAL_STATUS
+        ) and not self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def decommission_check_authorization(self) -> typ.Error:
         assert self.is_registry_call(), err.UNAUTHORIZED
 
-        if (
+        if self.decommissioned.value or (
             self.status.value != enm.STATUS_EMPTY
             and self.status.value != enm.STATUS_DRAFT
             and self.status.value != enm.STATUS_FUNDED
@@ -188,7 +193,7 @@ class Proposal(
     @subroutine
     def delete_check_authorization(self) -> None:
         assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_DECOMMISSIONED, err.WRONG_PROPOSAL_STATUS
+        assert self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def vote_check_authorization(self) -> typ.Error:
@@ -340,7 +345,9 @@ class Proposal(
     @subroutine
     def assert_draft_and_proposer(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_DRAFT, err.WRONG_PROPOSAL_STATUS
+        assert (
+            self.status.value == enm.STATUS_DRAFT and not self.decommissioned.value
+        ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def finalize_check_authorization(self) -> None:
@@ -357,7 +364,7 @@ class Proposal(
     @subroutine
     def drop_check_authorization(self) -> typ.Error:
         assert self.is_registry_call(), err.UNAUTHORIZED
-        if self.status.value != enm.STATUS_DRAFT:
+        if self.status.value != enm.STATUS_DRAFT or self.decommissioned.value:
             return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
         return typ.Error("")
 
@@ -372,7 +379,9 @@ class Proposal(
     @subroutine
     def submit_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_EMPTY, err.WRONG_PROPOSAL_STATUS
+        assert (
+            self.status.value == enm.STATUS_EMPTY and not self.decommissioned.value
+        ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def submit_input_validation(
@@ -648,7 +657,7 @@ class Proposal(
         )
 
         self.metadata.delete()
-        self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+        self.decommissioned.value = True
 
         return typ.Error("")
 
@@ -956,7 +965,7 @@ class Proposal(
             receiver=reg_app.address,
             amount=Global.current_application_address.balance,
         )
-        self.status.value = UInt64(enm.STATUS_DECOMMISSIONED)
+        self.decommissioned.value = True
 
         return typ.Error("")
 
@@ -988,6 +997,7 @@ class Proposal(
             finalization_ts=arc4.UInt64(self.finalization_ts.value),
             vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
             status=arc4.UInt64(self.status.value),
+            decommissioned=arc4.Bool(self.decommissioned.value),
             funding_category=arc4.UInt64(self.funding_category.value),
             focus=arc4.UInt8(self.focus.value),
             funding_type=arc4.UInt64(self.funding_type.value),

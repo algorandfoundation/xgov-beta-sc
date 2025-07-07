@@ -14,7 +14,7 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import DEFAULT_COMMITTEE_MEMBERS
-from tests.proposal.common import assert_decommissioned_proposal_global_state
+from tests.proposal.common import assert_funded_proposal_global_state
 from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
@@ -57,10 +57,11 @@ def test_decommission_funded_proposal_success(
 
     proposal_global_state = funded_unassigned_voters_proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_funded_proposal_global_state(
         proposal_global_state,
         proposer_address,
         xgov_registry_client.app_id,
+        decommissioned=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=10_000_000,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,

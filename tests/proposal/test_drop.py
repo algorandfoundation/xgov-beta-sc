@@ -14,7 +14,7 @@ from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
-    assert_decommissioned_proposal_global_state,
+    assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     logic_error_type,
     submit_proposal,
@@ -64,10 +64,11 @@ def test_drop_success(
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
+        decommissioned=True,
     )
 
     assert_account_balance(
@@ -126,16 +127,17 @@ def test_drop_twice(
                 signer=proposer.signer,
                 suggested_params=sp,
                 boxes=[(proposal_client.app_id, METADATA_BOX_KEY)],
-                note="a",
+                note="replay drop",
             ),
         )
 
     global_state = proposal_client.get_global_state()
 
-    assert_decommissioned_proposal_global_state(
+    assert_draft_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
+        decommissioned=True,
     )
 
     assert_account_balance(
