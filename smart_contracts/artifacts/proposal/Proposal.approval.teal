@@ -4,7 +4,7 @@
 // smart_contracts.proposal.contract.Proposal.__algopy_entrypoint_with_init() -> uint64:
 main:
     intcblock 0 1 10 20 10000
-    bytecblock 0x0000 0x737461747573 0x 0x6465636f6d6d697373696f6e6564 0x70726f706f736572 0x66756e64696e675f63617465676f7279 "M" 0x72656769737472795f6170705f6964 0x636f6d6d69747465655f6d656d62657273 "voters_count" 0x636f6d6d69747465655f766f746573 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 "assigned_votes" 0x6c6f636b65645f616d6f756e74 0x6e756c6c73 0x151f7c75 0x00 0x7375626d697373696f6e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x636f6d6d69747465655f6964 0x00194552523a57726f6e672050726f706f73616c20537461747573 0x7469746c65 0x66696e616c697a6174696f6e5f74696d657374616d70 0x666f637573 0x66756e64696e675f74797065 0x7265717565737465645f616d6f756e74 "V" 0x78676f765f6461656d6f6e
+    bytecblock 0x0000 0x737461747573 0x 0x6465636f6d6d697373696f6e6564 0x70726f706f736572 0x66756e64696e675f63617465676f7279 "M" 0x72656769737472795f6170705f6964 0x636f6d6d69747465655f6d656d62657273 "voters_count" 0x636f6d6d69747465655f766f746573 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 "assigned_votes" 0x6c6f636b65645f616d6f756e74 0x6e756c6c73 0x151f7c75 0x00 0x7375626d697373696f6e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x636f6d6d69747465655f6964 0x002b4552523a57726f6e672050726f706f73616c20537461747573206f72204465636f6d6d697373696f6e6564 0x7469746c65 0x66696e616c697a6174696f6e5f74696d657374616d70 0x666f637573 0x66756e64696e675f74797065 0x7265717565737465645f616d6f756e74 "V" 0x78676f765f6461656d6f6e
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/proposal/contract.py:46
@@ -761,7 +761,7 @@ assert_draft_and_proposer_bool_merge@4:
     // assert (
     //     self.status.value == enm.STATUS_DRAFT and not self.decommissioned.value
     // ), err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     retsub
 
 assert_draft_and_proposer_bool_false@3:
@@ -1156,7 +1156,7 @@ submit_bool_merge@5:
     // assert (
     //     self.status.value == enm.STATUS_EMPTY and not self.decommissioned.value
     // ), err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     // smart_contracts/proposal/contract.py:594
     // title.native, funding_type.native, requested_amount.native
     frame_dig -4
@@ -1502,7 +1502,7 @@ drop:
 drop_if_body@5:
     // smart_contracts/proposal/contract.py:368
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 22 // 0x00194552523a57726f6e672050726f706f73616c20537461747573
+    bytec 22 // 0x002b4552523a57726f6e672050726f706f73616c20537461747573206f72204465636f6d6d697373696f6e6564
     frame_bury 0
 
 drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop_check_authorization@7:
@@ -1740,7 +1740,7 @@ assign_voters:
     assert // check self.status exists
     intc_3 // 20
     ==
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     // smart_contracts/proposal/contract.py:751
     // if Txn.group_index == 0:
     txn GroupIndex
@@ -1941,7 +1941,7 @@ vote:
     bz vote_after_if_else@15
     // smart_contracts/proposal/contract.py:203
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 22 // 0x00194552523a57726f6e672050726f706f73616c20537461747573
+    bytec 22 // 0x002b4552523a57726f6e672050726f706f73616c20537461747573206f72204465636f6d6d697373696f6e6564
     frame_bury 0
 
 vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@20:
@@ -2192,7 +2192,7 @@ scrutiny:
     assert // check self.status exists
     pushint 25 // 25
     ==
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     // smart_contracts/proposal/contract.py:234
     // is_voting_open, error = self.is_voting_open()
     callsub is_voting_open
@@ -2518,7 +2518,7 @@ review:
     assert // check self.status exists
     pushint 30 // 30
     ==
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     // smart_contracts/proposal/contract.py:869
     // if block:
     frame_dig -1
@@ -2577,7 +2577,7 @@ fund:
     bz fund_after_if_else@5
     // smart_contracts/proposal/contract.py:164
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 22 // 0x00194552523a57726f6e672050726f706f73616c20537461747573
+    bytec 22 // 0x002b4552523a57726f6e672050726f706f73616c20537461747573206f72204465636f6d6d697373696f6e6564
     frame_bury 0
 
 fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@6:
@@ -2715,7 +2715,7 @@ unassign_voters_bool_merge@21:
     //     or self.status.value == enm.STATUS_REJECTED
     //     or self.status.value == enm.STATUS_FINAL
     // ) and not self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     // smart_contracts/proposal/contract.py:919
     // if Txn.group_index == 0:
     txn GroupIndex
@@ -2944,7 +2944,7 @@ decommission:
 decommission_if_body@13:
     // smart_contracts/proposal/contract.py:189
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 22 // 0x00194552523a57726f6e672050726f706f73616c20537461747573
+    bytec 22 // 0x002b4552523a57726f6e672050726f706f73616c20537461747573206f72204465636f6d6d697373696f6e6564
     frame_bury 0
 
 decommission_after_inlined_smart_contracts.proposal.contract.Proposal.decommission_check_authorization@15:
@@ -3061,7 +3061,7 @@ delete:
     bytec_3 // 0x6465636f6d6d697373696f6e6564
     app_global_get_ex
     assert // check self.decommissioned exists
-    assert // Wrong Proposal Status
+    assert // Wrong Proposal Status or Decommissioned
     retsub
 
 
