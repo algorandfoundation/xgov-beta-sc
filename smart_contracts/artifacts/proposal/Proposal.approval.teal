@@ -1582,10 +1582,10 @@ finalize_after_if_else@7:
     ==
     assert // Missing Config
     // smart_contracts/proposal/contract.py:683
-    // assert self.metadata, err.MISSING_METADATA
+    // assert self.metadata.length > 0, err.MISSING_METADATA
     bytec 5 // "M"
     box_len
-    bury 1
+    assert // check self.metadata exists
     assert // Missing Metadata
     // smart_contracts/proposal/contract.py:686
     // Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
