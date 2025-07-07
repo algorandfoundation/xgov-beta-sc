@@ -550,3 +550,69 @@ def test_assign_voters_one_call_not_xgov_daemon(
     )
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         composer.execute()
+
+
+def test_assign_voters_more_than_allowed(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
+    committee_members: list[AddressAndSigner],
+) -> None:
+
+    submit_proposal(
+        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
+    )
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    reg_gs = xgov_registry_mock_client.get_global_state()
+    discussion_duration = reg_gs.discussion_duration_small
+
+    submission_ts = proposal_client.get_global_state().submission_ts
+    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[xgov_daemon.address],
+            suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
+        ),
+    )
+
+    composer = proposal_client.compose()
+    assign_voters(
+        proposal_client_composer=composer,
+        xgov_daemon=xgov_daemon,
+        committee_members=[*committee_members, proposer],
+        xgov_registry_app_id=xgov_registry_mock_client.app_id,
+        sp=sp,
+    )
+    composer.execute()
+
+    global_state = proposal_client.get_global_state()
+
+    assert_final_proposal_global_state(
+        global_state,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        assigned_votes=10 * (len(committee_members) + 1),  # proposer is also assigned
+        voters_count=len(committee_members) + 1,
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=proposal_client.app_id,
+        expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
+        + [
+            (
+                get_voter_box_key(committee_member.address),
+                "AAAAAAAAAAoA",
+            )
+            for committee_member in [*committee_members, proposer]
+        ],
+    )
