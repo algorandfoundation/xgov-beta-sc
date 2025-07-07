@@ -24,7 +24,6 @@ from smart_contracts.proposal.enums import (
     FUNDING_PROACTIVE,
     STATUS_APPROVED,
     STATUS_BLOCKED,
-    STATUS_DECOMMISSIONED,
     STATUS_DRAFT,
     STATUS_EMPTY,
     STATUS_FINAL,
@@ -62,6 +61,7 @@ def assert_proposal_global_state(
     proposer_address: str,
     registry_app_id: int,
     status: int = STATUS_EMPTY,
+    decommissioned: bool = False,
     title: str = "",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
@@ -81,6 +81,7 @@ def assert_proposal_global_state(
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
     assert global_state.status == status
+    assert global_state.decommissioned == decommissioned
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
     assert global_state.funding_type == funding_type
@@ -97,24 +98,23 @@ def assert_proposal_global_state(
     assert global_state.assigned_votes == assigned_votes
     assert global_state.voters_count == voters_count
 
-    if status != STATUS_DECOMMISSIONED:  # Decommissioned proposals are ambiguous here
-        if status == STATUS_EMPTY:
-            assert global_state.submission_ts == 0
-        else:
-            assert global_state.submission_ts > 0
+    if status == STATUS_EMPTY:
+        assert global_state.submission_ts == 0
+    else:
+        assert global_state.submission_ts > 0
 
-        if status >= STATUS_FINAL:
-            assert global_state.finalization_ts > 0
-        else:
-            assert global_state.finalization_ts == 0
+    if status >= STATUS_FINAL:
+        assert global_state.finalization_ts > 0
+    else:
+        assert global_state.finalization_ts == 0
 
-        if status >= STATUS_VOTING:
-            assert global_state.vote_open_ts > 0
-        else:
-            assert global_state.vote_open_ts == 0
+    if status >= STATUS_VOTING:
+        assert global_state.vote_open_ts > 0
+    else:
+        assert global_state.vote_open_ts == 0
 
 
-def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type: ignore
+def get_default_params_for_status(status: int, overrides: dict, *, decommissioned: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
     common_defaults = {
         "title": PROPOSAL_TITLE,
@@ -134,13 +134,17 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
 
     # Define common voter-related defaults used in multiple statuses
     voter_defaults = {
-        "voters_count": DEFAULT_COMMITTEE_MEMBERS,
-        "assigned_votes": 10 * DEFAULT_COMMITTEE_MEMBERS,
+        "voters_count": 0 if decommissioned else DEFAULT_COMMITTEE_MEMBERS,
+        "assigned_votes": 0 if decommissioned else 10 * DEFAULT_COMMITTEE_MEMBERS,
     }
 
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
-        STATUS_DRAFT: {"status": STATUS_DRAFT, **committee_defaults},
+        STATUS_DRAFT: {
+            "status": STATUS_DRAFT,
+            **committee_defaults,
+            "locked_amount": 0 if decommissioned else LOCKED_AMOUNT,
+        },
         STATUS_FINAL: {"status": STATUS_FINAL, **committee_defaults},
         STATUS_VOTING: {
             "status": STATUS_VOTING,
@@ -175,11 +179,6 @@ def get_default_params_for_status(status: int, overrides: dict) -> dict:  # type
             **voter_defaults,
             "locked_amount": 0,
         },
-        STATUS_DECOMMISSIONED: {
-            "status": STATUS_DECOMMISSIONED,
-            **committee_defaults,
-            "locked_amount": 0,
-        },
     }.get(status, {})
 
     # Combine all defaults and apply overrides, with overrides taking precedence
@@ -191,13 +190,16 @@ def assert_proposal_with_status(  # type: ignore
     proposer_address: str,
     registry_app_id: int,
     status: int,
+    *,
+    decommissioned: bool = False,
     **overrides,  # noqa: ANN003
 ) -> None:
-    params = get_default_params_for_status(status, overrides)  # type: ignore
+    params = get_default_params_for_status(status, overrides, decommissioned=decommissioned)  # type: ignore
     assert_proposal_global_state(
         global_state,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
+        decommissioned=decommissioned,
         **params,  # type: ignore
     )
 
@@ -206,13 +208,14 @@ def assert_empty_proposal_global_state(
     global_state: GlobalState,
     proposer_address: str,
     registry_app_id: int,
-    decommissioned: bool = False,  # noqa: FBT001, FBT002
+    *,
+    decommissioned: bool = False,
 ) -> None:
     assert_proposal_global_state(
         global_state,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
-        status=STATUS_EMPTY if not decommissioned else STATUS_DECOMMISSIONED,
+        decommissioned=decommissioned,
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
@@ -223,10 +226,12 @@ def assert_draft_proposal_global_state(  # type: ignore
     global_state: GlobalState,
     proposer_address: str,
     registry_app_id: int,
+    *,
+    decommissioned: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_DRAFT, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_DRAFT, decommissioned=decommissioned, **kwargs  # type: ignore
     )
 
 
@@ -256,10 +261,12 @@ def assert_rejected_proposal_global_state(  # type: ignore
     global_state: GlobalState,
     proposer_address: str,
     registry_app_id: int,
+    *,
+    decommissioned: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_REJECTED, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_REJECTED, decommissioned=decommissioned, **kwargs  # type: ignore
     )
 
 
@@ -289,10 +296,12 @@ def assert_blocked_proposal_global_state(  # type: ignore
     global_state: GlobalState,
     proposer_address: str,
     registry_app_id: int,
+    *,
+    decommissioned: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, decommissioned=decommissioned, **kwargs  # type: ignore
     )
 
 
@@ -300,21 +309,12 @@ def assert_funded_proposal_global_state(  # type: ignore
     global_state: GlobalState,
     proposer_address: str,
     registry_app_id: int,
+    *,
+    decommissioned: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_FUNDED, **kwargs  # type: ignore
-    )
-
-
-def assert_decommissioned_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
-    proposer_address: str,
-    registry_app_id: int,
-    **kwargs,  # noqa: ANN003
-) -> None:
-    assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_DECOMMISSIONED, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_FUNDED, decommissioned=decommissioned, **kwargs  # type: ignore
     )
 
 
@@ -520,6 +520,7 @@ def decommission_proposal(
     proposal_app_id: int,
     xgov_daemon: AddressAndSigner,
     sp: SuggestedParams,
+    note: str = "",
 ) -> None:
     xgov_registry_client.decommission_proposal(
         proposal_app=proposal_app_id,
@@ -534,5 +535,6 @@ def decommission_proposal(
                 )
             ],
             suggested_params=sp,
+            note=note,
         ),
     )

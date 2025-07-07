@@ -8,7 +8,7 @@ STATUS_DRAFT: Final[int] = (
     10  # An Empty proposal is initialized (and updated) from the xGov Portal
 )
 STATUS_FINAL: Final[int] = (
-    20  # Draft is submitted to vote by the Proposer after minimum discussion time
+    20  # Draft is submitted to vote by the Proposer after a minimum discussion time
 )
 STATUS_VOTING: Final[int] = (
     25  # Final proposal is open to vote until the voting session expires
@@ -18,9 +18,6 @@ STATUS_REJECTED: Final[int] = 40  # Rejected at the end of voting phase
 STATUS_REVIEWED: Final[int] = 45  # Approved proposal has been reviewed
 STATUS_FUNDED: Final[int] = 50  # Proposal has been funded
 STATUS_BLOCKED: Final[int] = 60  # Blocked with veto, the Grant Proposal can not be paid
-STATUS_DECOMMISSIONED: Final[int] = (
-    70  # Proposal life cycle is complete and could be deleted
-)
 
 # Proposal Category
 FUNDING_CATEGORY_NULL: Final[int] = 0  # Null category
