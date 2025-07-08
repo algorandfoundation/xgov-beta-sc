@@ -717,13 +717,6 @@ class Proposal(
         self.voters_count += 1
         self.assigned_votes += voting_power
 
-        if self.voters_count == self.committee_members.value:
-            assert (
-                self.assigned_votes == self.committee_votes.value
-            ), err.VOTING_POWER_MISMATCH
-            self.status.value = UInt64(enm.STATUS_VOTING)
-            self.vote_open_ts.value = Global.latest_timestamp
-
     @arc4.abimethod()
     def assign_voters(
         self,
@@ -758,6 +751,13 @@ class Proposal(
 
         for i in urange(voters.length):
             self._assign_voter(voters[i].address.native, voters[i].voting_power.native)
+
+        if self.voters_count == self.committee_members.value:
+            assert (
+                self.assigned_votes == self.committee_votes.value
+            ), err.VOTING_POWER_MISMATCH
+            self.status.value = UInt64(enm.STATUS_VOTING)
+            self.vote_open_ts.value = Global.latest_timestamp
 
     @arc4.abimethod()
     def vote(
