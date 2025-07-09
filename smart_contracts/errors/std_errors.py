@@ -77,3 +77,13 @@ WRONG_METHOD_CALL = "Wrong Method Call"
 COMMITTEE_SIZE_TOO_LARGE = "Committee size is too large"
 
 INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"
+
+FORBIDDEN = "Forbidden"
+ALREADY_MEMBER = "Already a member"
+NOT_A_MEMBER = "Not a member"
+VOTING_CLOSED = "Voting is closed"
+ALREADY_VOTED = "Already voted"
+BAD_PROPOSAL_ID = "Bad proposal ID"
+BAD_VOTE = "Bad vote"
+ALREADY_SUBMITTED = "Already submitted"
+FAILED_VOTE = "Failed vote"

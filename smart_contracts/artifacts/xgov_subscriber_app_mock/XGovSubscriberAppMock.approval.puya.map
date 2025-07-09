@@ -27,32 +27,13 @@
       "stack_out": []
     },
     "11": {
-      "op": "pushbytess 0x42317b4f 0x5a2a3f16 // method \"subscribe_xgov(uint64,address)void\", method \"unsubscribe_xgov(uint64)void\"",
-      "defined_out": [
-        "Method(subscribe_xgov(uint64,address)void)",
-        "Method(unsubscribe_xgov(uint64)void)"
-      ],
-      "stack_out": [
-        "Method(subscribe_xgov(uint64,address)void)",
-        "Method(unsubscribe_xgov(uint64)void)"
-      ]
+      "op": "pushbytess 0x42317b4f 0x5a2a3f16 // method \"subscribe_xgov(uint64,address)void\", method \"unsubscribe_xgov(uint64)void\""
     },
     "23": {
-      "op": "txna ApplicationArgs 0",
-      "defined_out": [
-        "Method(subscribe_xgov(uint64,address)void)",
-        "Method(unsubscribe_xgov(uint64)void)",
-        "tmp%2#0"
-      ],
-      "stack_out": [
-        "Method(subscribe_xgov(uint64,address)void)",
-        "Method(unsubscribe_xgov(uint64)void)",
-        "tmp%2#0"
-      ]
+      "op": "txna ApplicationArgs 0"
     },
     "26": {
-      "op": "match main_subscribe_xgov_route@3 main_unsubscribe_xgov_route@4",
-      "stack_out": []
+      "op": "match main_subscribe_xgov_route@3 main_unsubscribe_xgov_route@4"
     },
     "32": {
       "block": "main_after_if_else@11",
@@ -66,27 +47,26 @@
       ]
     },
     "33": {
-      "op": "return",
-      "stack_out": []
+      "op": "return"
     },
     "34": {
       "block": "main_unsubscribe_xgov_route@4",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%8#0"
+        "tmp%10#0"
       ],
       "stack_out": [
-        "tmp%8#0"
+        "tmp%10#0"
       ]
     },
     "36": {
       "op": "!",
       "defined_out": [
-        "tmp%9#0"
+        "tmp%11#0"
       ],
       "stack_out": [
-        "tmp%9#0"
+        "tmp%11#0"
       ]
     },
     "37": {
@@ -97,10 +77,10 @@
     "38": {
       "op": "txn ApplicationID",
       "defined_out": [
-        "tmp%10#0"
+        "tmp%12#0"
       ],
       "stack_out": [
-        "tmp%10#0"
+        "tmp%12#0"
       ]
     },
     "40": {
@@ -111,19 +91,19 @@
     "41": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
-        "reinterpret_bytes[8]%1#0"
+        "tmp%14#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[8]%1#0"
+        "tmp%14#0"
       ]
     },
     "44": {
       "op": "btoi",
       "defined_out": [
-        "tmp%12#0"
+        "tmp%15#0"
       ],
       "stack_out": [
-        "tmp%12#0"
+        "tmp%15#0"
       ]
     },
     "45": {
@@ -141,8 +121,7 @@
       ]
     },
     "49": {
-      "op": "return",
-      "stack_out": []
+      "op": "return"
     },
     "50": {
       "block": "main_subscribe_xgov_route@3",
@@ -186,30 +165,30 @@
     "57": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
-        "reinterpret_bytes[8]%0#0"
+        "tmp%7#0"
       ],
       "stack_out": [
-        "reinterpret_bytes[8]%0#0"
+        "tmp%7#0"
       ]
     },
     "60": {
       "op": "btoi",
       "defined_out": [
-        "tmp%7#0"
+        "tmp%8#0"
       ],
       "stack_out": [
-        "tmp%7#0"
+        "tmp%8#0"
       ]
     },
     "61": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
-        "reinterpret_bytes[32]%0#0",
-        "tmp%7#0"
+        "tmp%8#0",
+        "tmp%9#0"
       ],
       "stack_out": [
-        "tmp%7#0",
-        "reinterpret_bytes[32]%0#0"
+        "tmp%8#0",
+        "tmp%9#0"
       ]
     },
     "64": {
@@ -227,18 +206,17 @@
       ]
     },
     "68": {
-      "op": "return",
-      "stack_out": []
+      "op": "return"
     },
     "69": {
       "block": "main_bare_routing@7",
       "stack_in": [],
       "op": "txn OnCompletion",
       "defined_out": [
-        "tmp%13#0"
+        "tmp%16#0"
       ],
       "stack_out": [
-        "tmp%13#0"
+        "tmp%16#0"
       ]
     },
     "71": {
@@ -246,40 +224,20 @@
       "stack_out": []
     },
     "74": {
-      "op": "txn ApplicationID",
-      "defined_out": [
-        "tmp%14#0"
-      ],
-      "stack_out": [
-        "tmp%14#0"
-      ]
+      "op": "txn ApplicationID"
     },
     "76": {
-      "op": "!",
-      "defined_out": [
-        "tmp%15#0"
-      ],
-      "stack_out": [
-        "tmp%15#0"
-      ]
+      "op": "!"
     },
     "77": {
       "error": "can only call when creating",
-      "op": "assert // can only call when creating",
-      "stack_out": []
+      "op": "assert // can only call when creating"
     },
     "78": {
-      "op": "intc_0 // 1",
-      "defined_out": [
-        "tmp%0#0"
-      ],
-      "stack_out": [
-        "tmp%0#0"
-      ]
+      "op": "intc_0 // 1"
     },
     "79": {
-      "op": "return",
-      "stack_out": []
+      "op": "return"
     },
     "80": {
       "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov",

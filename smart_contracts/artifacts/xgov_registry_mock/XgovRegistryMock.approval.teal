@@ -950,6 +950,10 @@ main_bare_routing@40:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.pause_registry() -> void:
 pause_registry:
+    // smart_contracts/xgov_registry_mock/contract.py:129-130
+    // @arc4.abimethod()
+    // def pause_registry(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry_mock/contract.py:135
     // self.paused_registry.value = UInt64(1)
     bytec 5 // 0x7061757365645f7265676973747279
@@ -960,6 +964,10 @@ pause_registry:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.pause_proposals() -> void:
 pause_proposals:
+    // smart_contracts/xgov_registry_mock/contract.py:137-138
+    // @arc4.abimethod()
+    // def pause_proposals(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry_mock/contract.py:143
     // self.paused_proposals.value = UInt64(1)
     bytec 6 // 0x7061757365645f70726f706f73616c73
@@ -970,6 +978,10 @@ pause_proposals:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.resume_registry() -> void:
 resume_registry:
+    // smart_contracts/xgov_registry_mock/contract.py:145-146
+    // @arc4.abimethod()
+    // def resume_registry(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry_mock/contract.py:151
     // self.paused_registry.value = UInt64(0)
     bytec 5 // 0x7061757365645f7265676973747279
@@ -980,6 +992,10 @@ resume_registry:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.resume_proposals() -> void:
 resume_proposals:
+    // smart_contracts/xgov_registry_mock/contract.py:153-154
+    // @arc4.abimethod()
+    // def resume_proposals(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry_mock/contract.py:159
     // self.paused_proposals.value = UInt64(0)
     bytec 6 // 0x7061757365645f70726f706f73616c73
@@ -1016,7 +1032,7 @@ create_empty_proposal:
     itxn_field ExtraProgramPages
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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)
+    pushbytes base64(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)
     itxn_field ApprovalProgramPages
     // smart_contracts/xgov_registry_mock/contract.py:178
     // Proposal,
@@ -1254,6 +1270,10 @@ set_committee_id:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.clear_committee_id() -> void:
 clear_committee_id:
+    // smart_contracts/xgov_registry_mock/contract.py:323-324
+    // @arc4.abimethod()
+    // def clear_committee_id(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry_mock/contract.py:329
     // self.committee_id.value = Bytes32.from_bytes(mock_cfg.COMMITTEE_ID)
     bytec 4 // 0x636f6d6d69747465655f6964
@@ -1465,14 +1485,16 @@ vote:
     // )
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry_mock/contract.py:488
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -1488,7 +1510,7 @@ vote_ternary_merge@4:
     // smart_contracts/xgov_registry_mock/contract.py:489
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -1496,7 +1518,7 @@ vote_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -1581,7 +1603,7 @@ vote_ternary_false@3:
     // smart_contracts/xgov_registry_mock/contract.py:488
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec_2 // "ERR:"
     ==
     b vote_ternary_merge@4
@@ -1632,14 +1654,16 @@ fund:
     // )
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry_mock/contract.py:539
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -1655,7 +1679,7 @@ fund_ternary_merge@4:
     // smart_contracts/xgov_registry_mock/contract.py:540
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -1663,7 +1687,7 @@ fund_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -1704,7 +1728,7 @@ fund_ternary_false@3:
     // smart_contracts/xgov_registry_mock/contract.py:539
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec_2 // "ERR:"
     ==
     b fund_ternary_merge@4
@@ -1741,14 +1765,16 @@ decommission_proposal:
     // )
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry_mock/contract.py:557
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -1764,7 +1790,7 @@ decommission_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry_mock/contract.py:558
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -1772,7 +1798,7 @@ decommission_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -1823,7 +1849,7 @@ decommission_proposal_ternary_false@3:
     // smart_contracts/xgov_registry_mock/contract.py:557
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec_2 // "ERR:"
     ==
     b decommission_proposal_ternary_merge@4
@@ -1860,14 +1886,16 @@ drop_proposal:
     // )
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec_0 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry_mock/contract.py:577
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -1883,7 +1911,7 @@ drop_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry_mock/contract.py:578
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -1891,7 +1919,7 @@ drop_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -1922,7 +1950,7 @@ drop_proposal_ternary_false@3:
     // smart_contracts/xgov_registry_mock/contract.py:577
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec_2 // "ERR:"
     ==
     b drop_proposal_ternary_merge@4

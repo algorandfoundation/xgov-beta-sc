@@ -3,7 +3,7 @@
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.__algopy_entrypoint_with_init() -> uint64:
 main:
-    intcblock 0 1 4 16
+    intcblock 0 1 4 6
     bytecblock 0x7061757365645f7265676973747279 0x6f75747374616e64696e675f66756e6473 0x70 0x78676f765f6d616e61676572 0x78676f7673 0x70656e64696e675f70726f706f73616c73 0x78 0x151f7c75 0x00 0x7061757365645f70726f706f73616c73 0x6f70656e5f70726f706f73616c5f666565 0x78676f765f73756273637269626572 0x78676f765f7061796f72 0x6b79635f70726f7669646572 0x636f6d6d69747465655f6d616e61676572 0x78676f765f6461656d6f6e 0x78676f765f666565 0x70726f706f7365725f666565 0x726571756573745f6964 0x0000000000000000 "Wrong Proposal Status or Decommissioned" "ERR:" 0x78676f765f636f756e63696c 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f786c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f786c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x6d61785f636f6d6d69747465655f73697a65 0x70726f706f736572 0x72 0x636f6d6d69747465655f6964 0x737461747573 "Missing Config" TMPL_entropy
     txn ApplicationID
     bnz main_after_if_else@2
@@ -1121,6 +1121,10 @@ main_create_route@5:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.is_xgov_manager() -> uint64:
 is_xgov_manager:
+    // smart_contracts/xgov_registry/contract.py:175-176
+    // @subroutine
+    // def is_xgov_manager(self) -> bool:
+    proto 0 1
     // smart_contracts/xgov_registry/contract.py:177
     // return Txn.sender == self.xgov_manager.value.native
     txn Sender
@@ -1134,6 +1138,10 @@ is_xgov_manager:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.is_xgov_subscriber() -> uint64:
 is_xgov_subscriber:
+    // smart_contracts/xgov_registry/contract.py:179-180
+    // @subroutine
+    // def is_xgov_subscriber(self) -> bool:
+    proto 0 1
     // smart_contracts/xgov_registry/contract.py:181
     // return Txn.sender == self.xgov_subscriber.value.native
     txn Sender
@@ -1250,8 +1258,8 @@ valid_kyc:
     frame_dig 0
     box_get
     assert // check self.proposer_box entry exists
-    intc_1 // 1
-    extract_uint64
+    extract 1 8 // on error: Index access is out of bounds
+    btoi
     global LatestTimestamp
     >
     // smart_contracts/xgov_registry/contract.py:220-221
@@ -1336,6 +1344,10 @@ decrement_pending_proposals:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.create() -> void:
 create:
+    // smart_contracts/xgov_registry/contract.py:274-275
+    // @arc4.abimethod(create="require")
+    // def create(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:280
     // self.xgov_manager.value = arc4.Address(Txn.sender)
     bytec_3 // 0x78676f765f6d616e61676572
@@ -1354,6 +1366,10 @@ create:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.pause_registry() -> void:
 pause_registry:
+    // smart_contracts/xgov_registry/contract.py:283-284
+    // @arc4.abimethod()
+    // def pause_registry(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:289
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -1368,6 +1384,10 @@ pause_registry:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.pause_proposals() -> void:
 pause_proposals:
+    // smart_contracts/xgov_registry/contract.py:292-293
+    // @arc4.abimethod()
+    // def pause_proposals(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:298
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -1382,6 +1402,10 @@ pause_proposals:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.resume_registry() -> void:
 resume_registry:
+    // smart_contracts/xgov_registry/contract.py:301-302
+    // @arc4.abimethod()
+    // def resume_registry(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:307
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -1396,6 +1420,10 @@ resume_registry:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.resume_proposals() -> void:
 resume_proposals:
+    // smart_contracts/xgov_registry/contract.py:310-311
+    // @arc4.abimethod()
+    // def resume_proposals(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:316
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -1557,11 +1585,11 @@ config_xgov_registry:
     // smart_contracts/xgov_registry/contract.py:441
     // config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
     frame_dig -1
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     frame_dig -1
-    pushint 24 // 24
-    extract_uint64
+    extract 24 8 // on error: Index access is out of bounds
+    btoi
     // smart_contracts/xgov_registry/contract.py:228
     // return amount * fraction_in_bps // BPS
     dup2
@@ -1597,16 +1625,16 @@ config_xgov_registry:
     // smart_contracts/xgov_registry/contract.py:444
     // self.xgov_fee.value = config.xgov_fee.native
     frame_dig -1
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 16 // 0x78676f765f666565
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:445
     // self.proposer_fee.value = config.proposer_fee.native
     frame_dig -1
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 17 // 0x70726f706f7365725f666565
     swap
     app_global_put
@@ -1623,16 +1651,16 @@ config_xgov_registry:
     // smart_contracts/xgov_registry/contract.py:448
     // self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
     frame_dig -1
-    pushint 32 // 32
-    extract_uint64
+    extract 32 8 // on error: Index access is out of bounds
+    btoi
     bytec 24 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:450
     // self.min_requested_amount.value = config.min_requested_amount.native
     frame_dig -1
-    pushint 40 // 40
-    extract_uint64
+    extract 40 8 // on error: Index access is out of bounds
+    btoi
     bytec 25 // 0x6d696e5f7265717565737465645f616d6f756e74
     swap
     app_global_put
@@ -1641,23 +1669,23 @@ config_xgov_registry:
     frame_dig -1
     extract 48 24 // on error: Index access is out of bounds
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 26 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:452
     // self.max_requested_amount_medium.value = config.max_requested_amount[1].native
     dup
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 27 // 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:453
     // self.max_requested_amount_large.value = config.max_requested_amount[2].native
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     bytec 28 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
     swap
     app_global_put
@@ -1666,31 +1694,31 @@ config_xgov_registry:
     frame_dig -1
     extract 72 32 // on error: Index access is out of bounds
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 29 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:456
     // self.discussion_duration_medium.value = config.discussion_duration[1].native
     dup
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 30 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:457
     // self.discussion_duration_large.value = config.discussion_duration[2].native
     dup
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     bytec 31 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:458
     // self.discussion_duration_xlarge.value = config.discussion_duration[3].native
-    pushint 24 // 24
-    extract_uint64
+    extract 24 8 // on error: Index access is out of bounds
+    btoi
     bytec 32 // 0x64697363757373696f6e5f6475726174696f6e5f786c61726765
     swap
     app_global_put
@@ -1699,31 +1727,31 @@ config_xgov_registry:
     frame_dig -1
     extract 104 32 // on error: Index access is out of bounds
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 33 // 0x766f74696e675f6475726174696f6e5f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:461
     // self.voting_duration_medium.value = config.voting_duration[1].native
     dup
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 34 // 0x766f74696e675f6475726174696f6e5f6d656469756d
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:462
     // self.voting_duration_large.value = config.voting_duration[2].native
     dup
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     bytec 35 // 0x766f74696e675f6475726174696f6e5f6c61726765
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:463
     // self.voting_duration_xlarge.value = config.voting_duration[3].native
-    pushint 24 // 24
-    extract_uint64
+    extract 24 8 // on error: Index access is out of bounds
+    btoi
     bytec 36 // 0x766f74696e675f6475726174696f6e5f786c61726765
     swap
     app_global_put
@@ -1732,23 +1760,23 @@ config_xgov_registry:
     frame_dig -1
     extract 136 24 // on error: Index access is out of bounds
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 37 // 0x71756f72756d5f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:466
     // self.quorum_medium.value = config.quorum[1].native
     dup
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 38 // 0x71756f72756d5f6d656469756d
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:467
     // self.quorum_large.value = config.quorum[2].native
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     bytec 39 // 0x71756f72756d5f6c61726765
     swap
     app_global_put
@@ -1757,23 +1785,23 @@ config_xgov_registry:
     frame_dig -1
     extract 160 24 // on error: Index access is out of bounds
     dup
-    intc_0 // 0
-    extract_uint64
+    extract 0 8 // on error: Index access is out of bounds
+    btoi
     bytec 40 // 0x77656967687465645f71756f72756d5f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:470
     // self.weighted_quorum_medium.value = config.weighted_quorum[1].native
     dup
-    pushint 8 // 8
-    extract_uint64
+    extract 8 8 // on error: Index access is out of bounds
+    btoi
     bytec 41 // 0x77656967687465645f71756f72756d5f6d656469756d
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:471
     // self.weighted_quorum_large.value = config.weighted_quorum[2].native
-    intc_3 // 16
-    extract_uint64
+    extract 16 8 // on error: Index access is out of bounds
+    btoi
     bytec 42 // 0x77656967687465645f71756f72756d5f6c61726765
     swap
     app_global_put
@@ -1782,6 +1810,10 @@ config_xgov_registry:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.update_xgov_registry() -> void:
 update_xgov_registry:
+    // smart_contracts/xgov_registry/contract.py:473-474
+    // @arc4.abimethod(allow_actions=["UpdateApplication"])
+    // def update_xgov_registry(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:483
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -2496,12 +2528,12 @@ open_proposal:
     itxn_field ExtraProgramPages
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(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)
+    pushbytes base64(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)
     itxn_field ApprovalProgramPages
     pushbytes 0xcc694eaa // method "create(address)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
@@ -2655,8 +2687,8 @@ vote_proposal:
     // smart_contracts/xgov_registry/contract.py:848
     // xgov_box.voted_proposals.native + UInt64(1)
     dup
-    pushint 32 // 32
-    extract_uint64
+    extract 32 8 // on error: Index access is out of bounds
+    btoi
     intc_1 // 1
     +
     // smart_contracts/xgov_registry/contract.py:847-849
@@ -2727,20 +2759,22 @@ vote_proposal:
     itxn_field ApplicationArgs
     frame_dig -1
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec 7 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry/contract.py:866
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -2756,7 +2790,7 @@ vote_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry/contract.py:867
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -2764,7 +2798,7 @@ vote_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -2836,7 +2870,7 @@ vote_proposal_ternary_false@3:
     // smart_contracts/xgov_registry/contract.py:866
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec 21 // "ERR:"
     ==
     b vote_proposal_ternary_merge@4
@@ -3003,20 +3037,22 @@ pay_grant_proposal:
     itxn_field ApplicationID
     pushbytes 0x8a5e4c80 // method "fund()string"
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec 7 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry/contract.py:937
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -3032,7 +3068,7 @@ pay_grant_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry/contract.py:938
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 2
+    frame_dig 1
     dup
     cover 2
     >=
@@ -3040,7 +3076,7 @@ pay_grant_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 1
+    frame_dig 0
     swap
     uncover 2
     substring3
@@ -3071,7 +3107,7 @@ pay_grant_proposal_ternary_false@3:
     // smart_contracts/xgov_registry/contract.py:937
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 0
-    extract 6 4
+    extract 0 4
     bytec 21 // "ERR:"
     ==
     b pay_grant_proposal_ternary_merge@4
@@ -3115,20 +3151,22 @@ decommission_proposal:
     // )
     pushbytes 0x69ecf4a2 // method "decommission()string"
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec 7 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry/contract.py:971
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -3144,7 +3182,7 @@ decommission_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry/contract.py:972
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 3
+    frame_dig 2
     dup
     cover 2
     >=
@@ -3152,7 +3190,7 @@ decommission_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 2
+    frame_dig 1
     swap
     uncover 2
     substring3
@@ -3207,7 +3245,7 @@ decommission_proposal_ternary_false@3:
     // smart_contracts/xgov_registry/contract.py:971
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 1
-    extract 6 4
+    extract 0 4
     bytec 21 // "ERR:"
     ==
     b decommission_proposal_ternary_merge@4
@@ -3265,20 +3303,22 @@ drop_proposal:
     itxn_field ApplicationID
     pushbytes 0x7371321a // method "drop()string"
     itxn_field ApplicationArgs
-    pushint 6 // appl
+    intc_3 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
     itxn LastLog
-    dupn 2
+    dup
+    extract 4 0
+    swap
     extract 0 4
     bytec 7 // 0x151f7c75
     ==
-    assert // application log value is not the result of an ABI return
+    assert // ARC4 prefix is valid
     // smart_contracts/xgov_registry/contract.py:1016
     // if error.native.startswith(err.ARC_65_PREFIX):
-    extract 6 0
+    extract 2 0
     dup
     len
     dup
@@ -3294,7 +3334,7 @@ drop_proposal_ternary_merge@4:
     // smart_contracts/xgov_registry/contract.py:1017
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_2 // 4
-    frame_dig 3
+    frame_dig 2
     dup
     cover 2
     >=
@@ -3302,7 +3342,7 @@ drop_proposal_ternary_merge@4:
     dig 2
     uncover 2
     select
-    frame_dig 2
+    frame_dig 1
     swap
     uncover 2
     substring3
@@ -3337,7 +3377,7 @@ drop_proposal_ternary_false@3:
     // smart_contracts/xgov_registry/contract.py:1016
     // if error.native.startswith(err.ARC_65_PREFIX):
     frame_dig 1
-    extract 6 4
+    extract 0 4
     bytec 21 // "ERR:"
     ==
     b drop_proposal_ternary_merge@4
@@ -3449,6 +3489,10 @@ withdraw_funds:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.withdraw_balance() -> void:
 withdraw_balance:
+    // smart_contracts/xgov_registry/contract.py:1068-1069
+    // @arc4.abimethod()
+    // def withdraw_balance(self) -> None:
+    proto 0 0
     // smart_contracts/xgov_registry/contract.py:1080
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -3525,6 +3569,10 @@ withdraw_balance:
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.get_state() -> bytes:
 get_state:
+    // smart_contracts/xgov_registry/contract.py:1097-1098
+    // @arc4.abimethod(readonly=True)
+    // def get_state(self) -> typ.TypedGlobalState:
+    proto 0 1
     // smart_contracts/xgov_registry/contract.py:1104
     // paused_registry=arc4.Bool(bool(self.paused_registry.value)),
     intc_0 // 0
