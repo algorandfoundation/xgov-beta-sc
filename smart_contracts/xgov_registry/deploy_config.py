@@ -64,26 +64,32 @@ def deploy(
     admin_roles.set_kyc_provider(provider=test_admin)
     admin_roles.execute()
 
-    logger.info("Configuring xGov registry")
-    config = XGovRegistryConfig(
-        xgov_fee=int(os.environ["XGOV_CFG_XGOV_FEE"]),
-        proposer_fee=int(os.environ["XGOV_CFG_PROPOSER_FEE"]),
-        open_proposal_fee=int(os.environ["XGOV_CFG_OPEN_PROPOSAL_FEE"]),
-        daemon_ops_funding_bps=int(os.environ["XGOV_CFG_DAEMON_OPS_FUNDING_BPS"]),
-        proposal_commitment_bps=int(os.environ["XGOV_CFG_PROPOSAL_COMMITMENT_BPS"]),
-        min_requested_amount=int(os.environ["XGOV_CFG_MIN_REQUESTED_AMOUNT"]),
-        max_requested_amount=[
-            int(num) for num in os.environ["XGOV_CFG_MAX_REQUESTED_AMOUNT"].split(",")
-        ],
-        discussion_duration=[
-            int(num) for num in os.environ["XGOV_CFG_DISCUSSION_DURATION"].split(",")
-        ],
-        voting_duration=[
-            int(num) for num in os.environ["XGOV_CFG_VOTING_DURATION"].split(",")
-        ],
-        quorum=[int(num) for num in os.environ["XGOV_CFG_QUORUM"].split(",")],
-        weighted_quorum=[
-            int(num) for num in os.environ["XGOV_CFG_WEIGHTED_QUORUM"].split(",")
-        ],
-    )
-    app_client.config_xgov_registry(config=config)
+    should_configure = os.environ.get("XGOV_REG_CONFIGURE", "false").lower() == "true"
+    if should_configure:
+        logger.info("Configuring xGov registry")
+        config = XGovRegistryConfig(
+            xgov_fee=int(os.environ["XGOV_CFG_XGOV_FEE"]),
+            proposer_fee=int(os.environ["XGOV_CFG_PROPOSER_FEE"]),
+            open_proposal_fee=int(os.environ["XGOV_CFG_OPEN_PROPOSAL_FEE"]),
+            daemon_ops_funding_bps=int(os.environ["XGOV_CFG_DAEMON_OPS_FUNDING_BPS"]),
+            proposal_commitment_bps=int(os.environ["XGOV_CFG_PROPOSAL_COMMITMENT_BPS"]),
+            min_requested_amount=int(os.environ["XGOV_CFG_MIN_REQUESTED_AMOUNT"]),
+            max_requested_amount=[
+                int(num)
+                for num in os.environ["XGOV_CFG_MAX_REQUESTED_AMOUNT"].split(",")
+            ],
+            discussion_duration=[
+                int(num)
+                for num in os.environ["XGOV_CFG_DISCUSSION_DURATION"].split(",")
+            ],
+            voting_duration=[
+                int(num) for num in os.environ["XGOV_CFG_VOTING_DURATION"].split(",")
+            ],
+            quorum=[int(num) for num in os.environ["XGOV_CFG_QUORUM"].split(",")],
+            weighted_quorum=[
+                int(num) for num in os.environ["XGOV_CFG_WEIGHTED_QUORUM"].split(",")
+            ],
+        )
+        app_client.config_xgov_registry(config=config)
+    else:
+        logger.info("Skipping xGov registry configuration as requested")
