@@ -5,6 +5,7 @@ from algokit_utils import (
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.encoding import encode_address
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -22,10 +23,10 @@ def test_drop_proposal_success(
     draft_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
@@ -70,10 +71,10 @@ def test_drop_proposal_not_proposer(
     draft_proposal_client: ProposalClient,
     committee_manager: AddressAndSigner,
     algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     proposer_address: str = encode_address(  # type: ignore
         draft_proposal_client.get_global_state().proposer.as_bytes
@@ -107,10 +108,10 @@ def test_drop_invalid_proposal(
     funded_unassigned_voters_proposal_client: ProposalClient,
     deployer: AddressAndSigner,
     algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     proposer_address: str = encode_address(  # type: ignore
         funded_unassigned_voters_proposal_client.get_global_state().proposer.as_bytes
@@ -144,10 +145,10 @@ def test_drop_paused_registry(
     draft_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     xgov_registry_client.pause_registry()
 

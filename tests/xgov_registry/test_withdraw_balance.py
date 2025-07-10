@@ -5,6 +5,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -17,6 +18,7 @@ def test_withdraw_balance_success(
     funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
+    sp: SuggestedParams,
 ) -> None:
     """
     Test that the xGov Manager can successfully withdraw the balance
@@ -24,7 +26,6 @@ def test_withdraw_balance_success(
     """
     # Add extra funds to the registry above the minimum balance
     extra_funds = 10_000_000
-    sp = algorand_client.get_suggested_params()
 
     # First add some extra funds
     funded_xgov_registry_client.deposit_funds(
@@ -59,7 +60,6 @@ def test_withdraw_balance_success(
     )
 
     # Ensure transaction fee is sufficient
-    sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
     # Get deployer balance before withdrawal
@@ -100,12 +100,12 @@ def test_withdraw_balance_not_manager(
     funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that only the xGov Manager can withdraw the balance.
     """
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         funded_xgov_registry_client.withdraw_balance(
@@ -142,6 +142,7 @@ def test_withdraw_balance_no_funds_available(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that transaction fails if no withdrawable funds are available.
@@ -161,8 +162,7 @@ def test_withdraw_balance_no_funds_available(
 
     # If there are available funds, withdraw them first
     if available > 0:
-        sp = algorand_client.get_suggested_params()
-        sp.min_fee *= 2  # type: ignore
+        sp = sp_min_fee_times_2
         xgov_registry_client.withdraw_balance(
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
@@ -171,8 +171,7 @@ def test_withdraw_balance_no_funds_available(
             ),
         )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Now try to withdraw again, which should fail
     with pytest.raises(LogicErrorType, match=err.INSUFFICIENT_FUNDS):
@@ -181,5 +180,6 @@ def test_withdraw_balance_no_funds_available(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
+                note=b"Withdraw again",
             ),
         )

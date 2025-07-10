@@ -52,9 +52,9 @@ def time_warp(to_timestamp: int) -> None:
     """
     algorand_client = AlgorandClient.default_local_net()
     algorand_client.set_suggested_params_timeout(0)
-    algorand_client.client.algod.set_timestamp_offset(
-        to_timestamp - get_latest_timestamp(algorand_client.client.algod)
-    )
+    offset = to_timestamp - get_latest_timestamp(algorand_client.client.algod)
+    if offset > 0:
+        algorand_client.client.algod.set_timestamp_offset(offset)
     round_warp()
     algorand_client.client.algod.set_timestamp_offset(0)
 

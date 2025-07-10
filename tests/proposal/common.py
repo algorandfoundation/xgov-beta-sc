@@ -13,6 +13,9 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     GlobalState,
     ProposalClient,
 )
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
@@ -43,6 +46,7 @@ from tests.common import (
     REQUESTED_AMOUNT,
     get_voter_box_key,
 )
+from tests.utils import time_warp
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
@@ -536,5 +540,39 @@ def decommission_proposal(
             ],
             suggested_params=sp,
             note=note,
+        ),
+    )
+
+
+def finalize_proposal(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient | XGovRegistryClient,
+    proposer: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
+    should_time_warp: bool = True,  # noqa: FBT001, FBT002
+) -> None:
+
+    sp = sp_min_fee_times_2
+
+    if should_time_warp:
+        reg_gs = xgov_registry_mock_client.get_global_state()
+        discussion_duration = reg_gs.discussion_duration_large
+
+        submission_ts = proposal_client.get_global_state().submission_ts
+        if submission_ts > 0:  # not empty proposal
+            time_warp(
+                submission_ts + discussion_duration
+            )  # so we could actually finalize
+
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[xgov_daemon.address],
+            suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
+            note=uuid.uuid4().bytes,
         ),
     )

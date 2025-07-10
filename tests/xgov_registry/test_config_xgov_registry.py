@@ -5,6 +5,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -90,10 +91,10 @@ def test_config_xgov_registry_pending_proposals(
     xgov_registry_config: XGovRegistryConfig,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     global_state = xgov_registry_client.get_global_state()
 
