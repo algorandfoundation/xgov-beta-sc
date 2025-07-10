@@ -3,6 +3,7 @@ from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -20,10 +21,10 @@ from tests.xgov_registry.common import (
 
 def test_pay_grant_proposal_success(
     xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
+    sp_min_fee_times_4: SuggestedParams,
 ) -> None:
 
     approved_proposal_client.review(
@@ -35,8 +36,7 @@ def test_pay_grant_proposal_success(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 4  # type: ignore
+    sp = sp_min_fee_times_4
 
     proposal_global_state = approved_proposal_client.get_global_state()
 

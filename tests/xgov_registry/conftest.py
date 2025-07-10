@@ -12,6 +12,7 @@ from algokit_utils.config import config
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.encoding import encode_address
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -24,7 +25,6 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.proposal import enums as enm
-from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -36,6 +36,7 @@ from tests.common import (
 from tests.proposal.common import (
     INITIAL_FUNDS,
     PROPOSAL_TITLE,
+    finalize_proposal,
     upload_metadata,
 )
 from tests.utils import time_warp
@@ -732,20 +733,12 @@ def voting_proposal_client(
     upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
     composer.execute()
 
-    reg_gs = xgov_registry_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)
-
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_client.app_id],
-            accounts=[deployer.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
+    finalize_proposal(
+        proposal_client=proposal_client,
+        xgov_registry_mock_client=xgov_registry_client,
+        proposer=proposer,
+        xgov_daemon=deployer,
+        algorand_client=algorand_client,
     )
 
     for committee_member in committee_members:
@@ -857,20 +850,12 @@ def voting_proposal_client_requested_too_much(
     upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
     composer.execute()
 
-    reg_gs = xgov_registry_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_xlarge
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)
-
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_client.app_id],
-            accounts=[deployer.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
+    finalize_proposal(
+        proposal_client=proposal_client,
+        xgov_registry_mock_client=xgov_registry_client,
+        proposer=proposer,
+        xgov_daemon=deployer,
+        algorand_client=algorand_client,
     )
 
     for committee_member in committee_members:
@@ -947,9 +932,11 @@ def approved_proposal_client(
         )
 
     reg_gs = xgov_registry_client.get_global_state()
-    voting_duration = reg_gs.voting_duration_small
-    submission_ts = voting_proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + voting_duration)
+    voting_duration = reg_gs.voting_duration_small  # 86400
+    submission_ts = (
+        voting_proposal_client.get_global_state().submission_ts
+    )  # 1_751_447_221
+    time_warp(submission_ts + voting_duration)  # 1_751_533_621
 
     voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -1034,9 +1021,9 @@ def approved_proposal_client_requested_too_much(
 @pytest.fixture(scope="function")
 def funded_proposal_client(
     xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     approved_proposal_client: ProposalClient,
     deployer: AddressAndSigner,
+    sp_min_fee_times_4: SuggestedParams,
 ) -> ProposalClient:
 
     approved_proposal_client.review(
@@ -1048,8 +1035,7 @@ def funded_proposal_client(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 4  # type: ignore
+    sp = sp_min_fee_times_4
 
     proposer_address: str = encode_address(approved_proposal_client.get_global_state().proposer.as_bytes)  # type: ignore
 

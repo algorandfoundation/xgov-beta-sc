@@ -17,7 +17,6 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     logic_error_type,
-    submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX
 
@@ -33,15 +32,11 @@ NO_COMMITTEE = {
 
 
 def test_drop_success(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
@@ -53,16 +48,16 @@ def test_drop_success(
     ]
 
     xgov_registry_mock_client.drop_proposal(
-        proposal_app=proposal_client.app_id,
+        proposal_app=submitted_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(proposal_client.app_id, METADATA_BOX_KEY)],
+            boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
@@ -72,7 +67,7 @@ def test_drop_success(
     )
 
     assert_account_balance(
-        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+        algorand_client, submitted_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
     )
 
     assert_account_balance(
@@ -83,20 +78,16 @@ def test_drop_success(
 
     with pytest.raises(AlgodHTTPError, match="box not found"):  # type: ignore
         algorand_client.client.algod.application_box_by_name(
-            proposal_client.app_id, METADATA_BOX_KEY.encode()
+            submitted_proposal_client.app_id, METADATA_BOX_KEY.encode()
         )
 
 
 def test_drop_twice(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 3  # type: ignore
@@ -108,12 +99,12 @@ def test_drop_twice(
     ]
 
     xgov_registry_mock_client.drop_proposal(
-        proposal_app=proposal_client.app_id,
+        proposal_app=submitted_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(proposal_client.app_id, METADATA_BOX_KEY)],
+            boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
         ),
     )
 
@@ -121,17 +112,17 @@ def test_drop_twice(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.drop_proposal(
-            proposal_app=proposal_client.app_id,
+            proposal_app=submitted_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(proposal_client.app_id, METADATA_BOX_KEY)],
-                note="replay drop",
+                boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
+                note="replay",
             ),
         )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
@@ -141,7 +132,7 @@ def test_drop_twice(
     )
 
     assert_account_balance(
-        algorand_client, proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+        algorand_client, submitted_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
     )
 
     assert_account_balance(

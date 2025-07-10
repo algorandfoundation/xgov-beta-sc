@@ -12,6 +12,7 @@ from algokit_utils import (
 from algokit_utils.account import Account as AlgokitAccount
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 from algosdk.util import algos_to_microalgos
 from algosdk.v2client.algod import AlgodClient
 from algosdk.v2client.indexer import IndexerClient
@@ -56,6 +57,29 @@ def algorand_client() -> AlgorandClient:
     client = AlgorandClient.default_local_net()
     client.set_suggested_params_timeout(0)
     return client
+
+
+@pytest.fixture(scope="function")
+def sp(algorand_client: AlgorandClient) -> SuggestedParams:
+    return algorand_client.get_suggested_params()
+
+
+@pytest.fixture(scope="function")
+def sp_min_fee_times_2(sp: SuggestedParams) -> SuggestedParams:
+    sp.min_fee *= 2  # type: ignore
+    return sp
+
+
+@pytest.fixture(scope="function")
+def sp_min_fee_times_3(sp: SuggestedParams) -> SuggestedParams:
+    sp.min_fee *= 3  # type: ignore
+    return sp
+
+
+@pytest.fixture(scope="function")
+def sp_min_fee_times_4(sp: SuggestedParams) -> SuggestedParams:
+    sp.min_fee *= 4  # type: ignore
+    return sp
 
 
 @pytest.fixture(scope="function")

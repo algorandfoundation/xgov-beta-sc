@@ -1,5 +1,4 @@
 import pytest
-from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 
@@ -8,7 +7,6 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for finalize on other statuses
 from tests.common import (
@@ -21,35 +19,28 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
+    finalize_proposal,
     logic_error_type,
     submit_proposal,
 )
 
 # TODO add tests for finalize on other statuses
-from tests.utils import ERROR_TO_REGEX, get_latest_timestamp, time_warp
+from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import LogicErrorType
 
 
 def test_finalize_success(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
 ) -> None:
 
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
 
     daemon_ops_funding_bps = relative_to_absolute_amount(
         reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
@@ -60,17 +51,12 @@ def test_finalize_success(
         "amount"
     ]
 
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY.encode())],
-        ),
+    finalize_proposal(
+        proposal_client=submitted_proposal_client,
+        xgov_registry_mock_client=xgov_registry_mock_client,
+        proposer=proposer,
+        xgov_daemon=xgov_daemon,
+        algorand_client=algorand_client,
     )
 
     assert_account_balance(
@@ -79,7 +65,7 @@ def test_finalize_success(
         expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_final_proposal_global_state(
         global_state,
@@ -89,7 +75,7 @@ def test_finalize_success(
 
 
 def test_finalize_not_proposer(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -97,34 +83,19 @@ def test_finalize_not_proposer(
     xgov_daemon: AddressAndSigner,
 ) -> None:
 
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=not_proposer.address,
-                signer=not_proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                suggested_params=sp,
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-            ),
+        finalize_proposal(
+            proposal_client=submitted_proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=not_proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
         )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
@@ -134,7 +105,7 @@ def test_finalize_not_proposer(
 
     assert_account_balance(
         algorand_client,
-        proposal_client.app_address,
+        submitted_proposal_client.app_address,
         LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
@@ -149,23 +120,15 @@ def test_finalize_empty_proposal(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    latest_ts = get_latest_timestamp(algorand_client.client.algod)
-    time_warp(latest_ts + discussion_duration)  # so we could actually finalize
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                suggested_params=sp,
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-            ),
+        finalize_proposal(
+            proposal_client=proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
         )
 
     global_state = proposal_client.get_global_state()
@@ -176,54 +139,36 @@ def test_finalize_empty_proposal(
 
 
 def test_finalize_twice(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
 ) -> None:
 
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            suggested_params=sp,
-            accounts=[xgov_daemon.address],
-            boxes=[(0, METADATA_BOX_KEY.encode())],
-        ),
+    finalize_proposal(
+        proposal_client=submitted_proposal_client,
+        xgov_registry_mock_client=xgov_registry_mock_client,
+        proposer=proposer,
+        xgov_daemon=xgov_daemon,
+        algorand_client=algorand_client,
     )
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                suggested_params=sp,
-                accounts=[xgov_daemon.address],
-                note="Second finalize",
-            ),
+        finalize_proposal(
+            proposal_client=submitted_proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
         )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_final_proposal_global_state(
         global_state,
@@ -233,36 +178,27 @@ def test_finalize_twice(
 
 
 def test_finalize_too_early(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
 ) -> None:
 
-    submit_proposal(
-        proposal_client,
-        algorand_client,
-        proposer,
-        xgov_registry_mock_client.app_id,
-    )
-
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                suggested_params=sp,
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY)],
-            ),
+        finalize_proposal(
+            proposal_client=submitted_proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
+            should_time_warp=False,
         )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
@@ -272,7 +208,7 @@ def test_finalize_too_early(
 
     assert_account_balance(
         algorand_client,
-        proposal_client.app_address,
+        submitted_proposal_client.app_address,
         LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
@@ -296,41 +232,28 @@ def test_finalize_no_metadata(
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.MISSING_METADATA]):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[xgov_daemon.address],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-                suggested_params=sp,
-            ),
+        finalize_proposal(
+            proposal_client=proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
         )
 
 
 def test_finalize_paused_registry_error(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
 ) -> None:
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
     sp = algorand_client.get_suggested_params()
     sp.min_fee *= 2  # type: ignore
 
     reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
 
     daemon_ops_funding_bps = relative_to_absolute_amount(
         reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
@@ -341,33 +264,24 @@ def test_finalize_paused_registry_error(
         "amount"
     ]
 
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-
     xgov_registry_mock_client.pause_registry()
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        proposal_client.finalize(
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                accounts=[xgov_daemon.address],
-                suggested_params=sp,
-                boxes=[(0, METADATA_BOX_KEY)],
-            ),
+        finalize_proposal(
+            proposal_client=submitted_proposal_client,
+            xgov_registry_mock_client=xgov_registry_mock_client,
+            proposer=proposer,
+            xgov_daemon=xgov_daemon,
+            algorand_client=algorand_client,
         )
 
     xgov_registry_mock_client.resume_registry()
 
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
+    finalize_proposal(
+        proposal_client=submitted_proposal_client,
+        xgov_registry_mock_client=xgov_registry_mock_client,
+        proposer=proposer,
+        xgov_daemon=xgov_daemon,
+        algorand_client=algorand_client,
     )
 
     assert_account_balance(
@@ -376,7 +290,7 @@ def test_finalize_paused_registry_error(
         expected_balance=xgov_daemon_balance_before_finalize + daemon_ops_funding_bps,  # type: ignore
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_final_proposal_global_state(
         global_state,
