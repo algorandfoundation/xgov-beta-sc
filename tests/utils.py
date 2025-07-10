@@ -55,7 +55,7 @@ def time_warp(to_timestamp: int) -> None:
     offset = to_timestamp - get_latest_timestamp(algorand_client.client.algod)
     if offset > 0:
         algorand_client.client.algod.set_timestamp_offset(
-            to_timestamp - get_latest_timestamp(algorand_client.client.algod)
+            offset
         )
     round_warp()
     algorand_client.client.algod.set_timestamp_offset(0)
