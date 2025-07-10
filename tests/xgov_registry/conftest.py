@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from algokit_utils import (
     CreateTransactionParameters,
@@ -103,14 +105,14 @@ def xgov_registry_client_committee_not_declared(
     algorand_client: AlgorandClient,
     deployer: Account,
     xgov_registry_config: XGovRegistryConfig,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> XGovRegistryClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     client = XGovRegistryClient(
         algorand_client.client.algod,
@@ -212,14 +214,14 @@ def xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,
     xgov_registry_config: XGovRegistryConfig,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> XGovRegistryClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     client = XGovRegistryClient(
         algorand_client.client.algod,
@@ -231,7 +233,10 @@ def xgov_registry_client(
 
     client.create_create(
         transaction_parameters=CreateTransactionParameters(
-            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+            note=uuid.uuid4().bytes,
         ),
     )
 
@@ -330,14 +335,14 @@ def funded_xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,
     xgov_registry_config: XGovRegistryConfig,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> XGovRegistryClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     client = XGovRegistryClient(
         algorand_client.client.algod,
@@ -589,9 +594,9 @@ def proposal_client(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     global_state = xgov_registry_client.get_global_state()
 
@@ -670,9 +675,9 @@ def voting_proposal_client(
     proposer: AddressAndSigner,
     deployer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     global_state = xgov_registry_client.get_global_state()
 
@@ -701,8 +706,6 @@ def voting_proposal_client(
         algorand_client.client.algod,
         app_id=proposal_app_id,
     )
-
-    sp.min_fee *= 2  # type: ignore
 
     requested_amount = 10_000_000
 
@@ -738,7 +741,7 @@ def voting_proposal_client(
         xgov_registry_mock_client=xgov_registry_client,
         proposer=proposer,
         xgov_daemon=deployer,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     for committee_member in committee_members:
@@ -787,9 +790,9 @@ def voting_proposal_client_requested_too_much(
     proposer: AddressAndSigner,
     deployer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     global_state = xgov_registry_client.get_global_state()
 
@@ -818,8 +821,6 @@ def voting_proposal_client_requested_too_much(
         algorand_client.client.algod,
         app_id=proposal_app_id,
     )
-
-    sp.min_fee *= 2  # type: ignore
 
     requested_amount = 10_000_000_000
 
@@ -855,7 +856,7 @@ def voting_proposal_client_requested_too_much(
         xgov_registry_mock_client=xgov_registry_client,
         proposer=proposer,
         xgov_daemon=deployer,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     for committee_member in committee_members:
@@ -903,9 +904,9 @@ def approved_proposal_client(
     algorand_client: AlgorandClient,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     for committee_member in committee_members:
         xgov_registry_client.vote_proposal(
@@ -962,9 +963,9 @@ def approved_proposal_client_requested_too_much(
     algorand_client: AlgorandClient,
     voting_proposal_client_requested_too_much: ProposalClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     for committee_member in committee_members:
         xgov_registry_client.vote_proposal(
@@ -1095,14 +1096,14 @@ def funded_unassigned_voters_proposal_client(
 def xgov_subscriber_app(
     algorand_client: AlgorandClient,
     deployer: Account,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> XGovSubscriberAppMockClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     client = XGovSubscriberAppMockClient(
         algorand_client.client.algod,

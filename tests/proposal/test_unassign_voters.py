@@ -50,9 +50,9 @@ def test_unassign_unauthorized(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         composer = rejected_proposal_client.compose()
@@ -72,9 +72,9 @@ def test_unassign_no_voters(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -102,9 +102,9 @@ def test_unassign_one_voter(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -134,9 +134,9 @@ def test_unassign_all_voters(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -166,9 +166,9 @@ def test_unassign_metadata_ref(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match="invalid Box reference"):
         rejected_proposal_client.unassign_voters(
@@ -205,9 +205,9 @@ def test_unassign_not_same_app(
     not_proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -287,9 +287,9 @@ def test_unassign_not_same_method(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     composer.get_state(
@@ -316,9 +316,9 @@ def test_unassign_not_same_method_2(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -346,9 +346,9 @@ def test_unassign_one_call_not_xgov_daemon(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -376,9 +376,9 @@ def test_unassign_final_proposal(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(

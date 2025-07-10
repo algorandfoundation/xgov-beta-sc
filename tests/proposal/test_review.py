@@ -98,8 +98,6 @@ def test_review_rejected_proposal(
     algorand_client: AlgorandClient,
     xgov_council: AddressAndSigner,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]

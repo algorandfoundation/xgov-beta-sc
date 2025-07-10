@@ -161,19 +161,21 @@ def finalized_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
+    sp = sp_min_fee_times_2
+
     finalize_proposal(
         submitted_proposal_client,
         xgov_registry_mock_client,
         proposer,
         xgov_daemon,
-        algorand_client,
+        sp,
     )
 
     return submitted_proposal_client
@@ -372,14 +374,14 @@ def alternative_proposal_client(
     not_proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     proposal_app_id = xgov_registry_mock_client.create_empty_proposal(
         proposer=not_proposer.address,
@@ -424,19 +426,21 @@ def alternative_finalized_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     not_proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
     config.configure(
         debug=True,
         # trace_all=True,
     )
 
+    sp = sp_min_fee_times_2
+
     finalize_proposal(
         alternative_submitted_proposal_client,
         xgov_registry_mock_client,
         not_proposer,
         xgov_daemon,
-        algorand_client,
+        sp,
     )
 
     return alternative_submitted_proposal_client

@@ -1,6 +1,7 @@
 import pytest
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -35,10 +36,10 @@ def test_finalize_success(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     reg_gs = xgov_registry_mock_client.get_global_state()
 
@@ -56,7 +57,7 @@ def test_finalize_success(
         xgov_registry_mock_client=xgov_registry_mock_client,
         proposer=proposer,
         xgov_daemon=xgov_daemon,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     assert_account_balance(
@@ -81,10 +82,10 @@ def test_finalize_not_proposer(
     xgov_registry_mock_client: XgovRegistryMockClient,
     not_proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         finalize_proposal(
@@ -92,7 +93,7 @@ def test_finalize_not_proposer(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=not_proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
     global_state = submitted_proposal_client.get_global_state()
@@ -116,9 +117,9 @@ def test_finalize_empty_proposal(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -128,7 +129,7 @@ def test_finalize_empty_proposal(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
     global_state = proposal_client.get_global_state()
@@ -144,17 +145,17 @@ def test_finalize_twice(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     finalize_proposal(
         proposal_client=submitted_proposal_client,
         xgov_registry_mock_client=xgov_registry_mock_client,
         proposer=proposer,
         xgov_daemon=xgov_daemon,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     with pytest.raises(
@@ -165,7 +166,7 @@ def test_finalize_twice(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
     global_state = submitted_proposal_client.get_global_state()
@@ -183,10 +184,10 @@ def test_finalize_too_early(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.TOO_EARLY]):
         finalize_proposal(
@@ -194,7 +195,7 @@ def test_finalize_too_early(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
             should_time_warp=False,
         )
 
@@ -219,6 +220,7 @@ def test_finalize_no_metadata(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
     submit_proposal(
@@ -229,8 +231,7 @@ def test_finalize_no_metadata(
         metadata=b"",
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.MISSING_METADATA]):
         finalize_proposal(
@@ -238,7 +239,7 @@ def test_finalize_no_metadata(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
 
@@ -248,10 +249,10 @@ def test_finalize_paused_registry_error(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     reg_gs = xgov_registry_mock_client.get_global_state()
 
@@ -271,7 +272,7 @@ def test_finalize_paused_registry_error(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
     xgov_registry_mock_client.resume_registry()
@@ -281,7 +282,7 @@ def test_finalize_paused_registry_error(
         xgov_registry_mock_client=xgov_registry_mock_client,
         proposer=proposer,
         xgov_daemon=xgov_daemon,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     assert_account_balance(

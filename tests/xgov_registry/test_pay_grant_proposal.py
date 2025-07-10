@@ -69,9 +69,9 @@ def test_pay_grant_proposal_not_payor(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     # payout
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
@@ -94,9 +94,9 @@ def test_pay_grant_proposal_not_a_proposal_app(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Call the config_xgov_registry method
     xgov_registry_client.config_xgov_registry(
@@ -129,10 +129,9 @@ def test_pay_grant_proposal_not_approved(
     deployer: Account,
     proposer: AddressAndSigner,
     proposal_client: ProposalClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     # payout
     with pytest.raises(LogicErrorType, match=err.PROPOSAL_WAS_NOT_REVIEWED):
@@ -155,6 +154,7 @@ def test_pay_grant_proposal_invalid_kyc(
     deployer: Account,
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
     approved_proposal_client.review(
@@ -166,8 +166,7 @@ def test_pay_grant_proposal_invalid_kyc(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -204,6 +203,7 @@ def test_pay_grant_proposal_expired_kyc(
     deployer: Account,
     proposer: AddressAndSigner,
     approved_proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
     approved_proposal_client.review(
@@ -215,8 +215,7 @@ def test_pay_grant_proposal_expired_kyc(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -253,6 +252,7 @@ def test_pay_grant_proposal_insufficient_funds(
     deployer: Account,
     proposer: AddressAndSigner,
     approved_proposal_client_requested_too_much: ProposalClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
     approved_proposal_client_requested_too_much.review(
@@ -264,8 +264,7 @@ def test_pay_grant_proposal_insufficient_funds(
         ),
     )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     # payout
     with pytest.raises(LogicErrorType, match=err.INSUFFICIENT_TREASURY_FUNDS):

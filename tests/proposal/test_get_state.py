@@ -11,8 +11,6 @@ def test_funded_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
 
     get_state_result = funded_proposal_client.get_state(
         transaction_parameters=TransactionParameters(

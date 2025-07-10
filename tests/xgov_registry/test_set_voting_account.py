@@ -6,6 +6,7 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk import abi
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -19,9 +20,9 @@ def test_set_voting_account_success(
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
@@ -51,9 +52,9 @@ def test_set_voting_account_not_an_xgov(
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
@@ -74,9 +75,9 @@ def test_set_voting_account_not_voting_account_or_xgov(
     deployer: Account,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
@@ -107,9 +108,9 @@ def test_set_voting_account_paused_registry_error(
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.pause_registry()
 

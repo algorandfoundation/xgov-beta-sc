@@ -5,6 +5,7 @@ from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk import abi
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -27,9 +28,9 @@ def test_vote_proposal_success(
     # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.vote_proposal(
         proposal_id=voting_proposal_client.app_id,
@@ -70,9 +71,9 @@ def test_vote_proposal_not_in_voting_phase(
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
     proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.PROPOSAL_IS_NOT_VOTING):
         xgov_registry_client.vote_proposal(
@@ -103,9 +104,9 @@ def test_vote_proposal_not_a_proposal_app(
     # xgov: AddressAndSigner,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
         xgov_registry_client.vote_proposal(
@@ -135,9 +136,9 @@ def test_vote_proposal_not_an_xgov(
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.vote_proposal(
@@ -162,9 +163,9 @@ def test_vote_proposal_wrong_voting_address(
     xgov: AddressAndSigner,
     random_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.MUST_BE_VOTING_ADDRESS):
         xgov_registry_client.vote_proposal(
@@ -189,9 +190,9 @@ def test_vote_proposal_paused_registry_error(
     # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.pause_registry()
 

@@ -7,6 +7,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -76,9 +77,9 @@ def test_app_subscribe_xgov_success(
     algorand_client: AlgorandClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     random_account: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,

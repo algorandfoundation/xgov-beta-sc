@@ -549,12 +549,11 @@ def finalize_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient | XGovRegistryClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_2: SuggestedParams,
     should_time_warp: bool = True,  # noqa: FBT001, FBT002
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     if should_time_warp:
         reg_gs = xgov_registry_mock_client.get_global_state()
@@ -574,5 +573,6 @@ def finalize_proposal(
             accounts=[xgov_daemon.address],
             suggested_params=sp,
             boxes=[(0, METADATA_BOX_KEY)],
+            note=uuid.uuid4().bytes,
         ),
     )

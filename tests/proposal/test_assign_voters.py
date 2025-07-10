@@ -2,6 +2,7 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -36,9 +37,9 @@ def test_assign_voters_success(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -79,9 +80,9 @@ def test_assign_voters_not_xgov_daemon(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         composer = finalized_proposal_client.compose()
@@ -116,9 +117,9 @@ def test_assign_voters_empty_proposal(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -155,10 +156,10 @@ def test_assign_voters_draft_proposal(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_member: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -201,9 +202,9 @@ def test_assign_voters_voting_open(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -257,9 +258,9 @@ def test_assign_voters_not_same_app(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -292,9 +293,9 @@ def test_assign_voters_not_same_method(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     composer.get_state(
@@ -321,9 +322,9 @@ def test_assign_voters_not_same_method_2(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -351,9 +352,9 @@ def test_assign_voters_one_call_not_xgov_daemon(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(
@@ -381,9 +382,9 @@ def test_assign_voters_more_than_allowed(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = finalized_proposal_client.compose()
     assign_voters(

@@ -3,6 +3,7 @@ from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.error import AlgodHTTPError
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -36,10 +37,10 @@ def test_drop_success(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
         proposer.address
@@ -87,10 +88,10 @@ def test_drop_twice(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
         proposer.address
@@ -147,9 +148,9 @@ def test_drop_empty_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
         proposer.address

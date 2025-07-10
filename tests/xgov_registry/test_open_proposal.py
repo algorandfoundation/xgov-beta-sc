@@ -5,6 +5,7 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -20,9 +21,9 @@ def test_open_proposal_success(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Call the config_xgov_registry method
     xgov_registry_client.config_xgov_registry(
@@ -77,11 +78,11 @@ def test_open_proposal_not_a_proposer(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.open_proposal(
@@ -110,9 +111,9 @@ def test_open_proposal_active_proposal(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.config_xgov_registry(
         config=xgov_registry_config,
@@ -183,11 +184,11 @@ def test_open_proposal_wrong_fee(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -227,9 +228,9 @@ def test_open_proposal_wrong_amount(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -271,11 +272,11 @@ def test_open_proposal_wrong_recipient(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -318,10 +319,10 @@ def test_open_proposal_paused_registry_error(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Call the config_xgov_registry method
     xgov_registry_client.config_xgov_registry(
@@ -402,10 +403,10 @@ def test_open_proposal_paused_proposal_error(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Call the config_xgov_registry method
     xgov_registry_client.config_xgov_registry(
@@ -486,9 +487,9 @@ def test_open_proposal_no_committee_declared(
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     # Call the config_xgov_registry method
     xgov_registry_client_committee_not_declared.config_xgov_registry(
@@ -500,8 +501,6 @@ def test_open_proposal_no_committee_declared(
     )
 
     global_state = xgov_registry_client_committee_not_declared.get_global_state()
-
-    sp = algorand_client.get_suggested_params()
 
     xgov_registry_client_committee_not_declared.subscribe_proposer(
         payment=TransactionWithSigner(

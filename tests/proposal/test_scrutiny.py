@@ -2,6 +2,7 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -59,8 +60,6 @@ def test_scrutiny_final_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -84,9 +83,6 @@ def test_scrutiny_voting_ongoing_1(
     Proposal is in voting status, and no votes have been cast yet.
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
         voting_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
@@ -103,13 +99,13 @@ def test_scrutiny_voting_ongoing_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Proposal is in voting status, and not all committee members have voted yet.
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -149,13 +145,13 @@ def test_scrutiny_voting_ongoing_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Proposal is in voting status, and there is 1 vote missing.
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:-1]:
         xgov_registry_mock_client.vote(
@@ -196,10 +192,10 @@ def test_scrutiny_twice(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members:
         xgov_registry_mock_client.vote(
@@ -260,14 +256,14 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 1 committee member approves, the rest abstain
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 0
@@ -370,13 +366,13 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 2 committee members approve, 1 committee member rejects, the rest abstain
     """
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 2
     num_of_rejections = 1
@@ -479,13 +475,13 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 11 committee members approve, 9 committee members reject
     """
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 11
     num_of_rejections = 9
@@ -588,14 +584,14 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, all of them abstain
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 0
     num_of_rejections = 0
@@ -699,14 +695,14 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 of them rejects, the rest abstain
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 0
     num_of_rejections = 1
@@ -810,14 +806,14 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 approves, 1 rejects, the rest abstain
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 1
@@ -921,14 +917,14 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 approves, 2 rejects, the rest abstain
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 2
@@ -1032,14 +1028,14 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 10 approve, 10 reject
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 10
     num_of_rejections = 10
@@ -1143,14 +1139,14 @@ def test_scrutiny_after_time_approve_small_1(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
     4 committee members vote and approve, reaching the regular and weighted quorums and relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
@@ -1206,6 +1202,7 @@ def test_scrutiny_after_time_approve_small_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1213,8 +1210,7 @@ def test_scrutiny_after_time_approve_small_2(
     3 approve and 1 rejects, reaching the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
@@ -1293,6 +1289,7 @@ def test_scrutiny_after_time_approve_small_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1300,8 +1297,7 @@ def test_scrutiny_after_time_approve_small_3(
     2 approve, 1 rejects and 1 abstains, reaching the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -1403,6 +1399,7 @@ def test_scrutiny_after_time_approve_small_4(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1410,8 +1407,7 @@ def test_scrutiny_after_time_approve_small_4(
     2 approve, 1 rejects and 16 abstain, reaching the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -1514,6 +1510,7 @@ def test_scrutiny_after_time_approve_small_5(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1521,8 +1518,7 @@ def test_scrutiny_after_time_approve_small_5(
     10 approve and 9 abstain, reaching the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
@@ -1601,6 +1597,7 @@ def test_scrutiny_after_time_reject_small_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1608,8 +1605,7 @@ def test_scrutiny_after_time_reject_small_1(
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     reg_gs = xgov_registry_mock_client.get_global_state()
 
@@ -1641,6 +1637,7 @@ def test_scrutiny_after_time_reject_small_2(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1648,8 +1645,7 @@ def test_scrutiny_after_time_reject_small_2(
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -1705,6 +1701,7 @@ def test_scrutiny_after_time_reject_small_3(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1712,8 +1709,7 @@ def test_scrutiny_after_time_reject_small_3(
     reached the regular quorum but did not reach the weighted quorum and the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -1770,6 +1766,7 @@ def test_scrutiny_after_time_reject_small_4(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1778,8 +1775,7 @@ def test_scrutiny_after_time_reject_small_4(
     did not reach the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -1859,6 +1855,7 @@ def test_scrutiny_after_time_reject_small_5(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1867,8 +1864,7 @@ def test_scrutiny_after_time_reject_small_5(
     did not reach the relative majority of approvals
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
@@ -1949,6 +1945,7 @@ def test_scrutiny_after_time_reject_small_6(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1957,8 +1954,7 @@ def test_scrutiny_after_time_reject_small_6(
     relative majority of approvals is reached
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -2014,6 +2010,7 @@ def test_scrutiny_after_time_reject_small_7(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """ "
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2022,8 +2019,7 @@ def test_scrutiny_after_time_reject_small_7(
     relative majority of approvals is reached
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2080,6 +2076,7 @@ def test_scrutiny_after_time_reject_small_8(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2088,8 +2085,7 @@ def test_scrutiny_after_time_reject_small_8(
     relative majority of approvals is reached
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
@@ -2146,6 +2142,7 @@ def test_scrutiny_after_time_reject_small_9(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2155,8 +2152,7 @@ def test_scrutiny_after_time_reject_small_9(
     relative majority of approvals is reached
     """
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2236,6 +2232,7 @@ def test_scrutiny_after_time_reject_small_10(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2244,8 +2241,7 @@ def test_scrutiny_after_time_reject_small_10(
     1 vote abstain
     relative majority of approvals is reached
     """
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
@@ -2326,6 +2322,7 @@ def test_scrutiny_after_time_reject_small_11(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2333,8 +2330,7 @@ def test_scrutiny_after_time_reject_small_11(
     1 vote approve with voting power 48, reaching the weighted quorum
     relative majority of approvals is reached
     """
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     finalized_proposal_client.assign_voters(
         voters=[(committee_members[0].address, 48)],

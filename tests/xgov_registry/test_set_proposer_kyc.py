@@ -6,6 +6,7 @@ from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk import abi
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -24,8 +25,6 @@ def test_set_proposer_kyc_success(
     deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
 
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
@@ -57,8 +56,6 @@ def test_set_proposer_kyc_not_kyc_provider(
     deployer: Account,
     proposer: AddressAndSigner,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_proposer_kyc(
@@ -78,9 +75,9 @@ def test_set_proposer_kyc_not_a_proposer(
     algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.set_proposer_kyc(

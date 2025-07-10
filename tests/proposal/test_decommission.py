@@ -32,9 +32,9 @@ def test_decommission_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     xgov_registry_mock_client.decommission_proposal(
         proposal_app=proposal_client.app_id,
@@ -94,6 +94,8 @@ def test_decommission_draft_proposal(
     sp_min_fee_times_4: SuggestedParams,
 ) -> None:
 
+    sp = sp_min_fee_times_4
+
     locked_amount = submitted_proposal_client.get_global_state().locked_amount
     proposer_balance = algorand_client.account.get_information(proposer.address)[  # type: ignore
         "amount"
@@ -112,7 +114,7 @@ def test_decommission_draft_proposal(
                 )
             ],
             accounts=[proposer.address],
-            suggested_params=sp_min_fee_times_4,
+            suggested_params=sp,
         ),
     )
 
@@ -147,7 +149,7 @@ def test_decommission_draft_proposal(
                     )
                 ],
                 accounts=[proposer.address],
-                suggested_params=sp_min_fee_times_4,
+                suggested_params=sp,
                 note="replay decommissioning",
             ),
         )
@@ -159,9 +161,9 @@ def test_decommission_final_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -190,9 +192,9 @@ def test_decommission_voting_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -221,9 +223,9 @@ def test_decommission_approved_proposal(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -252,9 +254,9 @@ def test_decommission_reviewed_proposal(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -284,9 +286,9 @@ def test_decommission_success_rejected_proposal(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -336,9 +338,9 @@ def test_decommission_success_blocked_proposal(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     composer = blocked_proposal_client.compose()
     unassign_voters(
@@ -390,9 +392,9 @@ def test_decommission_success_funded_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     composer = funded_proposal_client.compose()
     unassign_voters(
@@ -444,9 +446,9 @@ def test_decommission_not_registry(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(
@@ -476,9 +478,9 @@ def test_decommission_wrong_box_ref(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     composer = rejected_proposal_client.compose()
     unassign_voters(

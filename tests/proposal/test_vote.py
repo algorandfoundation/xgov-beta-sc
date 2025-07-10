@@ -2,6 +2,7 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -26,10 +27,10 @@ def test_vote_success(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -82,10 +83,10 @@ def test_vote_not_committee_member(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTER_NOT_FOUND]):
         xgov_registry_mock_client.vote(
@@ -114,10 +115,10 @@ def test_vote_already_voted(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -194,9 +195,9 @@ def test_vote_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -226,10 +227,10 @@ def test_vote_draft_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -262,10 +263,10 @@ def test_vote_finalized_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -299,10 +300,10 @@ def test_vote_voting_expired(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     reg_gs = xgov_registry_mock_client.get_global_state()
 
@@ -363,10 +364,10 @@ def test_vote_reject(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -425,10 +426,10 @@ def test_vote_null(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -487,10 +488,10 @@ def test_vote_mixed(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -596,10 +597,10 @@ def test_vote_mixed_same_vote_call(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
         proposal_app=voting_proposal_client.app_id,
@@ -652,10 +653,10 @@ def test_vote_exceeded(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTES_EXCEEDED]):
         xgov_registry_mock_client.vote(
@@ -707,10 +708,10 @@ def test_vote_paused_registry_error(
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.pause_registry()
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
@@ -719,7 +720,7 @@ def test_vote_paused_registry_error(
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
-            algorand_client=algorand_client,
+            sp_min_fee_times_2=sp,
         )
 
     xgov_registry_mock_client.resume_registry()
@@ -729,7 +730,7 @@ def test_vote_paused_registry_error(
         xgov_registry_mock_client=xgov_registry_mock_client,
         proposer=proposer,
         xgov_daemon=xgov_daemon,
-        algorand_client=algorand_client,
+        sp_min_fee_times_2=sp,
     )
 
     composer = submitted_proposal_client.compose()
