@@ -1,4 +1,5 @@
 from algosdk.encoding import decode_address
+from algosdk.util import algos_to_microalgos
 
 from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.constants import (
@@ -33,3 +34,5 @@ REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 PROPOSAL_TITLE = "Test Proposal"
 DEFAULT_FOCUS = 42
+
+INITIAL_FUNDS: int = algos_to_microalgos(1_000_000)  # type: ignore[no-untyped-call]
