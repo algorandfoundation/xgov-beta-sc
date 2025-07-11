@@ -1,7 +1,6 @@
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk.transaction import SuggestedParams
 
@@ -13,10 +12,9 @@ from tests.xgov_registry.common import LogicErrorType, decode_address
 
 
 def test_set_xgov_daemon_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
@@ -36,9 +34,8 @@ def test_set_xgov_daemon_success(
 
 
 def test_set_xgov_daemon_not_manager(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2

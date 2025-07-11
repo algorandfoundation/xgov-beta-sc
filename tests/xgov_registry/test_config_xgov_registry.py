@@ -24,8 +24,8 @@ from tests.xgov_registry.common import (
 
 
 def test_config_xgov_registry_success(
-    xgov_registry_client: XGovRegistryClient,
     deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
 ) -> None:
     # Call the config_xgov_registry method
@@ -70,8 +70,8 @@ def test_config_xgov_registry_success(
 
 def test_config_xgov_registry_not_manager(
     xgov_registry_client: XGovRegistryClient,
-    random_account: AddressAndSigner,
     xgov_registry_config: XGovRegistryConfig,
+    random_account: AddressAndSigner,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
@@ -85,11 +85,11 @@ def test_config_xgov_registry_not_manager(
 
 def test_config_xgov_registry_pending_proposals(
     algorand_client: AlgorandClient,
+    deployer: Account,
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
-    proposal_client: ProposalClient,
-    deployer: Account,
     proposer: AddressAndSigner,
+    proposal_client: ProposalClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.NO_PENDING_PROPOSALS):

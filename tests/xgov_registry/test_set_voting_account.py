@@ -3,7 +3,6 @@ import base64
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk import abi
 from algosdk.transaction import SuggestedParams
@@ -16,10 +15,9 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_set_voting_account_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
@@ -48,14 +46,11 @@ def test_set_voting_account_success(
 
 
 def test_set_voting_account_not_an_xgov(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_2
-
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
             xgov_address=random_account.address,
@@ -63,29 +58,26 @@ def test_set_voting_account_not_an_xgov(
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_2,
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )
 
 
 def test_set_voting_account_not_voting_account_or_xgov(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    sp = sp_min_fee_times_2
-
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
         voting_address=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_2,
             boxes=[(0, xgov_box_name(xgov.address))],
         ),
     )
@@ -97,23 +89,19 @@ def test_set_voting_account_not_voting_account_or_xgov(
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_2,
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )
 
 
 def test_set_voting_account_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_2
-
     xgov_registry_client.pause_registry()
-
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.set_voting_account(
             xgov_address=xgov.address,
@@ -121,7 +109,7 @@ def test_set_voting_account_paused_registry_error(
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_2,
                 boxes=[(0, xgov_box_name(xgov.address))],
             ),
         )
@@ -134,7 +122,7 @@ def test_set_voting_account_paused_registry_error(
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_2,
             boxes=[(0, xgov_box_name(xgov.address))],
         ),
     )

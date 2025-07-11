@@ -1,7 +1,6 @@
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk.transaction import SuggestedParams
 
@@ -13,20 +12,17 @@ from tests.xgov_registry.common import LogicErrorType, decode_address, xgov_box_
 
 
 def test_set_xgov_subscriber_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_2
-
     xgov_registry_client.set_xgov_subscriber(
         subscriber=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_2,
             boxes=[(0, xgov_box_name(deployer.address))],
         ),
     )
@@ -37,20 +33,17 @@ def test_set_xgov_subscriber_success(
 
 
 def test_set_xgov_subscriber_not_manager(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_2
-
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_xgov_subscriber(
             subscriber=random_account.address,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_2,
                 boxes=[(0, xgov_box_name(random_account.address))],
             ),
         )

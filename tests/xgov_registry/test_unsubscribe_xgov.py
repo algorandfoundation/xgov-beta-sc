@@ -1,7 +1,6 @@
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk import error
 from algosdk.transaction import SuggestedParams
 
@@ -16,8 +15,8 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_unsubscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
 
@@ -42,21 +41,18 @@ def test_unsubscribe_xgov_success(
 
 
 def test_app_unsubscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_3
-
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,
         voting_address=random_account.address,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_3,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
                 (
@@ -84,8 +80,8 @@ def test_app_unsubscribe_xgov_success(
 
 
 def test_unsubscribe_xgov_not_an_xgov(
-    xgov_registry_client: XGovRegistryClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.unsubscribe_xgov(
@@ -99,8 +95,8 @@ def test_unsubscribe_xgov_not_an_xgov(
 
 
 def test_unsubscribe_xgov_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
 

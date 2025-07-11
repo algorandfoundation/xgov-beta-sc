@@ -14,7 +14,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from smart_contracts.proposal.config import METADATA_BOX_KEY
-from tests.proposal.common import assert_draft_proposal_global_state
+from tests.proposal.common import REQUESTED_AMOUNT, assert_draft_proposal_global_state
 from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
@@ -59,7 +59,7 @@ def test_drop_proposal_success(
         xgov_registry_client.app_id,
         decommissioned=True,
         funding_type=enm.FUNDING_RETROACTIVE,
-        requested_amount=10_000_000,
+        requested_amount=REQUESTED_AMOUNT,
     )
 
     pending_proposals_after = xgov_registry_client.get_global_state().pending_proposals

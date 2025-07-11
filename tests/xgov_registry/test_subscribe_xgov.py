@@ -20,9 +20,9 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_subscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -73,10 +73,9 @@ def test_subscribe_xgov_success(
 
 
 def test_app_subscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
     random_account: AddressAndSigner,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_3
@@ -100,9 +99,9 @@ def test_app_subscribe_xgov_success(
 
 
 def test_subscribe_xgov_already_xgov(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -130,9 +129,9 @@ def test_subscribe_xgov_already_xgov(
 
 
 def test_subscribe_xgov_wrong_recipient(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -160,9 +159,9 @@ def test_subscribe_xgov_wrong_recipient(
 
 
 def test_subscribe_xgov_wrong_amount(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
@@ -189,9 +188,9 @@ def test_subscribe_xgov_wrong_amount(
 
 
 def test_subscribe_xgov_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()

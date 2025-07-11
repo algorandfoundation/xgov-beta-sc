@@ -8,6 +8,7 @@ from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -17,12 +18,12 @@ from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
 def test_subscribe_proposer_success(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    sp: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
 
     before_info = xgov_registry_client.algod_client.account_info(
         xgov_registry_client.app_address,
@@ -68,10 +69,10 @@ def test_subscribe_proposer_success(
 
 
 def test_subscribe_proposer_already_proposer(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -117,10 +118,10 @@ def test_subscribe_proposer_already_proposer(
 
 
 def test_subscribe_proposer_wrong_recipient(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -147,10 +148,10 @@ def test_subscribe_proposer_wrong_recipient(
 
 
 def test_subscribe_proposer_wrong_amount(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
@@ -176,9 +177,9 @@ def test_subscribe_proposer_wrong_amount(
 
 
 def test_subscribe_proposer_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()

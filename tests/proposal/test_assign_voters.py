@@ -10,11 +10,9 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
-
-# TODO add tests for assign_voter on other statuses
-from tests.common import METADATA_B64, get_voter_box_key
 from tests.proposal.common import (
     LOCKED_AMOUNT,
+    METADATA_B64,
     PROPOSAL_PARTIAL_FEE,
     assert_account_balance,
     assert_boxes,
@@ -28,6 +26,9 @@ from tests.proposal.common import (
 
 # TODO add tests for assign_voter on other statuses
 from tests.utils import ERROR_TO_REGEX
+
+# TODO add tests for assign_voter on other statuses
+from tests.xgov_registry.common import get_voter_box_key
 
 
 def test_assign_voters_success(

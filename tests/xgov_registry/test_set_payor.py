@@ -11,9 +11,9 @@ from tests.xgov_registry.common import LogicErrorType, assert_registry_payor
 
 
 def test_set_payor_success(
-    xgov_registry_client: XGovRegistryClient,
     deployer: Account,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.set_payor(
         payor=random_account.address,
@@ -32,8 +32,8 @@ def test_set_payor_success(
 
 
 def test_set_payor_not_manager(
-    xgov_registry_client: XGovRegistryClient,
     random_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_payor(

@@ -2,7 +2,6 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.models import Account
 from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import (
@@ -10,7 +9,6 @@ from smart_contracts.artifacts.proposal.proposal_client import (
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
-    XGovRegistryConfig,
 )
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
@@ -20,25 +18,16 @@ from tests.xgov_registry.common import (
 
 
 def test_pay_grant_proposal_success(
-    funded_xgov_registry_client: XGovRegistryClient,
-    deployer: Account,
+    xgov_council: AddressAndSigner,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
-    approved_proposal_client: ProposalClient,
+    funded_xgov_registry_client: XGovRegistryClient,
+    reviewed_proposal_client: ProposalClient,
     sp_min_fee_times_4: SuggestedParams,
 ) -> None:
-
-    approved_proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            foreign_apps=[funded_xgov_registry_client.app_id],
-        ),
-    )
-
     sp = sp_min_fee_times_4
 
-    proposal_global_state = approved_proposal_client.get_global_state()
+    proposal_global_state = reviewed_proposal_client.get_global_state()
 
     before_info = funded_xgov_registry_client.algod_client.account_info(
         funded_xgov_registry_client.app_address,
@@ -46,13 +35,13 @@ def test_pay_grant_proposal_success(
 
     # payout
     funded_xgov_registry_client.pay_grant_proposal(
-        proposal_id=approved_proposal_client.app_id,
+        proposal_id=reviewed_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=xgov_payor.address,
+            signer=xgov_payor.signer,
             suggested_params=sp,
             boxes=[(0, proposer_box_name(proposer.address))],
-            foreign_apps=[approved_proposal_client.app_id],
+            foreign_apps=[reviewed_proposal_client.app_id],
             accounts=[proposer.address],
         ),
     )
@@ -65,9 +54,9 @@ def test_pay_grant_proposal_success(
 
 
 def test_pay_grant_proposal_not_payor(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
+    funded_xgov_registry_client: XGovRegistryClient,
     approved_proposal_client: ProposalClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
@@ -89,31 +78,20 @@ def test_pay_grant_proposal_not_payor(
 
 
 def test_pay_grant_proposal_not_a_proposal_app(
-    funded_xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
-    deployer: Account,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
+    funded_xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
-
-    # Call the config_xgov_registry method
-    funded_xgov_registry_client.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
     # payout
     with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
         funded_xgov_registry_client.pay_grant_proposal(
             proposal_id=funded_xgov_registry_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_payor.address,
+                signer=xgov_payor.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
                 accounts=[proposer.address],
@@ -124,10 +102,10 @@ def test_pay_grant_proposal_not_a_proposal_app(
 
 # TODO: Change to `_not_milestone`
 def test_pay_grant_proposal_not_reviewed(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
+    funded_xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
@@ -138,8 +116,8 @@ def test_pay_grant_proposal_not_reviewed(
         funded_xgov_registry_client.pay_grant_proposal(
             proposal_id=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_payor.address,
+                signer=xgov_payor.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[proposal_client.app_id],
@@ -149,22 +127,15 @@ def test_pay_grant_proposal_not_reviewed(
 
 
 def test_pay_grant_proposal_invalid_kyc(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account,
+    xgov_council: AddressAndSigner,
+    kyc_provider: AddressAndSigner,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
-    approved_proposal_client: ProposalClient,
+    funded_xgov_registry_client: XGovRegistryClient,
+    reviewed_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-
-    approved_proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            foreign_apps=[funded_xgov_registry_client.app_id],
-        ),
-    )
 
     sp = sp_min_fee_times_2
 
@@ -173,8 +144,8 @@ def test_pay_grant_proposal_invalid_kyc(
         kyc_status=False,
         kyc_expiring=321321,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=kyc_provider.address,
+            signer=kyc_provider.signer,
             suggested_params=sp,
             boxes=[(0, proposer_box_name(proposer.address))],
         ),
@@ -185,35 +156,28 @@ def test_pay_grant_proposal_invalid_kyc(
     # payout
     with pytest.raises(LogicErrorType, match=err.INVALID_KYC):
         funded_xgov_registry_client.pay_grant_proposal(
-            proposal_id=approved_proposal_client.app_id,
+            proposal_id=reviewed_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_payor.address,
+                signer=xgov_payor.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[approved_proposal_client.app_id],
+                foreign_apps=[reviewed_proposal_client.app_id],
                 accounts=[proposer.address],
             ),
         )
 
 
 def test_pay_grant_proposal_expired_kyc(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account,
+    xgov_council: AddressAndSigner,
+    kyc_provider: AddressAndSigner,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
-    approved_proposal_client: ProposalClient,
+    funded_xgov_registry_client: XGovRegistryClient,
+    reviewed_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-
-    approved_proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            foreign_apps=[funded_xgov_registry_client.app_id],
-        ),
-    )
 
     sp = sp_min_fee_times_2
 
@@ -222,8 +186,8 @@ def test_pay_grant_proposal_expired_kyc(
         kyc_status=True,
         kyc_expiring=321321,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=kyc_provider.address,
+            signer=kyc_provider.signer,
             suggested_params=sp,
             boxes=[(0, proposer_box_name(proposer.address))],
         ),
@@ -234,23 +198,24 @@ def test_pay_grant_proposal_expired_kyc(
     # payout
     with pytest.raises(LogicErrorType, match=err.INVALID_KYC):
         funded_xgov_registry_client.pay_grant_proposal(
-            proposal_id=approved_proposal_client.app_id,
+            proposal_id=reviewed_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_payor.address,
+                signer=xgov_payor.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
-                foreign_apps=[approved_proposal_client.app_id],
+                foreign_apps=[reviewed_proposal_client.app_id],
                 accounts=[proposer.address],
             ),
         )
 
 
 def test_pay_grant_proposal_insufficient_funds(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    deployer: Account,
+    xgov_council: AddressAndSigner,
+    xgov_payor: AddressAndSigner,
     proposer: AddressAndSigner,
+    funded_xgov_registry_client: XGovRegistryClient,
     approved_proposal_client_requested_too_much: ProposalClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
@@ -258,8 +223,8 @@ def test_pay_grant_proposal_insufficient_funds(
     approved_proposal_client_requested_too_much.review(
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
             foreign_apps=[funded_xgov_registry_client.app_id],
         ),
     )
@@ -271,8 +236,8 @@ def test_pay_grant_proposal_insufficient_funds(
         funded_xgov_registry_client.pay_grant_proposal(
             proposal_id=approved_proposal_client_requested_too_much.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_payor.address,
+                signer=xgov_payor.signer,
                 suggested_params=sp,
                 boxes=[(0, proposer_box_name(proposer.address))],
                 foreign_apps=[approved_proposal_client_requested_too_much.app_id],

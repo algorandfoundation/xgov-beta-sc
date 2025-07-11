@@ -14,10 +14,10 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import get_voter_box_key
+from tests.common import DEFAULT_COMMITTEE_VOTES
 from tests.xgov_registry.common import (
-    COMMITTEE_VOTES,
     LogicErrorType,
+    get_voter_box_key,
     xgov_box_name,
 )
 
@@ -78,7 +78,7 @@ def test_vote_proposal_not_in_voting_phase(
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_client.app_id,
             xgov_address=xgov.address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
@@ -110,7 +110,7 @@ def test_vote_proposal_not_a_proposal_app(
         xgov_registry_client.vote_proposal(
             proposal_id=xgov_registry_client.app_id,
             xgov_address=committee_members[0].address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_members[0].address,
@@ -142,7 +142,7 @@ def test_vote_proposal_not_an_xgov(
         xgov_registry_client.vote_proposal(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=random_account.address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
@@ -170,7 +170,7 @@ def test_vote_proposal_wrong_voting_address(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=xgov.address,
             approval_votes=0,
-            rejection_votes=COMMITTEE_VOTES,
+            rejection_votes=DEFAULT_COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(
                 sender=random_account.address,
                 signer=random_account.signer,
