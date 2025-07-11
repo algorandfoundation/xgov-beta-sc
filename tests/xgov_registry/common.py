@@ -10,10 +10,9 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     GlobalState,
     TypedGlobalState,
 )
-from smart_contracts.proposal.constants import (
-    COMMITTEE_ID_LENGTH,
-)
+from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
 from smart_contracts.xgov_registry.config import (
+    MIN_REQUESTED_AMOUNT,
     PROPOSER_BOX_MAP_PREFIX,
     REQUEST_BOX_MAP_PREFIX,
     XGOV_BOX_MAP_PREFIX,
@@ -21,46 +20,16 @@ from smart_contracts.xgov_registry.config import (
 
 LogicErrorType: type[LogicError] = LogicError
 
-XGOV_FEE = 1_000_000
-PROPOSER_FEE = 10_000_000
-OPEN_PROPOSAL_FEE = 100_000_000
-DAEMON_OPS_FUNDING_BPS = 1_000
-PROPOSAL_COMMITMENT_BPS = 100
-MIN_REQUESTED_AMOUNT = 1_000
-
-MAX_REQUESTED_AMOUNT_SMALL = 100_000_000
-MAX_REQUESTED_AMOUNT_MEDIUM = 1_000_000_000
-MAX_REQUESTED_AMOUNT_LARGE = 10_000_000_000
-
-DISCUSSION_DURATION_SMALL = 86400
-DISCUSSION_DURATION_MEDIUM = 172800
-DISCUSSION_DURATION_LARGE = 259200
-DISCUSSION_DURATION_XLARGE = 345600
-
-VOTING_DURATION_SMALL = 86400
-VOTING_DURATION_MEDIUM = 172800
-VOTING_DURATION_LARGE = 259200
-VOTING_DURATION_XLARGE = 345600
-
-QUORUM_SMALL = 100
-QUORUM_MEDIUM = 200
-QURUM_LARGE = 300
-
-WEIGHTED_QUORUM_SMALL = 200
-WEIGHTED_QUORUM_MEDIUM = 300
-WEIGHTED_QUORUM_LARGE = 400
-
-COMMITTEE_ID = bytes(COMMITTEE_ID_LENGTH)
-COMMITTEE_SIZE = 10
-COMMITTEE_VOTES = 100
-
-TREASURY_AMOUNT = 10_000_000
-
+TREASURY_AMOUNT = MIN_REQUESTED_AMOUNT * 10
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1
 
 
 def xgov_box_name(address: str) -> bytes:
     return XGOV_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
+
+
+def get_voter_box_key(voter_address: str) -> bytes:
+    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
 def request_box_name(rid: int) -> bytes:

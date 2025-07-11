@@ -35,26 +35,40 @@ from smart_contracts.proposal.enums import (
     STATUS_REVIEWED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry_mock.config import OPEN_PROPOSAL_FEE
+from smart_contracts.xgov_registry.config import (
+    MIN_REQUESTED_AMOUNT,
+    OPEN_PROPOSAL_FEE,
+    PROPOSAL_COMMITMENT_BPS,
+)
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
-    DEFAULT_FOCUS,
-    LOCKED_AMOUNT,
-    PROPOSAL_TITLE,
-    REQUESTED_AMOUNT,
-    get_voter_box_key,
+    relative_to_absolute_amount,
 )
 from tests.utils import time_warp
+from tests.xgov_registry.common import (
+    get_voter_box_key,
+)
+
+logic_error_type: type[LogicError] = LogicError
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
-
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
 PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
-logic_error_type: type[LogicError] = LogicError
+PROPOSAL_TITLE = "Test Proposal"
+METADATA_B64 = "TUVUQURBVEE="
+DEFAULT_FOCUS = 42
+
+
+def get_locked_amount(requested_amount: int) -> int:
+    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
+
+
+REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
+LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
 def assert_proposal_global_state(
