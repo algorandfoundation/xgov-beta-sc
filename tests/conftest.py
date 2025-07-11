@@ -13,17 +13,13 @@ from algokit_utils.account import Account as AlgokitAccount
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.transaction import SuggestedParams
-from algosdk.util import algos_to_microalgos
 from algosdk.v2client.algod import AlgodClient
 from algosdk.v2client.indexer import IndexerClient
 from dotenv import load_dotenv
 
 from models.account import Account
-from tests.common import DEFAULT_COMMITTEE_MEMBERS
+from tests.common import DEFAULT_COMMITTEE_MEMBERS, INITIAL_FUNDS
 from tests.xgov_registry.common import address_and_signer_from_account
-
-INITIAL_FUNDS: int = algos_to_microalgos(10_000)  # type: ignore[no-untyped-call]
-
 
 @pytest.fixture(autouse=True, scope="session")
 def environment_fixture() -> None:
