@@ -56,8 +56,6 @@ PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 logic_error_type: type[LogicError] = LogicError
 
-INITIAL_FUNDS = 10_000_000_000
-
 
 def assert_proposal_global_state(
     global_state: GlobalState,
