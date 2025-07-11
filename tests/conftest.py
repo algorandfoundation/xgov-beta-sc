@@ -21,6 +21,7 @@ from models.account import Account
 from tests.common import DEFAULT_COMMITTEE_MEMBERS, INITIAL_FUNDS
 from tests.xgov_registry.common import address_and_signer_from_account
 
+
 @pytest.fixture(autouse=True, scope="session")
 def environment_fixture() -> None:
     env_path = Path(__file__).parent.parent / ".env.localnet"
@@ -78,7 +79,7 @@ def sp_min_fee_times_4(sp: SuggestedParams) -> SuggestedParams:
     return sp
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def deployer(algorand_client: AlgorandClient) -> AlgokitAccount:
     deployer = get_localnet_default_account(algorand_client.client.algod)
     account = address_and_signer_from_account(deployer)

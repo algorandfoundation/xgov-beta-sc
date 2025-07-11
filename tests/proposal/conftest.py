@@ -14,19 +14,20 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
+from smart_contracts.xgov_registry.config import MAX_REQUESTED_AMOUNT_LARGE
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
-    get_voter_box_key,
+    INITIAL_FUNDS,
 )
 from tests.proposal.common import (
-    INITIAL_FUNDS,
     assign_voters,
     finalize_proposal,
     submit_proposal,
 )
 from tests.utils import time_warp
+from tests.xgov_registry.common import get_voter_box_key
 
 
 @pytest.fixture(scope="function")
@@ -37,7 +38,7 @@ def proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
         algorand_client.client.algod,
         EnsureBalanceParameters(
             account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
+            min_spending_balance_micro_algos=MAX_REQUESTED_AMOUNT_LARGE,
         ),
     )
     return account

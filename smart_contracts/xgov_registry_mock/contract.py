@@ -16,105 +16,104 @@ from smart_contracts.proposal.contract import Proposal
 
 from ..common.abi_types import Bytes32
 from ..xgov_registry import config as reg_cfg
-from . import config as mock_cfg
 
 
 class XgovRegistryMock(ARC4Contract):
     def __init__(self) -> None:
         self.proposal_commitment_bps = GlobalState(
-            UInt64(mock_cfg.PROPOSAL_COMMITMENT_BPS),
+            UInt64(reg_cfg.PROPOSAL_COMMITMENT_BPS),
             key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
         )
         self.min_requested_amount = GlobalState(
-            UInt64(mock_cfg.MIN_REQUESTED_AMOUNT),
+            UInt64(reg_cfg.MIN_REQUESTED_AMOUNT),
             key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
         )
         self.max_requested_amount_small = GlobalState(
-            UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_SMALL),
+            UInt64(reg_cfg.MAX_REQUESTED_AMOUNT_SMALL),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL,
         )
         self.max_requested_amount_medium = GlobalState(
-            UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_MEDIUM),
+            UInt64(reg_cfg.MAX_REQUESTED_AMOUNT_MEDIUM),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM,
         )
         self.max_requested_amount_large = GlobalState(
-            UInt64(mock_cfg.MAX_REQUESTED_AMOUNT_LARGE),
+            UInt64(reg_cfg.MAX_REQUESTED_AMOUNT_LARGE),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
         )
         self.daemon_ops_funding_bps = GlobalState(
-            UInt64(mock_cfg.DAEMON_OPS_FUNDING_BPS),
+            UInt64(reg_cfg.DAEMON_OPS_FUNDING_BPS),
             key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
         )
         self.discussion_duration_small = GlobalState(
-            UInt64(mock_cfg.DISCUSSION_DURATION_SMALL),
+            UInt64(reg_cfg.DISCUSSION_DURATION_SMALL),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL,
         )
         self.discussion_duration_medium = GlobalState(
-            UInt64(mock_cfg.DISCUSSION_DURATION_MEDIUM),
+            UInt64(reg_cfg.DISCUSSION_DURATION_MEDIUM),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM,
         )
         self.discussion_duration_large = GlobalState(
-            UInt64(mock_cfg.DISCUSSION_DURATION_LARGE),
+            UInt64(reg_cfg.DISCUSSION_DURATION_LARGE),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
         )
         self.xgov_daemon = GlobalState(
-            arc4.Address(mock_cfg.XGOV_DAEMON),
+            arc4.Address(),
             key=reg_cfg.GS_KEY_XGOV_DAEMON,
         )
         self.open_proposal_fee = GlobalState(
-            UInt64(mock_cfg.OPEN_PROPOSAL_FEE),
+            UInt64(reg_cfg.OPEN_PROPOSAL_FEE),
             key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
         )
         self.committee_id = GlobalState(
-            Bytes32.from_bytes(mock_cfg.COMMITTEE_ID),
+            Bytes32.from_bytes(b"0" * 32),
             key=reg_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
-            UInt64(mock_cfg.COMMITTEE_MEMBERS),
+            UInt64(),
             key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
         )
         self.committee_votes = GlobalState(
-            UInt64(mock_cfg.COMMITTEE_VOTES),
+            UInt64(),
             key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
         self.voting_duration_small = GlobalState(
-            UInt64(mock_cfg.VOTING_DURATION_SMALL),
+            UInt64(reg_cfg.VOTING_DURATION_SMALL),
             key=reg_cfg.GS_KEY_VOTING_DURATION_SMALL,
         )
         self.voting_duration_medium = GlobalState(
-            UInt64(mock_cfg.VOTING_DURATION_MEDIUM),
+            UInt64(reg_cfg.VOTING_DURATION_MEDIUM),
             key=reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM,
         )
         self.voting_duration_large = GlobalState(
-            UInt64(mock_cfg.VOTING_DURATION_LARGE),
+            UInt64(reg_cfg.VOTING_DURATION_LARGE),
             key=reg_cfg.GS_KEY_VOTING_DURATION_LARGE,
         )
         self.quorum_small = GlobalState(
-            UInt64(mock_cfg.QUORUM_SMALL_BPS),
+            UInt64(reg_cfg.QUORUM_SMALL),
             key=reg_cfg.GS_KEY_QUORUM_SMALL,
         )
         self.quorum_medium = GlobalState(
-            UInt64(mock_cfg.QUORUM_MEDIUM_BPS),
+            UInt64(reg_cfg.QUORUM_MEDIUM),
             key=reg_cfg.GS_KEY_QUORUM_MEDIUM,
         )
         self.quorum_large = GlobalState(
-            UInt64(mock_cfg.QUORUM_LARGE_BPS),
+            UInt64(reg_cfg.QUORUM_LARGE),
             key=reg_cfg.GS_KEY_QUORUM_LARGE,
         )
         self.weighted_quorum_small = GlobalState(
-            UInt64(mock_cfg.WEIGHTED_QUORUM_SMALL_BPS),
+            UInt64(reg_cfg.WEIGHTED_QUORUM_SMALL),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL,
         )
         self.weighted_quorum_medium = GlobalState(
-            UInt64(mock_cfg.WEIGHTED_QUORUM_MEDIUM_BPS),
+            UInt64(reg_cfg.WEIGHTED_QUORUM_MEDIUM),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM,
         )
         self.weighted_quorum_large = GlobalState(
-            UInt64(mock_cfg.WEIGHTED_QUORUM_LARGE_BPS),
+            UInt64(reg_cfg.WEIGHTED_QUORUM_LARGE),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
         )
         self.xgov_council = GlobalState(
-            arc4.Address(mock_cfg.XGOV_COUNCIL),
+            arc4.Address(),
             key=reg_cfg.GS_KEY_XGOV_COUNCIL,
         )
         self.paused_registry = GlobalState(
@@ -326,7 +325,7 @@ class XgovRegistryMock(ARC4Contract):
         Clear the committee ID
 
         """
-        self.committee_id.value = Bytes32.from_bytes(mock_cfg.COMMITTEE_ID)
+        self.committee_id.value = Bytes32.from_bytes(b"0" * 32)
 
     @arc4.abimethod()
     def set_committee_members(self, committee_members: UInt64) -> None:
