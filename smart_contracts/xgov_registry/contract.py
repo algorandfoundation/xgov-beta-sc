@@ -189,20 +189,37 @@ class XGovRegistry(
         return self.pending_proposals.value == 0
 
     @subroutine
-    def _is_proposal(self, proposal_id: arc4.UInt64) -> bool:
-        return (
-            Application(proposal_id.native).creator
-            == Global.current_application_address
-        )
+    def _is_proposal(self, proposal_id: UInt64) -> bool:
+        return Application(proposal_id).creator == Global.current_application_address
 
     @subroutine
-    def disburse_funds(self, recipient: arc4.Address, amount: UInt64) -> None:
+    def get_proposal_status(self, proposal_id: UInt64) -> UInt64:
+        status, status_exists = op.AppGlobal.get_ex_uint64(
+            proposal_id, pcfg.GS_KEY_STATUS
+        )
+        assert status_exists, err.WRONG_PROPOSAL_STATUS
+        return status
+
+    @subroutine
+    def get_proposal_proposer(self, proposal_id: UInt64) -> Account:
+        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
+            proposal_id, pcfg.GS_KEY_PROPOSER
+        )
+        assert proposer_exists, err.WRONG_PROPOSAL_STATUS
+        return Account(proposer_bytes)
+
+    @subroutine
+    def get_proposal_requested_amount(self, proposal_id: UInt64) -> UInt64:
+        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
+            proposal_id, pcfg.GS_KEY_REQUESTED_AMOUNT
+        )
+        assert requested_amount_exists, err.WRONG_PROPOSAL_STATUS
+        return requested_amount
+
+    @subroutine
+    def disburse_funds(self, recipient: Account, amount: UInt64) -> None:
         # Transfer the funds to the receiver
-        itxn.Payment(
-            receiver=Account(recipient.bytes),
-            amount=amount,
-            fee=0,
-        ).submit()
+        itxn.Payment(receiver=recipient, amount=amount, fee=0).submit()
 
         # Update the outstanding funds
         self.outstanding_funds.value -= amount
@@ -263,13 +280,8 @@ class XGovRegistry(
         self.pending_proposals.value -= 1
 
         # Update proposer's active proposal status
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
-            proposal_id, pcfg.GS_KEY_PROPOSER
-        )
-        proposer = arc4.Address(proposer_bytes)
-        self.proposer_box[proposer.native].active_proposal = arc4.Bool(
-            False  # noqa: FBT003
-        )
+        proposer = self.get_proposal_proposer(proposal_id)
+        self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
 
     @arc4.abimethod(create="require")
     def create(self) -> None:
@@ -631,6 +643,7 @@ class XGovRegistry(
         Sets the Voting Address for the xGov.
 
         Args:
+            xgov_address (arc4.Address): The xGov address delegating voting power
             voting_address (arc4.Address): The voting account address to delegate voting power to
 
         Raises:
@@ -647,7 +660,8 @@ class XGovRegistry(
 
         # Check that the sender is either the xGov or the voting address
         assert (
-            Txn.sender == xgov_box.voting_address.native or Txn.sender == xgov_address
+            Txn.sender == xgov_box.voting_address.native
+            or Txn.sender == xgov_address.native
         ), err.UNAUTHORIZED
 
         # Update the voting account in the xGov box
@@ -832,12 +846,10 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # verify proposal id is genuine proposal
-        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
         # Verify the proposal is in the voting state
-        status, status_exists = op.AppGlobal.get_ex_uint64(
-            proposal_id.native, pcfg.GS_KEY_STATUS
-        )
+        status = self.get_proposal_status(proposal_id.native)
         assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
 
         # make sure they're voting on behalf of an xGov
@@ -903,25 +915,18 @@ class XGovRegistry(
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        status, status_exists = op.AppGlobal.get_ex_uint64(
-            proposal_id.native, pcfg.GS_KEY_STATUS
-        )
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
-            proposal_id.native, pcfg.GS_KEY_PROPOSER
-        )
-        proposer = arc4.Address(proposer_bytes)
-        requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
-            proposal_id.native, pcfg.GS_KEY_REQUESTED_AMOUNT
-        )
+        status = self.get_proposal_status(proposal_id.native)
+        proposer = self.get_proposal_proposer(proposal_id.native)
+        requested_amount = self.get_proposal_requested_amount(proposal_id.native)
         # Verify the proposal is in the reviewed state
         assert status == UInt64(penm.STATUS_REVIEWED), err.PROPOSAL_WAS_NOT_REVIEWED
 
-        assert proposer.native in self.proposer_box, err.WRONG_PROPOSER
+        assert proposer in self.proposer_box, err.WRONG_PROPOSER
 
-        assert self.valid_kyc(proposer.native), err.INVALID_KYC
+        assert self.valid_kyc(proposer), err.INVALID_KYC
 
         # Verify sufficient funds are available
         assert (
@@ -956,13 +961,12 @@ class XGovRegistry(
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTERS_ASSIGNED: If there are still assigned voters
-
         """
 
         assert arc4.Address(Txn.sender) == self.xgov_daemon.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.decommission, app_id=proposal_id.native
@@ -1000,13 +1004,9 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
-        proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
-            proposal_id.native, pcfg.GS_KEY_PROPOSER
-        )
-        proposer = Account(proposer_bytes)
-
+        proposer = self.get_proposal_proposer(proposal_id.native)
         assert Txn.sender == proposer, err.UNAUTHORIZED
 
         error, tx = arc4.abi_call(
@@ -1152,4 +1152,4 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
-        assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
