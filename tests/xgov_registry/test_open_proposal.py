@@ -12,7 +12,11 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryConfig,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, proposer_box_name
+from tests.xgov_registry.common import (
+    UNLIMITED_KYC_EXPIRATION,
+    LogicErrorType,
+    proposer_box_name,
+)
 
 
 def test_open_proposal_success(
@@ -41,7 +45,7 @@ def test_open_proposal_success(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -130,7 +134,7 @@ def test_open_proposal_active_proposal(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -193,7 +197,7 @@ def test_open_proposal_wrong_fee(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -235,7 +239,7 @@ def test_open_proposal_wrong_amount(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -281,7 +285,7 @@ def test_open_proposal_wrong_recipient(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -340,7 +344,7 @@ def test_open_proposal_paused_registry_error(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -424,7 +428,7 @@ def test_open_proposal_paused_proposal_error(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -483,58 +487,14 @@ def test_open_proposal_paused_proposal_error(
 
 def test_open_proposal_no_committee_declared(
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     algorand_client: AlgorandClient,
     deployer: Account,
     proposer: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
-
-    # Call the config_xgov_registry method
-    xgov_registry_client_committee_not_declared.config_xgov_registry(
-        config=xgov_registry_config,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-        ),
-    )
-
-    global_state = xgov_registry_client_committee_not_declared.get_global_state()
-
-    xgov_registry_client_committee_not_declared.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client_committee_not_declared.app_address,
-                    amount=global_state.proposer_fee,
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
-    )
-
     sp.min_fee *= 3  # type: ignore
-
-    xgov_registry_client_committee_not_declared.set_proposer_kyc(
-        proposer=proposer.address,
-        kyc_status=True,
-        kyc_expiring=18446744073709551615,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
-    )
-
+    global_state = xgov_registry_client_committee_not_declared.get_global_state()
     with pytest.raises(LogicErrorType):
         xgov_registry_client_committee_not_declared.open_proposal(
             payment=TransactionWithSigner(

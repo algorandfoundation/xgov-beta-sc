@@ -25,7 +25,6 @@ from tests.xgov_registry.common import (
 def test_vote_proposal_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,
@@ -101,7 +100,6 @@ def test_vote_proposal_not_in_voting_phase(
 def test_vote_proposal_not_a_proposal_app(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,
@@ -187,7 +185,6 @@ def test_vote_proposal_wrong_voting_address(
 def test_vote_proposal_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,

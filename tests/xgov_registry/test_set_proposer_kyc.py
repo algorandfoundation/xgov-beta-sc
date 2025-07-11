@@ -13,7 +13,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 )
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import (
-    KYC_EXPIRATION,
+    UNLIMITED_KYC_EXPIRATION,
     LogicErrorType,
     proposer_box_name,
 )
@@ -29,7 +29,7 @@ def test_set_proposer_kyc_success(
     xgov_registry_client.set_proposer_kyc(
         proposer=proposer.address,
         kyc_status=True,
-        kyc_expiring=18446744073709551615,
+        kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -47,7 +47,7 @@ def test_set_proposer_kyc_success(
     active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
 
     assert kyc_status  # type: ignore
-    assert kyc_expiring == KYC_EXPIRATION  # type: ignore
+    assert kyc_expiring == UNLIMITED_KYC_EXPIRATION  # type: ignore
 
 
 def test_set_proposer_kyc_not_kyc_provider(
@@ -61,7 +61,7 @@ def test_set_proposer_kyc_not_kyc_provider(
         xgov_registry_client.set_proposer_kyc(
             proposer=proposer.address,
             kyc_status=True,
-            kyc_expiring=18446744073709551615,
+            kyc_expiring=UNLIMITED_KYC_EXPIRATION,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -83,7 +83,7 @@ def test_set_proposer_kyc_not_a_proposer(
         xgov_registry_client.set_proposer_kyc(
             proposer=random_account.address,
             kyc_status=True,
-            kyc_expiring=18446744073709551615,
+            kyc_expiring=UNLIMITED_KYC_EXPIRATION,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,

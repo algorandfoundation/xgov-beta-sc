@@ -2,11 +2,10 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
-from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.transaction import SuggestedParams
 
+from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
     XGovRegistryConfig,
@@ -21,7 +20,6 @@ from smart_contracts.xgov_registry.constants import (
 from tests.xgov_registry.common import (
     LogicErrorType,
     assert_registry_config,
-    proposer_box_name,
 )
 
 
@@ -89,34 +87,11 @@ def test_config_xgov_registry_pending_proposals(
     algorand_client: AlgorandClient,
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
+    proposal_client: ProposalClient,
     deployer: Account,
     proposer: AddressAndSigner,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-
-    sp = sp_min_fee_times_3
-
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.open_proposal_fee,
-                ),
-            ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
-    )
-
     with pytest.raises(LogicErrorType, match=err.NO_PENDING_PROPOSALS):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
