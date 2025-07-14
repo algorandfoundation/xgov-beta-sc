@@ -51,116 +51,6 @@ from tests.xgov_registry.common import (
 )
 
 
-@pytest.fixture(scope="session")
-def committee_manager(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def xgov_subscriber(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def xgov_payor(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def xgov_daemon(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def xgov_council(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def kyc_provider(
-    algorand_client: AlgorandClient,
-    deployer: Account,
-) -> AddressAndSigner:
-    account = algorand_client.account.random()
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def random_account(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
 @pytest.fixture(scope="function")
 def xgov_registry_config() -> XGovRegistryConfig:
     return XGovRegistryConfig(
@@ -909,27 +799,27 @@ def app_xgov_subscribe_requested(
     algorand_client: AlgorandClient,
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> XGovSubscriberAppMockClient:
     global_state = xgov_registry_client.get_global_state()
 
     xgov_registry_client.request_subscribe_xgov(
         xgov_address=xgov_subscriber_app.app_address,
-        owner_address=random_account.address,
+        owner_address=no_role_account.address,
         relation_type=0,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=global_state.xgov_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             boxes=[
                 (0, xgov_box_name(xgov_subscriber_app.app_address)),
                 (0, request_box_name(global_state.request_id)),

@@ -97,6 +97,116 @@ def deployer(algorand_client: AlgorandClient) -> AlgokitAccount:
 
 
 @pytest.fixture(scope="session")
+def committee_manager(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def xgov_subscriber(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def xgov_payor(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def xgov_daemon(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def xgov_council(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def kyc_provider(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+) -> AddressAndSigner:
+    account = algorand_client.account.random()
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
+def committee_member(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
+
+
+@pytest.fixture(scope="session")
 def committee_members(algorand_client: AlgorandClient) -> list[AddressAndSigner]:
     accounts = [
         algorand_client.account.random() for _ in range(DEFAULT_COMMITTEE_MEMBERS)
@@ -112,3 +222,17 @@ def committee_members(algorand_client: AlgorandClient) -> list[AddressAndSigner]
         )
 
     return accounts
+
+
+@pytest.fixture(scope="session")
+def no_role_account(algorand_client: AlgorandClient) -> AddressAndSigner:
+    account = algorand_client.account.random()
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=account.address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+    return account
