@@ -15,9 +15,9 @@ from tests.xgov_registry.common import LogicErrorType
 
 
 def test_withdraw_balance_success(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
+    funded_xgov_registry_client: XGovRegistryClient,
     sp: SuggestedParams,
 ) -> None:
     """
@@ -97,9 +97,8 @@ def test_withdraw_balance_success(
 
 
 def test_withdraw_balance_not_manager(
+    no_role_account: AddressAndSigner,
     funded_xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
@@ -110,17 +109,17 @@ def test_withdraw_balance_not_manager(
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         funded_xgov_registry_client.withdraw_balance(
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
             ),
         )
 
 
 def test_withdraw_balance_insufficient_fee(
-    funded_xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
+    funded_xgov_registry_client: XGovRegistryClient,
 ) -> None:
     """
     Test that transaction fails if fee is insufficient.
@@ -139,9 +138,8 @@ def test_withdraw_balance_insufficient_fee(
 
 
 def test_withdraw_balance_no_funds_available(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """

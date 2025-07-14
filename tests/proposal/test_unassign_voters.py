@@ -202,7 +202,7 @@ def test_unassign_not_same_app(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,
@@ -249,8 +249,8 @@ def test_unassign_not_same_app(
 
     alternative_finalized_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
-            sender=not_proposer.address,
-            signer=not_proposer.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             foreign_apps=[xgov_registry_mock_client.app_id],
             suggested_params=sp,
         ),

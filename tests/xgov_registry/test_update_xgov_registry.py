@@ -12,9 +12,9 @@ from tests.xgov_registry.common import LogicErrorType
 
 
 def test_update_xgov_registry_success(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
@@ -28,17 +28,17 @@ def test_update_xgov_registry_success(
 
 
 def test_update_xgov_registry_not_manager(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.update_update_xgov_registry(
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
             ),
         )

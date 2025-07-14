@@ -14,10 +14,10 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import get_voter_box_key
+from tests.common import DEFAULT_COMMITTEE_VOTES
 from tests.xgov_registry.common import (
-    COMMITTEE_VOTES,
     LogicErrorType,
+    get_voter_box_key,
     xgov_box_name,
 )
 
@@ -25,7 +25,6 @@ from tests.xgov_registry.common import (
 def test_vote_proposal_success(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,
@@ -79,7 +78,7 @@ def test_vote_proposal_not_in_voting_phase(
         xgov_registry_client.vote_proposal(
             proposal_id=proposal_client.app_id,
             xgov_address=xgov.address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
@@ -101,7 +100,6 @@ def test_vote_proposal_not_in_voting_phase(
 def test_vote_proposal_not_a_proposal_app(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     proposer: AddressAndSigner,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,
@@ -112,7 +110,7 @@ def test_vote_proposal_not_a_proposal_app(
         xgov_registry_client.vote_proposal(
             proposal_id=xgov_registry_client.app_id,
             xgov_address=committee_members[0].address,
-            approval_votes=COMMITTEE_VOTES,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_members[0].address,
@@ -134,7 +132,7 @@ def test_vote_proposal_not_a_proposal_app(
 def test_vote_proposal_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -143,16 +141,16 @@ def test_vote_proposal_not_an_xgov(
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.vote_proposal(
             proposal_id=voting_proposal_client.app_id,
-            xgov_address=random_account.address,
-            approval_votes=COMMITTEE_VOTES,
+            xgov_address=no_role_account.address,
+            approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                boxes=[(0, xgov_box_name(no_role_account.address))],
                 foreign_apps=[voting_proposal_client.app_id],
-                accounts=[random_account.address],
+                accounts=[no_role_account.address],
             ),
         )
 
@@ -161,7 +159,7 @@ def test_vote_proposal_wrong_voting_address(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -172,10 +170,10 @@ def test_vote_proposal_wrong_voting_address(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=xgov.address,
             approval_votes=0,
-            rejection_votes=COMMITTEE_VOTES,
+            rejection_votes=DEFAULT_COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(xgov.address))],
                 foreign_apps=[voting_proposal_client.app_id],
@@ -187,7 +185,6 @@ def test_vote_proposal_wrong_voting_address(
 def test_vote_proposal_paused_registry_error(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    # xgov: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     sp_min_fee_times_2: SuggestedParams,

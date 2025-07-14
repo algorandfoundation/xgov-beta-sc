@@ -30,6 +30,7 @@ TOO_EARLY = "Too early"
 
 MISSING_CONFIG = "Missing Config"
 MISSING_METADATA = "Missing Metadata"
+MISSING_KEY = "Missing key in state"
 
 PENDING_PROPOSALS = "Pending proposals"
 WRONG_PAYMENT_AMOUNT = "Wrong payment amount"

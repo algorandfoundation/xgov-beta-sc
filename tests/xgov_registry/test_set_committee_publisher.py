@@ -1,7 +1,6 @@
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk.transaction import SuggestedParams
 
@@ -13,16 +12,15 @@ from tests.xgov_registry.common import LogicErrorType, decode_address
 
 
 def test_set_xgov_daemon_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
 
     xgov_registry_client.set_xgov_daemon(
-        xgov_daemon=random_account.address,
+        xgov_daemon=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -32,23 +30,22 @@ def test_set_xgov_daemon_success(
 
     global_state = xgov_registry_client.get_global_state()
 
-    assert global_state.xgov_daemon.as_bytes == decode_address(random_account.address)  # type: ignore
+    assert global_state.xgov_daemon.as_bytes == decode_address(no_role_account.address)  # type: ignore
 
 
 def test_set_xgov_daemon_not_manager(
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     sp = sp_min_fee_times_2
 
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_xgov_daemon(
-            xgov_daemon=random_account.address,
+            xgov_daemon=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
             ),
         )

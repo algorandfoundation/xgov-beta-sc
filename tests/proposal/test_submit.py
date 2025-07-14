@@ -15,13 +15,12 @@ from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_MEDIUM,
     FUNDING_NULL,
 )
-from smart_contracts.xgov_registry_mock.config import (
+from smart_contracts.xgov_registry.config import (
     MAX_REQUESTED_AMOUNT_LARGE,
     MAX_REQUESTED_AMOUNT_MEDIUM,
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
 )
-from tests.common import get_locked_amount
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -29,6 +28,7 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
+    get_locked_amount,
     logic_error_type,
     submit_proposal,
 )
@@ -68,14 +68,14 @@ def test_submit_not_proposer(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         submit_proposal(
             proposal_client,
             algorand_client,
-            not_proposer,
+            no_role_account,
             xgov_registry_mock_client.app_id,
         )
 
@@ -364,7 +364,7 @@ def test_submit_wrong_payment_3(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_SENDER]):
@@ -373,7 +373,7 @@ def test_submit_wrong_payment_3(
             algorand_client,
             proposer,
             xgov_registry_mock_client.app_id,
-            payment_sender=not_proposer,
+            payment_sender=no_role_account,
         )
 
     global_state = proposal_client.get_global_state()

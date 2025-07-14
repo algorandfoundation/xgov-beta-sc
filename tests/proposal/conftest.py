@@ -14,19 +14,20 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
+from smart_contracts.xgov_registry.config import MAX_REQUESTED_AMOUNT_LARGE
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
-    get_voter_box_key,
+    INITIAL_FUNDS,
 )
 from tests.proposal.common import (
-    INITIAL_FUNDS,
     assign_voters,
     finalize_proposal,
     submit_proposal,
 )
 from tests.utils import time_warp
+from tests.xgov_registry.common import get_voter_box_key
 
 
 @pytest.fixture(scope="function")
@@ -37,35 +38,7 @@ def proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
         algorand_client.client.algod,
         EnsureBalanceParameters(
             account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def not_proposer(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def committee_member(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
+            min_spending_balance_micro_algos=MAX_REQUESTED_AMOUNT_LARGE,
         ),
     )
     return account
@@ -143,11 +116,6 @@ def submitted_proposal_client(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     submit_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
@@ -163,11 +131,6 @@ def finalized_proposal_client(
     xgov_daemon: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_2
 
     finalize_proposal(
@@ -189,11 +152,6 @@ def voting_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_3
 
     composer = finalized_proposal_client.compose()
@@ -217,11 +175,6 @@ def rejected_proposal_client(
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     reg_gs = xgov_registry_mock_client.get_global_state()
 
     voting_duration = reg_gs.voting_duration_small
@@ -250,11 +203,6 @@ def approved_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_members: list[AddressAndSigner],
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:4]:
@@ -303,11 +251,6 @@ def reviewed_proposal_client(
     xgov_council: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     approved_proposal_client.review(
         block=False,
         transaction_parameters=TransactionParameters(
@@ -327,11 +270,6 @@ def blocked_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_2
 
     approved_proposal_client.review(
@@ -371,20 +309,15 @@ def funded_proposal_client(
 
 @pytest.fixture(scope="function")
 def alternative_proposal_client(
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_3
 
     proposal_app_id = xgov_registry_mock_client.create_empty_proposal(
-        proposer=not_proposer.address,
+        proposer=no_role_account.address,
         transaction_parameters=TransactionParameters(
             suggested_params=sp,
         ),
@@ -402,18 +335,13 @@ def alternative_proposal_client(
 def alternative_submitted_proposal_client(
     alternative_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     submit_proposal(
         alternative_proposal_client,
         algorand_client,
-        not_proposer,
+        no_role_account,
         xgov_registry_mock_client.app_id,
     )
 
@@ -424,65 +352,18 @@ def alternative_submitted_proposal_client(
 def alternative_finalized_proposal_client(
     alternative_submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_2
 
     finalize_proposal(
         alternative_submitted_proposal_client,
         xgov_registry_mock_client,
-        not_proposer,
+        no_role_account,
         xgov_daemon,
         sp,
     )
 
     return alternative_submitted_proposal_client
-
-
-@pytest.fixture(scope="session")
-def xgov_daemon(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def xgov_council(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
-
-
-@pytest.fixture(scope="session")
-def not_xgov_council(algorand_client: AlgorandClient) -> AddressAndSigner:
-    account = algorand_client.account.random()
-
-    ensure_funded(
-        algorand_client.client.algod,
-        EnsureBalanceParameters(
-            account_to_fund=account.address,
-            min_spending_balance_micro_algos=INITIAL_FUNDS,
-        ),
-    )
-    return account
