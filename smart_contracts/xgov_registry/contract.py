@@ -197,7 +197,7 @@ class XGovRegistry(
         status, status_exists = op.AppGlobal.get_ex_uint64(
             proposal_id, pcfg.GS_KEY_STATUS
         )
-        assert status_exists, err.WRONG_PROPOSAL_STATUS
+        assert status_exists, err.MISSING_KEY
         return status
 
     @subroutine
@@ -205,7 +205,7 @@ class XGovRegistry(
         proposer_bytes, proposer_exists = op.AppGlobal.get_ex_bytes(
             proposal_id, pcfg.GS_KEY_PROPOSER
         )
-        assert proposer_exists, err.WRONG_PROPOSAL_STATUS
+        assert proposer_exists, err.MISSING_KEY
         return Account(proposer_bytes)
 
     @subroutine
@@ -213,7 +213,7 @@ class XGovRegistry(
         requested_amount, requested_amount_exists = op.AppGlobal.get_ex_uint64(
             proposal_id, pcfg.GS_KEY_REQUESTED_AMOUNT
         )
-        assert requested_amount_exists, err.WRONG_PROPOSAL_STATUS
+        assert requested_amount_exists, err.MISSING_KEY
         return requested_amount
 
     @subroutine

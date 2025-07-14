@@ -4144,8 +4144,8 @@
       ]
     },
     "1031": {
-      "error": "Wrong Proposal Status or Decommissioned",
-      "op": "assert // Wrong Proposal Status or Decommissioned",
+      "error": "Missing key in state",
+      "op": "assert // Missing key in state",
       "stack_out": [
         "proposer_bytes#0"
       ]
@@ -11122,8 +11122,8 @@
       ]
     },
     "5782": {
-      "error": "Wrong Proposal Status or Decommissioned",
-      "op": "assert // Wrong Proposal Status or Decommissioned",
+      "error": "Missing key in state",
+      "op": "assert // Missing key in state",
       "stack_out": [
         "proposal_id#1",
         "status#1"
@@ -12436,8 +12436,8 @@
       ]
     },
     "6054": {
-      "error": "Wrong Proposal Status or Decommissioned",
-      "op": "assert // Wrong Proposal Status or Decommissioned",
+      "error": "Missing key in state",
+      "op": "assert // Missing key in state",
       "stack_out": [
         "proposal_id#1",
         "status#1"
@@ -12509,8 +12509,8 @@
       ]
     },
     "6081": {
-      "error": "Wrong Proposal Status or Decommissioned",
-      "op": "assert // Wrong Proposal Status or Decommissioned",
+      "error": "Missing key in state",
+      "op": "assert // Missing key in state",
       "stack_out": [
         "proposal_id#1",
         "status#1",

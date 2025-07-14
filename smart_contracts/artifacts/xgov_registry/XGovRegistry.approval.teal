@@ -1181,8 +1181,8 @@ get_proposal_proposer:
     // )
     app_global_get_ex
     // smart_contracts/xgov_registry/contract.py:208
-    // assert proposer_exists, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status or Decommissioned
+    // assert proposer_exists, err.MISSING_KEY
+    assert // Missing key in state
     // smart_contracts/xgov_registry/contract.py:209
     // return Account(proposer_bytes)
     dup
@@ -2634,8 +2634,8 @@ vote_proposal:
     // )
     app_global_get_ex
     // smart_contracts/xgov_registry/contract.py:200
-    // assert status_exists, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status or Decommissioned
+    // assert status_exists, err.MISSING_KEY
+    assert // Missing key in state
     // smart_contracts/xgov_registry/contract.py:853
     // assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
     pushint 25 // 25
@@ -2886,8 +2886,8 @@ pay_grant_proposal:
     // )
     app_global_get_ex
     // smart_contracts/xgov_registry/contract.py:200
-    // assert status_exists, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status or Decommissioned
+    // assert status_exists, err.MISSING_KEY
+    assert // Missing key in state
     // smart_contracts/xgov_registry/contract.py:922
     // proposer = self.get_proposal_proposer(proposal_id.native)
     dig 1
@@ -2906,8 +2906,8 @@ pay_grant_proposal:
     // )
     app_global_get_ex
     // smart_contracts/xgov_registry/contract.py:216
-    // assert requested_amount_exists, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status or Decommissioned
+    // assert requested_amount_exists, err.MISSING_KEY
+    assert // Missing key in state
     // smart_contracts/xgov_registry/contract.py:924-925
     // # Verify the proposal is in the reviewed state
     // assert status == UInt64(penm.STATUS_REVIEWED), err.PROPOSAL_WAS_NOT_REVIEWED
