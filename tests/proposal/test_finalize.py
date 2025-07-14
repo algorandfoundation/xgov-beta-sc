@@ -80,7 +80,7 @@ def test_finalize_not_proposer(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -91,7 +91,7 @@ def test_finalize_not_proposer(
         finalize_proposal(
             proposal_client=submitted_proposal_client,
             xgov_registry_mock_client=xgov_registry_mock_client,
-            proposer=not_proposer,
+            proposer=no_role_account,
             xgov_daemon=xgov_daemon,
             sp_min_fee_times_2=sp,
         )

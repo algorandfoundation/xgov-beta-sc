@@ -309,7 +309,7 @@ def funded_proposal_client(
 
 @pytest.fixture(scope="function")
 def alternative_proposal_client(
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     sp_min_fee_times_3: SuggestedParams,
@@ -317,7 +317,7 @@ def alternative_proposal_client(
     sp = sp_min_fee_times_3
 
     proposal_app_id = xgov_registry_mock_client.create_empty_proposal(
-        proposer=not_proposer.address,
+        proposer=no_role_account.address,
         transaction_parameters=TransactionParameters(
             suggested_params=sp,
         ),
@@ -335,13 +335,13 @@ def alternative_proposal_client(
 def alternative_submitted_proposal_client(
     alternative_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     submit_proposal(
         alternative_proposal_client,
         algorand_client,
-        not_proposer,
+        no_role_account,
         xgov_registry_mock_client.app_id,
     )
 
@@ -352,21 +352,16 @@ def alternative_submitted_proposal_client(
 def alternative_finalized_proposal_client(
     alternative_submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     sp_min_fee_times_2: SuggestedParams,
 ) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
     sp = sp_min_fee_times_2
 
     finalize_proposal(
         alternative_submitted_proposal_client,
         xgov_registry_mock_client,
-        not_proposer,
+        no_role_account,
         xgov_daemon,
         sp,
     )

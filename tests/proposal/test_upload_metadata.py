@@ -124,7 +124,7 @@ def test_upload_success_3(
 
 def test_upload_not_proposer(
     submitted_proposal_client: ProposalClient,
-    not_proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
 
@@ -132,7 +132,7 @@ def test_upload_not_proposer(
         composer = submitted_proposal_client.compose()
         upload_metadata(
             composer,
-            not_proposer,
+            no_role_account,
             xgov_registry_mock_client.app_id,
             b"ANY PAYLOAD",
         )

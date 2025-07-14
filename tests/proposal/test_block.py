@@ -219,15 +219,15 @@ def test_block_twice(
 def test_block_not_council(
     approved_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    not_xgov_council: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> None:
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         approved_proposal_client.review(
             block=True,
             transaction_parameters=TransactionParameters(
-                sender=not_xgov_council.address,
-                signer=not_xgov_council.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
             ),
         )
