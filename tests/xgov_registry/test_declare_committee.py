@@ -43,7 +43,7 @@ def test_declare_committee_success(
 
 def test_declare_committee_not_manager(
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client_committee_not_declared.declare_committee(
@@ -51,8 +51,8 @@ def test_declare_committee_not_manager(
             size=DEFAULT_COMMITTEE_MEMBERS,
             votes=DEFAULT_COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
             ),
         )
 

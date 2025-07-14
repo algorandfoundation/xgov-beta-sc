@@ -65,19 +65,19 @@ def test_set_proposer_kyc_not_kyc_provider(
 
 def test_set_proposer_kyc_not_a_proposer(
     kyc_provider: AddressAndSigner,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.set_proposer_kyc(
-            proposer=random_account.address,
+            proposer=no_role_account.address,
             kyc_status=True,
             kyc_expiring=UNLIMITED_KYC_EXPIRATION,
             transaction_parameters=TransactionParameters(
                 sender=kyc_provider.address,
                 signer=kyc_provider.signer,
                 suggested_params=sp_min_fee_times_2,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )

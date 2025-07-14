@@ -21,7 +21,7 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 def test_subscribe_xgov_success(
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
@@ -32,22 +32,22 @@ def test_subscribe_xgov_success(
     )
 
     xgov_registry_client.subscribe_xgov(
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=before_global_state.xgov_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
-            boxes=[(0, xgov_box_name(random_account.address))],
+            boxes=[(0, xgov_box_name(no_role_account.address))],
         ),
     )
 
@@ -62,18 +62,18 @@ def test_subscribe_xgov_success(
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(random_account.address),
+        box_name=xgov_box_name(no_role_account.address),
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
     box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
     voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
 
-    assert random_account.address == voting_address  # type: ignore
+    assert no_role_account.address == voting_address  # type: ignore
 
 
 def test_app_subscribe_xgov_success(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_3: SuggestedParams,
@@ -82,10 +82,10 @@ def test_app_subscribe_xgov_success(
 
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
@@ -130,7 +130,7 @@ def test_subscribe_xgov_already_xgov(
 
 def test_subscribe_xgov_wrong_recipient(
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
@@ -138,58 +138,58 @@ def test_subscribe_xgov_wrong_recipient(
 
     with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
         xgov_registry_client.subscribe_xgov(
-            voting_address=random_account.address,
+            voting_address=no_role_account.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
-                        receiver=random_account.address,
+                        sender=no_role_account.address,
+                        receiver=no_role_account.address,
                         amount=global_state.proposer_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_subscribe_xgov_wrong_amount(
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
     with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
         xgov_registry_client.subscribe_xgov(
-            voting_address=random_account.address,
+            voting_address=no_role_account.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=100,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_subscribe_xgov_paused_registry_error(
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
@@ -203,44 +203,44 @@ def test_subscribe_xgov_paused_registry_error(
 
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.subscribe_xgov(
-            voting_address=random_account.address,
+            voting_address=no_role_account.address,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=before_global_state.xgov_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
     xgov_registry_client.resume_registry()
 
     xgov_registry_client.subscribe_xgov(
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=before_global_state.xgov_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
-            boxes=[(0, xgov_box_name(random_account.address))],
+            boxes=[(0, xgov_box_name(no_role_account.address))],
         ),
     )
 
@@ -255,11 +255,11 @@ def test_subscribe_xgov_paused_registry_error(
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(random_account.address),
+        box_name=xgov_box_name(no_role_account.address),
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
     box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
     voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
 
-    assert random_account.address == voting_address  # type: ignore
+    assert no_role_account.address == voting_address  # type: ignore

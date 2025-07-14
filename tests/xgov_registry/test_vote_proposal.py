@@ -132,7 +132,7 @@ def test_vote_proposal_not_a_proposal_app(
 def test_vote_proposal_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -141,16 +141,16 @@ def test_vote_proposal_not_an_xgov(
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.vote_proposal(
             proposal_id=voting_proposal_client.app_id,
-            xgov_address=random_account.address,
+            xgov_address=no_role_account.address,
             approval_votes=DEFAULT_COMMITTEE_VOTES,
             rejection_votes=0,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                boxes=[(0, xgov_box_name(no_role_account.address))],
                 foreign_apps=[voting_proposal_client.app_id],
-                accounts=[random_account.address],
+                accounts=[no_role_account.address],
             ),
         )
 
@@ -159,7 +159,7 @@ def test_vote_proposal_wrong_voting_address(
     xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     xgov: AddressAndSigner,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     voting_proposal_client: ProposalClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -172,8 +172,8 @@ def test_vote_proposal_wrong_voting_address(
             approval_votes=0,
             rejection_votes=DEFAULT_COMMITTEE_VOTES,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
                 boxes=[(0, xgov_box_name(xgov.address))],
                 foreign_apps=[voting_proposal_client.app_id],

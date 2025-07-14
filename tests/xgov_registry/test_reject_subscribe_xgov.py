@@ -47,7 +47,7 @@ def test_reject_subscribe_xgov_success(
 
 
 def test_reject_subscribe_xgov_not_subscriber(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
     algorand_client: AlgorandClient,
@@ -61,8 +61,8 @@ def test_reject_subscribe_xgov_not_subscriber(
         xgov_registry_client.reject_subscribe_xgov(
             request_id=request_id,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
                 boxes=[
                     (0, request_box_name(request_id)),

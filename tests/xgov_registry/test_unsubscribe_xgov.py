@@ -41,17 +41,17 @@ def test_unsubscribe_xgov_success(
 
 
 def test_app_unsubscribe_xgov_success(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp_min_fee_times_3,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
@@ -66,8 +66,8 @@ def test_app_unsubscribe_xgov_success(
     xgov_subscriber_app.unsubscribe_xgov(
         app_id=xgov_registry_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
                 (
@@ -80,16 +80,16 @@ def test_app_unsubscribe_xgov_success(
 
 
 def test_unsubscribe_xgov_not_an_xgov(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.unsubscribe_xgov(
-            xgov_address=random_account.address,
+            xgov_address=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 

@@ -71,14 +71,14 @@ def test_config_xgov_registry_success(
 def test_config_xgov_registry_not_manager(
     xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.config_xgov_registry(
             config=xgov_registry_config,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
             ),
         )
 

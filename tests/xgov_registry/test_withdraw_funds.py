@@ -36,7 +36,7 @@ def test_withdraw_funds_success(
 
 
 def test_withdraw_funds_not_manager(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     funded_xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -45,8 +45,8 @@ def test_withdraw_funds_not_manager(
         funded_xgov_registry_client.withdraw_funds(
             amount=TREASURY_AMOUNT,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
             ),
         )

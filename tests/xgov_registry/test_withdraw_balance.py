@@ -97,7 +97,7 @@ def test_withdraw_balance_success(
 
 
 def test_withdraw_balance_not_manager(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     funded_xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_2: SuggestedParams,
 ) -> None:
@@ -109,8 +109,8 @@ def test_withdraw_balance_not_manager(
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         funded_xgov_registry_client.withdraw_balance(
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
             ),
         )

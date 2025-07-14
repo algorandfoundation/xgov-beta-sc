@@ -48,7 +48,7 @@ def test_open_proposal_success(
 
 def test_open_proposal_not_a_proposer(
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     sp_min_fee_times_3: SuggestedParams,
 ) -> None:
@@ -58,18 +58,18 @@ def test_open_proposal_not_a_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=global_state.open_proposal_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )
 

@@ -12,11 +12,11 @@ from tests.xgov_registry.common import LogicErrorType, assert_registry_payor
 
 def test_set_payor_success(
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.set_payor(
-        payor=random_account.address,
+        payor=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
@@ -27,19 +27,19 @@ def test_set_payor_success(
 
     assert_registry_payor(
         global_state=global_state,
-        payor_address=random_account.address,
+        payor_address=no_role_account.address,
     )
 
 
 def test_set_payor_not_manager(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_payor(
-            payor=random_account.address,
+            payor=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
             ),
         )
