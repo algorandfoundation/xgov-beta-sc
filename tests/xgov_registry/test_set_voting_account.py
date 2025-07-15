@@ -39,8 +39,8 @@ def test_set_voting_account_success(
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
+    box_abi = abi.ABIType.from_string("(address,uint64,uint64,uint64)")
+    voting_address, _, _, _ = box_abi.decode(box_value)  # type: ignore
 
     assert no_role_account.address == voting_address  # type: ignore
 
@@ -133,7 +133,7 @@ def test_set_voting_account_paused_registry_error(
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
+    box_abi = abi.ABIType.from_string("(address,uint64,uint64,uint64)")
+    voting_address, _, _, _ = box_abi.decode(box_value)  # type: ignore
 
     assert no_role_account.address == voting_address  # type: ignore

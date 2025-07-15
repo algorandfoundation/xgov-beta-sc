@@ -489,7 +489,6 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
-            err.NO_PENDING_PROPOSALS: If there are currently pending proposals
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -521,6 +520,7 @@ class XGovRegistry(
             voting_address=voting_address,
             voted_proposals=arc4.UInt64(0),
             last_vote_timestamp=arc4.UInt64(0),
+            subscription_round=arc4.UInt64(Global.round),
         )
         self.xgovs.value += 1
 
@@ -613,6 +613,7 @@ class XGovRegistry(
             voting_address=request.owner_addr,
             voted_proposals=arc4.UInt64(0),
             last_vote_timestamp=arc4.UInt64(0),
+            subscription_round=arc4.UInt64(Global.round),
         )
         self.xgovs.value += 1
         # delete the request
@@ -963,7 +964,11 @@ class XGovRegistry(
             err.VOTERS_ASSIGNED: If there are still assigned voters
         """
 
-        assert arc4.Address(Txn.sender) == self.xgov_daemon.value, err.UNAUTHORIZED
+        proposal_status = self.get_proposal_status(proposal_id.native)
+        if proposal_status == UInt64(penm.STATUS_EMPTY) or proposal_status == UInt64(
+            penm.STATUS_DRAFT
+        ):
+            assert arc4.Address(Txn.sender) == self.xgov_daemon.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL

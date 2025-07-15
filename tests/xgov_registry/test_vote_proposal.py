@@ -58,8 +58,8 @@ def test_vote_proposal_success(
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    _, voted_proposals, last_vote_timestamp = box_abi.decode(box_value)  # type: ignore
+    box_abi = abi.ABIType.from_string("(address,uint64,uint64,uint64)")
+    _, voted_proposals, last_vote_timestamp, _ = box_abi.decode(box_value)  # type: ignore
 
     assert voted_proposals == 1  # type: ignore
     assert last_vote_timestamp > 0  # type: ignore
