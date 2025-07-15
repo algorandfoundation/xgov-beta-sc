@@ -47,7 +47,7 @@ Empty = arc4.StaticArray[arc4.Byte, typing.Literal[0]]
 
 class CouncilVote(arc4.Struct):
     address: arc4.Address
-    approve: arc4.Bool
+    block: arc4.Bool
 
 
 CouncilVotingBox = arc4.DynamicArray[CouncilVote]

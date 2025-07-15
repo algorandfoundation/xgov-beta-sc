@@ -34,7 +34,7 @@ def test_vote_approve_success(
 
         composer.vote(
             proposal_id=proposal_id,
-            approve=True,
+            block=False,
             transaction_parameters=TransactionParameters(
                 sender=member.address,
                 signer=member.signer,
@@ -84,7 +84,7 @@ def test_vote_reject_success(
 
         composer.vote(
             proposal_id=proposal_id,
-            approve=False,
+            block=True,
             transaction_parameters=TransactionParameters(
                 sender=member.address,
                 signer=member.signer,
@@ -111,6 +111,67 @@ def test_vote_reject_success(
     assert global_state.status == STATUS_BLOCKED
 
 
+def test_vote_mix_success(
+    approved_proposal_client: ProposalClient,
+    council_client: CouncilClient,
+    council_members: list[AddressAndSigner],
+    algorand_client: AlgorandClient,
+) -> None:
+
+    sp = algorand_client.get_suggested_params()
+    sp.min_fee *= 2  # type: ignore
+
+    proposal_id = approved_proposal_client.app_id
+    half_plus_one = (len(council_members) // 2) + 1
+
+    refs = [(0, votes_box_name(proposal_id))]
+    for member in council_members:
+        refs.append((0, members_box_name(member.address)))
+
+    approvals = 0
+    for i in range(len(council_members)):
+        member = council_members[i]
+
+        if approvals >= half_plus_one:
+            break
+
+        if (i % 3) == 0:
+            block = True
+        else:
+            block = False
+            approvals += 1
+
+        composer = council_client.compose()
+
+        composer.vote(
+            proposal_id=proposal_id,
+            block=block,
+            transaction_parameters=TransactionParameters(
+                sender=member.address,
+                signer=member.signer,
+                boxes=refs[:5],
+                foreign_apps=[
+                    council_client.get_global_state().registry_app_id,
+                    proposal_id,
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+        for i in range(5, len(refs), 8):
+            composer.op_up(
+                transaction_parameters=TransactionParameters(
+                    boxes=refs[i : i + 8],
+                )
+            )
+
+        composer.execute()
+
+    global_state = approved_proposal_client.get_global_state()
+
+    assert global_state.status == STATUS_REVIEWED
+
+
 def test_vote_proposal_invalid_state(
     voting_proposal_client: ProposalClient,
     council_client: CouncilClient,
@@ -127,7 +188,7 @@ def test_vote_proposal_invalid_state(
 
     composer.vote(
         proposal_id=proposal_id,
-        approve=True,
+        block=False,
         transaction_parameters=TransactionParameters(
             sender=member.address,
             signer=member.signer,
@@ -165,7 +226,7 @@ def test_vote_not_member(
 
     composer.vote(
         proposal_id=proposal_id,
-        approve=True,
+        block=False,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,
@@ -201,7 +262,7 @@ def test_vote_not_a_proposal(
 
     composer.vote(
         proposal_id=registry_app_id,
-        approve=True,
+        block=False,
         transaction_parameters=TransactionParameters(
             sender=random_account.address,
             signer=random_account.signer,

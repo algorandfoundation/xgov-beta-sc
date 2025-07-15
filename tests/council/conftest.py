@@ -19,6 +19,14 @@ from tests.council.common import members_box_name
 from tests.proposal.common import (
     INITIAL_FUNDS,
 )
+from tests.xgov_registry.conftest import (
+    approved_proposal_client,
+    proposer,
+    random_account,
+    voting_proposal_client,
+    xgov_registry_client,
+    xgov_registry_config,
+)
 
 
 @pytest.fixture(scope="function")

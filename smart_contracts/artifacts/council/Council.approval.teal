@@ -327,11 +327,11 @@ remove_member:
     retsub
 
 
-// smart_contracts.council.contract.Council.vote(proposal_id: uint64, approve: uint64) -> void:
+// smart_contracts.council.contract.Council.vote(proposal_id: uint64, block: uint64) -> void:
 vote:
     // smart_contracts/council/contract.py:128-129
     // @arc4.abimethod()
-    // def vote(self, proposal_id: UInt64, approve: bool) -> None:  # noqa: FBT001
+    // def vote(self, proposal_id: UInt64, block: bool) -> None:  # noqa: FBT001
     proto 2 0
     pushbytes ""
     dupn 4
@@ -413,7 +413,7 @@ vote:
     // address=arc4.Address(Txn.sender),
     txn Sender
     // smart_contracts/council/contract.py:165
-    // approve=arc4.Bool(approve),
+    // block=arc4.Bool(block),
     bytec_1 // 0x00
     intc_0 // 0
     frame_dig -1
@@ -421,14 +421,14 @@ vote:
     // smart_contracts/council/contract.py:163-166
     // typ.CouncilVote(
     //     address=arc4.Address(Txn.sender),
-    //     approve=arc4.Bool(approve),
+    //     block=arc4.Bool(block),
     // )
     concat
     // smart_contracts/council/contract.py:162-167
     // self.votes[proposal_id] = arc4.DynamicArray(
     //     typ.CouncilVote(
     //         address=arc4.Address(Txn.sender),
-    //         approve=arc4.Bool(approve),
+    //         block=arc4.Bool(block),
     //     )
     // )
     pushbytes 0x0001
@@ -456,9 +456,14 @@ vote_else_body@3:
     intc_1 // 1
     +
     frame_bury 1
-    // smart_contracts/council/contract.py:172
-    // rejections = UInt64(1) if not approve else UInt64(0)
+    // smart_contracts/council/contract.py:171
+    // approvals = UInt64(0) if block else UInt64(1)
     frame_dig -1
+    !
+    dup
+    frame_bury 0
+    // smart_contracts/council/contract.py:172
+    // rejections = UInt64(0) if not block else UInt64(1)
     !
     frame_bury 3
     // smart_contracts/council/contract.py:174
@@ -471,8 +476,6 @@ vote_else_body@3:
     frame_bury 4
     intc_0 // 0
     frame_bury 2
-    frame_dig -1
-    frame_bury 0
 
 vote_for_header@4:
     // smart_contracts/council/contract.py:174
@@ -504,7 +507,7 @@ vote_for_header@4:
     // ), err.ALREADY_VOTED
     assert // Already voted
     // smart_contracts/council/contract.py:179
-    // if self.votes[proposal_id][i].approve:
+    // if self.votes[proposal_id][i].block:
     swap
     box_get
     assert // check self.votes entry exists
@@ -522,11 +525,11 @@ vote_for_header@4:
     !=
     bz vote_else_body@7
     // smart_contracts/council/contract.py:180
-    // approvals += 1
-    frame_dig 0
+    // rejections += 1
+    frame_dig 3
     intc_1 // 1
     +
-    frame_bury 0
+    frame_bury 3
 
 vote_after_if_else@8:
     // smart_contracts/council/contract.py:174
@@ -539,11 +542,11 @@ vote_after_if_else@8:
 
 vote_else_body@7:
     // smart_contracts/council/contract.py:182
-    // rejections += 1
-    frame_dig 3
+    // approvals += 1
+    frame_dig 0
     intc_1 // 1
     +
-    frame_bury 3
+    frame_bury 0
     b vote_after_if_else@8
 
 vote_after_for@10:
@@ -557,7 +560,7 @@ vote_after_for@10:
     // self.votes[proposal_id].append(
     //     typ.CouncilVote(
     //         address=arc4.Address(Txn.sender),
-    //         approve=arc4.Bool(approve),
+    //         block=arc4.Bool(block),
     //     )
     // )
     extract 2 0
@@ -565,7 +568,7 @@ vote_after_for@10:
     // address=arc4.Address(Txn.sender),
     txn Sender
     // smart_contracts/council/contract.py:187
-    // approve=arc4.Bool(approve),
+    // block=arc4.Bool(block),
     bytec_1 // 0x00
     intc_0 // 0
     frame_dig -1
@@ -573,14 +576,14 @@ vote_after_for@10:
     // smart_contracts/council/contract.py:185-188
     // typ.CouncilVote(
     //     address=arc4.Address(Txn.sender),
-    //     approve=arc4.Bool(approve),
+    //     block=arc4.Bool(block),
     // )
     concat
     // smart_contracts/council/contract.py:184-189
     // self.votes[proposal_id].append(
     //     typ.CouncilVote(
     //         address=arc4.Address(Txn.sender),
-    //         approve=arc4.Bool(approve),
+    //         block=arc4.Bool(block),
     //     )
     // )
     concat
@@ -614,6 +617,7 @@ vote_if_body@12:
     frame_dig 3
     frame_dig 1
     >=
+    frame_bury -1
     // smart_contracts/council/contract.py:195-197
     // arc4.abi_call(
     //     proposal_contract.Proposal.review, block, app_id=proposal_id
@@ -623,7 +627,7 @@ vote_if_body@12:
     // proposal_contract.Proposal.review, block, app_id=proposal_id
     bytec_1 // 0x00
     intc_0 // 0
-    uncover 2
+    frame_dig -1
     setbit
     frame_dig -2
     itxn_field ApplicationID

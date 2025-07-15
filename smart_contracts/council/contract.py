@@ -126,7 +126,7 @@ class Council(
         self.member_count.value -= 1
 
     @arc4.abimethod()
-    def vote(self, proposal_id: UInt64, approve: bool) -> None:  # noqa: FBT001
+    def vote(self, proposal_id: UInt64, block: bool) -> None:  # noqa: FBT001
         """
         Cast a vote on a proposal.
 
@@ -162,29 +162,29 @@ class Council(
             self.votes[proposal_id] = arc4.DynamicArray(
                 typ.CouncilVote(
                     address=arc4.Address(Txn.sender),
-                    approve=arc4.Bool(approve),
+                    block=arc4.Bool(block),
                 )
             )
 
         else:
             half_plus_one = (self.member_count.value // 2) + 1
-            approvals = UInt64(1) if approve else UInt64(0)
-            rejections = UInt64(1) if not approve else UInt64(0)
+            approvals = UInt64(0) if block else UInt64(1)
+            rejections = UInt64(0) if not block else UInt64(1)
 
             for i in urange(self.votes[proposal_id].length):
                 assert (
                     Txn.sender != self.votes[proposal_id][i].address
                 ), err.ALREADY_VOTED
 
-                if self.votes[proposal_id][i].approve:
-                    approvals += 1
-                else:
+                if self.votes[proposal_id][i].block:
                     rejections += 1
+                else:
+                    approvals += 1
 
             self.votes[proposal_id].append(
                 typ.CouncilVote(
                     address=arc4.Address(Txn.sender),
-                    approve=arc4.Bool(approve),
+                    block=arc4.Bool(block),
                 )
             )
 
