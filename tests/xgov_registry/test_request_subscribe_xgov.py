@@ -1,9 +1,11 @@
 import pytest
 from algokit_utils import TransactionParameters
+from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -50,13 +52,13 @@ def test_request_subscribe_xgov_success(
 
 
 def test_request_subscribe_xgov_already_xgov(
-    deployer: Account,
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
+    xgov_subscriber: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
+    sp: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
 
     before_global_state = xgov_registry_client.get_global_state()
 
@@ -65,8 +67,8 @@ def test_request_subscribe_xgov_already_xgov(
     xgov_registry_client.approve_subscribe_xgov(
         request_id=request_id,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=xgov_subscriber.address,
+            signer=xgov_subscriber.signer,
             suggested_params=sp,
             boxes=[
                 (0, request_box_name(request_id)),
@@ -79,21 +81,21 @@ def test_request_subscribe_xgov_already_xgov(
     with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
         xgov_registry_client.request_subscribe_xgov(
             xgov_address=app_xgov_subscribe_requested.app_address,
-            owner_address=deployer.address,
+            owner_address=xgov_subscriber.address,
             relation_type=0,
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=deployer.address,
+                        sender=xgov_subscriber.address,
                         receiver=xgov_registry_client.app_address,
                         amount=global_state.xgov_fee,
                     ),
                 ),
-                signer=deployer.signer,
+                signer=xgov_subscriber.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_subscriber.address,
+                signer=xgov_subscriber.signer,
                 suggested_params=sp,
                 boxes=[
                     (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),

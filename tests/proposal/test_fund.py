@@ -2,22 +2,20 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.config import METADATA_BOX_KEY
+
 from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_account_balance,
     assert_funded_proposal_global_state,
-    assign_voters,
-    get_voter_box_key,
-    submit_proposal,
 )
-from tests.utils import ERROR_TO_REGEX, time_warp
+from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for fund on other statuses
 
@@ -27,9 +25,9 @@ def test_fund_empty_proposal(
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -46,484 +44,169 @@ def test_fund_empty_proposal(
 
 
 def test_fund_draft_proposal(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=submitted_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[submitted_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_final_proposal(
-    proposal_client: ProposalClient,
+    finalized_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            suggested_params=sp,
-            accounts=[xgov_daemon.address],
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=finalized_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[finalized_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_voting_proposal(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[voting_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_approved_proposal(
-    proposal_client: ProposalClient,
+    approved_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=approved_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[approved_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_rejected_proposal(
-    proposal_client: ProposalClient,
+    rejected_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            suggested_params=sp,
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=rejected_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[rejected_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_blocked_proposal(
-    proposal_client: ProposalClient,
+    blocked_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
-    xgov_council: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    proposal_client.review(
-        block=True,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_council.address,
-            signer=xgov_council.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            suggested_params=sp,
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=blocked_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[blocked_proposal_client.app_id],
             ),
         )
 
 
 def test_fund_success(
-    proposal_client: ProposalClient,
+    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_council: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_council.address,
-            signer=xgov_council.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     proposer_balance_before = algorand_client.account.get_information(proposer.address)[  # type: ignore
         "amount"
     ]
-    locked_amount = proposal_client.get_global_state().locked_amount
+    locked_amount = reviewed_proposal_client.get_global_state().locked_amount
 
     xgov_registry_mock_client.fund(
-        proposal_app=proposal_client.app_id,
+        proposal_app=reviewed_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            foreign_apps=[proposal_client.app_id],
+            foreign_apps=[reviewed_proposal_client.app_id],
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = reviewed_proposal_client.get_global_state()
 
     assert_funded_proposal_global_state(
         global_state,
@@ -541,104 +224,31 @@ def test_fund_success(
 
 
 def test_fund_twice(
-    proposal_client: ProposalClient,
+    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
-    xgov_council: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_council.address,
-            signer=xgov_council.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     proposer_balance_before = algorand_client.account.get_information(proposer.address)[  # type: ignore
         "amount"
     ]
-    locked_amount = proposal_client.get_global_state().locked_amount
+    locked_amount = reviewed_proposal_client.get_global_state().locked_amount
 
     xgov_registry_mock_client.fund(
-        proposal_app=proposal_client.app_id,
+        proposal_app=reviewed_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            foreign_apps=[proposal_client.app_id],
+            foreign_apps=[reviewed_proposal_client.app_id],
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = reviewed_proposal_client.get_global_state()
 
     assert_funded_proposal_global_state(
         global_state,
@@ -658,106 +268,31 @@ def test_fund_twice(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.fund(
-            proposal_app=proposal_client.app_id,
+            proposal_app=reviewed_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[reviewed_proposal_client.app_id],
                 note="Second funding",
             ),
         )
 
 
 def test_fund_not_registry(
-    proposal_client: ProposalClient,
+    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
-    xgov_council: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_council.address,
-            signer=xgov_council.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
+    sp = sp_min_fee_times_3
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        proposal_client.fund(
+        reviewed_proposal_client.fund(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                foreign_apps=[proposal_client.app_id],
+                foreign_apps=[reviewed_proposal_client.app_id],
             )
         )

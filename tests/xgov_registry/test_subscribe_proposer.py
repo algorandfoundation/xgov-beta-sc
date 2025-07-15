@@ -8,6 +8,7 @@ from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
 from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -17,12 +18,12 @@ from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
 def test_subscribe_proposer_success(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    sp: SuggestedParams,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
 
     before_info = xgov_registry_client.algod_client.account_info(
         xgov_registry_client.app_address,
@@ -32,18 +33,18 @@ def test_subscribe_proposer_success(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=global_state.proposer_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(random_account.address))],
+            boxes=[(0, proposer_box_name(no_role_account.address))],
         ),
     )
 
@@ -55,7 +56,7 @@ def test_subscribe_proposer_success(
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,
-        box_name=proposer_box_name(random_account.address),
+        box_name=proposer_box_name(no_role_account.address),
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore
@@ -68,10 +69,10 @@ def test_subscribe_proposer_success(
 
 
 def test_subscribe_proposer_already_proposer(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -80,18 +81,18 @@ def test_subscribe_proposer_already_proposer(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=global_state.proposer_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(random_account.address))],
+            boxes=[(0, proposer_box_name(no_role_account.address))],
         ),
     )
 
@@ -100,27 +101,27 @@ def test_subscribe_proposer_already_proposer(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=global_state.proposer_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_subscribe_proposer_wrong_recipient(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -130,27 +131,27 @@ def test_subscribe_proposer_wrong_recipient(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
-                        receiver=random_account.address,
+                        sender=no_role_account.address,
+                        receiver=no_role_account.address,
                         amount=global_state.proposer_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_subscribe_proposer_wrong_amount(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
@@ -159,26 +160,26 @@ def test_subscribe_proposer_wrong_amount(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=100,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_subscribe_proposer_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     global_state = xgov_registry_client.get_global_state()
     sp = algorand_client.get_suggested_params()
@@ -194,18 +195,18 @@ def test_subscribe_proposer_paused_registry_error(
             payment=TransactionWithSigner(
                 txn=algorand_client.transactions.payment(
                     PayParams(
-                        sender=random_account.address,
+                        sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=global_state.proposer_fee,
                     ),
                 ),
-                signer=random_account.signer,
+                signer=no_role_account.signer,
             ),
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
-                boxes=[(0, proposer_box_name(random_account.address))],
+                boxes=[(0, proposer_box_name(no_role_account.address))],
             ),
         )
 
@@ -215,18 +216,18 @@ def test_subscribe_proposer_paused_registry_error(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
-                    sender=random_account.address,
+                    sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
                     amount=global_state.proposer_fee,
                 ),
             ),
-            signer=random_account.signer,
+            signer=no_role_account.signer,
         ),
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             suggested_params=sp,
-            boxes=[(0, proposer_box_name(random_account.address))],
+            boxes=[(0, proposer_box_name(no_role_account.address))],
         ),
     )
 
@@ -238,7 +239,7 @@ def test_subscribe_proposer_paused_registry_error(
 
     box_info = xgov_registry_client.algod_client.application_box_by_name(
         application_id=xgov_registry_client.app_id,
-        box_name=proposer_box_name(random_account.address),
+        box_name=proposer_box_name(no_role_account.address),
     )
 
     box_value = base64.b64decode(box_info["value"])  # type: ignore

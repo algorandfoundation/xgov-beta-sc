@@ -4,119 +4,22 @@ from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.encoding import encode_address
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
-from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    XgovRegistryMockClient,
-)
-from smart_contracts.proposal.config import METADATA_BOX_KEY
-from tests.proposal.common import (
-    assign_voters,
-    get_voter_box_key,
-    submit_proposal,
-)
-from tests.utils import time_warp
 
 
 def test_funded_proposal(
-    proposal_client: ProposalClient,
+    funded_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
-    xgov_council: AddressAndSigner,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
-    for committee_member in committee_members[:4]:
-        xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
-            voter=committee_member.address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_member.address,
-                signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        get_voter_box_key(committee_member.address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    proposal_client.scrutiny(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    proposal_client.review(
-        block=False,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_council.address,
-            signer=xgov_council.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-        ),
-    )
-
-    xgov_registry_mock_client.fund(
-        proposal_app=proposal_client.app_id,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            foreign_apps=[proposal_client.app_id],
-        ),
-    )
-
-    get_state_result = proposal_client.get_state(
+    get_state_result = funded_proposal_client.get_state(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
         )
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = funded_proposal_client.get_global_state()
 
     assert global_state.approvals == get_state_result.return_value.approvals
     assert (

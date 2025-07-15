@@ -3,9 +3,9 @@ import base64
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.models import Account
 from algosdk import abi
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -15,17 +15,16 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_set_voting_account_success(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
@@ -43,48 +42,42 @@ def test_set_voting_account_success(
     box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
     voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
 
-    assert random_account.address == voting_address  # type: ignore
+    assert no_role_account.address == voting_address  # type: ignore
 
 
 def test_set_voting_account_not_an_xgov(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
-            xgov_address=random_account.address,
+            xgov_address=no_role_account.address,
             voting_address=xgov.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
+                suggested_params=sp_min_fee_times_2,
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_set_voting_account_not_voting_account_or_xgov(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     deployer: Account,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
         voting_address=deployer.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_2,
             boxes=[(0, xgov_box_name(xgov.address))],
         ),
     )
@@ -92,35 +85,31 @@ def test_set_voting_account_not_voting_account_or_xgov(
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.set_voting_account(
             xgov_address=xgov.address,
-            voting_address=random_account.address,
+            voting_address=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
+                suggested_params=sp_min_fee_times_2,
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_set_voting_account_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
     xgov_registry_client.pause_registry()
-
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         xgov_registry_client.set_voting_account(
             xgov_address=xgov.address,
-            voting_address=random_account.address,
+            voting_address=no_role_account.address,
             transaction_parameters=TransactionParameters(
                 sender=xgov.address,
                 signer=xgov.signer,
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_2,
                 boxes=[(0, xgov_box_name(xgov.address))],
             ),
         )
@@ -129,11 +118,11 @@ def test_set_voting_account_paused_registry_error(
 
     xgov_registry_client.set_voting_account(
         xgov_address=xgov.address,
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=xgov.address,
             signer=xgov.signer,
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_2,
             boxes=[(0, xgov_box_name(xgov.address))],
         ),
     )
@@ -147,4 +136,4 @@ def test_set_voting_account_paused_registry_error(
     box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
     voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
 
-    assert random_account.address == voting_address  # type: ignore
+    assert no_role_account.address == voting_address  # type: ignore

@@ -8,6 +8,11 @@ on:
         required: false
         default: "false"
         type: boolean
+      xgov-reg-configure:
+        description: "Configure xgov-reg contract"
+        required: false
+        default: "false"
+        type: boolean
   workflow_call:
   push:
     branches:
@@ -58,6 +63,8 @@ jobs:
           ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
           # Should the contract be deployed fresh?
           XGOV_REG_FRESH_DEPLOY: ${{ github.event.inputs.fresh-deploy || 'false' }}
+          # Should the contract be configured?
+          XGOV_REG_CONFIGURE: ${{ github.event.inputs.xgov-reg-configure || 'false' }}
           # Registry configuration
           XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || '100_000_000'  }} # defaults: 100 Algos
           XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || '100_000_000'  }} # defaults: 100 Algos

@@ -1,6 +1,6 @@
 import uuid
 
-from algokit_utils import TransactionParameters
+from algokit_utils import LogicError, TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
@@ -12,6 +12,9 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     Composer,
     GlobalState,
     ProposalClient,
+)
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
@@ -32,25 +35,41 @@ from smart_contracts.proposal.enums import (
     STATUS_REVIEWED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry_mock.config import OPEN_PROPOSAL_FEE
+from smart_contracts.xgov_registry.config import (
+    MIN_REQUESTED_AMOUNT,
+    OPEN_PROPOSAL_FEE,
+    PROPOSAL_COMMITMENT_BPS,
+)
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
-    DEFAULT_FOCUS,
-    LOCKED_AMOUNT,
-    PROPOSAL_TITLE,
-    REQUESTED_AMOUNT,
+    relative_to_absolute_amount,
+)
+from tests.utils import time_warp
+from tests.xgov_registry.common import (
     get_voter_box_key,
 )
 
-MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
+logic_error_type: type[LogicError] = LogicError
 
+MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
 PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 INITIAL_FUNDS = 10_000_000_000
+PROPOSAL_TITLE = "Test Proposal"
+METADATA_B64 = "TUVUQURBVEE="
+DEFAULT_FOCUS = 42
+
+
+def get_locked_amount(requested_amount: int) -> int:
+    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
+
+
+REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
+LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
 def assert_proposal_global_state(
@@ -534,5 +553,39 @@ def decommission_proposal(
             ],
             suggested_params=sp,
             note=note,
+        ),
+    )
+
+
+def finalize_proposal(
+    proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient | XGovRegistryClient,
+    proposer: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
+    should_time_warp: bool = True,  # noqa: FBT001, FBT002
+) -> None:
+
+    sp = sp_min_fee_times_2
+
+    if should_time_warp:
+        reg_gs = xgov_registry_mock_client.get_global_state()
+        discussion_duration = reg_gs.discussion_duration_large
+
+        submission_ts = proposal_client.get_global_state().submission_ts
+        if submission_ts > 0:  # not empty proposal
+            time_warp(
+                submission_ts + discussion_duration
+            )  # so we could actually finalize
+
+    proposal_client.finalize(
+        transaction_parameters=TransactionParameters(
+            sender=proposer.address,
+            signer=proposer.signer,
+            foreign_apps=[xgov_registry_mock_client.app_id],
+            accounts=[xgov_daemon.address],
+            suggested_params=sp,
+            boxes=[(0, METADATA_BOX_KEY)],
+            note=uuid.uuid4().bytes,
         ),
     )

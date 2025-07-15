@@ -1,8 +1,8 @@
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk import error
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -15,8 +15,8 @@ from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_unsubscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
 
@@ -41,21 +41,18 @@ def test_unsubscribe_xgov_success(
 
 
 def test_app_unsubscribe_xgov_success(
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
-    algorand_client: AlgorandClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
-    random_account: AddressAndSigner,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
     xgov_subscriber_app.subscribe_xgov(
         app_id=xgov_registry_client.app_id,
-        voting_address=random_account.address,
+        voting_address=no_role_account.address,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
-            suggested_params=sp,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
+            suggested_params=sp_min_fee_times_3,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
                 (
@@ -69,8 +66,8 @@ def test_app_unsubscribe_xgov_success(
     xgov_subscriber_app.unsubscribe_xgov(
         app_id=xgov_registry_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             foreign_apps=[xgov_registry_client.app_id],
             boxes=[
                 (
@@ -83,23 +80,23 @@ def test_app_unsubscribe_xgov_success(
 
 
 def test_unsubscribe_xgov_not_an_xgov(
+    no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
-    random_account: AddressAndSigner,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.unsubscribe_xgov(
-            xgov_address=random_account.address,
+            xgov_address=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
-                boxes=[(0, xgov_box_name(random_account.address))],
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
+                boxes=[(0, xgov_box_name(no_role_account.address))],
             ),
         )
 
 
 def test_unsubscribe_xgov_paused_registry_error(
-    xgov_registry_client: XGovRegistryClient,
     xgov: AddressAndSigner,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     before_global_state = xgov_registry_client.get_global_state()
 

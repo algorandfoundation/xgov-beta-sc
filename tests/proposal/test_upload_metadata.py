@@ -26,7 +26,6 @@ def test_empty_proposal(
     proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
 ) -> None:
 
     with pytest.raises(
@@ -43,19 +42,15 @@ def test_empty_proposal(
 
 
 def test_upload_success_1(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
 ) -> None:
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
     payload = json.dumps({"o": "a" * 500}).encode()  # type: ignore
 
-    composer = proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     upload_metadata(
         composer,
         proposer,
@@ -66,7 +61,7 @@ def test_upload_success_1(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[
             (METADATA_BOX_KEY.encode(), base64.b64encode(payload).decode())
         ],
@@ -74,18 +69,15 @@ def test_upload_success_1(
 
 
 def test_upload_success_2(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
     payload = json.dumps({"o": "a" * 1500}).encode()  # type: ignore
 
-    composer = proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     upload_metadata(
         composer,
         proposer,
@@ -96,7 +88,7 @@ def test_upload_success_2(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[
             (METADATA_BOX_KEY.encode(), base64.b64encode(payload).decode())
         ],
@@ -104,18 +96,15 @@ def test_upload_success_2(
 
 
 def test_upload_success_3(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
     payload = json.dumps({"o": "a" * 2500}).encode()  # type: ignore
 
-    composer = proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     upload_metadata(
         composer,
         proposer,
@@ -126,7 +115,7 @@ def test_upload_success_3(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[
             (METADATA_BOX_KEY.encode(), base64.b64encode(payload).decode())
         ],
@@ -134,22 +123,16 @@ def test_upload_success_3(
 
 
 def test_upload_not_proposer(
-    proposal_client: ProposalClient,
-    proposer: AddressAndSigner,
-    not_proposer: AddressAndSigner,
+    submitted_proposal_client: ProposalClient,
+    no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
 ) -> None:
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        composer = proposal_client.compose()
+        composer = submitted_proposal_client.compose()
         upload_metadata(
             composer,
-            not_proposer,
+            no_role_account,
             xgov_registry_mock_client.app_id,
             b"ANY PAYLOAD",
         )
@@ -157,18 +140,13 @@ def test_upload_not_proposer(
 
 
 def test_empty_payload(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
 ) -> None:
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.EMPTY_PAYLOAD]):
-        composer = proposal_client.compose()
+        composer = submitted_proposal_client.compose()
         upload_metadata(
             composer,
             proposer,
@@ -179,19 +157,15 @@ def test_empty_payload(
 
 
 def test_paused_registry_error(
-    proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
+    submitted_proposal_client: ProposalClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
 
     xgov_registry_mock_client.pause_registry()
 
     with pytest.raises(logic_error_type, match=err.PAUSED_REGISTRY):
-        composer = proposal_client.compose()
+        composer = submitted_proposal_client.compose()
         upload_metadata(
             composer,
             proposer,
@@ -203,7 +177,7 @@ def test_paused_registry_error(
     # We unpause the xGov Registry due to `xgov_registry_mock_client` fixture "session" scope, to avoid flaky tests.
     xgov_registry_mock_client.resume_registry()
 
-    composer = proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     upload_metadata(
         composer,
         proposer,

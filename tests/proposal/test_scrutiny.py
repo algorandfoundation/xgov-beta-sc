@@ -2,31 +2,27 @@ import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.config import METADATA_BOX_KEY
+
 from tests.common import get_voter_box_key, logic_error_type
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
     assert_rejected_proposal_global_state,
-    assign_voters,
-    submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
-from tests.xgov_registry.common import LogicErrorType
+from tests.xgov_registry.common import LogicErrorType, get_voter_box_key
 
 
 def test_scrutiny_empty_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
 ) -> None:
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
@@ -41,24 +37,15 @@ def test_scrutiny_empty_proposal(
 
 
 def test_scrutiny_draft_proposal(
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
 ) -> None:
-    submit_proposal(
-        proposal_client=proposal_client,
-        algorand_client=algorand_client,
-        proposer=proposer,
-        registry_app_id=xgov_registry_mock_client.app_id,
-    )
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.scrutiny(
+        submitted_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -68,40 +55,16 @@ def test_scrutiny_draft_proposal(
 
 
 def test_scrutiny_final_proposal(
-    proposal_client: ProposalClient,
+    finalized_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
 ) -> None:
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
 
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.scrutiny(
+        finalized_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -111,52 +74,17 @@ def test_scrutiny_final_proposal(
 
 
 def test_scrutiny_voting_ongoing_1(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
 ) -> None:
     """
     Proposal is in voting status, and no votes have been cast yet.
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
-
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
-        proposal_client.scrutiny(
+        voting_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -166,62 +94,34 @@ def test_scrutiny_voting_ongoing_1(
 
 
 def test_scrutiny_voting_ongoing_2(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Proposal is in voting status, and not all committee members have voted yet.
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=10,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -230,7 +130,7 @@ def test_scrutiny_voting_ongoing_2(
     )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
-        proposal_client.scrutiny(
+        voting_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -240,63 +140,35 @@ def test_scrutiny_voting_ongoing_2(
 
 
 def test_scrutiny_voting_ongoing_3(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Proposal is in voting status, and there is 1 vote missing.
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:-1]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -305,7 +177,7 @@ def test_scrutiny_voting_ongoing_3(
         )
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
-        proposal_client.scrutiny(
+        voting_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -315,60 +187,32 @@ def test_scrutiny_voting_ongoing_3(
 
 
 def test_scrutiny_twice(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -376,7 +220,7 @@ def test_scrutiny_twice(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -387,7 +231,7 @@ def test_scrutiny_twice(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        proposal_client.scrutiny(
+        voting_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -395,7 +239,7 @@ def test_scrutiny_twice(
             ),
         )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -407,67 +251,39 @@ def test_scrutiny_twice(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_1(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 1 committee member approves, the rest abstain
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 0
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -479,17 +295,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -499,17 +318,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -517,7 +339,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -525,7 +347,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -539,66 +361,38 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_2(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 2 committee members approve, 1 committee member rejects, the rest abstain
     """
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 2
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -610,17 +404,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -630,17 +427,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -648,7 +448,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -656,7 +456,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -670,66 +470,38 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_3(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
     All committee members vote, 11 committee members approve, 9 committee members reject
     """
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 11
     num_of_rejections = 9
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -741,17 +513,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -761,17 +536,20 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -779,7 +557,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -787,7 +565,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -801,67 +579,39 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_1(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, all of them abstain
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 0
     num_of_rejections = 0
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -873,17 +623,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -893,17 +646,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -911,7 +667,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -920,7 +676,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -934,67 +690,39 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_2(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 of them rejects, the rest abstain
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 0
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1006,17 +734,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1026,17 +757,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1044,7 +778,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1053,7 +787,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -1067,67 +801,39 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_3(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 approves, 1 rejects, the rest abstain
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1139,17 +845,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1159,17 +868,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1177,7 +889,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1186,7 +898,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -1200,67 +912,39 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_4(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 1 approves, 2 rejects, the rest abstain
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 1
     num_of_rejections = 2
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1272,17 +956,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1292,17 +979,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1310,7 +1000,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1319,7 +1009,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -1333,67 +1023,39 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_5(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
     All committee members vote, 10 approve, 10 reject
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     num_of_approvals = 10
     num_of_rejections = 10
 
     for committee_member in committee_members[:num_of_approvals]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1405,17 +1067,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1425,17 +1090,20 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1443,7 +1111,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
             ),
         )
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1452,7 +1120,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -1466,64 +1134,36 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
 
 
 def test_scrutiny_after_time_approve_small_1(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
     4 committee members vote and approve, reaching the regular and weighted quorums and relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1531,11 +1171,13 @@ def test_scrutiny_after_time_approve_small_1(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1543,7 +1185,7 @@ def test_scrutiny_after_time_approve_small_1(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -1555,12 +1197,12 @@ def test_scrutiny_after_time_approve_small_1(
 
 
 def test_scrutiny_after_time_approve_small_2(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1568,52 +1210,24 @@ def test_scrutiny_after_time_approve_small_2(
     3 approve and 1 rejects, reaching the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1622,17 +1236,20 @@ def test_scrutiny_after_time_approve_small_2(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[4].address,
         approvals=0,
         rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[4].address,
             signer=committee_members[4].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[4].address),
                 )
             ],
@@ -1640,11 +1257,13 @@ def test_scrutiny_after_time_approve_small_2(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1652,7 +1271,7 @@ def test_scrutiny_after_time_approve_small_2(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -1665,12 +1284,12 @@ def test_scrutiny_after_time_approve_small_2(
 
 
 def test_scrutiny_after_time_approve_small_3(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1678,52 +1297,24 @@ def test_scrutiny_after_time_approve_small_3(
     2 approve, 1 rejects and 1 abstains, reaching the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1732,17 +1323,20 @@ def test_scrutiny_after_time_approve_small_3(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[4].address,
         approvals=0,
         rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[4].address,
             signer=committee_members[4].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[4].address),
                 )
             ],
@@ -1751,17 +1345,20 @@ def test_scrutiny_after_time_approve_small_3(
     )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[5].address,
         approvals=0,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[5].address,
             signer=committee_members[5].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[5].address),
                 )
             ],
@@ -1769,11 +1366,13 @@ def test_scrutiny_after_time_approve_small_3(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1781,7 +1380,7 @@ def test_scrutiny_after_time_approve_small_3(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -1795,12 +1394,12 @@ def test_scrutiny_after_time_approve_small_3(
 
 
 def test_scrutiny_after_time_approve_small_4(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1808,52 +1407,24 @@ def test_scrutiny_after_time_approve_small_4(
     2 approve, 1 rejects and 16 abstain, reaching the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1862,17 +1433,20 @@ def test_scrutiny_after_time_approve_small_4(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[2].address,
         approvals=0,
         rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[2].address),
                 )
             ],
@@ -1882,17 +1456,20 @@ def test_scrutiny_after_time_approve_small_4(
 
     for committee_member in committee_members[3:-1]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1900,11 +1477,13 @@ def test_scrutiny_after_time_approve_small_4(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -1912,7 +1491,7 @@ def test_scrutiny_after_time_approve_small_4(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -1926,12 +1505,12 @@ def test_scrutiny_after_time_approve_small_4(
 
 
 def test_scrutiny_after_time_approve_small_5(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1939,52 +1518,24 @@ def test_scrutiny_after_time_approve_small_5(
     10 approve and 9 abstain, reaching the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -1994,17 +1545,20 @@ def test_scrutiny_after_time_approve_small_5(
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2012,11 +1566,13 @@ def test_scrutiny_after_time_approve_small_5(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2024,7 +1580,7 @@ def test_scrutiny_after_time_approve_small_5(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_approved_proposal_global_state(
         global_state,
@@ -2037,12 +1593,11 @@ def test_scrutiny_after_time_approve_small_5(
 
 
 def test_scrutiny_after_time_reject_small_1(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2050,44 +1605,15 @@ def test_scrutiny_after_time_reject_small_1(
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
+    sp = sp_min_fee_times_2
 
     reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2096,7 +1622,7 @@ def test_scrutiny_after_time_reject_small_1(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2106,12 +1632,12 @@ def test_scrutiny_after_time_reject_small_1(
 
 
 def test_scrutiny_after_time_reject_small_2(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2119,51 +1645,23 @@ def test_scrutiny_after_time_reject_small_2(
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=0,
         rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -2171,11 +1669,13 @@ def test_scrutiny_after_time_reject_small_2(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2184,7 +1684,7 @@ def test_scrutiny_after_time_reject_small_2(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2196,12 +1696,12 @@ def test_scrutiny_after_time_reject_small_2(
 
 
 def test_scrutiny_after_time_reject_small_3(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2209,52 +1709,24 @@ def test_scrutiny_after_time_reject_small_3(
     reached the regular quorum but did not reach the weighted quorum and the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2262,11 +1734,13 @@ def test_scrutiny_after_time_reject_small_3(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2275,7 +1749,7 @@ def test_scrutiny_after_time_reject_small_3(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2287,12 +1761,12 @@ def test_scrutiny_after_time_reject_small_3(
 
 
 def test_scrutiny_after_time_reject_small_4(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2301,52 +1775,24 @@ def test_scrutiny_after_time_reject_small_4(
     did not reach the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2355,17 +1801,20 @@ def test_scrutiny_after_time_reject_small_4(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[2].address,
         approvals=10,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[2].address),
                 )
             ],
@@ -2373,11 +1822,13 @@ def test_scrutiny_after_time_reject_small_4(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2386,7 +1837,7 @@ def test_scrutiny_after_time_reject_small_4(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2399,12 +1850,12 @@ def test_scrutiny_after_time_reject_small_4(
 
 
 def test_scrutiny_after_time_reject_small_5(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2413,52 +1864,24 @@ def test_scrutiny_after_time_reject_small_5(
     did not reach the relative majority of approvals
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[: len(committee_members) // 2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=0,
             rejections=10,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2468,17 +1891,20 @@ def test_scrutiny_after_time_reject_small_5(
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2486,11 +1912,13 @@ def test_scrutiny_after_time_reject_small_5(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2499,7 +1927,7 @@ def test_scrutiny_after_time_reject_small_5(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2512,12 +1940,12 @@ def test_scrutiny_after_time_reject_small_5(
 
 
 def test_scrutiny_after_time_reject_small_6(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2526,51 +1954,23 @@ def test_scrutiny_after_time_reject_small_6(
     relative majority of approvals is reached
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=10,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -2578,11 +1978,13 @@ def test_scrutiny_after_time_reject_small_6(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2591,7 +1993,7 @@ def test_scrutiny_after_time_reject_small_6(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2603,12 +2005,12 @@ def test_scrutiny_after_time_reject_small_6(
 
 
 def test_scrutiny_after_time_reject_small_7(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """ "
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2617,52 +2019,24 @@ def test_scrutiny_after_time_reject_small_7(
     relative majority of approvals is reached
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2670,11 +2044,13 @@ def test_scrutiny_after_time_reject_small_7(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2683,7 +2059,7 @@ def test_scrutiny_after_time_reject_small_7(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2695,12 +2071,12 @@ def test_scrutiny_after_time_reject_small_7(
 
 
 def test_scrutiny_after_time_reject_small_8(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2709,52 +2085,24 @@ def test_scrutiny_after_time_reject_small_8(
     relative majority of approvals is reached
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:3]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2762,11 +2110,13 @@ def test_scrutiny_after_time_reject_small_8(
             ),
         )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2775,7 +2125,7 @@ def test_scrutiny_after_time_reject_small_8(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2787,12 +2137,12 @@ def test_scrutiny_after_time_reject_small_8(
 
 
 def test_scrutiny_after_time_reject_small_9(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2802,52 +2152,24 @@ def test_scrutiny_after_time_reject_small_9(
     relative majority of approvals is reached
     """
 
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2856,17 +2178,20 @@ def test_scrutiny_after_time_reject_small_9(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[2].address,
         approvals=0,
         rejections=10,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[2].address),
                 )
             ],
@@ -2874,11 +2199,13 @@ def test_scrutiny_after_time_reject_small_9(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2887,7 +2214,7 @@ def test_scrutiny_after_time_reject_small_9(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -2900,12 +2227,12 @@ def test_scrutiny_after_time_reject_small_9(
 
 
 def test_scrutiny_after_time_reject_small_10(
-    proposal_client: ProposalClient,
+    voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -2914,52 +2241,24 @@ def test_scrutiny_after_time_reject_small_10(
     1 vote abstain
     relative majority of approvals is reached
     """
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    composer = proposal_client.compose()
-    assign_voters(
-        proposal_client_composer=composer,
-        xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
-        xgov_registry_app_id=xgov_registry_mock_client.app_id,
-        sp=sp,
-    )
-    composer.execute()
+    sp = sp_min_fee_times_2
 
     for committee_member in committee_members[:2]:
         xgov_registry_mock_client.vote(
-            proposal_app=proposal_client.app_id,
+            proposal_app=voting_proposal_client.app_id,
             voter=committee_member.address,
             approvals=10,
             rejections=0,
             transaction_parameters=TransactionParameters(
                 sender=committee_member.address,
                 signer=committee_member.signer,
-                foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    voting_proposal_client.app_id,
+                ],
                 boxes=[
                     (
-                        proposal_client.app_id,
+                        voting_proposal_client.app_id,
                         get_voter_box_key(committee_member.address),
                     )
                 ],
@@ -2968,17 +2267,20 @@ def test_scrutiny_after_time_reject_small_10(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=voting_proposal_client.app_id,
         voter=committee_members[2].address,
         approvals=0,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[2].address,
             signer=committee_members[2].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                voting_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    voting_proposal_client.app_id,
                     get_voter_box_key(committee_members[2].address),
                 )
             ],
@@ -2986,11 +2288,13 @@ def test_scrutiny_after_time_reject_small_10(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2999,7 +2303,7 @@ def test_scrutiny_after_time_reject_small_10(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = voting_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,
@@ -3012,12 +2316,13 @@ def test_scrutiny_after_time_reject_small_10(
 
 
 def test_scrutiny_after_time_reject_small_11(
-    proposal_client: ProposalClient,
+    finalized_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
     committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -3025,30 +2330,9 @@ def test_scrutiny_after_time_reject_small_11(
     1 vote approve with voting power 48, reaching the weighted quorum
     relative majority of approvals is reached
     """
-    submit_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
+    sp = sp_min_fee_times_2
 
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 2  # type: ignore
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
-    discussion_duration = reg_gs.discussion_duration_small
-
-    submission_ts = proposal_client.get_global_state().submission_ts
-    time_warp(submission_ts + discussion_duration)  # so we could actually finalize
-    proposal_client.finalize(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
-        ),
-    )
-
-    proposal_client.assign_voters(
+    finalized_proposal_client.assign_voters(
         voters=[(committee_members[0].address, 48)],
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -3064,7 +2348,7 @@ def test_scrutiny_after_time_reject_small_11(
     )
 
     for committee_member in committee_members[1:]:
-        proposal_client.assign_voters(
+        finalized_proposal_client.assign_voters(
             voters=[(committee_member.address, 8)],
             transaction_parameters=TransactionParameters(
                 sender=xgov_daemon.address,
@@ -3080,17 +2364,20 @@ def test_scrutiny_after_time_reject_small_11(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=proposal_client.app_id,
+        proposal_app=finalized_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=48,
         rejections=0,
         transaction_parameters=TransactionParameters(
             sender=committee_members[0].address,
             signer=committee_members[0].signer,
-            foreign_apps=[xgov_registry_mock_client.app_id, proposal_client.app_id],
+            foreign_apps=[
+                xgov_registry_mock_client.app_id,
+                finalized_proposal_client.app_id,
+            ],
             boxes=[
                 (
-                    proposal_client.app_id,
+                    finalized_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -3098,11 +2385,13 @@ def test_scrutiny_after_time_reject_small_11(
         ),
     )
 
+    reg_gs = xgov_registry_mock_client.get_global_state()
+
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = finalized_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    proposal_client.scrutiny(
+    finalized_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -3111,7 +2400,7 @@ def test_scrutiny_after_time_reject_small_11(
         ),
     )
 
-    global_state = proposal_client.get_global_state()
+    global_state = finalized_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,

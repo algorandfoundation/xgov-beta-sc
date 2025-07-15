@@ -3,8 +3,8 @@ from algokit_utils import (
     TransactionParameters,
 )
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
 from algosdk.encoding import encode_address
+from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -14,20 +14,16 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import DEFAULT_COMMITTEE_MEMBERS
-from tests.proposal.common import assert_funded_proposal_global_state
+from tests.proposal.common import REQUESTED_AMOUNT, assert_funded_proposal_global_state
 from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
 def test_decommission_funded_proposal_success(
+    xgov_daemon: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
-    deployer: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
     proposer_address: str = encode_address(  # type: ignore
         funded_unassigned_voters_proposal_client.get_global_state().proposer.as_bytes
     )
@@ -37,8 +33,8 @@ def test_decommission_funded_proposal_success(
     xgov_registry_client.decommission_proposal(
         proposal_id=funded_unassigned_voters_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=xgov_daemon.address,
+            signer=xgov_daemon.signer,
             foreign_apps=[funded_unassigned_voters_proposal_client.app_id],
             accounts=[proposer_address],
             boxes=[
@@ -51,7 +47,7 @@ def test_decommission_funded_proposal_success(
                     METADATA_BOX_KEY.encode(),
                 ),
             ],
-            suggested_params=sp,
+            suggested_params=sp_min_fee_times_3,
         ),
     )
 
@@ -63,7 +59,7 @@ def test_decommission_funded_proposal_success(
         xgov_registry_client.app_id,
         decommissioned=True,
         funding_type=enm.FUNDING_RETROACTIVE,
-        requested_amount=10_000_000,
+        requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
         approvals=10 * DEFAULT_COMMITTEE_MEMBERS,
     )
@@ -73,19 +69,14 @@ def test_decommission_funded_proposal_success(
 
 
 def test_decommission_proposal_not_xgov_daemon(
+    committee_manager: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
-    committee_manager: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
     proposer_address: str = encode_address(  # type: ignore
         funded_unassigned_voters_proposal_client.get_global_state().proposer.as_bytes
     )
-
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         xgov_registry_client.decommission_proposal(
             proposal_id=funded_unassigned_voters_proposal_client.app_id,
@@ -104,31 +95,26 @@ def test_decommission_proposal_not_xgov_daemon(
                         METADATA_BOX_KEY.encode(),
                     ),
                 ],
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_3,
             ),
         )
 
 
 def test_decommission_invalid_proposal(
+    xgov_daemon: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
-    deployer: AddressAndSigner,
-    algorand_client: AlgorandClient,
+    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
     proposer_address: str = encode_address(  # type: ignore
         funded_unassigned_voters_proposal_client.get_global_state().proposer.as_bytes
     )
-
     with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
         xgov_registry_client.decommission_proposal(
             proposal_id=xgov_registry_client.app_id,
             transaction_parameters=TransactionParameters(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
                 foreign_apps=[funded_unassigned_voters_proposal_client.app_id],
                 accounts=[proposer_address],
                 boxes=[
@@ -141,6 +127,6 @@ def test_decommission_invalid_proposal(
                         METADATA_BOX_KEY.encode(),
                     ),
                 ],
-                suggested_params=sp,
+                suggested_params=sp_min_fee_times_3,
             ),
         )
