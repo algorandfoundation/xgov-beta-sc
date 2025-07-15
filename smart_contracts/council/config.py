@@ -12,8 +12,8 @@ GS_KEY_REGISTRY_APP_ID: Final[bytes] = b"registry_app_id"
 GS_KEY_MEMBER_COUNT: Final[bytes] = b"member_count"
 
 # Boxes
-MEMBERS_KEY_PREFIX: Final[str] = "M"
-VOTES_KEY_PREFIX: Final[str] = "V"
+MEMBERS_KEY_PREFIX: Final[bytes] = b"M"
+VOTES_KEY_PREFIX: Final[bytes] = b"V"
 
 MEMBER_BOX_KEY_SIZE: Final[int] = 33  # 1 byte for prefix + 32 bytes for address
 MEMBER_BOX_VALUE_SIZE: Final[int] = 0

@@ -1,3 +1,4 @@
+from algokit_utils import LogicError
 from algosdk.encoding import decode_address
 
 from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
@@ -9,6 +10,8 @@ from smart_contracts.xgov_registry_mock.config import (
     MIN_REQUESTED_AMOUNT,
     PROPOSAL_COMMITMENT_BPS,
 )
+
+logic_error_type: type[LogicError] = LogicError
 
 
 def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:

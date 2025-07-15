@@ -11,11 +11,11 @@ from smart_contracts.errors import std_errors as err
 
 # TODO add tests for review on other statuses
 from smart_contracts.proposal.config import METADATA_BOX_KEY
+from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_reviewed_proposal_global_state,
     assign_voters,
     get_voter_box_key,
-    logic_error_type,
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp

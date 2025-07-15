@@ -12,6 +12,7 @@ from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for finalize on other statuses
 from tests.common import (
+    logic_error_type,
     relative_to_absolute_amount,
 )
 from tests.proposal.common import (
@@ -21,7 +22,6 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
-    logic_error_type,
     submit_proposal,
 )
 

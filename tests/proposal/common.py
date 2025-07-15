@@ -1,6 +1,6 @@
 import uuid
 
-from algokit_utils import LogicError, TransactionParameters
+from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
@@ -49,8 +49,6 @@ MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (pa
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
 PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
-
-logic_error_type: type[LogicError] = LogicError
 
 INITIAL_FUNDS = 10_000_000_000
 

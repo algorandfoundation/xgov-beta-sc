@@ -11,7 +11,7 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 
 # TODO add tests for assign_voter on other statuses
-from tests.common import METADATA_B64, get_voter_box_key
+from tests.common import METADATA_B64, get_voter_box_key, logic_error_type
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -22,7 +22,6 @@ from tests.proposal.common import (
     assert_final_proposal_global_state,
     assert_voting_proposal_global_state,
     assign_voters,
-    logic_error_type,
     submit_proposal,
 )
 

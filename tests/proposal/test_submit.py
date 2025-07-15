@@ -21,7 +21,7 @@ from smart_contracts.xgov_registry_mock.config import (
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
 )
-from tests.common import get_locked_amount
+from tests.common import get_locked_amount, logic_error_type
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -29,7 +29,6 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
-    logic_error_type,
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX

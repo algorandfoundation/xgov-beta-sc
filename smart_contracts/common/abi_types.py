@@ -44,10 +44,10 @@ class CommitteeMember(arc4.Struct):
 
 Empty = arc4.StaticArray[arc4.Byte, typing.Literal[0]]
 
+
 class CouncilVote(arc4.Struct):
     address: arc4.Address
     approve: arc4.Bool
 
-class CouncilVotingBox(arc4.Struct):
-    submitted: arc4.Bool
-    votes: arc4.DynamicArray[CouncilVote]
+
+CouncilVotingBox = arc4.DynamicArray[CouncilVote]
