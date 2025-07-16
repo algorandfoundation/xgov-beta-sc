@@ -1,9 +1,6 @@
-import base64
-
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
-from algosdk import abi
 from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -33,17 +30,15 @@ def test_set_proposer_kyc_success(
         ),
     )
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=proposer_box_name(proposer.address),
+    proposer_box = xgov_registry_client.get_proposer_box(
+        proposer_address=proposer.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, proposer_box_name(proposer.address))],
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(bool,bool,uint64)")
-    active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
-
-    assert kyc_status  # type: ignore
-    assert kyc_expiring == UNLIMITED_KYC_EXPIRATION  # type: ignore
+    assert proposer_box.return_value.kyc_status
+    assert proposer_box.return_value.kyc_expiring == UNLIMITED_KYC_EXPIRATION
 
 
 def test_set_proposer_kyc_not_kyc_provider(

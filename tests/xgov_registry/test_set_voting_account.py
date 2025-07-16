@@ -1,10 +1,7 @@
-import base64
-
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.models import Account
-from algosdk import abi
 from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -33,16 +30,14 @@ def test_set_voting_account_success(
         ),
     )
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(xgov.address),
+    xgov_box = xgov_registry_client.get_xgov_box(
+        xgov_address=xgov.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, xgov_box_name(xgov.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64,uint64)")
-    voting_address, _, _, _ = box_abi.decode(box_value)  # type: ignore
-
-    assert no_role_account.address == voting_address  # type: ignore
+    assert no_role_account.address == xgov_box.return_value.voting_address
 
 
 def test_set_voting_account_not_an_xgov(
@@ -127,13 +122,11 @@ def test_set_voting_account_paused_registry_error(
         ),
     )
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(xgov.address),
+    xgov_box = xgov_registry_client.get_xgov_box(
+        xgov_address=xgov.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, xgov_box_name(xgov.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64,uint64)")
-    voting_address, _, _, _ = box_abi.decode(box_value)  # type: ignore
-
-    assert no_role_account.address == voting_address  # type: ignore
+    assert no_role_account.address == xgov_box.return_value.voting_address

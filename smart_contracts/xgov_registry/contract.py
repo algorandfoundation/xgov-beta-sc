@@ -147,6 +147,10 @@ class XGovRegistry(
 
         self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
 
+        self.max_committee_size = GlobalState(
+            UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
+        )
+
         # boxes
         self.xgov_box = BoxMap(
             Account,
@@ -162,10 +166,6 @@ class XGovRegistry(
 
         self.proposer_box = BoxMap(
             Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
-        )
-
-        self.max_committee_size = GlobalState(
-            UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
         )
 
     @subroutine
@@ -282,6 +282,48 @@ class XGovRegistry(
         # Update proposer's active proposal status
         proposer = self.get_proposal_proposer(proposal_id)
         self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
+
+    @subroutine
+    def make_xgov_box(self, voting_address: arc4.Address) -> typ.XGovBoxValue:
+        """
+        Creates a new xGov box with the given voting address.
+
+        Args:
+            voting_address (arc4.Address): The address of the voting account for the xGov
+
+        Returns:
+            typ.XGovBoxValue: The initialized xGov box value
+        """
+        return typ.XGovBoxValue(
+            voting_address=voting_address,
+            voted_proposals=arc4.UInt64(0),
+            last_vote_timestamp=arc4.UInt64(0),
+            subscription_round=arc4.UInt64(Global.round),
+        )
+
+    @subroutine
+    def make_proposer_box(
+        self,
+        active_proposal: arc4.Bool,
+        kyc_status: arc4.Bool,
+        kyc_expiring: arc4.UInt64,
+    ) -> typ.ProposerBoxValue:
+        """
+        Creates a new proposer box with the given parameters.
+
+        Args:
+            active_proposal (arc4.Bool): Whether the proposer has an active proposal
+            kyc_status (arc4.Bool): KYC status of the proposer
+            kyc_expiring (arc4.UInt64): Timestamp when the KYC expires
+
+        Returns:
+            typ.ProposerBoxValue: The initialized proposer box value
+        """
+        return typ.ProposerBoxValue(
+            active_proposal=active_proposal,
+            kyc_status=kyc_status,
+            kyc_expiring=kyc_expiring,
+        )
 
     @arc4.abimethod(create="require")
     def create(self) -> None:
@@ -516,12 +558,7 @@ class XGovRegistry(
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create box
-        self.xgov_box[Txn.sender] = typ.XGovBoxValue(
-            voting_address=voting_address,
-            voted_proposals=arc4.UInt64(0),
-            last_vote_timestamp=arc4.UInt64(0),
-            subscription_round=arc4.UInt64(Global.round),
-        )
+        self.xgov_box[Txn.sender] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
 
     @arc4.abimethod()
@@ -609,12 +646,7 @@ class XGovRegistry(
         # get the request
         request = self.request_box[request_id.native].copy()
         # create the xGov
-        self.xgov_box[request.xgov_addr.native] = typ.XGovBoxValue(
-            voting_address=request.owner_addr,
-            voted_proposals=arc4.UInt64(0),
-            last_vote_timestamp=arc4.UInt64(0),
-            subscription_round=arc4.UInt64(Global.round),
-        )
+        self.xgov_box[request.xgov_addr.native] = self.make_xgov_box(request.owner_addr)
         self.xgovs.value += 1
         # delete the request
         del self.request_box[request_id.native]
@@ -691,10 +723,8 @@ class XGovRegistry(
         ), err.WRONG_RECEIVER
         assert payment.amount == self.proposer_fee.value, err.WRONG_PAYMENT_AMOUNT
 
-        self.proposer_box[Txn.sender] = typ.ProposerBoxValue(
-            active_proposal=arc4.Bool(False),  # noqa: FBT003
-            kyc_status=arc4.Bool(False),  # noqa: FBT003
-            kyc_expiring=arc4.UInt64(0),
+        self.proposer_box[Txn.sender] = self.make_proposer_box(
+            arc4.Bool(False), arc4.Bool(False), arc4.UInt64(0)  # noqa: FBT003
         )
 
     @arc4.abimethod()
@@ -720,10 +750,8 @@ class XGovRegistry(
 
         active_proposal = self.proposer_box[proposer.native].copy().active_proposal
 
-        self.proposer_box[proposer.native] = typ.ProposerBoxValue(
-            active_proposal=active_proposal,
-            kyc_status=kyc_status,
-            kyc_expiring=kyc_expiring,
+        self.proposer_box[proposer.native] = self.make_proposer_box(
+            active_proposal, kyc_status, kyc_expiring
         )
 
     @arc4.abimethod()
@@ -1154,6 +1182,32 @@ class XGovRegistry(
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
         )
+
+    @arc4.abimethod(readonly=True)
+    def get_xgov_box(self, xgov_address: arc4.Address) -> typ.XGovBoxValue:
+        """
+        Returns the xGov box for the given address.
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov
+
+        Returns:
+            typ.XGovBoxValue: The xGov box value
+        """
+        return self.xgov_box[xgov_address.native].copy()
+
+    @arc4.abimethod(readonly=True)
+    def get_proposer_box(self, proposer_address: arc4.Address) -> typ.ProposerBoxValue:
+        """
+        Returns the Proposer box for the given address.
+
+        Args:
+            proposer_address (arc4.Address): The address of the Proposer
+
+        Returns:
+            typ.ProposerBoxValue: The Proposer box value
+        """
+        return self.proposer_box[proposer_address.native].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
