@@ -14,7 +14,6 @@ from tests.proposal.common import (
     assert_boxes,
     assert_voting_proposal_global_state,
     assign_voters,
-    logic_error_type,
     submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp

@@ -14,7 +14,6 @@ from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_boxes,
-    logic_error_type,
     open_proposal,
     upload_metadata,
 )

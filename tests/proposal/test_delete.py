@@ -9,13 +9,11 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import logic_error_type
-
 from smart_contracts.proposal.config import METADATA_BOX_KEY
+from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_account_balance,
     finalize_proposal,
-    logic_error_type,
     unassign_voters,
 )
 from tests.utils import ERROR_TO_REGEX

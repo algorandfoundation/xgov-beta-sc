@@ -408,7 +408,7 @@ vote:
     // assert status == proposal_enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
     pushint 30 // 30
     ==
-    assert // Wrong Proposal Status or Decommissioned
+    assert // Wrong Proposal Status or finalized
     // smart_contracts/council/contract.py:162
     // address=arc4.Address(Txn.sender),
     txn Sender

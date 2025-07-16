@@ -1,6 +1,6 @@
 import uuid
 
-from algokit_utils import LogicError, TransactionParameters
+from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
@@ -50,8 +50,6 @@ from tests.utils import time_warp
 from tests.xgov_registry.common import (
     get_voter_box_key,
 )
-
-logic_error_type: type[LogicError] = LogicError
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 

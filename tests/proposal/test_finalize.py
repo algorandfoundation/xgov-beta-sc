@@ -20,7 +20,6 @@ from tests.proposal.common import (
     assert_funded_proposal_global_state,
     assert_rejected_proposal_global_state,
     finalize_proposal,
-    logic_error_type,
     unassign_voters,
 )
 from tests.utils import ERROR_TO_REGEX

@@ -1803,8 +1803,8 @@
       ]
     },
     "369": {
-      "error": "Wrong Proposal Status or Decommissioned",
-      "op": "assert // Wrong Proposal Status or Decommissioned",
+      "error": "Wrong Proposal Status or finalized",
+      "op": "assert // Wrong Proposal Status or finalized",
       "stack_out": [
         "approvals#0",
         "half_plus_one#0",
