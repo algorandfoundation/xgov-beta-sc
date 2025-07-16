@@ -132,7 +132,7 @@ class Council(
 
         Args:
             proposal_id: The ID of the proposal to vote on.
-            vote: The vote to cast (FOR, AGAINST, ABSTAIN).
+            block: Whether or not to block the proposal.
 
         Raises:
             err.NOT_A_MEMBER: If the sender is not a member of the council.
