@@ -30,11 +30,11 @@ class ProposalMock(ARC4Contract):
         )
         self.submission_ts = GlobalState(
             UInt64(),
-            key=prop_cfg.GS_KEY_SUBMISSION_TS,
+            key=prop_cfg.GS_KEY_OPEN_TS,
         )
         self.finalization_ts = GlobalState(
             UInt64(),
-            key=prop_cfg.GS_KEY_FINALIZATION_TS,
+            key=prop_cfg.GS_KEY_SUBMISSION_TS,
         )
         self.status = GlobalState(
             UInt64(enm.STATUS_EMPTY),

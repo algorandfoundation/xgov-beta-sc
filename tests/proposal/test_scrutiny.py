@@ -36,7 +36,7 @@ def test_scrutiny_empty_proposal(
 
 
 def test_scrutiny_draft_proposal(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: AddressAndSigner,
 ) -> None:
@@ -44,7 +44,7 @@ def test_scrutiny_draft_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        submitted_proposal_client.scrutiny(
+        draft_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -54,7 +54,7 @@ def test_scrutiny_draft_proposal(
 
 
 def test_scrutiny_final_proposal(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -63,7 +63,7 @@ def test_scrutiny_final_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        finalized_proposal_client.scrutiny(
+        submitted_proposal_client.scrutiny(
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
@@ -2315,7 +2315,7 @@ def test_scrutiny_after_time_reject_small_10(
 
 
 def test_scrutiny_after_time_reject_small_11(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -2331,7 +2331,7 @@ def test_scrutiny_after_time_reject_small_11(
     """
     sp = sp_min_fee_times_2
 
-    finalized_proposal_client.assign_voters(
+    submitted_proposal_client.assign_voters(
         voters=[(committee_members[0].address, 48)],
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -2347,7 +2347,7 @@ def test_scrutiny_after_time_reject_small_11(
     )
 
     for committee_member in committee_members[1:]:
-        finalized_proposal_client.assign_voters(
+        submitted_proposal_client.assign_voters(
             voters=[(committee_member.address, 8)],
             transaction_parameters=TransactionParameters(
                 sender=xgov_daemon.address,
@@ -2363,7 +2363,7 @@ def test_scrutiny_after_time_reject_small_11(
         )
 
     xgov_registry_mock_client.vote(
-        proposal_app=finalized_proposal_client.app_id,
+        proposal_app=submitted_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=48,
         rejections=0,
@@ -2372,11 +2372,11 @@ def test_scrutiny_after_time_reject_small_11(
             signer=committee_members[0].signer,
             foreign_apps=[
                 xgov_registry_mock_client.app_id,
-                finalized_proposal_client.app_id,
+                submitted_proposal_client.app_id,
             ],
             boxes=[
                 (
-                    finalized_proposal_client.app_id,
+                    submitted_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -2387,10 +2387,10 @@ def test_scrutiny_after_time_reject_small_11(
     reg_gs = xgov_registry_mock_client.get_global_state()
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = finalized_proposal_client.get_global_state().vote_open_ts
+    vote_open_ts = submitted_proposal_client.get_global_state().vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    finalized_proposal_client.scrutiny(
+    submitted_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
@@ -2399,7 +2399,7 @@ def test_scrutiny_after_time_reject_small_11(
         ),
     )
 
-    global_state = finalized_proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_rejected_proposal_global_state(
         global_state,

@@ -12,7 +12,7 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     assert_account_balance,
-    decommission_proposal,
+    finalize_proposal,
     logic_error_type,
     unassign_voters,
 )
@@ -42,6 +42,29 @@ def test_delete_empty_proposal(
 
 
 def test_delete_draft_proposal(
+    draft_proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    xgov_daemon: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
+) -> None:
+    sp = sp_min_fee_times_2
+
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        draft_proposal_client.delete_delete(
+            transaction_parameters=TransactionParameters(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                suggested_params=sp,
+                foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
+            ),
+        )
+
+
+def test_delete_final_proposal(
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
@@ -54,29 +77,6 @@ def test_delete_draft_proposal(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         submitted_proposal_client.delete_delete(
-            transaction_parameters=TransactionParameters(
-                sender=xgov_daemon.address,
-                signer=xgov_daemon.signer,
-                suggested_params=sp,
-                foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY.encode())],
-            ),
-        )
-
-
-def test_delete_final_proposal(
-    finalized_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    xgov_daemon: AddressAndSigner,
-    sp_min_fee_times_2: SuggestedParams,
-) -> None:
-    sp = sp_min_fee_times_2
-
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        finalized_proposal_client.delete_delete(
             transaction_parameters=TransactionParameters(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
@@ -245,7 +245,7 @@ def test_delete_success(
     )
     composer.execute()
 
-    decommission_proposal(
+    finalize_proposal(
         xgov_registry_mock_client,
         rejected_proposal_client.app_id,
         xgov_daemon,
@@ -289,7 +289,7 @@ def test_delete_not_xgov_daemon(
     )
     composer.execute()
 
-    decommission_proposal(
+    finalize_proposal(
         xgov_registry_mock_client,
         rejected_proposal_client.app_id,
         xgov_daemon,

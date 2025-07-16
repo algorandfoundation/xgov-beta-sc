@@ -25,7 +25,7 @@ from tests.proposal.common import (
 from tests.xgov_registry.common import LogicErrorType, proposer_box_name
 
 
-def test_decommission_funded_proposal_success(
+def test_finalize_funded_proposal_success(
     xgov_daemon: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
@@ -37,7 +37,7 @@ def test_decommission_funded_proposal_success(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=funded_unassigned_voters_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -64,7 +64,7 @@ def test_decommission_funded_proposal_success(
         proposal_global_state,
         proposer_address,
         xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
@@ -75,7 +75,7 @@ def test_decommission_funded_proposal_success(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_empty_proposal_not_xgov_daemon(
+def test_finalize_empty_proposal_not_xgov_daemon(
     committee_manager: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
@@ -85,7 +85,7 @@ def test_decommission_empty_proposal_not_xgov_daemon(
         proposal_client.get_global_state().proposer.as_bytes
     )
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.decommission_proposal(
+        xgov_registry_client.finalize_proposal(
             proposal_id=proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_manager.address,
@@ -107,7 +107,7 @@ def test_decommission_empty_proposal_not_xgov_daemon(
         )
 
 
-def test_decommission_empty_proposal_xgov_daemon(
+def test_finalize_empty_proposal_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
     xgov_daemon: AddressAndSigner,
@@ -119,7 +119,7 @@ def test_decommission_empty_proposal_xgov_daemon(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -146,14 +146,14 @@ def test_decommission_empty_proposal_xgov_daemon(
         proposal_global_state,
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
     )
 
     pending_proposals_after = xgov_registry_client.get_global_state().pending_proposals
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_draft_proposal_not_xgov_daemon(
+def test_finalize_draft_proposal_not_xgov_daemon(
     committee_manager: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
@@ -163,7 +163,7 @@ def test_decommission_draft_proposal_not_xgov_daemon(
         draft_proposal_client.get_global_state().proposer.as_bytes
     )
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.decommission_proposal(
+        xgov_registry_client.finalize_proposal(
             proposal_id=draft_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=committee_manager.address,
@@ -185,7 +185,7 @@ def test_decommission_draft_proposal_not_xgov_daemon(
         )
 
 
-def test_decommission_draft_proposal_xgov_daemon(
+def test_finalize_draft_proposal_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
     xgov_daemon: AddressAndSigner,
@@ -197,7 +197,7 @@ def test_decommission_draft_proposal_xgov_daemon(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=draft_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -224,7 +224,7 @@ def test_decommission_draft_proposal_xgov_daemon(
         proposal_global_state,
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
     )
 
@@ -232,7 +232,7 @@ def test_decommission_draft_proposal_xgov_daemon(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_rejected_proposal_not_xgov_daemon(
+def test_finalize_rejected_proposal_not_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     rejected_unassigned_voters_proposal_client: ProposalClient,
     no_role_account: AddressAndSigner,
@@ -244,7 +244,7 @@ def test_decommission_rejected_proposal_not_xgov_daemon(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=rejected_unassigned_voters_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=no_role_account.address,
@@ -273,7 +273,7 @@ def test_decommission_rejected_proposal_not_xgov_daemon(
         proposal_global_state,
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
     )
 
@@ -281,7 +281,7 @@ def test_decommission_rejected_proposal_not_xgov_daemon(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_funded_proposal_not_xgov_daemon(
+def test_finalize_funded_proposal_not_xgov_daemon(
     no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
@@ -293,7 +293,7 @@ def test_decommission_funded_proposal_not_xgov_daemon(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=funded_unassigned_voters_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=no_role_account.address,
@@ -320,7 +320,7 @@ def test_decommission_funded_proposal_not_xgov_daemon(
         proposal_global_state,
         proposer_address,
         xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
@@ -331,7 +331,7 @@ def test_decommission_funded_proposal_not_xgov_daemon(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_blocked_proposal_not_xgov_daemon(
+def test_finalize_blocked_proposal_not_xgov_daemon(
     no_role_account: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
     blocked_unassigned_voters_proposal_client: ProposalClient,
@@ -343,7 +343,7 @@ def test_decommission_blocked_proposal_not_xgov_daemon(
 
     pending_proposals_before = xgov_registry_client.get_global_state().pending_proposals
 
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_id=blocked_unassigned_voters_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=no_role_account.address,
@@ -370,7 +370,7 @@ def test_decommission_blocked_proposal_not_xgov_daemon(
         proposal_global_state,
         proposer_address,
         xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
@@ -381,7 +381,7 @@ def test_decommission_blocked_proposal_not_xgov_daemon(
     assert pending_proposals_after == pending_proposals_before - 1
 
 
-def test_decommission_invalid_proposal(
+def test_finalize_invalid_proposal(
     xgov_daemon: AddressAndSigner,
     alternative_xgov_registry_client: XGovRegistryClient,
     funded_unassigned_voters_proposal_client: ProposalClient,
@@ -391,7 +391,7 @@ def test_decommission_invalid_proposal(
         funded_unassigned_voters_proposal_client.get_global_state().proposer.as_bytes
     )
     with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
-        alternative_xgov_registry_client.decommission_proposal(
+        alternative_xgov_registry_client.finalize_proposal(
             proposal_id=funded_unassigned_voters_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=xgov_daemon.address,

@@ -57,7 +57,7 @@ def test_drop_proposal_success(
         proposal_global_state,
         proposer.address,
         xgov_registry_client.app_id,
-        decommissioned=True,
+        finalized=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
     )

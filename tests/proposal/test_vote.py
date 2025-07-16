@@ -13,8 +13,8 @@ from tests.proposal.common import (
     assert_boxes,
     assert_voting_proposal_global_state,
     assign_voters,
-    finalize_proposal,
     logic_error_type,
+    submit_proposal,
 )
 from tests.utils import ERROR_TO_REGEX, time_warp
 from tests.xgov_registry.common import LogicErrorType, get_voter_box_key
@@ -222,6 +222,42 @@ def test_vote_empty_proposal(
 
 
 def test_vote_draft_proposal(
+    draft_proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    algorand_client: AlgorandClient,
+    committee_members: list[AddressAndSigner],
+    sp_min_fee_times_2: SuggestedParams,
+) -> None:
+
+    sp = sp_min_fee_times_2
+
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        xgov_registry_mock_client.vote(
+            proposal_app=draft_proposal_client.app_id,
+            voter=committee_members[0].address,
+            approvals=10,
+            rejections=0,
+            transaction_parameters=TransactionParameters(
+                sender=committee_members[0].address,
+                signer=committee_members[0].signer,
+                foreign_apps=[
+                    xgov_registry_mock_client.app_id,
+                    draft_proposal_client.app_id,
+                ],
+                boxes=[
+                    (
+                        draft_proposal_client.app_id,
+                        get_voter_box_key(committee_members[0].address),
+                    )
+                ],
+                suggested_params=sp,
+            ),
+        )
+
+
+def test_vote_submitted_proposal(
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
@@ -249,42 +285,6 @@ def test_vote_draft_proposal(
                 boxes=[
                     (
                         submitted_proposal_client.app_id,
-                        get_voter_box_key(committee_members[0].address),
-                    )
-                ],
-                suggested_params=sp,
-            ),
-        )
-
-
-def test_vote_finalized_proposal(
-    finalized_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    committee_members: list[AddressAndSigner],
-    sp_min_fee_times_2: SuggestedParams,
-) -> None:
-
-    sp = sp_min_fee_times_2
-
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        xgov_registry_mock_client.vote(
-            proposal_app=finalized_proposal_client.app_id,
-            voter=committee_members[0].address,
-            approvals=10,
-            rejections=0,
-            transaction_parameters=TransactionParameters(
-                sender=committee_members[0].address,
-                signer=committee_members[0].signer,
-                foreign_apps=[
-                    xgov_registry_mock_client.app_id,
-                    finalized_proposal_client.app_id,
-                ],
-                boxes=[
-                    (
-                        finalized_proposal_client.app_id,
                         get_voter_box_key(committee_members[0].address),
                     )
                 ],
@@ -701,7 +701,7 @@ def test_vote_exceeded(
 
 
 def test_vote_paused_registry_error(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -714,8 +714,8 @@ def test_vote_paused_registry_error(
 
     xgov_registry_mock_client.pause_registry()
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        finalize_proposal(
-            proposal_client=submitted_proposal_client,
+        submit_proposal(
+            proposal_client=draft_proposal_client,
             xgov_registry_mock_client=xgov_registry_mock_client,
             proposer=proposer,
             xgov_daemon=xgov_daemon,
@@ -724,15 +724,15 @@ def test_vote_paused_registry_error(
 
     xgov_registry_mock_client.resume_registry()
 
-    finalize_proposal(
-        proposal_client=submitted_proposal_client,
+    submit_proposal(
+        proposal_client=draft_proposal_client,
         xgov_registry_mock_client=xgov_registry_mock_client,
         proposer=proposer,
         xgov_daemon=xgov_daemon,
         sp_min_fee_times_2=sp,
     )
 
-    composer = submitted_proposal_client.compose()
+    composer = draft_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -743,7 +743,7 @@ def test_vote_paused_registry_error(
     composer.execute()
 
     xgov_registry_mock_client.vote(
-        proposal_app=submitted_proposal_client.app_id,
+        proposal_app=draft_proposal_client.app_id,
         voter=committee_members[0].address,
         approvals=10,
         rejections=0,
@@ -752,11 +752,11 @@ def test_vote_paused_registry_error(
             signer=committee_members[0].signer,
             foreign_apps=[
                 xgov_registry_mock_client.app_id,
-                submitted_proposal_client.app_id,
+                draft_proposal_client.app_id,
             ],
             boxes=[
                 (
-                    submitted_proposal_client.app_id,
+                    draft_proposal_client.app_id,
                     get_voter_box_key(committee_members[0].address),
                 )
             ],
@@ -764,7 +764,7 @@ def test_vote_paused_registry_error(
         ),
     )
 
-    global_state = submitted_proposal_client.get_global_state()
+    global_state = draft_proposal_client.get_global_state()
 
     assert_voting_proposal_global_state(
         global_state,
@@ -776,7 +776,7 @@ def test_vote_paused_registry_error(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=submitted_proposal_client.app_id,
+        app_id=draft_proposal_client.app_id,
         expected_boxes=[
             (
                 get_voter_box_key(committee_member.address),

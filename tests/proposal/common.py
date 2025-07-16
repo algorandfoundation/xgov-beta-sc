@@ -29,10 +29,10 @@ from smart_contracts.proposal.enums import (
     STATUS_BLOCKED,
     STATUS_DRAFT,
     STATUS_EMPTY,
-    STATUS_FINAL,
     STATUS_FUNDED,
     STATUS_REJECTED,
     STATUS_REVIEWED,
+    STATUS_SUBMITTED,
     STATUS_VOTING,
 )
 from smart_contracts.xgov_registry.config import (
@@ -77,7 +77,7 @@ def assert_proposal_global_state(
     proposer_address: str,
     registry_app_id: int,
     status: int = STATUS_EMPTY,
-    decommissioned: bool = False,
+    finalized: bool = False,
     title: str = "",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
@@ -97,7 +97,7 @@ def assert_proposal_global_state(
     assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
     assert global_state.title.as_str == title
     assert global_state.status == status
-    assert global_state.decommissioned == decommissioned
+    assert global_state.finalized == finalized
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
     assert global_state.funding_type == funding_type
@@ -115,14 +115,14 @@ def assert_proposal_global_state(
     assert global_state.voters_count == voters_count
 
     if status == STATUS_EMPTY:
-        assert global_state.submission_ts == 0
+        assert global_state.open_ts == 0
     else:
-        assert global_state.submission_ts > 0
+        assert global_state.open_ts > 0
 
-    if status >= STATUS_FINAL:
-        assert global_state.finalization_ts > 0
+    if status >= STATUS_SUBMITTED:
+        assert global_state.submission_ts > 0
     else:
-        assert global_state.finalization_ts == 0
+        assert global_state.submission_ts == 0
 
     if status >= STATUS_VOTING:
         assert global_state.vote_open_ts > 0
@@ -130,7 +130,7 @@ def assert_proposal_global_state(
         assert global_state.vote_open_ts == 0
 
 
-def get_default_params_for_status(status: int, overrides: dict, *, decommissioned: bool) -> dict:  # type: ignore
+def get_default_params_for_status(status: int, overrides: dict, *, finalized: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
     common_defaults = {
         "title": PROPOSAL_TITLE,
@@ -150,8 +150,8 @@ def get_default_params_for_status(status: int, overrides: dict, *, decommissione
 
     # Define common voter-related defaults used in multiple statuses
     voter_defaults = {
-        "voters_count": 0 if decommissioned else DEFAULT_COMMITTEE_MEMBERS,
-        "assigned_votes": 0 if decommissioned else 10 * DEFAULT_COMMITTEE_MEMBERS,
+        "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
+        "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
     }
 
     # Specific status defaults, with shared defaults included where needed
@@ -159,9 +159,9 @@ def get_default_params_for_status(status: int, overrides: dict, *, decommissione
         STATUS_DRAFT: {
             "status": STATUS_DRAFT,
             **committee_defaults,
-            "locked_amount": 0 if decommissioned else LOCKED_AMOUNT,
+            "locked_amount": 0 if finalized else LOCKED_AMOUNT,
         },
-        STATUS_FINAL: {"status": STATUS_FINAL, **committee_defaults},
+        STATUS_SUBMITTED: {"status": STATUS_SUBMITTED, **committee_defaults},
         STATUS_VOTING: {
             "status": STATUS_VOTING,
             **committee_defaults,
@@ -207,15 +207,15 @@ def assert_proposal_with_status(  # type: ignore
     registry_app_id: int,
     status: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
     **overrides,  # noqa: ANN003
 ) -> None:
-    params = get_default_params_for_status(status, overrides, decommissioned=decommissioned)  # type: ignore
+    params = get_default_params_for_status(status, overrides, finalized=finalized)  # type: ignore
     assert_proposal_global_state(
         global_state,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
-        decommissioned=decommissioned,
+        finalized=finalized,
         **params,  # type: ignore
     )
 
@@ -225,13 +225,13 @@ def assert_empty_proposal_global_state(
     proposer_address: str,
     registry_app_id: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
 ) -> None:
     assert_proposal_global_state(
         global_state,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
-        decommissioned=decommissioned,
+        finalized=finalized,
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
@@ -243,11 +243,11 @@ def assert_draft_proposal_global_state(  # type: ignore
     proposer_address: str,
     registry_app_id: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_DRAFT, decommissioned=decommissioned, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_DRAFT, finalized=finalized, **kwargs  # type: ignore
     )
 
 
@@ -278,11 +278,11 @@ def assert_rejected_proposal_global_state(  # type: ignore
     proposer_address: str,
     registry_app_id: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_REJECTED, decommissioned=decommissioned, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_REJECTED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
@@ -293,7 +293,7 @@ def assert_final_proposal_global_state(  # type: ignore
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_FINAL, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_SUBMITTED, **kwargs  # type: ignore
     )
 
 
@@ -313,11 +313,11 @@ def assert_blocked_proposal_global_state(  # type: ignore
     proposer_address: str,
     registry_app_id: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, decommissioned=decommissioned, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
@@ -326,11 +326,11 @@ def assert_funded_proposal_global_state(  # type: ignore
     proposer_address: str,
     registry_app_id: int,
     *,
-    decommissioned: bool = False,
+    finalized: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_FUNDED, decommissioned=decommissioned, **kwargs  # type: ignore
+        global_state, proposer_address, registry_app_id, STATUS_FUNDED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
@@ -360,7 +360,7 @@ def assert_boxes(
             )
 
 
-def submit_proposal(
+def open_proposal(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -383,7 +383,7 @@ def submit_proposal(
 
     composer = proposal_client.compose()
 
-    composer.submit(
+    composer.open(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -531,14 +531,14 @@ def assign_voters(
         )
 
 
-def decommission_proposal(
+def finalize_proposal(
     xgov_registry_client: XgovRegistryMockClient,
     proposal_app_id: int,
     xgov_daemon: AddressAndSigner,
     sp: SuggestedParams,
     note: str = "",
 ) -> None:
-    xgov_registry_client.decommission_proposal(
+    xgov_registry_client.finalize_proposal(
         proposal_app=proposal_app_id,
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -550,7 +550,7 @@ def decommission_proposal(
     )
 
 
-def finalize_proposal(
+def submit_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient | XGovRegistryClient,
     proposer: AddressAndSigner,
@@ -565,13 +565,11 @@ def finalize_proposal(
         reg_gs = xgov_registry_mock_client.get_global_state()
         discussion_duration = reg_gs.discussion_duration_large
 
-        submission_ts = proposal_client.get_global_state().submission_ts
-        if submission_ts > 0:  # not empty proposal
-            time_warp(
-                submission_ts + discussion_duration
-            )  # so we could actually finalize
+        open_ts = proposal_client.get_global_state().open_ts
+        if open_ts > 0:  # not empty proposal
+            time_warp(open_ts + discussion_duration)  # so we could actually submit
 
-    proposal_client.finalize(
+    proposal_client.submit(
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
