@@ -257,7 +257,7 @@ def test_vote_draft_proposal(
         )
 
 
-def test_vote_submitd_proposal(
+def test_vote_submitted_proposal(
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
