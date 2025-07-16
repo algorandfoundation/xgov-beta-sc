@@ -78,7 +78,9 @@ def test_add_member_already_member(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTER_ALREADY_ASSIGNED]):
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.VOTER_ALREADY_ASSIGNED]
+    ):
         council_client.add_member(
             address=no_role_account.address,
             transaction_parameters=TransactionParameters(

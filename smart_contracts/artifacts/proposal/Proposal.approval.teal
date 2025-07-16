@@ -736,10 +736,6 @@ is_voting_open_else_body@7:
 
 // smart_contracts.proposal.contract.Proposal.assert_draft_and_proposer() -> void:
 assert_draft_and_proposer:
-    // smart_contracts/proposal/contract.py:345-346
-    // @subroutine
-    // def assert_draft_and_proposer(self) -> None:
-    proto 0 0
     // smart_contracts/proposal/contract.py:347
     // assert self.is_proposer(), err.UNAUTHORIZED
     callsub is_proposer
@@ -876,10 +872,6 @@ get_bytes_from_registry_config:
 
 // smart_contracts.proposal.contract.Proposal.check_registry_not_paused() -> void:
 check_registry_not_paused:
-    // smart_contracts/proposal/contract.py:485-486
-    // @subroutine
-    // def check_registry_not_paused(self) -> None:
-    proto 0 0
     // smart_contracts/proposal/contract.py:488
     // Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
     pushbytes 0x7061757365645f7265676973747279
@@ -902,10 +894,6 @@ check_registry_not_paused:
 
 // smart_contracts.proposal.contract.Proposal.is_proposer() -> uint64:
 is_proposer:
-    // smart_contracts/proposal/contract.py:498-499
-    // @subroutine
-    // def is_proposer(self) -> bool:
-    proto 0 1
     // smart_contracts/proposal/contract.py:500
     // return Txn.sender == self.proposer.value
     txn Sender
@@ -919,10 +907,6 @@ is_proposer:
 
 // smart_contracts.proposal.contract.Proposal.is_xgov_daemon() -> uint64:
 is_xgov_daemon:
-    // smart_contracts/proposal/contract.py:508-509
-    // @subroutine
-    // def is_xgov_daemon(self) -> bool:
-    proto 0 1
     // smart_contracts/proposal/contract.py:510
     // return Txn.sender == Account(
     txn Sender
@@ -945,10 +929,6 @@ is_xgov_daemon:
 
 // smart_contracts.proposal.contract.Proposal.is_registry_call() -> uint64:
 is_registry_call:
-    // smart_contracts/proposal/contract.py:514-515
-    // @subroutine
-    // def is_registry_call(self) -> bool:
-    proto 0 1
     // smart_contracts/proposal/contract.py:516
     // return Global.caller_application_id == self.registry_app_id.value
     global CallerApplicationID
@@ -1825,8 +1805,8 @@ assign_voters_for_header@8:
     dup
     extract 0 32 // on error: Index access is out of bounds
     swap
-    extract 32 8 // on error: Index access is out of bounds
-    btoi
+    pushint 32 // 32
+    extract_uint64
     // smart_contracts/proposal/contract.py:252
     // assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
     bytec 28 // "V"
@@ -2020,13 +2000,8 @@ vote_after_if_else@4:
     assert // check self.voters entry exists
     // smart_contracts/proposal/contract.py:796
     // votes=voter_box.votes,
-    extract 0 8 // on error: Index access is out of bounds
-    // smart_contracts/proposal/contract.py:795-798
-    // self.voters[voter.native] = typ.VoterBox(
-    //     votes=voter_box.votes,
-    //     voted=arc4.Bool(True),  # noqa: FBT003
-    // )
     dup
+    extract 0 8 // on error: Index access is out of bounds
     // smart_contracts/proposal/contract.py:797
     // voted=arc4.Bool(True),  # noqa: FBT003
     pushbytes 0x80
@@ -2052,7 +2027,8 @@ vote_after_if_else@4:
     app_global_put
     // smart_contracts/proposal/contract.py:802
     // nulls = voter_box.votes.native - approvals.native - rejections.native
-    btoi
+    intc_0 // 0
+    extract_uint64
     frame_dig 3
     dup
     cover 2
@@ -2832,8 +2808,8 @@ unassign_voters_for_header@8:
     cover 2
     box_get
     assert // check self.voters entry exists
-    extract 0 8 // on error: Index access is out of bounds
-    btoi
+    intc_0 // 0
+    extract_uint64
     -
     bytec 14 // "assigned_votes"
     swap
@@ -3076,10 +3052,6 @@ decommission_after_if_else@14:
 
 // smart_contracts.proposal.contract.Proposal.delete() -> void:
 delete:
-    // smart_contracts/proposal/contract.py:972-973
-    // @arc4.abimethod(allow_actions=("DeleteApplication",))
-    // def delete(self) -> None:
-    proto 0 0
     // smart_contracts/proposal/contract.py:195
     // assert self.is_xgov_daemon(), err.UNAUTHORIZED
     callsub is_xgov_daemon
@@ -3096,10 +3068,6 @@ delete:
 
 // smart_contracts.proposal.contract.Proposal.get_state() -> bytes:
 get_state:
-    // smart_contracts/proposal/contract.py:984-985
-    // @arc4.abimethod(readonly=True)
-    // def get_state(self) -> typ.ProposalTypedGlobalState:
-    proto 0 1
     // smart_contracts/proposal/contract.py:993
     // proposer=arc4.Address(self.proposer.value),
     intc_0 // 0
@@ -3177,6 +3145,11 @@ get_state:
     app_global_get_ex
     assert // check self.focus exists
     itob
+    dup
+    bitlen
+    pushint 8 // 8
+    <=
+    assert // overflow
     extract 7 1
     // smart_contracts/proposal/contract.py:1003
     // funding_type=arc4.UInt64(self.funding_type.value),

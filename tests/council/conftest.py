@@ -15,9 +15,9 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
+from tests.common import INITIAL_FUNDS
 from tests.conftest import no_role_account
 from tests.council.common import members_box_name
-from tests.common import INITIAL_FUNDS
 from tests.xgov_registry.conftest import (
     approved_proposal_client,
     draft_proposal_client,

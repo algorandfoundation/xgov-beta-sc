@@ -18,7 +18,6 @@ import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
 
 from ..proposal import config as proposal_cfg
-
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as proposal_enm
 from ..xgov_registry import contract as registry_contract
@@ -119,7 +118,7 @@ class Council(
         """
 
         assert Txn.sender == self.admin.value, err.UNAUTHORIZED
-        assert address.native in self.members, err.VOTER_ALREADY_ASSIGNED
+        assert address.native in self.members, err.VOTER_NOT_FOUND
 
         del self.members[address.native]
         self.member_count.value -= 1
