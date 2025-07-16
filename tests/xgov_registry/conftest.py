@@ -36,8 +36,8 @@ from tests.proposal.common import (
     DEFAULT_FOCUS,
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
-    finalize_proposal,
     get_locked_amount,
+    submit_proposal,
     upload_metadata,
 )
 from tests.utils import time_warp
@@ -484,7 +484,7 @@ def draft_proposal_client(
 ) -> ProposalClient:
     registry_id = proposal_client.get_global_state().registry_app_id
 
-    proposal_client.submit(
+    proposal_client.open(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -527,7 +527,7 @@ def voting_proposal_client(
 
     global_state = xgov_registry_client.get_global_state()
 
-    finalize_proposal(
+    submit_proposal(
         proposal_client=draft_proposal_client,
         xgov_registry_mock_client=xgov_registry_client,
         proposer=proposer,
@@ -590,7 +590,7 @@ def voting_proposal_client_requested_too_much(
 
     requested_amount = TREASURY_AMOUNT + 1
 
-    proposal_client.submit(
+    proposal_client.open(
         payment=TransactionWithSigner(
             txn=algorand_client.transactions.payment(
                 PayParams(
@@ -617,7 +617,7 @@ def voting_proposal_client_requested_too_much(
     upload_metadata(composer, proposer, xgov_registry_client.app_id, b"METADATA")
     composer.execute()
 
-    finalize_proposal(
+    submit_proposal(
         proposal_client=proposal_client,
         xgov_registry_mock_client=xgov_registry_client,
         proposer=proposer,
@@ -758,10 +758,8 @@ def approved_proposal_client(
 
     reg_gs = xgov_registry_client.get_global_state()
     voting_duration = reg_gs.voting_duration_small  # 86400
-    submission_ts = (
-        voting_proposal_client.get_global_state().submission_ts
-    )  # 1_751_447_221
-    time_warp(submission_ts + voting_duration)  # 1_751_533_621
+    open_ts = voting_proposal_client.get_global_state().open_ts  # 1_751_447_221
+    time_warp(open_ts + voting_duration)  # 1_751_533_621
 
     voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
@@ -854,10 +852,8 @@ def approved_proposal_client_requested_too_much(
 
     reg_gs = xgov_registry_client.get_global_state()
     voting_duration = reg_gs.voting_duration_xlarge
-    submission_ts = (
-        voting_proposal_client_requested_too_much.get_global_state().submission_ts
-    )
-    time_warp(submission_ts + voting_duration)
+    open_ts = voting_proposal_client_requested_too_much.get_global_state().open_ts
+    time_warp(open_ts + voting_duration)
 
     voting_proposal_client_requested_too_much.scrutiny(
         transaction_parameters=TransactionParameters(

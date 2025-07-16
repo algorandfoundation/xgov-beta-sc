@@ -546,9 +546,9 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def decommission_proposal(self, proposal_app: Application) -> None:
+    def finalize_proposal(self, proposal_app: Application) -> None:
         error, tx = arc4.abi_call(
-            Proposal.decommission,
+            Proposal.finalize,
             app_id=proposal_app,
             fee=0,
         )

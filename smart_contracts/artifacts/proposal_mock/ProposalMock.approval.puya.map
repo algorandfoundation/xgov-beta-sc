@@ -3,7 +3,7 @@
   "sources": [
     "../../proposal_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADmB;AAD3B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AA9DR;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;AA4FK;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAgFK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAxEL;;;AAAA;AAwEK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAnEL;;;AAmEK;;;AAAA;;AAAL;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAIQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADmB;AAD3B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AA9DR;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;;;AAAA;;AA4FK;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;AARA;;AAAA;AAAA;AAAA;;AAAA;AAhFL;;;AAAA;;;AAAA;AAAA;;;AAAA;AAgFK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AA5EL;;;AAAA;AA4EK;;;AAAA;;AAJA;;AAAA;AAAA;AAAA;;AAAA;AAxEL;;;AAAA;AAwEK;;;AAAA;;AALA;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAnEL;;;AAmEK;;;AAAA;;AAAL;;;AAEQ;AAAA;;AAAA;AACA;AAA6B;;AAA7B;;AAER;;;AAEQ;AAAA;;AAAA;;AAER;;;AAEQ;;AAAA;;AAAA;;AAER;;;AAIQ;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -102,6 +102,26 @@
       "stack_out": []
     },
     "125": {
+      "op": "pushbytes 0x6f70656e5f74696d657374616d70",
+      "defined_out": [
+        "0x6f70656e5f74696d657374616d70"
+      ],
+      "stack_out": [
+        "0x6f70656e5f74696d657374616d70"
+      ]
+    },
+    "141": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0x6f70656e5f74696d657374616d70",
+        "0"
+      ]
+    },
+    "142": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "143": {
       "op": "pushbytes 0x7375626d697373696f6e5f74696d657374616d70",
       "defined_out": [
         "0x7375626d697373696f6e5f74696d657374616d70"
@@ -110,38 +130,18 @@
         "0x7375626d697373696f6e5f74696d657374616d70"
       ]
     },
-    "147": {
+    "165": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x7375626d697373696f6e5f74696d657374616d70",
         "0"
       ]
     },
-    "148": {
+    "166": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "149": {
-      "op": "pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70",
-      "defined_out": [
-        "0x66696e616c697a6174696f6e5f74696d657374616d70"
-      ],
-      "stack_out": [
-        "0x66696e616c697a6174696f6e5f74696d657374616d70"
-      ]
-    },
-    "173": {
-      "op": "intc_0 // 0",
-      "stack_out": [
-        "0x66696e616c697a6174696f6e5f74696d657374616d70",
-        "0"
-      ]
-    },
-    "174": {
-      "op": "app_global_put",
-      "stack_out": []
-    },
-    "175": {
+    "167": {
       "op": "bytec_3 // 0x737461747573",
       "defined_out": [
         "0x737461747573"
@@ -150,18 +150,18 @@
         "0x737461747573"
       ]
     },
-    "176": {
+    "168": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x737461747573",
         "0"
       ]
     },
-    "177": {
+    "169": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "178": {
+    "170": {
       "op": "pushbytes 0x66756e64696e675f63617465676f7279",
       "defined_out": [
         "0x66756e64696e675f63617465676f7279"
@@ -170,18 +170,18 @@
         "0x66756e64696e675f63617465676f7279"
       ]
     },
-    "196": {
+    "188": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x66756e64696e675f63617465676f7279",
         "0"
       ]
     },
-    "197": {
+    "189": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "198": {
+    "190": {
       "op": "pushbytes 0x66756e64696e675f74797065",
       "defined_out": [
         "0x66756e64696e675f74797065"
@@ -190,18 +190,18 @@
         "0x66756e64696e675f74797065"
       ]
     },
-    "212": {
+    "204": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x66756e64696e675f74797065",
         "0"
       ]
     },
-    "213": {
+    "205": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "214": {
+    "206": {
       "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74"
@@ -210,18 +210,18 @@
         "0x7265717565737465645f616d6f756e74"
       ]
     },
-    "216": {
+    "208": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x7265717565737465645f616d6f756e74",
         "0"
       ]
     },
-    "217": {
+    "209": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "218": {
+    "210": {
       "op": "pushbytes 0x6c6f636b65645f616d6f756e74",
       "defined_out": [
         "0x6c6f636b65645f616d6f756e74"
@@ -230,18 +230,18 @@
         "0x6c6f636b65645f616d6f756e74"
       ]
     },
-    "233": {
+    "225": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x6c6f636b65645f616d6f756e74",
         "0"
       ]
     },
-    "234": {
+    "226": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "235": {
+    "227": {
       "op": "bytec 5 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -250,7 +250,7 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "237": {
+    "229": {
       "op": "bytec_2 // 0x",
       "defined_out": [
         "0x",
@@ -261,11 +261,11 @@
         "0x"
       ]
     },
-    "238": {
+    "230": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "239": {
+    "231": {
       "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
@@ -274,18 +274,18 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "241": {
+    "233": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x636f6d6d69747465655f6d656d62657273",
         "0"
       ]
     },
-    "242": {
+    "234": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "243": {
+    "235": {
       "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
@@ -294,18 +294,18 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "245": {
+    "237": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x636f6d6d69747465655f766f746573",
         "0"
       ]
     },
-    "246": {
+    "238": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "247": {
+    "239": {
       "op": "pushbytes 0x766f7465645f6d656d62657273",
       "defined_out": [
         "0x766f7465645f6d656d62657273"
@@ -314,18 +314,18 @@
         "0x766f7465645f6d656d62657273"
       ]
     },
-    "262": {
+    "254": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x766f7465645f6d656d62657273",
         "0"
       ]
     },
-    "263": {
+    "255": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "264": {
+    "256": {
       "op": "pushbytes 0x617070726f76616c73",
       "defined_out": [
         "0x617070726f76616c73"
@@ -334,18 +334,18 @@
         "0x617070726f76616c73"
       ]
     },
-    "275": {
+    "267": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x617070726f76616c73",
         "0"
       ]
     },
-    "276": {
+    "268": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "277": {
+    "269": {
       "op": "pushbytes 0x72656a656374696f6e73",
       "defined_out": [
         "0x72656a656374696f6e73"
@@ -354,18 +354,18 @@
         "0x72656a656374696f6e73"
       ]
     },
-    "289": {
+    "281": {
       "op": "intc_0 // 0",
       "stack_out": [
         "0x72656a656374696f6e73",
         "0"
       ]
     },
-    "290": {
+    "282": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "291": {
+    "283": {
       "block": "main_after_if_else@2",
       "stack_in": [],
       "op": "txn NumAppArgs",
@@ -376,11 +376,11 @@
         "tmp%0#2"
       ]
     },
-    "293": {
+    "285": {
       "op": "bz main_after_if_else@11",
       "stack_out": []
     },
-    "296": {
+    "288": {
       "op": "pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method \"create(address)void\", method \"set_status(uint64)void\", method \"set_requested_amount(uint64)void\", method \"set_committee_details(byte[32],uint64,uint64)void\", method \"release_funds()void\", method \"vote(address,uint64,uint64)void\"",
       "defined_out": [
         "Method(create(address)void)",
@@ -399,7 +399,7 @@
         "Method(vote(address,uint64,uint64)void)"
       ]
     },
-    "328": {
+    "320": {
       "op": "txna ApplicationArgs 0",
       "defined_out": [
         "Method(create(address)void)",
@@ -420,11 +420,11 @@
         "tmp%2#0"
       ]
     },
-    "331": {
+    "323": {
       "op": "match main_create_route@5 main_set_status_route@6 main_set_requested_amount_route@7 main_set_committee_details_route@8 main_release_funds_route@9 main_vote_route@10",
       "stack_out": []
     },
-    "345": {
+    "337": {
       "block": "main_after_if_else@11",
       "stack_in": [],
       "op": "intc_0 // 0",
@@ -435,11 +435,11 @@
         "tmp%0#0"
       ]
     },
-    "346": {
+    "338": {
       "op": "return",
       "stack_out": []
     },
-    "347": {
+    "339": {
       "block": "main_vote_route@10",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -450,7 +450,7 @@
         "tmp%27#0"
       ]
     },
-    "349": {
+    "341": {
       "op": "!",
       "defined_out": [
         "tmp%28#0"
@@ -459,12 +459,12 @@
         "tmp%28#0"
       ]
     },
-    "350": {
+    "342": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "351": {
+    "343": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%29#0"
@@ -473,12 +473,12 @@
         "tmp%29#0"
       ]
     },
-    "353": {
+    "345": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "354": {
+    "346": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -487,11 +487,11 @@
         "tmp%0#0"
       ]
     },
-    "355": {
+    "347": {
       "op": "return",
       "stack_out": []
     },
-    "356": {
+    "348": {
       "block": "main_release_funds_route@9",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -502,7 +502,7 @@
         "tmp%23#0"
       ]
     },
-    "358": {
+    "350": {
       "op": "!",
       "defined_out": [
         "tmp%24#0"
@@ -511,12 +511,12 @@
         "tmp%24#0"
       ]
     },
-    "359": {
+    "351": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "360": {
+    "352": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%25#0"
@@ -525,12 +525,12 @@
         "tmp%25#0"
       ]
     },
-    "362": {
+    "354": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "363": {
+    "355": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -539,11 +539,11 @@
         "tmp%0#0"
       ]
     },
-    "364": {
+    "356": {
       "op": "return",
       "stack_out": []
     },
-    "365": {
+    "357": {
       "block": "main_set_committee_details_route@8",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -554,7 +554,7 @@
         "tmp%17#0"
       ]
     },
-    "367": {
+    "359": {
       "op": "!",
       "defined_out": [
         "tmp%18#0"
@@ -563,12 +563,12 @@
         "tmp%18#0"
       ]
     },
-    "368": {
+    "360": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "369": {
+    "361": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%19#0"
@@ -577,12 +577,12 @@
         "tmp%19#0"
       ]
     },
-    "371": {
+    "363": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "372": {
+    "364": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%1#0"
@@ -591,7 +591,7 @@
         "reinterpret_bytes[32]%1#0"
       ]
     },
-    "375": {
+    "367": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "reinterpret_bytes[32]%1#0",
@@ -602,7 +602,7 @@
         "reinterpret_bytes[8]%2#0"
       ]
     },
-    "378": {
+    "370": {
       "op": "btoi",
       "defined_out": [
         "reinterpret_bytes[32]%1#0",
@@ -613,7 +613,7 @@
         "tmp%21#0"
       ]
     },
-    "379": {
+    "371": {
       "op": "txna ApplicationArgs 3",
       "defined_out": [
         "reinterpret_bytes[32]%1#0",
@@ -626,7 +626,7 @@
         "reinterpret_bytes[8]%3#0"
       ]
     },
-    "382": {
+    "374": {
       "op": "btoi",
       "defined_out": [
         "reinterpret_bytes[32]%1#0",
@@ -639,12 +639,12 @@
         "tmp%22#0"
       ]
     },
-    "383": {
+    "375": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
       "op": "callsub set_committee_details",
       "stack_out": []
     },
-    "386": {
+    "378": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -653,11 +653,11 @@
         "tmp%0#0"
       ]
     },
-    "387": {
+    "379": {
       "op": "return",
       "stack_out": []
     },
-    "388": {
+    "380": {
       "block": "main_set_requested_amount_route@7",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -668,7 +668,7 @@
         "tmp%12#0"
       ]
     },
-    "390": {
+    "382": {
       "op": "!",
       "defined_out": [
         "tmp%13#0"
@@ -677,12 +677,12 @@
         "tmp%13#0"
       ]
     },
-    "391": {
+    "383": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "392": {
+    "384": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%14#0"
@@ -691,12 +691,12 @@
         "tmp%14#0"
       ]
     },
-    "394": {
+    "386": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "395": {
+    "387": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%1#0"
@@ -705,7 +705,7 @@
         "reinterpret_bytes[8]%1#0"
       ]
     },
-    "398": {
+    "390": {
       "op": "btoi",
       "defined_out": [
         "tmp%16#0"
@@ -714,12 +714,12 @@
         "tmp%16#0"
       ]
     },
-    "399": {
+    "391": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
       "op": "callsub set_requested_amount",
       "stack_out": []
     },
-    "402": {
+    "394": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -728,11 +728,11 @@
         "tmp%0#0"
       ]
     },
-    "403": {
+    "395": {
       "op": "return",
       "stack_out": []
     },
-    "404": {
+    "396": {
       "block": "main_set_status_route@6",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -743,7 +743,7 @@
         "tmp%7#0"
       ]
     },
-    "406": {
+    "398": {
       "op": "!",
       "defined_out": [
         "tmp%8#0"
@@ -752,12 +752,12 @@
         "tmp%8#0"
       ]
     },
-    "407": {
+    "399": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "408": {
+    "400": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%9#0"
@@ -766,12 +766,12 @@
         "tmp%9#0"
       ]
     },
-    "410": {
+    "402": {
       "error": "can only call when not creating",
       "op": "assert // can only call when not creating",
       "stack_out": []
     },
-    "411": {
+    "403": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[8]%0#0"
@@ -780,7 +780,7 @@
         "reinterpret_bytes[8]%0#0"
       ]
     },
-    "414": {
+    "406": {
       "op": "btoi",
       "defined_out": [
         "tmp%11#0"
@@ -789,12 +789,12 @@
         "tmp%11#0"
       ]
     },
-    "415": {
+    "407": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
       "op": "callsub set_status",
       "stack_out": []
     },
-    "418": {
+    "410": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -803,11 +803,11 @@
         "tmp%0#0"
       ]
     },
-    "419": {
+    "411": {
       "op": "return",
       "stack_out": []
     },
-    "420": {
+    "412": {
       "block": "main_create_route@5",
       "stack_in": [],
       "op": "txn OnCompletion",
@@ -818,7 +818,7 @@
         "tmp%3#0"
       ]
     },
-    "422": {
+    "414": {
       "op": "!",
       "defined_out": [
         "tmp%4#0"
@@ -827,12 +827,12 @@
         "tmp%4#0"
       ]
     },
-    "423": {
+    "415": {
       "error": "OnCompletion is not NoOp",
       "op": "assert // OnCompletion is not NoOp",
       "stack_out": []
     },
-    "424": {
+    "416": {
       "op": "txn ApplicationID",
       "defined_out": [
         "tmp%5#0"
@@ -841,7 +841,7 @@
         "tmp%5#0"
       ]
     },
-    "426": {
+    "418": {
       "op": "!",
       "defined_out": [
         "tmp%6#0"
@@ -850,12 +850,12 @@
         "tmp%6#0"
       ]
     },
-    "427": {
+    "419": {
       "error": "can only call when creating",
       "op": "assert // can only call when creating",
       "stack_out": []
     },
-    "428": {
+    "420": {
       "op": "txna ApplicationArgs 1",
       "defined_out": [
         "reinterpret_bytes[32]%0#0"
@@ -864,12 +864,12 @@
         "reinterpret_bytes[32]%0#0"
       ]
     },
-    "431": {
+    "423": {
       "callsub": "smart_contracts.proposal_mock.contract.ProposalMock.create",
       "op": "callsub create",
       "stack_out": []
     },
-    "434": {
+    "426": {
       "op": "intc_1 // 1",
       "defined_out": [
         "tmp%0#0"
@@ -878,11 +878,11 @@
         "tmp%0#0"
       ]
     },
-    "435": {
+    "427": {
       "op": "return",
       "stack_out": []
     },
-    "436": {
+    "428": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.create",
       "params": {
         "proposer#0": "bytes"
@@ -891,7 +891,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "439": {
+    "431": {
       "op": "bytec_0 // 0x70726f706f736572",
       "defined_out": [
         "0x70726f706f736572"
@@ -900,7 +900,7 @@
         "0x70726f706f736572"
       ]
     },
-    "440": {
+    "432": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x70726f706f736572",
@@ -911,11 +911,11 @@
         "proposer#0 (copy)"
       ]
     },
-    "442": {
+    "434": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "443": {
+    "435": {
       "op": "bytec_1 // 0x72656769737472795f6170705f6964",
       "defined_out": [
         "0x72656769737472795f6170705f6964"
@@ -924,7 +924,7 @@
         "0x72656769737472795f6170705f6964"
       ]
     },
-    "444": {
+    "436": {
       "op": "global CallerApplicationID",
       "defined_out": [
         "0x72656769737472795f6170705f6964",
@@ -933,6 +933,43 @@
       "stack_out": [
         "0x72656769737472795f6170705f6964",
         "new_state_value%0#0"
+      ]
+    },
+    "438": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "439": {
+      "retsub": true,
+      "op": "retsub"
+    },
+    "440": {
+      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
+      "params": {
+        "status#0": "uint64"
+      },
+      "block": "set_status",
+      "stack_in": [],
+      "op": "proto 1 0"
+    },
+    "443": {
+      "op": "bytec_3 // 0x737461747573",
+      "defined_out": [
+        "0x737461747573"
+      ],
+      "stack_out": [
+        "0x737461747573"
+      ]
+    },
+    "444": {
+      "op": "frame_dig -1",
+      "defined_out": [
+        "0x737461747573",
+        "status#0 (copy)"
+      ],
+      "stack_out": [
+        "0x737461747573",
+        "status#0 (copy)"
       ]
     },
     "446": {
@@ -944,43 +981,6 @@
       "op": "retsub"
     },
     "448": {
-      "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_status",
-      "params": {
-        "status#0": "uint64"
-      },
-      "block": "set_status",
-      "stack_in": [],
-      "op": "proto 1 0"
-    },
-    "451": {
-      "op": "bytec_3 // 0x737461747573",
-      "defined_out": [
-        "0x737461747573"
-      ],
-      "stack_out": [
-        "0x737461747573"
-      ]
-    },
-    "452": {
-      "op": "frame_dig -1",
-      "defined_out": [
-        "0x737461747573",
-        "status#0 (copy)"
-      ],
-      "stack_out": [
-        "0x737461747573",
-        "status#0 (copy)"
-      ]
-    },
-    "454": {
-      "op": "app_global_put",
-      "stack_out": []
-    },
-    "455": {
-      "retsub": true,
-      "op": "retsub"
-    },
-    "456": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount",
       "params": {
         "requested_amount#0": "uint64"
@@ -989,7 +989,7 @@
       "stack_in": [],
       "op": "proto 1 0"
     },
-    "459": {
+    "451": {
       "op": "bytec 4 // 0x7265717565737465645f616d6f756e74",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74"
@@ -998,7 +998,7 @@
         "0x7265717565737465645f616d6f756e74"
       ]
     },
-    "461": {
+    "453": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x7265717565737465645f616d6f756e74",
@@ -1009,15 +1009,15 @@
         "requested_amount#0 (copy)"
       ]
     },
-    "463": {
+    "455": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "464": {
+    "456": {
       "retsub": true,
       "op": "retsub"
     },
-    "465": {
+    "457": {
       "subroutine": "smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details",
       "params": {
         "metadata_hash#0": "bytes",
@@ -1028,7 +1028,7 @@
       "stack_in": [],
       "op": "proto 3 0"
     },
-    "468": {
+    "460": {
       "op": "bytec 5 // 0x636f6d6d69747465655f6964",
       "defined_out": [
         "0x636f6d6d69747465655f6964"
@@ -1037,7 +1037,7 @@
         "0x636f6d6d69747465655f6964"
       ]
     },
-    "470": {
+    "462": {
       "op": "frame_dig -3",
       "defined_out": [
         "0x636f6d6d69747465655f6964",
@@ -1048,11 +1048,11 @@
         "metadata_hash#0 (copy)"
       ]
     },
-    "472": {
+    "464": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "473": {
+    "465": {
       "op": "bytec 6 // 0x636f6d6d69747465655f6d656d62657273",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273"
@@ -1061,7 +1061,7 @@
         "0x636f6d6d69747465655f6d656d62657273"
       ]
     },
-    "475": {
+    "467": {
       "op": "frame_dig -2",
       "defined_out": [
         "0x636f6d6d69747465655f6d656d62657273",
@@ -1072,11 +1072,11 @@
         "size#0 (copy)"
       ]
     },
-    "477": {
+    "469": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "478": {
+    "470": {
       "op": "bytec 7 // 0x636f6d6d69747465655f766f746573",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573"
@@ -1085,7 +1085,7 @@
         "0x636f6d6d69747465655f766f746573"
       ]
     },
-    "480": {
+    "472": {
       "op": "frame_dig -1",
       "defined_out": [
         "0x636f6d6d69747465655f766f746573",
@@ -1096,11 +1096,11 @@
         "votes#0 (copy)"
       ]
     },
-    "482": {
+    "474": {
       "op": "app_global_put",
       "stack_out": []
     },
-    "483": {
+    "475": {
       "retsub": true,
       "op": "retsub"
     }

@@ -7,7 +7,7 @@ STATUS_EMPTY: Final[int] = (
 STATUS_DRAFT: Final[int] = (
     10  # An Empty proposal is initialized (and updated) from the xGov Portal
 )
-STATUS_FINAL: Final[int] = (
+STATUS_SUBMITTED: Final[int] = (
     20  # Draft is submitted to vote by the Proposer after a minimum discussion time
 )
 STATUS_VOTING: Final[int] = (

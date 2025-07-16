@@ -977,12 +977,12 @@ class XGovRegistry(
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def decommission_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def finalize_proposal(self, proposal_id: arc4.UInt64) -> None:
         """
-        Decommissions a Proposal.
+        Finalize a Proposal.
 
         Args:
-            proposal_id (arc4.UInt64): The application ID of the Proposal app to decommission
+            proposal_id (arc4.UInt64): The application ID of the Proposal app to finalize
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
@@ -1002,7 +1002,7 @@ class XGovRegistry(
         assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
         error, tx = arc4.abi_call(
-            proposal_contract.Proposal.decommission, app_id=proposal_id.native
+            proposal_contract.Proposal.finalize, app_id=proposal_id.native
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):

@@ -23,7 +23,7 @@ from tests.common import (
 )
 from tests.proposal.common import (
     assign_voters,
-    finalize_proposal,
+    open_proposal,
     submit_proposal,
 )
 from tests.utils import time_warp
@@ -110,13 +110,13 @@ def proposal_client(
 
 
 @pytest.fixture(scope="function")
-def submitted_proposal_client(
+def draft_proposal_client(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    submit_proposal(
+    open_proposal(
         proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
     )
 
@@ -124,8 +124,8 @@ def submitted_proposal_client(
 
 
 @pytest.fixture(scope="function")
-def finalized_proposal_client(
-    submitted_proposal_client: ProposalClient,
+def submitted_proposal_client(
+    draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
@@ -133,20 +133,20 @@ def finalized_proposal_client(
 ) -> ProposalClient:
     sp = sp_min_fee_times_2
 
-    finalize_proposal(
-        submitted_proposal_client,
+    submit_proposal(
+        draft_proposal_client,
         xgov_registry_mock_client,
         proposer,
         xgov_daemon,
         sp,
     )
 
-    return submitted_proposal_client
+    return draft_proposal_client
 
 
 @pytest.fixture(scope="function")
 def voting_proposal_client(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     committee_members: list[AddressAndSigner],
     xgov_daemon: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -154,7 +154,7 @@ def voting_proposal_client(
 ) -> ProposalClient:
     sp = sp_min_fee_times_3
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
 
     assign_voters(
         composer,
@@ -165,7 +165,7 @@ def voting_proposal_client(
     )
     composer.execute()
 
-    return finalized_proposal_client
+    return submitted_proposal_client
 
 
 @pytest.fixture(scope="function")
@@ -332,13 +332,13 @@ def alternative_proposal_client(
 
 
 @pytest.fixture(scope="function")
-def alternative_submitted_proposal_client(
+def alternative_draft_proposal_client(
     alternative_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     no_role_account: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    submit_proposal(
+    open_proposal(
         alternative_proposal_client,
         algorand_client,
         no_role_account,
@@ -349,8 +349,8 @@ def alternative_submitted_proposal_client(
 
 
 @pytest.fixture(scope="function")
-def alternative_finalized_proposal_client(
-    alternative_submitted_proposal_client: ProposalClient,
+def alternative_submitted_proposal_client(
+    alternative_draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: AddressAndSigner,
     xgov_daemon: AddressAndSigner,
@@ -358,12 +358,12 @@ def alternative_finalized_proposal_client(
 ) -> ProposalClient:
     sp = sp_min_fee_times_2
 
-    finalize_proposal(
-        alternative_submitted_proposal_client,
+    submit_proposal(
+        alternative_draft_proposal_client,
         xgov_registry_mock_client,
         no_role_account,
         xgov_daemon,
         sp,
     )
 
-    return alternative_submitted_proposal_client
+    return alternative_draft_proposal_client

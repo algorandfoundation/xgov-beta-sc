@@ -34,7 +34,7 @@ def test_funded_proposal(
         == get_state_result.return_value.committee_members
     )
     assert global_state.committee_votes == get_state_result.return_value.committee_votes
-    assert global_state.finalization_ts == get_state_result.return_value.finalization_ts
+    assert global_state.submission_ts == get_state_result.return_value.submission_ts
     assert global_state.funding_type == get_state_result.return_value.funding_type
     assert global_state.locked_amount == get_state_result.return_value.locked_amount
     assert global_state.nulls == get_state_result.return_value.nulls
@@ -48,7 +48,7 @@ def test_funded_proposal(
         global_state.requested_amount == get_state_result.return_value.requested_amount
     )
     assert global_state.status == get_state_result.return_value.status
-    assert global_state.submission_ts == get_state_result.return_value.submission_ts
+    assert global_state.open_ts == get_state_result.return_value.open_ts
     assert global_state.title.as_bytes == get_state_result.return_value.title.encode()
     assert global_state.vote_open_ts == get_state_result.return_value.vote_open_ts
     assert global_state.voted_members == get_state_result.return_value.voted_members
