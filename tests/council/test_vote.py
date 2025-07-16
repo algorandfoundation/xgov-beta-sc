@@ -213,7 +213,7 @@ def test_vote_proposal_invalid_state(
 def test_vote_not_member(
     approved_proposal_client: ProposalClient,
     council_client: CouncilClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     algorand_client: AlgorandClient,
 ) -> None:
 
@@ -228,11 +228,11 @@ def test_vote_not_member(
         proposal_id=proposal_id,
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             boxes=[
                 (0, votes_box_name(proposal_id)),
-                (0, members_box_name(random_account.address)),
+                (0, members_box_name(no_role_account.address)),
             ],
             foreign_apps=[
                 council_client.get_global_state().registry_app_id,
@@ -248,7 +248,7 @@ def test_vote_not_member(
 
 def test_vote_not_a_proposal(
     council_client: CouncilClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     algorand_client: AlgorandClient,
 ) -> None:
 
@@ -264,11 +264,11 @@ def test_vote_not_a_proposal(
         proposal_id=registry_app_id,
         block=False,
         transaction_parameters=TransactionParameters(
-            sender=random_account.address,
-            signer=random_account.signer,
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
             boxes=[
                 (0, votes_box_name(registry_app_id)),
-                (0, members_box_name(random_account.address)),
+                (0, members_box_name(no_role_account.address)),
             ],
             foreign_apps=[registry_app_id],
             suggested_params=sp,

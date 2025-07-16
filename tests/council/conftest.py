@@ -19,13 +19,16 @@ from tests.council.common import members_box_name
 from tests.proposal.common import (
     INITIAL_FUNDS,
 )
+from tests.conftest import no_role_account
 from tests.xgov_registry.conftest import (
     approved_proposal_client,
     proposer,
-    random_account,
     voting_proposal_client,
     xgov_registry_client,
     xgov_registry_config,
+    xgov_registry_client_committee_not_declared,
+    draft_proposal_client,
+    proposal_client
 )
 
 

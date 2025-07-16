@@ -21,6 +21,7 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
+    finalize_proposal,
     submit_proposal,
 )
 

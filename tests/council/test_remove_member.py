@@ -15,19 +15,19 @@ def test_remove_member_success(
     deployer: Account,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> None:
     before_global_state = council_client.get_global_state()
     sp = algorand_client.get_suggested_params()
 
     council_client.add_member(
-        address=random_account.address,
+        address=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
             boxes=[
-                (0, members_box_name(random_account.address)),
+                (0, members_box_name(no_role_account.address)),
             ],
         ),
     )
@@ -37,13 +37,13 @@ def test_remove_member_success(
     assert (before_global_state.member_count + 1) == added_global_state.member_count
 
     council_client.remove_member(
-        address=random_account.address,
+        address=no_role_account.address,
         transaction_parameters=TransactionParameters(
             sender=deployer.address,
             signer=deployer.signer,
             suggested_params=sp,
             boxes=[
-                (0, members_box_name(random_account.address)),
+                (0, members_box_name(no_role_account.address)),
             ],
         ),
     )
@@ -54,7 +54,7 @@ def test_remove_member_success(
 
 
 def test_remove_member_not_admin(
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
 ) -> None:
@@ -62,13 +62,13 @@ def test_remove_member_not_admin(
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.FORBIDDEN]):
         council_client.remove_member(
-            address=random_account.address,
+            address=no_role_account.address,
             transaction_parameters=TransactionParameters(
-                sender=random_account.address,
-                signer=random_account.signer,
+                sender=no_role_account.address,
+                signer=no_role_account.signer,
                 suggested_params=sp,
                 boxes=[
-                    (0, members_box_name(random_account.address)),
+                    (0, members_box_name(no_role_account.address)),
                 ],
             ),
         )
@@ -78,19 +78,19 @@ def test_remove_member_not_member(
     deployer: Account,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
-    random_account: AddressAndSigner,
+    no_role_account: AddressAndSigner,
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.NOT_A_MEMBER]):
         council_client.remove_member(
-            address=random_account.address,
+            address=no_role_account.address,
             transaction_parameters=TransactionParameters(
                 sender=deployer.address,
                 signer=deployer.signer,
                 suggested_params=sp,
                 boxes=[
-                    (0, members_box_name(random_account.address)),
+                    (0, members_box_name(no_role_account.address)),
                 ],
             ),
         )
