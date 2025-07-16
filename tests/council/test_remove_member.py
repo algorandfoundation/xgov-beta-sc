@@ -60,7 +60,7 @@ def test_remove_member_not_admin(
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.FORBIDDEN]):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         council_client.remove_member(
             address=no_role_account.address,
             transaction_parameters=TransactionParameters(
@@ -82,7 +82,7 @@ def test_remove_member_not_member(
 ) -> None:
     sp = algorand_client.get_suggested_params()
 
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.NOT_A_MEMBER]):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTER_NOT_FOUND]):
         council_client.remove_member(
             address=no_role_account.address,
             transaction_parameters=TransactionParameters(

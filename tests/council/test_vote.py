@@ -242,7 +242,7 @@ def test_vote_not_member(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.NOT_A_MEMBER]):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTER_NOT_FOUND]):
         composer.execute()
 
 
@@ -275,5 +275,5 @@ def test_vote_not_a_proposal(
         ),
     )
 
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.NOT_A_MEMBER]):
+    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.VOTER_NOT_FOUND]):
         composer.execute()

@@ -19,7 +19,6 @@ from smart_contracts.common import abi_types as typ
 
 from ..proposal import config as proposal_cfg
 
-# from ..xgov_registry import config as reg_cfg
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as proposal_enm
 from ..xgov_registry import contract as registry_contract
@@ -100,8 +99,8 @@ class Council(
             err.ALREADY_MEMBER: If the address is already a member.
         """
 
-        assert Txn.sender == self.admin.value, err.FORBIDDEN
-        assert address.native not in self.members, err.ALREADY_MEMBER
+        assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+        assert address.native not in self.members, err.VOTER_ALREADY_ASSIGNED
 
         self.members[address.native] = typ.Empty()
         self.member_count.value += 1
@@ -119,8 +118,8 @@ class Council(
             err.NOT_A_MEMBER: If the address is not a member.
         """
 
-        assert Txn.sender == self.admin.value, err.FORBIDDEN
-        assert address.native in self.members, err.NOT_A_MEMBER
+        assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+        assert address.native in self.members, err.VOTER_ALREADY_ASSIGNED
 
         del self.members[address.native]
         self.member_count.value -= 1
@@ -141,7 +140,7 @@ class Council(
             err.ALREADY_VOTED: If the sender has already voted on this proposal.
         """
 
-        assert Txn.sender in self.members, err.NOT_A_MEMBER
+        assert Txn.sender in self.members, err.VOTER_NOT_FOUND
 
         if proposal_id not in self.votes:
             # we dont need any error handling here
@@ -174,7 +173,7 @@ class Council(
             for i in urange(self.votes[proposal_id].length):
                 assert (
                     Txn.sender != self.votes[proposal_id][i].address
-                ), err.ALREADY_VOTED
+                ), err.VOTER_ALREADY_VOTED
 
                 if self.votes[proposal_id][i].block:
                     rejections += 1
