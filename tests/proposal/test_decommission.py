@@ -9,7 +9,6 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
     assert_account_balance,
     assert_blocked_proposal_global_state,
@@ -42,12 +41,6 @@ def test_decommission_empty_proposal(
             sender=xgov_daemon.address,
             signer=xgov_daemon.signer,
             foreign_apps=[proposal_client.app_id],
-            boxes=[
-                (
-                    proposal_client.app_id,
-                    METADATA_BOX_KEY.encode(),
-                )
-            ],
             suggested_params=sp,
         ),
     )
@@ -60,8 +53,8 @@ def test_decommission_empty_proposal(
         xgov_registry_mock_client.app_id,
         decommissioned=True,
     )
-
-    assert_account_balance(algorand_client, proposal_client.app_address, 0)
+    min_balance = algorand_client.account.get_information(proposal_client.app_address)["min-balance"]  # type: ignore
+    assert_account_balance(algorand_client, proposal_client.app_address, min_balance)  # type: ignore
 
     # Test that decommission cannot be replayed from this state
     with pytest.raises(
@@ -73,12 +66,6 @@ def test_decommission_empty_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[proposal_client.app_id],
-                boxes=[
-                    (
-                        proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 suggested_params=sp,
                 note="replay decommissioning",
             ),
@@ -107,12 +94,6 @@ def test_decommission_draft_proposal(
             sender=xgov_daemon.address,
             signer=xgov_daemon.signer,
             foreign_apps=[submitted_proposal_client.app_id],
-            boxes=[
-                (
-                    submitted_proposal_client.app_id,
-                    METADATA_BOX_KEY.encode(),
-                )
-            ],
             accounts=[proposer.address],
             suggested_params=sp,
         ),
@@ -127,7 +108,12 @@ def test_decommission_draft_proposal(
         decommissioned=True,
     )
 
-    assert_account_balance(algorand_client, submitted_proposal_client.app_address, 0)
+    min_balance = algorand_client.account.get_information(  # type: ignore
+        submitted_proposal_client.app_address
+    )["min-balance"]
+    assert_account_balance(
+        algorand_client, submitted_proposal_client.app_address, min_balance  # type: ignore
+    )
     assert_account_balance(
         algorand_client, proposer.address, proposer_balance + locked_amount  # type: ignore
     )
@@ -142,12 +128,6 @@ def test_decommission_draft_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[submitted_proposal_client.app_id],
-                boxes=[
-                    (
-                        submitted_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
                 note="replay decommissioning",
@@ -174,12 +154,6 @@ def test_decommission_final_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[finalized_proposal_client.app_id],
-                boxes=[
-                    (
-                        finalized_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
             ),
@@ -205,12 +179,6 @@ def test_decommission_voting_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[voting_proposal_client.app_id],
-                boxes=[
-                    (
-                        voting_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
             ),
@@ -236,12 +204,6 @@ def test_decommission_approved_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[approved_proposal_client.app_id],
-                boxes=[
-                    (
-                        approved_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
             ),
@@ -267,12 +229,6 @@ def test_decommission_reviewed_proposal(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[reviewed_proposal_client.app_id],
-                boxes=[
-                    (
-                        reviewed_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
             ),
@@ -316,7 +272,12 @@ def test_decommission_success_rejected_proposal(
         decommissioned=True,
     )
 
-    assert_account_balance(algorand_client, rejected_proposal_client.app_address, 0)
+    min_balance = algorand_client.account.get_information(  # type: ignore
+        rejected_proposal_client.app_address
+    )["min-balance"]
+    assert_account_balance(
+        algorand_client, rejected_proposal_client.app_address, min_balance  # type: ignore
+    )
 
     # Test that decommission cannot be replayed from this state
     with pytest.raises(
@@ -370,7 +331,12 @@ def test_decommission_success_blocked_proposal(
         approvals=10 * len(committee_members[:4]),
     )
 
-    assert_account_balance(algorand_client, blocked_proposal_client.app_address, 0)
+    min_balance = algorand_client.account.get_information(  # type: ignore
+        blocked_proposal_client.app_address
+    )["min-balance"]
+    assert_account_balance(
+        algorand_client, blocked_proposal_client.app_address, min_balance  # type: ignore
+    )
 
     # Test that decommission cannot be replayed from this state
     with pytest.raises(
@@ -424,7 +390,12 @@ def test_decommission_success_funded_proposal(
         approvals=10 * len(committee_members[:4]),
     )
 
-    assert_account_balance(algorand_client, funded_proposal_client.app_address, 0)
+    min_balance = algorand_client.account.get_information(  # type: ignore
+        funded_proposal_client.app_address
+    )["min-balance"]
+    assert_account_balance(
+        algorand_client, funded_proposal_client.app_address, min_balance  # type: ignore
+    )
 
     # Test that decommission cannot be replayed from this state
     with pytest.raises(
@@ -466,7 +437,6 @@ def test_decommission_not_registry(
                 sender=proposer.address,
                 signer=proposer.signer,
                 foreign_apps=[xgov_registry_mock_client.app_id],
-                boxes=[(0, METADATA_BOX_KEY)],
             ),
         )
 
@@ -499,12 +469,6 @@ def test_decommission_wrong_box_ref(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
                 foreign_apps=[rejected_proposal_client.app_id],
-                boxes=[
-                    (
-                        rejected_proposal_client.app_id,
-                        METADATA_BOX_KEY.encode(),
-                    )
-                ],
                 accounts=[proposer.address],
                 suggested_params=sp,
             ),

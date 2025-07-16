@@ -1,12 +1,9 @@
-import base64
-
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
 from algokit_utils.models import Account
-from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.transaction import SuggestedParams
 
@@ -54,18 +51,16 @@ def test_subscribe_proposer_success(
 
     assert (before_info["amount"] + global_state.proposer_fee) == after_info["amount"]  # type: ignore
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=proposer_box_name(no_role_account.address),
+    proposer_box = xgov_registry_client.get_proposer_box(
+        proposer_address=no_role_account.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, proposer_box_name(no_role_account.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(bool,bool,uint64)")
-    active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
-
-    assert not active_proposal  # type: ignore
-    assert not kyc_status  # type: ignore
-    assert kyc_expiring == 0  # type: ignore
+    assert not proposer_box.return_value.active_proposal
+    assert not proposer_box.return_value.kyc_status
+    assert proposer_box.return_value.kyc_expiring == 0
 
 
 def test_subscribe_proposer_already_proposer(
@@ -237,15 +232,13 @@ def test_subscribe_proposer_paused_registry_error(
 
     assert (before_info["amount"] + global_state.proposer_fee) == after_info["amount"]  # type: ignore
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=proposer_box_name(no_role_account.address),
+    proposer_box = xgov_registry_client.get_proposer_box(
+        proposer_address=no_role_account.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, proposer_box_name(no_role_account.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(bool,bool,uint64)")
-    active_proposal, kyc_status, kyc_expiring = box_abi.decode(box_value)  # type: ignore
-
-    assert not active_proposal  # type: ignore
-    assert not kyc_status  # type: ignore
-    assert kyc_expiring == 0  # type: ignore
+    assert not proposer_box.return_value.active_proposal
+    assert not proposer_box.return_value.kyc_status
+    assert proposer_box.return_value.kyc_expiring == 0

@@ -208,6 +208,115 @@ def xgov_registry_client(
 
 
 @pytest.fixture(scope="function")
+def alternative_xgov_registry_client(
+    algorand_client: AlgorandClient,
+    deployer: Account,
+    committee_manager: AddressAndSigner,
+    xgov_subscriber: AddressAndSigner,
+    xgov_payor: AddressAndSigner,
+    xgov_daemon: AddressAndSigner,
+    xgov_council: AddressAndSigner,
+    kyc_provider: AddressAndSigner,
+    xgov_registry_config: XGovRegistryConfig,
+    sp_min_fee_times_2: SuggestedParams,
+) -> XGovRegistryClient:
+    config.configure(
+        debug=True,
+        # trace_all=True,
+    )
+
+    sp = sp_min_fee_times_2
+
+    client = XGovRegistryClient(
+        algorand_client.client.algod,
+        sender=deployer.address,
+        creator=deployer,
+        indexer_client=algorand_client.client.indexer,
+        template_values={"entropy": b"1"},
+    )
+
+    client.create_create(
+        transaction_parameters=CreateTransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    ensure_funded(
+        algorand_client.client.algod,
+        EnsureBalanceParameters(
+            account_to_fund=client.app_address,
+            min_spending_balance_micro_algos=INITIAL_FUNDS,
+        ),
+    )
+
+    # Set xGov Registry Role-Based Access Control
+    client.set_committee_manager(
+        manager=committee_manager.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_subscriber(
+        subscriber=xgov_subscriber.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_payor(
+        payor=xgov_payor.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_daemon(
+        xgov_daemon=xgov_daemon.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_xgov_council(
+        council=xgov_council.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.set_kyc_provider(
+        provider=kyc_provider.address,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address,
+            signer=deployer.signer,
+            suggested_params=sp,
+        ),
+    )
+
+    # Configure xGov Registry
+    client.config_xgov_registry(
+        config=xgov_registry_config,
+        transaction_parameters=TransactionParameters(
+            sender=deployer.address, signer=deployer.signer, suggested_params=sp
+        ),
+    )
+
+    client.declare_committee(
+        committee_id=DEFAULT_COMMITTEE_ID,
+        size=DEFAULT_COMMITTEE_MEMBERS,
+        votes=DEFAULT_COMMITTEE_VOTES,
+        transaction_parameters=TransactionParameters(
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
+            suggested_params=sp_min_fee_times_2,
+        ),
+    )
+
+    return client
+
+
+@pytest.fixture(scope="function")
 def funded_xgov_registry_client(
     algorand_client: AlgorandClient,
     deployer: Account,
@@ -556,6 +665,64 @@ def voting_proposal_client_requested_too_much(
 
 
 @pytest.fixture(scope="function")
+def rejected_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
+    voting_proposal_client: ProposalClient,
+    proposer: AddressAndSigner,
+    no_role_account: AddressAndSigner,
+    sp_min_fee_times_2: SuggestedParams,
+) -> ProposalClient:
+    sp = sp_min_fee_times_2
+
+    reg_gs = xgov_registry_client.get_global_state()
+    voting_duration = reg_gs.voting_duration_small
+    vote_open_ts = voting_proposal_client.get_global_state().vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
+    voting_proposal_client.scrutiny(
+        transaction_parameters=TransactionParameters(
+            sender=no_role_account.address,
+            signer=no_role_account.signer,
+            foreign_apps=[xgov_registry_client.app_id, voting_proposal_client.app_id],
+            accounts=[proposer.address],
+            suggested_params=sp,
+        ),
+    )
+    return voting_proposal_client
+
+
+@pytest.fixture(scope="function")
+def rejected_unassigned_voters_proposal_client(
+    xgov_daemon: AddressAndSigner,
+    rejected_proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
+    bulks = 6
+
+    for i in range(1 + len(committee_members) // bulks):
+        rejected_proposal_client.unassign_voters(
+            voters=[
+                cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                foreign_apps=[
+                    rejected_proposal_client.get_global_state().registry_app_id
+                ],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(cm.address),
+                    )
+                    for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
+            ),
+        )
+
+    return rejected_proposal_client
+
+
+@pytest.fixture(scope="function")
 def approved_proposal_client(
     algorand_client: AlgorandClient,
     xgov_registry_client: XGovRegistryClient,
@@ -598,8 +765,8 @@ def approved_proposal_client(
 
     voting_proposal_client.scrutiny(
         transaction_parameters=TransactionParameters(
-            sender=committee_member.address,
-            signer=committee_member.signer,
+            sender=committee_members[0].address,
+            signer=committee_members[0].signer,
             foreign_apps=[xgov_registry_client.app_id, voting_proposal_client.app_id],
             boxes=[
                 (
@@ -625,6 +792,27 @@ def reviewed_proposal_client(
             sender=xgov_council.address,
             signer=xgov_council.signer,
             foreign_apps=[approved_proposal_client.get_global_state().registry_app_id],
+        ),
+    )
+    return approved_proposal_client
+
+
+@pytest.fixture(scope="function")
+def blocked_proposal_client(
+    xgov_council: AddressAndSigner,
+    approved_proposal_client: ProposalClient,
+    sp_min_fee_times_2: SuggestedParams,
+) -> ProposalClient:
+
+    sp = sp_min_fee_times_2
+
+    approved_proposal_client.review(
+        block=True,
+        transaction_parameters=TransactionParameters(
+            sender=xgov_council.address,
+            signer=xgov_council.signer,
+            foreign_apps=[approved_proposal_client.get_global_state().registry_app_id],
+            suggested_params=sp,
         ),
     )
     return approved_proposal_client
@@ -755,6 +943,39 @@ def funded_unassigned_voters_proposal_client(
         )
 
     return funded_proposal_client
+
+
+@pytest.fixture(scope="function")
+def blocked_unassigned_voters_proposal_client(
+    xgov_daemon: AddressAndSigner,
+    blocked_proposal_client: ProposalClient,
+    committee_members: list[AddressAndSigner],
+) -> ProposalClient:
+
+    bulks = 6
+
+    for i in range(1 + len(committee_members) // bulks):
+        blocked_proposal_client.unassign_voters(
+            voters=[
+                cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+            ],
+            transaction_parameters=TransactionParameters(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                foreign_apps=[
+                    blocked_proposal_client.get_global_state().registry_app_id
+                ],
+                boxes=[
+                    (
+                        0,
+                        get_voter_box_key(cm.address),
+                    )
+                    for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
+            ),
+        )
+
+    return blocked_proposal_client
 
 
 @pytest.fixture(scope="function")

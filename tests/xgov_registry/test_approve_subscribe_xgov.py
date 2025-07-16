@@ -1,10 +1,7 @@
-import base64
-
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
-from algosdk import abi
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
@@ -46,16 +43,14 @@ def test_approve_subscribe_xgov_success(
 
     assert (before_global_state.xgovs + 1) == after_global_state.xgovs
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(app_xgov_subscribe_requested.app_address),
+    xgov_box = xgov_registry_client.get_xgov_box(
+        xgov_address=app_xgov_subscribe_requested.app_address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, xgov_box_name(app_xgov_subscribe_requested.app_address))],
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
-
-    assert no_role_account.address == voting_address  # type: ignore
+    assert no_role_account.address == xgov_box.return_value.voting_address
 
 
 def test_approve_subscribe_xgov_not_subscriber(

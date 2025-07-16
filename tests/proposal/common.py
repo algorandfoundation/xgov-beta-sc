@@ -544,12 +544,6 @@ def decommission_proposal(
             sender=xgov_daemon.address,
             signer=xgov_daemon.signer,
             foreign_apps=[proposal_app_id],
-            boxes=[
-                (
-                    proposal_app_id,
-                    METADATA_BOX_KEY.encode(),
-                )
-            ],
             suggested_params=sp,
             note=note,
         ),
@@ -584,7 +578,6 @@ def finalize_proposal(
             foreign_apps=[xgov_registry_mock_client.app_id],
             accounts=[xgov_daemon.address],
             suggested_params=sp,
-            boxes=[(0, METADATA_BOX_KEY)],
             note=uuid.uuid4().bytes,
         ),
     )

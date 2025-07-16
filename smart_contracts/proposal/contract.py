@@ -132,6 +132,7 @@ class Proposal(
         )
         self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
+        self.metadata_uploaded = False
 
         # Boxes
         self.voters = BoxMap(
@@ -167,13 +168,14 @@ class Proposal(
 
     @subroutine
     def unassign_voters_check_authorization(self) -> None:
-        assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        assert (
-            self.status.value == enm.STATUS_FUNDED
-            or self.status.value == enm.STATUS_BLOCKED
-            or self.status.value == enm.STATUS_REJECTED
-            or self.status.value == enm.STATUS_FINAL
-        ) and not self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
+        if self.status.value == enm.STATUS_FINAL:
+            assert self.is_xgov_daemon(), err.UNAUTHORIZED
+        else:
+            assert (
+                self.status.value == enm.STATUS_FUNDED
+                or self.status.value == enm.STATUS_BLOCKED
+                or self.status.value == enm.STATUS_REJECTED
+            ) and not self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def decommission_check_authorization(self) -> typ.Error:
@@ -628,6 +630,8 @@ class Proposal(
         self.upload_metadata_check_authorization()
         self.upload_metadata_input_validation(payload)
 
+        self.metadata_uploaded = True
+
         if is_first_in_group:
             # clear and write the metadata to the box
             self.metadata.delete()
@@ -689,7 +693,7 @@ class Proposal(
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
-        assert self.metadata, err.MISSING_METADATA
+        assert self.metadata_uploaded, err.MISSING_METADATA
 
         daemon_ops_funding_bps, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
@@ -950,9 +954,6 @@ class Proposal(
         if self.voters_count > UInt64(0):
             return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
 
-        # delete metadata box if it exists
-        self.metadata.delete()
-
         # refund the locked amount for DRAFT proposals
         # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
         # for EMPTY, FUNDED, or BLOCKED proposals, the locked amount is not refundable
@@ -963,7 +964,8 @@ class Proposal(
         reg_app = Application(self.registry_app_id.value)
         self.pay(
             receiver=reg_app.address,
-            amount=Global.current_application_address.balance,
+            amount=Global.current_application_address.balance
+            - Global.current_application_address.min_balance,
         )
         self.decommissioned.value = True
 
@@ -980,6 +982,15 @@ class Proposal(
         """
 
         self.delete_check_authorization()
+
+        # delete metadata box if it exists
+        self.metadata.delete()
+
+        reg_app = Application(self.registry_app_id.value)
+        self.pay(
+            receiver=reg_app.address,
+            amount=Global.current_application_address.balance,
+        )
 
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.ProposalTypedGlobalState:

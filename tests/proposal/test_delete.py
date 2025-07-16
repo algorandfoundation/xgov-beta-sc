@@ -9,7 +9,9 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.proposal.config import METADATA_BOX_KEY
 from tests.proposal.common import (
+    assert_account_balance,
     decommission_proposal,
     logic_error_type,
     unassign_voters,
@@ -34,6 +36,7 @@ def test_delete_empty_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -56,6 +59,7 @@ def test_delete_draft_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -78,6 +82,7 @@ def test_delete_final_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -100,6 +105,7 @@ def test_delete_voting_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -122,6 +128,7 @@ def test_delete_approved_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -144,6 +151,7 @@ def test_delete_reviewed_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -166,6 +174,7 @@ def test_delete_rejected_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -188,6 +197,7 @@ def test_delete_blocked_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -210,6 +220,7 @@ def test_delete_funded_proposal(
                 signer=xgov_daemon.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
 
@@ -247,8 +258,11 @@ def test_delete_success(
             signer=xgov_daemon.signer,
             suggested_params=sp,
             foreign_apps=[xgov_registry_mock_client.app_id],
+            boxes=[(0, METADATA_BOX_KEY.encode())],
         ),
     )
+
+    assert_account_balance(algorand_client, rejected_proposal_client.app_address, 0)
 
     with pytest.raises(Exception, match="application does not exist"):
         algorand_client.client.algod.application_info(rejected_proposal_client.app_id)
@@ -289,5 +303,6 @@ def test_delete_not_xgov_daemon(
                 signer=proposer.signer,
                 suggested_params=sp,
                 foreign_apps=[xgov_registry_mock_client.app_id],
+                boxes=[(0, METADATA_BOX_KEY.encode())],
             ),
         )
