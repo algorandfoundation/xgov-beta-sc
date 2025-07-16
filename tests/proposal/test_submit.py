@@ -29,8 +29,8 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
+    get_locked_amount,
     submit_proposal,
-    get_locked_amount
 )
 from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import LogicErrorType

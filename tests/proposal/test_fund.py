@@ -9,7 +9,6 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-
 from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_account_balance,
