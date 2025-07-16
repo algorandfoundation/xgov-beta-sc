@@ -18,11 +18,11 @@ class ProposalTypedGlobalState(arc4.Struct):
     proposer: arc4.Address
     registry_app_id: arc4.UInt64
     title: arc4.String
+    open_ts: arc4.UInt64
     submission_ts: arc4.UInt64
-    finalization_ts: arc4.UInt64
     vote_open_ts: arc4.UInt64
     status: arc4.UInt64
-    decommissioned: arc4.Bool
+    finalized: arc4.Bool
     funding_category: arc4.UInt64
     focus: arc4.UInt8
     funding_type: arc4.UInt64

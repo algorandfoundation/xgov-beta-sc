@@ -33,7 +33,7 @@ NO_COMMITTEE = {
 
 
 def test_drop_success(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -49,26 +49,26 @@ def test_drop_success(
     ]
 
     xgov_registry_mock_client.drop_proposal(
-        proposal_app=submitted_proposal_client.app_id,
+        proposal_app=draft_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
+            boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
         ),
     )
 
-    global_state = submitted_proposal_client.get_global_state()
+    global_state = draft_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        decommissioned=True,
+        finalized=True,
     )
 
     assert_account_balance(
-        algorand_client, submitted_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+        algorand_client, draft_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
     )
 
     assert_account_balance(
@@ -79,12 +79,12 @@ def test_drop_success(
 
     with pytest.raises(AlgodHTTPError, match="box not found"):  # type: ignore
         algorand_client.client.algod.application_box_by_name(
-            submitted_proposal_client.app_id, METADATA_BOX_KEY.encode()
+            draft_proposal_client.app_id, METADATA_BOX_KEY.encode()
         )
 
 
 def test_drop_twice(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -100,12 +100,12 @@ def test_drop_twice(
     ]
 
     xgov_registry_mock_client.drop_proposal(
-        proposal_app=submitted_proposal_client.app_id,
+        proposal_app=draft_proposal_client.app_id,
         transaction_parameters=TransactionParameters(
             sender=proposer.address,
             signer=proposer.signer,
             suggested_params=sp,
-            boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
+            boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
         ),
     )
 
@@ -113,27 +113,27 @@ def test_drop_twice(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.drop_proposal(
-            proposal_app=submitted_proposal_client.app_id,
+            proposal_app=draft_proposal_client.app_id,
             transaction_parameters=TransactionParameters(
                 sender=proposer.address,
                 signer=proposer.signer,
                 suggested_params=sp,
-                boxes=[(submitted_proposal_client.app_id, METADATA_BOX_KEY)],
+                boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
                 note="replay",
             ),
         )
 
-    global_state = submitted_proposal_client.get_global_state()
+    global_state = draft_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        decommissioned=True,
+        finalized=True,
     )
 
     assert_account_balance(
-        algorand_client, submitted_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
+        algorand_client, draft_proposal_client.app_address, PROPOSAL_PARTIAL_FEE
     )
 
     assert_account_balance(

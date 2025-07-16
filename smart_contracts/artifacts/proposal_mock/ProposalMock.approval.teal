@@ -44,27 +44,27 @@ main:
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:33
-    // key=prop_cfg.GS_KEY_SUBMISSION_TS,
-    pushbytes 0x7375626d697373696f6e5f74696d657374616d70
+    // key=prop_cfg.GS_KEY_OPEN_TS,
+    pushbytes 0x6f70656e5f74696d657374616d70
     // smart_contracts/proposal_mock/contract.py:32
     // UInt64(),
     intc_0 // 0
     // smart_contracts/proposal_mock/contract.py:31-34
     // self.submission_ts = GlobalState(
     //     UInt64(),
-    //     key=prop_cfg.GS_KEY_SUBMISSION_TS,
+    //     key=prop_cfg.GS_KEY_OPEN_TS,
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:37
-    // key=prop_cfg.GS_KEY_FINALIZATION_TS,
-    pushbytes 0x66696e616c697a6174696f6e5f74696d657374616d70
+    // key=prop_cfg.GS_KEY_SUBMISSION_TS,
+    pushbytes 0x7375626d697373696f6e5f74696d657374616d70
     // smart_contracts/proposal_mock/contract.py:36
     // UInt64(),
     intc_0 // 0
     // smart_contracts/proposal_mock/contract.py:35-38
     // self.finalization_ts = GlobalState(
     //     UInt64(),
-    //     key=prop_cfg.GS_KEY_FINALIZATION_TS,
+    //     key=prop_cfg.GS_KEY_SUBMISSION_TS,
     // )
     app_global_put
     // smart_contracts/proposal_mock/contract.py:41

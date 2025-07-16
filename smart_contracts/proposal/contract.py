@@ -62,13 +62,13 @@ class Proposal(
             String(),
             key=prop_cfg.GS_KEY_TITLE,
         )
+        self.open_ts = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_OPEN_TS,
+        )
         self.submission_ts = GlobalState(
             UInt64(),
             key=prop_cfg.GS_KEY_SUBMISSION_TS,
-        )
-        self.finalization_ts = GlobalState(
-            UInt64(),
-            key=prop_cfg.GS_KEY_FINALIZATION_TS,
         )
         self.vote_open_ts = GlobalState(
             UInt64(),
@@ -78,9 +78,9 @@ class Proposal(
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
         )
-        self.decommissioned = GlobalState(
+        self.finalized = GlobalState(
             False,  # noqa: FBT003
-            key=prop_cfg.GS_KEY_DECOMMISSIONED,
+            key=prop_cfg.GS_KEY_FINALIZED,
         )
         self.funding_category = GlobalState(
             UInt64(enm.FUNDING_CATEGORY_NULL),
@@ -132,6 +132,7 @@ class Proposal(
         )
         self.voters_count = UInt64(0)
         self.assigned_votes = UInt64(0)
+        self.metadata_uploaded = False
 
         # Boxes
         self.voters = BoxMap(
@@ -167,19 +168,20 @@ class Proposal(
 
     @subroutine
     def unassign_voters_check_authorization(self) -> None:
-        assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        assert (
-            self.status.value == enm.STATUS_FUNDED
-            or self.status.value == enm.STATUS_BLOCKED
-            or self.status.value == enm.STATUS_REJECTED
-            or self.status.value == enm.STATUS_FINAL
-        ) and not self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
+        if self.status.value == enm.STATUS_SUBMITTED:
+            assert self.is_xgov_daemon(), err.UNAUTHORIZED
+        else:
+            assert (
+                self.status.value == enm.STATUS_FUNDED
+                or self.status.value == enm.STATUS_BLOCKED
+                or self.status.value == enm.STATUS_REJECTED
+            ) and not self.finalized.value, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
-    def decommission_check_authorization(self) -> typ.Error:
+    def finalize_check_authorization(self) -> typ.Error:
         assert self.is_registry_call(), err.UNAUTHORIZED
 
-        if self.decommissioned.value or (
+        if self.finalized.value or (
             self.status.value != enm.STATUS_EMPTY
             and self.status.value != enm.STATUS_DRAFT
             and self.status.value != enm.STATUS_FUNDED
@@ -193,7 +195,7 @@ class Proposal(
     @subroutine
     def delete_check_authorization(self) -> None:
         assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        assert self.decommissioned.value, err.WRONG_PROPOSAL_STATUS
+        assert self.finalized.value, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def vote_check_authorization(self) -> typ.Error:
@@ -243,7 +245,7 @@ class Proposal(
     @subroutine
     def assign_voters_check_authorization(self) -> None:
         assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        assert self.status.value == enm.STATUS_FINAL, err.WRONG_PROPOSAL_STATUS
+        assert self.status.value == enm.STATUS_SUBMITTED, err.WRONG_PROPOSAL_STATUS
 
     @subroutine
     def assign_voter_input_validation(
@@ -346,15 +348,15 @@ class Proposal(
     def assert_draft_and_proposer(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
         assert (
-            self.status.value == enm.STATUS_DRAFT and not self.decommissioned.value
+            self.status.value == enm.STATUS_DRAFT and not self.finalized.value
         ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
-    def finalize_check_authorization(self) -> None:
+    def submit_check_authorization(self) -> None:
 
         self.assert_draft_and_proposer()
 
-        discussion_duration = Global.latest_timestamp - self.submission_ts.value
+        discussion_duration = Global.latest_timestamp - self.open_ts.value
         minimum_discussion_duration = self.get_discussion_duration(
             self.funding_category.value
         )
@@ -364,7 +366,7 @@ class Proposal(
     @subroutine
     def drop_check_authorization(self) -> typ.Error:
         assert self.is_registry_call(), err.UNAUTHORIZED
-        if self.status.value != enm.STATUS_DRAFT or self.decommissioned.value:
+        if self.status.value != enm.STATUS_DRAFT or self.finalized.value:
             return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
         return typ.Error("")
 
@@ -377,14 +379,14 @@ class Proposal(
         assert payload.length > 0, err.EMPTY_PAYLOAD
 
     @subroutine
-    def submit_check_authorization(self) -> None:
+    def open_check_authorization(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
         assert (
-            self.status.value == enm.STATUS_EMPTY and not self.decommissioned.value
+            self.status.value == enm.STATUS_EMPTY and not self.finalized.value
         ), err.WRONG_PROPOSAL_STATUS
 
     @subroutine
-    def submit_input_validation(
+    def open_input_validation(
         self,
         title: String,
         funding_type: UInt64,
@@ -432,7 +434,7 @@ class Proposal(
         )
 
     @subroutine
-    def submit_payment_validation(
+    def open_payment_validation(
         self, payment: gtxn.PaymentTransaction, requested_amount: UInt64
     ) -> None:
         expected_lock_amount = self.get_expected_locked_amount(requested_amount)
@@ -554,7 +556,7 @@ class Proposal(
         self.verify_and_set_committee()
 
     @arc4.abimethod()
-    def submit(
+    def open(
         self,
         payment: gtxn.PaymentTransaction,
         title: arc4.String,
@@ -562,7 +564,7 @@ class Proposal(
         requested_amount: arc4.UInt64,
         focus: arc4.UInt8,
     ) -> None:
-        """Submit the first draft of the proposal.
+        """Open the first draft of the proposal.
 
         Args:
             payment (gtxn.PaymentTransaction): Commitment payment transaction from the proposer to the contract
@@ -588,12 +590,12 @@ class Proposal(
 
         self.check_registry_not_paused()
 
-        self.submit_check_authorization()
+        self.open_check_authorization()
 
-        self.submit_input_validation(
+        self.open_input_validation(
             title.native, funding_type.native, requested_amount.native
         )
-        self.submit_payment_validation(payment, requested_amount.native)
+        self.open_payment_validation(payment, requested_amount.native)
 
         self.title.value = title.native
         self.set_category(requested_amount.native)
@@ -603,7 +605,7 @@ class Proposal(
         self.locked_amount.value = self.get_expected_locked_amount(
             requested_amount.native
         )
-        self.submission_ts.value = Global.latest_timestamp
+        self.open_ts.value = Global.latest_timestamp
         self.status.value = UInt64(enm.STATUS_DRAFT)
 
     @arc4.abimethod()
@@ -627,6 +629,8 @@ class Proposal(
 
         self.upload_metadata_check_authorization()
         self.upload_metadata_input_validation(payload)
+
+        self.metadata_uploaded = True
 
         if is_first_in_group:
             # clear and write the metadata to the box
@@ -657,13 +661,13 @@ class Proposal(
         )
 
         self.metadata.delete()
-        self.decommissioned.value = True
+        self.finalized.value = True
 
         return typ.Error("")
 
     @arc4.abimethod()
-    def finalize(self) -> None:
-        """Finalize the proposal.
+    def submit(self) -> None:
+        """submit the proposal.
 
         Raises:
             err.PAUSED_REGISTRY: Registry's non-admin methods are paused
@@ -671,7 +675,7 @@ class Proposal(
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.MISSING_METADATA: The proposal description metadata is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
-            err.TOO_EARLY: If the proposal is finalized before the minimum time
+            err.TOO_EARLY: If the proposal is submitted before the minimum time
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
             err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
             err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
@@ -679,17 +683,17 @@ class Proposal(
         """
         self.check_registry_not_paused()
 
-        self.finalize_check_authorization()
+        self.submit_check_authorization()
 
-        self.status.value = UInt64(enm.STATUS_FINAL)
-        self.finalization_ts.value = Global.latest_timestamp
+        self.status.value = UInt64(enm.STATUS_SUBMITTED)
+        self.submission_ts.value = Global.latest_timestamp
 
         open_proposal_fee, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
         )
         assert error == typ.Error(""), err.MISSING_CONFIG
 
-        assert self.metadata, err.MISSING_METADATA
+        assert self.metadata_uploaded, err.MISSING_METADATA
 
         daemon_ops_funding_bps, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
@@ -730,7 +734,7 @@ class Proposal(
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_FINAL
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_SUBMITTED
             err.WRONG_APP_ID: If the app ID is not as expected
             err.WRONG_METHOD_CALL: If the method call is not as expected
             err.VOTER_ALREADY_ASSIGNED: If the voter is already assigned
@@ -932,8 +936,8 @@ class Proposal(
                 del self.voters[voter.native]
 
     @arc4.abimethod()
-    def decommission(self) -> typ.Error:
-        """Decommission the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
+    def finalize(self) -> typ.Error:
+        """Finalize the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the registry contract
@@ -942,16 +946,13 @@ class Proposal(
             err.VOTERS_ASSIGNED: If there are still assigned voters
 
         """
-        error = self.decommission_check_authorization()
+        error = self.finalize_check_authorization()
         if error != typ.Error(""):
             return error
 
         # check no assigned voters
         if self.voters_count > UInt64(0):
             return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
-
-        # delete metadata box if it exists
-        self.metadata.delete()
 
         # refund the locked amount for DRAFT proposals
         # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
@@ -963,9 +964,10 @@ class Proposal(
         reg_app = Application(self.registry_app_id.value)
         self.pay(
             receiver=reg_app.address,
-            amount=Global.current_application_address.balance,
+            amount=Global.current_application_address.balance
+            - Global.current_application_address.min_balance,
         )
-        self.decommissioned.value = True
+        self.finalized.value = True
 
         return typ.Error("")
 
@@ -975,11 +977,20 @@ class Proposal(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DECOMMISSIONED
+            err.WRONG_PROPOSAL_STATUS: If the proposal is not finalized
 
         """
 
         self.delete_check_authorization()
+
+        # delete metadata box if it exists
+        self.metadata.delete()
+
+        reg_app = Application(self.registry_app_id.value)
+        self.pay(
+            receiver=reg_app.address,
+            amount=Global.current_application_address.balance,
+        )
 
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.ProposalTypedGlobalState:
@@ -993,11 +1004,11 @@ class Proposal(
             proposer=arc4.Address(self.proposer.value),
             registry_app_id=arc4.UInt64(self.registry_app_id.value),
             title=arc4.String(self.title.value),
+            open_ts=arc4.UInt64(self.open_ts.value),
             submission_ts=arc4.UInt64(self.submission_ts.value),
-            finalization_ts=arc4.UInt64(self.finalization_ts.value),
             vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
             status=arc4.UInt64(self.status.value),
-            decommissioned=arc4.Bool(self.decommissioned.value),
+            finalized=arc4.Bool(self.finalized.value),
             funding_category=arc4.UInt64(self.funding_category.value),
             focus=arc4.UInt8(self.focus.value),
             funding_type=arc4.UInt64(self.funding_type.value),

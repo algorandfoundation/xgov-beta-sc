@@ -1,11 +1,8 @@
-import base64
-
 import pytest
 from algokit_utils import TransactionParameters
 from algokit_utils.beta.account_manager import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.beta.composer import PayParams
-from algosdk import abi
 from algosdk.atomic_transaction_composer import TransactionWithSigner
 from algosdk.transaction import SuggestedParams
 
@@ -60,16 +57,14 @@ def test_subscribe_xgov_success(
     assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
     assert (before_global_state.xgovs + 1) == after_global_state.xgovs
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(no_role_account.address),
+    xgov_box = xgov_registry_client.get_xgov_box(
+        xgov_address=no_role_account.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, xgov_box_name(no_role_account.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
-
-    assert no_role_account.address == voting_address  # type: ignore
+    assert no_role_account.address == xgov_box.return_value.voting_address
 
 
 def test_app_subscribe_xgov_success(
@@ -253,13 +248,11 @@ def test_subscribe_xgov_paused_registry_error(
     assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
     assert (before_global_state.xgovs + 1) == after_global_state.xgovs
 
-    box_info = xgov_registry_client.algod_client.application_box_by_name(
-        application_id=xgov_registry_client.app_id,
-        box_name=xgov_box_name(no_role_account.address),
+    xgov_box = xgov_registry_client.get_xgov_box(
+        xgov_address=no_role_account.address,
+        transaction_parameters=TransactionParameters(
+            boxes=[(0, xgov_box_name(no_role_account.address))]
+        ),
     )
 
-    box_value = base64.b64decode(box_info["value"])  # type: ignore
-    box_abi = abi.ABIType.from_string("(address,uint64,uint64)")
-    voting_address, _, _ = box_abi.decode(box_value)  # type: ignore
-
-    assert no_role_account.address == voting_address  # type: ignore
+    assert no_role_account.address == xgov_box.return_value.voting_address

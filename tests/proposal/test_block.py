@@ -38,7 +38,7 @@ def test_block_empty_proposal(
 
 
 def test_block_draft_proposal(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_council: AddressAndSigner,
 ) -> None:
@@ -46,7 +46,7 @@ def test_block_draft_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        submitted_proposal_client.review(
+        draft_proposal_client.review(
             block=True,
             transaction_parameters=TransactionParameters(
                 sender=xgov_council.address,
@@ -57,7 +57,7 @@ def test_block_draft_proposal(
 
 
 def test_block_final_proposal(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_council: AddressAndSigner,
 ) -> None:
@@ -65,7 +65,7 @@ def test_block_final_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        finalized_proposal_client.review(
+        submitted_proposal_client.review(
             block=True,
             transaction_parameters=TransactionParameters(
                 sender=xgov_council.address,

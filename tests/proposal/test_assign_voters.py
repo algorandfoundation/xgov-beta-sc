@@ -32,7 +32,7 @@ from tests.xgov_registry.common import get_voter_box_key
 
 
 def test_assign_voters_success(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -42,7 +42,7 @@ def test_assign_voters_success(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -52,7 +52,7 @@ def test_assign_voters_success(
     )
     composer.execute()
 
-    global_state = finalized_proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_voting_proposal_global_state(
         global_state,
@@ -62,7 +62,7 @@ def test_assign_voters_success(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=finalized_proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (
@@ -75,7 +75,7 @@ def test_assign_voters_success(
 
 
 def test_assign_voters_not_xgov_daemon(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -86,7 +86,7 @@ def test_assign_voters_not_xgov_daemon(
     sp = sp_min_fee_times_2
 
     with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        composer = finalized_proposal_client.compose()
+        composer = submitted_proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=proposer,
@@ -96,7 +96,7 @@ def test_assign_voters_not_xgov_daemon(
         )
         composer.execute()
 
-    global_state = finalized_proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_final_proposal_global_state(
         global_state,
@@ -106,7 +106,7 @@ def test_assign_voters_not_xgov_daemon(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=finalized_proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)],  # no voter boxes
     )
 
@@ -151,7 +151,7 @@ def test_assign_voters_empty_proposal(
 
 
 def test_assign_voters_draft_proposal(
-    submitted_proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -165,7 +165,7 @@ def test_assign_voters_draft_proposal(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        composer = submitted_proposal_client.compose()
+        composer = draft_proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=xgov_daemon,
@@ -175,7 +175,7 @@ def test_assign_voters_draft_proposal(
         )
         composer.execute()
 
-    global_state = submitted_proposal_client.get_global_state()
+    global_state = draft_proposal_client.get_global_state()
 
     assert_draft_proposal_global_state(
         global_state,
@@ -185,19 +185,19 @@ def test_assign_voters_draft_proposal(
 
     assert_account_balance(
         algorand_client,
-        submitted_proposal_client.app_address,
+        draft_proposal_client.app_address,
         LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
     )
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=submitted_proposal_client.app_id,
+        app_id=draft_proposal_client.app_id,
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)],  # no voter box
     )
 
 
 def test_assign_voters_voting_open(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -207,7 +207,7 @@ def test_assign_voters_voting_open(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -220,7 +220,7 @@ def test_assign_voters_voting_open(
     with pytest.raises(
         logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
-        composer = finalized_proposal_client.compose()
+        composer = submitted_proposal_client.compose()
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=xgov_daemon,
@@ -230,7 +230,7 @@ def test_assign_voters_voting_open(
         )
         composer.execute()
 
-    global_state = finalized_proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_voting_proposal_global_state(
         global_state,
@@ -240,7 +240,7 @@ def test_assign_voters_voting_open(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=finalized_proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (
@@ -253,8 +253,8 @@ def test_assign_voters_voting_open(
 
 
 def test_assign_voters_not_same_app(
-    finalized_proposal_client: ProposalClient,
-    alternative_finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
+    alternative_submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
@@ -263,7 +263,7 @@ def test_assign_voters_not_same_app(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -272,7 +272,7 @@ def test_assign_voters_not_same_app(
         sp=sp,
     )
 
-    alternative_composer = alternative_finalized_proposal_client.compose()
+    alternative_composer = alternative_submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=alternative_composer,
         xgov_daemon=xgov_daemon,
@@ -289,7 +289,7 @@ def test_assign_voters_not_same_app(
 
 
 def test_assign_voters_not_same_method(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
@@ -298,7 +298,7 @@ def test_assign_voters_not_same_method(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     composer.get_state(
         transaction_parameters=TransactionParameters(
             sender=xgov_daemon.address,
@@ -318,7 +318,7 @@ def test_assign_voters_not_same_method(
 
 
 def test_assign_voters_not_same_method_2(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: AddressAndSigner,
@@ -327,7 +327,7 @@ def test_assign_voters_not_same_method_2(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -347,7 +347,7 @@ def test_assign_voters_not_same_method_2(
 
 
 def test_assign_voters_one_call_not_xgov_daemon(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -357,7 +357,7 @@ def test_assign_voters_one_call_not_xgov_daemon(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -377,7 +377,7 @@ def test_assign_voters_one_call_not_xgov_daemon(
 
 
 def test_assign_voters_more_than_allowed(
-    finalized_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -387,7 +387,7 @@ def test_assign_voters_more_than_allowed(
 ) -> None:
     sp = sp_min_fee_times_2
 
-    composer = finalized_proposal_client.compose()
+    composer = submitted_proposal_client.compose()
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -397,7 +397,7 @@ def test_assign_voters_more_than_allowed(
     )
     composer.execute()
 
-    global_state = finalized_proposal_client.get_global_state()
+    global_state = submitted_proposal_client.get_global_state()
 
     assert_final_proposal_global_state(
         global_state,
@@ -409,7 +409,7 @@ def test_assign_voters_more_than_allowed(
 
     assert_boxes(
         algorand_client=algorand_client,
-        app_id=finalized_proposal_client.app_id,
+        app_id=submitted_proposal_client.app_id,
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (

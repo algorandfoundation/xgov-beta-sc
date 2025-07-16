@@ -43,6 +43,29 @@ def test_fund_empty_proposal(
 
 
 def test_fund_draft_proposal(
+    draft_proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: AddressAndSigner,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    sp_min_fee_times_3: SuggestedParams,
+) -> None:
+    sp = sp_min_fee_times_3
+
+    with pytest.raises(
+        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
+    ):
+        xgov_registry_mock_client.fund(
+            proposal_app=draft_proposal_client.app_id,
+            transaction_parameters=TransactionParameters(
+                sender=proposer.address,
+                signer=proposer.signer,
+                suggested_params=sp,
+                foreign_apps=[draft_proposal_client.app_id],
+            ),
+        )
+
+
+def test_fund_final_proposal(
     submitted_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: AddressAndSigner,
@@ -61,29 +84,6 @@ def test_fund_draft_proposal(
                 signer=proposer.signer,
                 suggested_params=sp,
                 foreign_apps=[submitted_proposal_client.app_id],
-            ),
-        )
-
-
-def test_fund_final_proposal(
-    finalized_proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    sp_min_fee_times_3: SuggestedParams,
-) -> None:
-    sp = sp_min_fee_times_3
-
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        xgov_registry_mock_client.fund(
-            proposal_app=finalized_proposal_client.app_id,
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp,
-                foreign_apps=[finalized_proposal_client.app_id],
             ),
         )
 
