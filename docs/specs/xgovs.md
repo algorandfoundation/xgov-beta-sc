@@ -60,7 +60,7 @@ An xGov Box has the following ABI schema:
     "voting_addr": "address",
     "voted_proposals": "uint64",
     "last_vote_timestamp": "uint64",
-    "subscription_round": "uint64
+    "subscription_round": "uint64"
 }
 ```
 
