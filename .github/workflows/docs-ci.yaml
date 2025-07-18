@@ -22,15 +22,5 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Detect changes
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            docs:
-              - 'docs/**'
-              - 'README.md'
-
       - name: Docs CI actions
-        if: steps.filter.outputs.docs == 'true'
         uses: ./.github/actions/docs-ci

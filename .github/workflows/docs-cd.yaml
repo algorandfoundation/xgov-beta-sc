@@ -20,15 +20,10 @@ jobs:
     uses: ./.github/workflows/docs-ci.yaml
     secrets: inherit
 
-  deploy-xgov:
-    name: Deploy xGov
-    uses: ./.github/workflows/xgov-beta-sc-cd.yaml
-    secrets: inherit
-
   deploy-docs:
     name: Deploy xGov docs
     runs-on: "ubuntu-latest"
-    needs: [ validate-docs, deploy-xgov ]
+    needs: [ validate-docs ]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
