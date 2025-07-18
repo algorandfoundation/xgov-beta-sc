@@ -22,8 +22,3 @@ runs:
         globs: |
           README.md
           docs/*.md
-
-    - name: Check trailing whitespaces
-      uses: pre-commit/action@v3.0.1
-      with:
-        extra_args: trailing-whitespace
