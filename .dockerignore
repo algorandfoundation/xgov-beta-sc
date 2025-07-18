@@ -1,0 +1,20 @@
+# DOTs
+.*
+
+# SMART CONTRACTS
+smart_contracts/
+tests/
+poetry.lock
+poetry.toml
+pyproject.toml
+
+# DOCKER
+docker-compose.yaml
+Dockerfile
+
+# README
+README.md
+LICENSE
+
+# MDBOOK
+book/
