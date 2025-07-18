@@ -1,27 +1,54 @@
-# xgov-beta-sc
+# xGov Beta Architecture
 
-xGov Beta Smart Contracts
+Documentation: https://tbd/
 
-## Setup Local Development
+## Deployments
 
-This project was created with Algokit which in turn uses Python Poetry.
+| Network  |                 xGov Registry                 |
+|:---------|:---------------------------------------------:|
+| Main Net |     [TBD](https://lora.algokit.io/app-id)     |
+| Test Net | [TBD](https://lora.algokit.io/testnet/app-id) |
 
-To set it up, run:
+| App Spec      | Link                                                                                                                                    |
+|:--------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| xGov Registry | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/xgov_registry/XGovRegistry.arc32.json) |
+| Proposal      | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Proposal.arc32.json)          |
+| xGov Council  | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Council.arc32.json)           |
 
-```bash
+1. Download the App Spec JSON file;
+1. Navigate to the [Lora App Lab](https://lora.algokit.io/testnet/app-lab);
+1. Create the App Interface using the existing App ID and App Spec JSON;
+1. Explore the xGov Architecture interfaces.
+
+## Local Setup and Tests
+
+The xGov Architecture project is developed with [AlgoKit](https://algorand.co/algokit).
+
+- Install AlgoKit
+- Set up your virtual environment (managed with [Poetry](https://python-poetry.org/))
+
+```shell
 algokit bootstrap all
 ```
 
-Then, start up your localnet:
+- Start your Algorand LocalNet (requires [Docker](https://www.docker.com/get-started/))
 
-```bash
+```shell
 algokit localnet start
 ```
 
-And finally run tests:
+- Run tests (managed with PyTest)
 
-```bash
+```shell
 algokit project run test
 ```
 
-Checkout the `.algokit.toml` file to understand what other project commands are available.
+or, for verbose results:
+
+```shell
+poetry run pytest -s -v tests/<contract_name>/<test_case>.py
+```
+
+## How to contribute
+
+Refer to xGov Architecture documentation!
