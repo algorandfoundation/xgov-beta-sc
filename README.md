@@ -1,6 +1,6 @@
 # xGov Beta Architecture
 
-Documentation: https://tbd/
+Documentation: <https://tbd/>
 
 ## Deployments
 
