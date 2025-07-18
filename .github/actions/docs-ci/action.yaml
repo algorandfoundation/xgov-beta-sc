@@ -17,9 +17,11 @@ runs:
       run: mdbook test
 
     - name: Check markdown linting
-      uses: pre-commit/action@v3.0.1
+      uses: DavidAnson/markdownlint-cli2-action@v20
       with:
-        extra_args: markdownlint
+        globs: |
+          README.md
+          docs/*.md
 
     - name: Check trailing whitespaces
       uses: pre-commit/action@v3.0.1
