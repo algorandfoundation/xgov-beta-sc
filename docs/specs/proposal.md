@@ -3,7 +3,11 @@
 A Proposal is a funding request from the xGov Treasury, which is approved or rejected
 by the xGov Committee vote and reviewed by the xGov Council.
 
-A Proposal consists of a Proposal Application and Proposal Metadata.
+A Proposal consists of:
+
+- Proposal Application, with **REQUIRED** data;
+
+- Proposal metadata.
 
 The Proposal Application is created and funded by the xGov Registry App (see [Creation
 section](./proposal-creation.md)).
@@ -27,7 +31,7 @@ The Proposals have two different _funding types_:
 1. **Retroactive**
 
    - Claim: _“I have done X, which has benefited the Algorand ecosystem because
-   of Y metrics, I would like to receive Z as compensation for the work”.
+   of Y metrics, I would like to receive Z as compensation for the work”_.
 
    - Positive outcome: funding is immediately disbursed if the Proposal is approved
    by the xGov Committee vote, and the xGov Council does not apply a veto according
@@ -36,7 +40,7 @@ The Proposals have two different _funding types_:
 2. **Proactive** (NOT AVAILABLE YET)
 
    - Claim: _“I want to do X, it has the potential Y for the Algorand ecosystem,
-   I would like to receive Z staggered behind these milestones”.
+   I would like to receive Z staggered behind these milestones”_.
 
    - Positive outcome: funding will be disbursed if the Proposal is approved by the
    xGov Committee vote, after milestone reviews from the xGov Council, and if the
@@ -85,7 +89,7 @@ A Proposal **SHALL** be in one of the following enumerated statuses:
 | `VOTING`    |  `25`  | The xGov Committee **MAY** vote the proposal until the voting session expires                                                                                          |
 | `APPROVED`  |  `30`  | The outcome of the vote scrutiny (quorum and majority) approved the proposal, the xGov Council **SHALL** review it                                                     |
 | `REJECTED`  |  `40`  | The outcome of the vote scrutiny (quorum and majority) rejected the proposal, it **SHOULD** be finalized                                                               |
-| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the xGov Payor **MAY** the requested amount                                                    |
+| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the xGov Payor **MAY** disburse the requested amount                                           |
 | `BLOCKED`   |  `60`  | The xGov Council blocked the approved proposal with veto, it **SHOULD** be finalized, the requested amount **MUST NOT** be paid, the locked amount **MUST** be slashed |
 | `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                   |
 | `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                           |

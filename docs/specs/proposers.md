@@ -12,15 +12,20 @@ The KYC Provider **SHALL** update the Proposer KYC status after the KYC process.
 
 The KYC Provider **MAY** update the Proposer KYC during its validity.
 
-The Proposer KYC **MUST** be valid and not expired to receive Proposal funding.
+The Proposer KYC status **MUST** be valid and not expired to receive Proposal funding.
 
 ## Subscription
 
 A Proposer Fee **MUST** be paid to the xGov Treasury for the subscription.
 
 {{#include ../.include/styles.md:note}}
-> The xGov Manager **MAY** modify the Proposer Fee. The Proposer Fee is used for
-> the KYC process cost and to cover the Proposer Box MBR (see below).
+> The xGov Manager **MAY** modify the Proposer Fee.
+
+The Proposer Fee has the following scope:
+
+1. Covering the KYC process costs;
+
+1. Covering the Proposer Box MBR (see below).
 
 ## Proposer Box
 

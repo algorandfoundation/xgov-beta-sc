@@ -2,10 +2,10 @@
 
 The Proposer **MAY** update the Proposal Metadata during the discussion phase.
 
-The Proposer **SHALL NOT** change the Proposal _required_ fields (e.g., the requested
+The Proposer **SHALL NOT** change the Proposal **REQUIRED** data (e.g., the requested
 amount) during the discussion phase.
 
-To change the Proposal _required_ fields, the Proposer **MUST** drop the Proposal
+To change the Proposal **REQUIRED** data, the Proposer **MUST** drop the Proposal
 Draft and open a new one.
 
 # Submission
@@ -15,6 +15,8 @@ The Proposer **SHALL** submit the Draft Proposal after the minimum discussion pe
 
 The xGov Daemon **MAY** finalize the Draft Proposal if it becomes stale (the Proposer
 does not submit the Draft).
+
+The Proposal Metadata **SHOULD** be submitted from the xGov Portal (front-end).
 
 The Proposal **MUST NOT** be submitted without Metadata.
 

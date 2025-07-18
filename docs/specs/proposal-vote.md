@@ -14,6 +14,7 @@ to the xGov voting power.
 
 Vote **SHALL NOT** be modified.
 
+{{#include ../.include/styles.md:example}}
 > Pooled Vote Example: Let's have an xGov Staking Pool with `N` votes. The Pool
 > **SHOULD** collect poolers’ opinions _before_ expressing the Pool vote accordingly.
 > Once the Pool is ready to vote, the allocation of `N` votes among _“Approve”_,
@@ -44,9 +45,9 @@ The xGov Council **MAY** apply a veto to an Approved Proposal.
 
 An Approved Proposal is considered either:
 
-- Blocked, if the veto **is applied**;
+- Blocked, if the **veto is applied**;
 
-- Reviewed, if the veto **is not applied**.
+- Reviewed, if the **veto is not applied**.
 
 In case of a Blocked Proposal:
 

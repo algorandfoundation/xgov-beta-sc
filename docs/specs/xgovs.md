@@ -31,7 +31,7 @@ is executed in two steps:
   relationship off-chain (based on the Relation Type) and eventually approves it.
 
 {{#include ../.include/styles.md:note}}
-> At the time of writing, the only Relation Type value is 1, dedicated to the Reti
+> At the time of writing, the only Relation Type value is `1`, dedicated to the Reti
 > Pool protocol.
 
 An xGov Fee **MUST** be paid to the xGov Treasury for the subscription or subscription

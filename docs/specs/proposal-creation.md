@@ -2,6 +2,16 @@
 
 Proposers can create a Proposal at any time.
 
+The Proposer **MUST** provide the following **REQUIRED** data to open a Proposal:
+
+- **Title**: a short name for the Proposal;
+
+- **Focus**: an enumerative focus area (e.g., Wallets, SDKs, etc.);
+
+- **Funding Type**: enumerative for Retroactive or Proactive (currently just Retroactive);
+
+- **Requested Amount** (in 𝜇ALGO).
+
 A Proposer **MUST NOT** have more than one active proposal at any time.
 
 The Proposer creates a Proposal Application from the xGov Registry.
