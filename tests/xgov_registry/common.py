@@ -1,68 +1,21 @@
-from algokit_utils import LogicError
-from algokit_utils.beta.account_manager import (
-    AccountTransactionSigner,
-    AddressAndSigner,
-)
-from algokit_utils.models import Account
-from algosdk.encoding import decode_address, encode_address
+from typing import Final
+from algokit_utils import LogicError, AlgoAmount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GlobalState,
-    TypedGlobalState,
+    XGovRegistryClient, TypedGlobalState
 )
-from smart_contracts.proposal.config import VOTER_BOX_KEY_PREFIX
 from smart_contracts.xgov_registry.config import (
     MIN_REQUESTED_AMOUNT,
-    PROPOSER_BOX_MAP_PREFIX,
-    REQUEST_BOX_MAP_PREFIX,
-    XGOV_BOX_MAP_PREFIX,
 )
 
 LogicErrorType: type[LogicError] = LogicError
 
-TREASURY_AMOUNT = MIN_REQUESTED_AMOUNT * 10
+TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT * 10)
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1
 
 
-def xgov_box_name(address: str) -> bytes:
-    return XGOV_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
-
-
-def get_voter_box_key(voter_address: str) -> bytes:
-    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
-
-
-def request_box_name(rid: int) -> bytes:
-    return REQUEST_BOX_MAP_PREFIX + rid.to_bytes(8, "big")
-
-
-def proposer_box_name(address: str) -> bytes:
-    return PROPOSER_BOX_MAP_PREFIX + decode_address(address)  # type: ignore
-
-
-def address_and_signer_from_account(acc: Account) -> AddressAndSigner:
-    signer = AccountTransactionSigner(acc.private_key)
-    return AddressAndSigner(address=acc.address, signer=signer)
-
-
-def assert_registry_global_state(
-    global_state: GlobalState,
-    *,
-    manager_address: str,
-) -> None:
-    assert encode_address(global_state.xgov_manager.as_bytes) == manager_address  # type: ignore
-
-
-def assert_registry_payor(
-    global_state: GlobalState,
-    *,
-    payor_address: str,
-) -> None:
-    assert encode_address(global_state.xgov_payor.as_bytes) == payor_address  # type: ignore
-
-
 def assert_registry_config(
-    global_state: GlobalState,
+    xgov_registry_client: XGovRegistryClient,
     *,
     xgov_fee: int,
     daemon_ops_funding_bps: int,
@@ -88,6 +41,7 @@ def assert_registry_config(
     weighted_quorum_medium: int,
     weighted_quorum_large: int,
 ) -> None:
+    global_state = xgov_registry_client.state.global_state
     assert global_state.xgov_fee == xgov_fee
     assert global_state.daemon_ops_funding_bps == daemon_ops_funding_bps
     assert global_state.proposal_commitment_bps == proposal_commitment_bps
@@ -114,18 +68,20 @@ def assert_registry_config(
 
 
 def assert_committee(
-    global_state: GlobalState,
+    xgov_registry_client: XGovRegistryClient,
     *,
     committee_id: bytes,
     committee_size: int,
     committee_votes: int,
 ) -> None:
-    assert global_state.committee_id.as_bytes == committee_id
+    global_state = xgov_registry_client.state.global_state
+    assert bytes(global_state.committee_id) == committee_id
     assert global_state.committee_members == committee_size
     assert global_state.committee_votes == committee_votes
 
 
-def assert_get_state(global_state: GlobalState, get_state: TypedGlobalState) -> None:
+def assert_get_state(xgov_registry_client: XGovRegistryClient, get_state: TypedGlobalState) -> None:
+    global_state = xgov_registry_client.state.global_state
     assert global_state.xgov_fee == get_state.xgov_fee
     assert global_state.daemon_ops_funding_bps == get_state.daemon_ops_funding_bps
     assert global_state.proposal_commitment_bps == get_state.proposal_commitment_bps
