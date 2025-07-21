@@ -1954,17 +1954,19 @@ vote:
     // smart_contracts/proposal/contract.py:205
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
     bytec 22 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
-    frame_bury 0
+    frame_bury 1
 
 vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@20:
     // smart_contracts/proposal/contract.py:789
     // if error != typ.Error(""):
-    frame_dig 0
+    frame_dig 1
     bytec_0 // 0x0000
     !=
     bz vote_after_if_else@2
     // smart_contracts/proposal/contract.py:790
     // return error
+    frame_dig 1
+    frame_bury 0
     retsub
 
 vote_after_if_else@2:
@@ -1982,30 +1984,32 @@ vote_after_if_else@2:
     frame_dig -3
     concat
     dup
-    frame_bury 1
+    frame_bury 0
     box_len
     bury 1
     bnz vote_after_if_else@7
     // smart_contracts/proposal/contract.py:221
     // return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
     pushbytes 0x00134552523a566f746572206e6f7420666f756e64
-    frame_bury 0
+    frame_bury 1
 
 vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@12:
     // smart_contracts/proposal/contract.py:795
     // if error != typ.Error(""):
-    frame_dig 0
+    frame_dig 1
     bytec_0 // 0x0000
     !=
     bz vote_after_if_else@4
     // smart_contracts/proposal/contract.py:796
     // return error
+    frame_dig 1
+    frame_bury 0
     retsub
 
 vote_after_if_else@4:
     // smart_contracts/proposal/contract.py:798
     // voter_box = self.voters[voter.native].copy()
-    frame_dig 1
+    frame_dig 0
     dup
     box_get
     assert // check self.voters entry exists
@@ -2089,7 +2093,7 @@ vote_after_if_else@4:
 vote_after_if_else@7:
     // smart_contracts/proposal/contract.py:223
     // voter_box = self.voters[voter].copy()
-    frame_dig 1
+    frame_dig 0
     box_get
     swap
     dup
@@ -2110,7 +2114,7 @@ vote_after_if_else@7:
     // smart_contracts/proposal/contract.py:225
     // return typ.Error(err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED)
     pushbytes 0x00174552523a566f74657220616c726561647920766f746564
-    frame_bury 0
+    frame_bury 1
     // smart_contracts/proposal/contract.py:792-794
     // error = self.vote_input_validation(
     //     voter.native, approvals.native, rejections.native
@@ -2131,7 +2135,7 @@ vote_after_if_else@9:
     // smart_contracts/proposal/contract.py:228
     // return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
     pushbytes 0x00124552523a566f746573206578636565646564
-    frame_bury 0
+    frame_bury 1
     // smart_contracts/proposal/contract.py:792-794
     // error = self.vote_input_validation(
     //     voter.native, approvals.native, rejections.native
@@ -2142,7 +2146,7 @@ vote_after_if_else@11:
     // smart_contracts/proposal/contract.py:230
     // return typ.Error("")
     bytec_0 // 0x0000
-    frame_bury 0
+    frame_bury 1
     // smart_contracts/proposal/contract.py:792-794
     // error = self.vote_input_validation(
     //     voter.native, approvals.native, rejections.native
@@ -2155,7 +2159,7 @@ vote_after_if_else@15:
     callsub is_voting_open
     dup
     cover 2
-    frame_bury 0
+    frame_bury 1
     frame_bury 4
     // smart_contracts/proposal/contract.py:208
     // if error != typ.Error(""):
@@ -2169,7 +2173,7 @@ vote_after_if_else@15:
     // smart_contracts/proposal/contract.py:212
     // return typ.Error(err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED)
     pushbytes 0x00194552523a566f74696e6720506572696f642045787069726564
-    frame_bury 0
+    frame_bury 1
     // smart_contracts/proposal/contract.py:788
     // error = self.vote_check_authorization()
     b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@20
@@ -2178,7 +2182,7 @@ vote_after_if_else@19:
     // smart_contracts/proposal/contract.py:214
     // return typ.Error("")
     bytec_0 // 0x0000
-    frame_bury 0
+    frame_bury 1
     // smart_contracts/proposal/contract.py:788
     // error = self.vote_check_authorization()
     b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@20
