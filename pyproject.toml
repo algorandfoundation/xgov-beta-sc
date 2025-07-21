@@ -1,28 +1,32 @@
 [tool.poetry]
+package-mode = false
 name = "xgov-beta-sc"
-version = "0.1.0"
+version = "1.0.0"
 description = "Algorand xGov Beta Smart Contracts"
 authors = ["Algorand Foundation <contact@algorand.foundation>"]
 readme = "README.md"
+homepage = "https://xgov.algorand.co/"
+repository = "https://https://github.com/algorandfoundation/xgov-beta-sc"
+documentation = "https://.../"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 algokit-utils = "^4.1.0"
-python-dotenv = "^1.1.0"
-algorand-python = "^2.7.0"
-algorand-python-testing = "^0.5.0"
+python-dotenv = "^1.1.1"
+algorand-python = "==2.9.0"
+poetry-core = "^2.1.3"
 
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^2.1.0"
 black = {extras = ["d"], version = "^25.1.0"}
-ruff = "^0.11.2"
-mypy = "==1.11.2"  # TODO: relax to caret again once this is done: https://github.com/algorandfoundation/algokit-internal/issues/42
-pytest = "^8.3.5"
-pytest-cov = "^6.0.0"
+ruff = "^0.12.4"
+mypy = "^1.17.0"
+pytest = "^8.4.1"
+pytest-cov = "^6.2.1"
 pytest-sugar = "^1.0.0"
-pip-audit = "^2.8.0"
+pip-audit = "^2.9.0"
 pre-commit = "^4.2.0"
-puyapy = "^4.6.1"
+puyapy = "==4.10.0"
 
 [build-system]
 requires = ["poetry-core"]
