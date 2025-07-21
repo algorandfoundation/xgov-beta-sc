@@ -94,8 +94,8 @@ class Council(
             address: The address of the member to add.
 
         Raises:
-            err.FORBIDDEN: If the sender is not the admin.
-            err.ALREADY_MEMBER: If the address is already a member.
+            err.UNAUTHORIZED: If the sender is not the admin.
+            err.VOTER_ALREADY_ASSIGNED: If the address is already a member.
         """
 
         assert Txn.sender == self.admin.value, err.UNAUTHORIZED
@@ -113,8 +113,8 @@ class Council(
             address: The address of the member to remove.
 
         Raises:
-            err.FORBIDDEN: If the sender is not the admin.
-            err.NOT_A_MEMBER: If the address is not a member.
+            err.UNAUTHORIZED: If the sender is not the admin.
+            err.VOTER_NOT_FOUND: If the address is not a member.
         """
 
         assert Txn.sender == self.admin.value, err.UNAUTHORIZED
@@ -133,7 +133,7 @@ class Council(
             block: Whether or not to block the proposal.
 
         Raises:
-            err.NOT_A_MEMBER: If the sender is not a member of the council.
+            err.VOTER_NOT_FOUND: If the sender is not a member of the council.
             err.INVALID_PROPOSAL: If the proposal ID is invalid or does not exist.
             err.WRONG_PROPOSAL_STATUS: If the proposal is not approved.
             err.ALREADY_VOTED: If the sender has already voted on this proposal.
