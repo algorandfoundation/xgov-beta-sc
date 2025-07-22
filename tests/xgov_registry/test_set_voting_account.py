@@ -1,132 +1,95 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.models import Account
-from algosdk.transaction import SuggestedParams
+from algokit_utils import SigningAccount, CommonAppCallParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient,
+    XGovRegistryClient, SetVotingAccountArgs, GetXgovBoxArgs,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, xgov_box_name
+from tests.xgov_registry.common import LogicErrorType
 
 
-def test_set_voting_account_success(
-    no_role_account: AddressAndSigner,
-    xgov: AddressAndSigner,
+def test_set_voting_account_as_xgov(
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
+    xgov: SigningAccount,
 ) -> None:
-    sp = sp_min_fee_times_2
+    xgov_box = xgov_registry_client.send.get_xgov_box(
+        args=GetXgovBoxArgs(xgov_address=xgov.address)
+    ).abi_return
+    assert xgov_box.voting_address == xgov.address
 
-    xgov_registry_client.set_voting_account(
-        xgov_address=xgov.address,
-        voting_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            suggested_params=sp,
-            boxes=[(0, xgov_box_name(xgov.address))],
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
+            xgov_address=xgov.address,
+            voting_address=no_role_account.address,
         ),
+        params=CommonAppCallParams(sender=xgov.address)
     )
 
-    xgov_box = xgov_registry_client.get_xgov_box(
-        xgov_address=xgov.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, xgov_box_name(xgov.address))]
-        ),
-    )
-
-    assert no_role_account.address == xgov_box.return_value.voting_address
+    xgov_box = xgov_registry_client.send.get_xgov_box(
+        args=GetXgovBoxArgs(xgov_address=xgov.address)
+    ).abi_return
+    assert xgov_box.voting_address == no_role_account.address
 
 
 def test_set_voting_account_not_an_xgov(
-    no_role_account: AddressAndSigner,
-    xgov: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
+    xgov: SigningAccount,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.set_voting_account(
-            xgov_address=no_role_account.address,
-            voting_address=xgov.address,
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp_min_fee_times_2,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
+        xgov_registry_client.send.set_voting_account(
+            args=SetVotingAccountArgs(
+                xgov_address=xgov.address,
+                voting_address=no_role_account.address,
             ),
+            params=CommonAppCallParams(sender=no_role_account.address)
         )
 
 
-def test_set_voting_account_not_voting_account_or_xgov(
-    deployer: Account,
-    no_role_account: AddressAndSigner,
-    xgov: AddressAndSigner,
-    sp_min_fee_times_2: SuggestedParams,
+def test_set_voting_account_as_voting_address(
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
+    xgov: SigningAccount,
 ) -> None:
-    xgov_registry_client.set_voting_account(
-        xgov_address=xgov.address,
-        voting_address=deployer.address,
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            suggested_params=sp_min_fee_times_2,
-            boxes=[(0, xgov_box_name(xgov.address))],
-        ),
-    )
-
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.set_voting_account(
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
             xgov_address=xgov.address,
             voting_address=no_role_account.address,
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp_min_fee_times_2,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
-        )
+        ),
+        params=CommonAppCallParams(sender=xgov.address)
+    )
+
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
+            xgov_address=xgov.address,
+            voting_address=xgov.address,
+        ),
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
 
 def test_set_voting_account_paused_registry_error(
-    no_role_account: AddressAndSigner,
-    xgov: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
+    xgov: SigningAccount,
 ) -> None:
-    xgov_registry_client.pause_registry()
+    xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.set_voting_account(
-            xgov_address=xgov.address,
-            voting_address=no_role_account.address,
-            transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
-                suggested_params=sp_min_fee_times_2,
-                boxes=[(0, xgov_box_name(xgov.address))],
+        xgov_registry_client.send.set_voting_account(
+            args=SetVotingAccountArgs(
+                xgov_address=xgov.address,
+                voting_address=no_role_account.address,
             ),
+            params=CommonAppCallParams(sender=xgov.address)
         )
 
-    xgov_registry_client.resume_registry()
+    xgov_registry_client.send.resume_registry()
 
-    xgov_registry_client.set_voting_account(
-        xgov_address=xgov.address,
-        voting_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            suggested_params=sp_min_fee_times_2,
-            boxes=[(0, xgov_box_name(xgov.address))],
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
+            xgov_address=xgov.address,
+            voting_address=no_role_account.address,
         ),
+        params=CommonAppCallParams(sender=xgov.address)
     )
-
-    xgov_box = xgov_registry_client.get_xgov_box(
-        xgov_address=xgov.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, xgov_box_name(xgov.address))]
-        ),
-    )
-
-    assert no_role_account.address == xgov_box.return_value.voting_address
