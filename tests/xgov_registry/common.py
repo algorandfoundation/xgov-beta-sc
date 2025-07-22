@@ -10,7 +10,7 @@ from smart_contracts.xgov_registry.config import (
 
 LogicErrorType: type[LogicError] = LogicError
 
-TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT * 10)
+TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1
 
 
@@ -105,3 +105,15 @@ def assert_get_state(xgov_registry_client: XGovRegistryClient, get_state: TypedG
     assert global_state.weighted_quorum_small == get_state.weighted_quorum[0]
     assert global_state.weighted_quorum_medium == get_state.weighted_quorum[1]
     assert global_state.weighted_quorum_large == get_state.weighted_quorum[2]
+
+
+def get_xgov_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
+    return AlgoAmount(micro_algo=xgov_registry_client.state.global_state.xgov_fee)
+
+
+def get_proposer_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
+    return AlgoAmount(micro_algo=xgov_registry_client.state.global_state.proposer_fee)
+
+
+def get_open_proposal_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
+    return AlgoAmount(micro_algo=xgov_registry_client.state.global_state.open_proposal_fee)
