@@ -11,7 +11,7 @@ path = ".algokit/generators/create_env_file"
 
 [project]
 type = 'contract'
-name = 'v4_example'
+name = 'xgov-beta-sc'
 artifacts = 'smart_contracts/artifacts'
 
 [project.deploy]
