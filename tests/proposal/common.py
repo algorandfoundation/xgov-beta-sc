@@ -1,4 +1,4 @@
-from algokit_utils import LogicError, AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
+from algokit_utils import AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
 from algosdk.constants import MIN_TXN_FEE
 
 from smart_contracts.artifacts.proposal.proposal_client import (
@@ -38,8 +38,6 @@ from tests.common import (
     relative_to_absolute_amount,
 )
 from tests.utils import time_warp
-
-logic_error_type: type[LogicError] = LogicError
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
@@ -327,7 +325,7 @@ def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
     assert (
-        algorand_client.account.get_information(address)["amount"] == expected_balance  # type: ignore
+        algorand_client.account.get_information(address).amount == expected_balance  # type: ignore
     )
 
 
@@ -383,7 +381,7 @@ def open_proposal(
             focus=focus,
             requested_amount=requested_amount.amount_in_micro_algo,
         ),
-        params = CommonAppCallParams(signer=proposer.signer)
+        params = CommonAppCallParams(sender=proposer.address)
     )
 
     if metadata != b"":
@@ -410,7 +408,7 @@ def upload_metadata(
                         ],
                 is_first_in_group=i == 0,
             ),
-            params = CommonAppCallParams(signer=proposer.signer)
+            params = CommonAppCallParams(sender=proposer.address)
         )
 
 
