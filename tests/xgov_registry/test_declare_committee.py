@@ -10,6 +10,7 @@ from tests.common import (
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
 )
+from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import assert_committee
 
 
@@ -38,7 +39,7 @@ def test_declare_committee_not_manager(
     no_role_account: SigningAccount,
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client_committee_not_declared.send.declare_committee(
             args=DeclareCommitteeArgs(
                 committee_id=DEFAULT_COMMITTEE_ID,
@@ -56,7 +57,7 @@ def test_declare_committee_too_large(
     max_committee_size = (
         xgov_registry_client_committee_not_declared.state.global_state.max_committee_size
     )
-    with pytest.raises(LogicError, match=err.COMMITTEE_SIZE_TOO_LARGE):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.COMMITTEE_SIZE_TOO_LARGE]):
         xgov_registry_client_committee_not_declared.send.declare_committee(
             args=DeclareCommitteeArgs(
                 committee_id=DEFAULT_COMMITTEE_ID,

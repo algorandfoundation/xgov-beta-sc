@@ -8,6 +8,8 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, PayGrantProposalArgs, SetProposerKycArgs,
 )
 from smart_contracts.errors import std_errors as err
+
+from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import UNLIMITED_KYC_EXPIRATION
 
 
@@ -44,7 +46,7 @@ def test_pay_grant_proposal_not_payor(
     proposer: SigningAccount,
     reviewed_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=reviewed_proposal_client.app_id
@@ -58,7 +60,7 @@ def test_pay_grant_proposal_not_a_proposal_app(
     xgov_payor: SigningAccount,
     funded_xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.INVALID_PROPOSAL):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PROPOSAL]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=funded_xgov_registry_client.app_id,
@@ -73,7 +75,7 @@ def test_pay_grant_proposal_not_reviewed(
     funded_xgov_registry_client: XGovRegistryClient,
     approved_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.PROPOSAL_WAS_NOT_REVIEWED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PROPOSAL_WAS_NOT_REVIEWED]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=approved_proposal_client.app_id
@@ -98,7 +100,7 @@ def test_pay_grant_proposal_invalid_kyc(
         ),
         params=CommonAppCallParams(sender=kyc_provider.address)
     )
-    with pytest.raises(LogicError, match=err.INVALID_KYC):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_KYC]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=reviewed_proposal_client.app_id
@@ -123,7 +125,7 @@ def test_pay_grant_proposal_expired_kyc(
         ),
         params=CommonAppCallParams(sender=kyc_provider.address)
     )
-    with pytest.raises(LogicError, match=err.INVALID_KYC):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_KYC]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=reviewed_proposal_client.app_id
@@ -143,7 +145,7 @@ def test_pay_grant_proposal_insufficient_funds(
         args=ReviewArgs(block=False),
         params=CommonAppCallParams(sender=xgov_council.address)
     )
-    with pytest.raises(LogicError, match=err.INSUFFICIENT_TREASURY_FUNDS):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INSUFFICIENT_TREASURY_FUNDS]):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(
                 proposal_id=approved_proposal_client_requested_too_much.app_id

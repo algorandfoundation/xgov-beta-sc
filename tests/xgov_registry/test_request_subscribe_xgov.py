@@ -8,6 +8,8 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
+
+from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import get_xgov_fee
 
 
@@ -50,7 +52,7 @@ def test_request_subscribe_xgov_already_xgov(
         params=CommonAppCallParams(sender=xgov_subscriber.address)
     )
 
-    with pytest.raises(LogicError, match=err.ALREADY_XGOV):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.ALREADY_XGOV]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=app_xgov_subscribe_requested.app_address,
@@ -73,7 +75,7 @@ def test_request_subscribe_xgov_wrong_recipient(
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,
@@ -96,7 +98,7 @@ def test_request_subscribe_xgov_wrong_amount(
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,
@@ -121,7 +123,7 @@ def test_request_subscribe_xgov_paused_registry_error(
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,

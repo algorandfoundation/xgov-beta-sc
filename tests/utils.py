@@ -1,7 +1,11 @@
+import re
+from re import Pattern
 from typing import Optional
 
 from algokit_utils import AlgorandClient, PaymentParams, AlgoAmount
 from algosdk.v2client.algod import AlgodClient
+
+from smart_contracts.errors import std_errors as err
 
 
 def get_last_round(algod_client: AlgodClient) -> int:
@@ -51,3 +55,14 @@ def time_warp(to_timestamp: int) -> None:
         algorand_client.client.algod.set_timestamp_offset(offset)
     round_warp()
     algorand_client.client.algod.set_timestamp_offset(0)
+
+
+def compile_error_regex(error: str) -> Pattern[str]:
+    return re.compile(f"{error}\\s+<-- Error")
+
+
+ERROR_TO_REGEX: dict[str, Pattern[str]] = {
+    getattr(err, name): compile_error_regex(getattr(err, name))  # type: ignore
+    for name in dir(err)
+    if not name.startswith("__") and isinstance(getattr(err, name), str)  # type: ignore
+}

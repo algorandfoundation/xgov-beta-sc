@@ -9,6 +9,7 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
 )
 from smart_contracts.errors import std_errors as err
 
+from tests.utils import ERROR_TO_REGEX
 
 def test_reject_subscribe_xgov_success(
     xgov_subscriber: SigningAccount,
@@ -33,7 +34,7 @@ def test_reject_subscribe_xgov_not_subscriber(
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.reject_subscribe_xgov(
             args=RejectSubscribeXgovArgs(
                 request_id=xgov_registry_client.state.global_state.request_id - 1

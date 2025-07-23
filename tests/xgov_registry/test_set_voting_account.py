@@ -6,6 +6,8 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 )
 from smart_contracts.errors import std_errors as err
 
+from tests.utils import ERROR_TO_REGEX
+
 
 def test_set_voting_account_as_xgov(
     no_role_account: SigningAccount,
@@ -36,7 +38,7 @@ def test_set_voting_account_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,
@@ -74,7 +76,7 @@ def test_set_voting_account_paused_registry_error(
     xgov: SigningAccount,
 ) -> None:
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,

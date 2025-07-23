@@ -5,6 +5,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, DepositFundsArgs,
 )
 from smart_contracts.errors import std_errors as err
+from tests.utils import ERROR_TO_REGEX
 
 ADDED_AMOUNT = AlgoAmount(algo=10)
 
@@ -34,7 +35,7 @@ def test_deposit_funds_wrong_recipient(
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_RECEIVER):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_RECEIVER]):
         xgov_registry_client.send.deposit_funds(
             args=DepositFundsArgs(
                 payment=algorand_client.create_transaction.payment(

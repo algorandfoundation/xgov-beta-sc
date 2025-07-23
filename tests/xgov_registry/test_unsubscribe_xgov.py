@@ -11,6 +11,8 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import UnsubscribeXgovArgs as AppUnsubscribeXgovArgs
 from smart_contracts.errors import std_errors as err
 
+from tests.utils import ERROR_TO_REGEX
+
 
 def test_unsubscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
@@ -62,7 +64,7 @@ def test_unsubscribe_xgov_not_an_xgov(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=no_role_account.address)
         )
@@ -75,7 +77,7 @@ def test_unsubscribe_xgov_paused_registry_error(
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     xgov_registry_client.send.pause_registry()
 
-    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=xgov.address),
         )

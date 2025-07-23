@@ -5,6 +5,8 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, WithdrawFundsArgs,
 )
 from smart_contracts.errors import std_errors as err
+
+from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import TREASURY_AMOUNT
 
 
@@ -30,7 +32,7 @@ def test_withdraw_funds_not_manager(
     no_role_account: SigningAccount,
     funded_xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         funded_xgov_registry_client.send.withdraw_funds(
             args=WithdrawFundsArgs(amount=TREASURY_AMOUNT.amount_in_micro_algo),
             params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
@@ -41,7 +43,7 @@ def test_withdraw_funds_insufficient_funds(
     min_fee_times_2: AlgoAmount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.INSUFFICIENT_FUNDS):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INSUFFICIENT_FUNDS]):
         xgov_registry_client.send.withdraw_funds(
             args=WithdrawFundsArgs(amount=TREASURY_AMOUNT.micro_algo + 1,),
             params=CommonAppCallParams(static_fee=min_fee_times_2)
