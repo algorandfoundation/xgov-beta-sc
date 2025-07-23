@@ -545,6 +545,13 @@ class Proposal(
 
         Args:
             proposer (arc4.Address): Address of the proposer
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Registry
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
+            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
+            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
         """
         assert (
             Global.caller_application_id != 0
@@ -676,10 +683,6 @@ class Proposal(
             err.MISSING_METADATA: The proposal description metadata is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.TOO_EARLY: If the proposal is submitted before the minimum time
-            err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
-            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
-            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
-
         """
         self.check_registry_not_paused()
 
