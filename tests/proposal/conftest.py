@@ -18,6 +18,7 @@ from tests.common import (
     DEFAULT_COMMITTEE_VOTES,
     INITIAL_FUNDS,
 )
+from tests.conftest import min_fee_times_2
 from tests.proposal.common import (
     assign_voters,
     open_proposal,
@@ -147,6 +148,7 @@ def rejected_proposal_client(
     voting_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -154,7 +156,9 @@ def rejected_proposal_client(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     return voting_proposal_client
 
@@ -165,6 +169,7 @@ def approved_proposal_client(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     for committee_member in committee_members[:4]:
         xgov_registry_mock_client.send.vote(
@@ -173,7 +178,8 @@ def approved_proposal_client(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2)
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state

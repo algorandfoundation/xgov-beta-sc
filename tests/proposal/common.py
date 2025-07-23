@@ -1,5 +1,6 @@
 from algokit_utils import AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
 from algosdk.constants import MIN_TXN_FEE
+from algosdk.encoding import decode_address
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient, OpenArgs, ProposalComposer, UploadMetadataArgs, UnassignVotersArgs, AssignVotersArgs,
@@ -10,7 +11,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
-from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS
+from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS, VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -47,6 +48,10 @@ PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 PROPOSAL_TITLE = "Test Proposal"
 METADATA_B64 = "TUVUQURBVEE="
 DEFAULT_FOCUS = 42
+
+
+def get_voter_box_key(voter_address: str) -> bytes:
+    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
 def get_locked_amount(requested_amount: AlgoAmount) -> AlgoAmount:
@@ -438,13 +443,13 @@ def assign_voters(
 ) -> None:
     proposal_client_composer.assign_voters(
         args=AssignVotersArgs(voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]]),
-        params = CommonAppCallParams(signer=xgov_daemon.signer)
+        params = CommonAppCallParams(sender=xgov_daemon.address)
     )
     rest_of_committee_members = committee_members[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.assign_voters(
             args=AssignVotersArgs(voters=[(cm.address, 10) for cm in rest_of_committee_members[i * bulks: (i + 1) * bulks]]),
-            params = CommonAppCallParams(signer=xgov_daemon.signer)
+            params = CommonAppCallParams(sender=xgov_daemon.address)
         )
 
 

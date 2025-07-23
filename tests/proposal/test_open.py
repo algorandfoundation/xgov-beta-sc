@@ -21,6 +21,8 @@ from smart_contracts.xgov_registry.config import (
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
 )
+
+from tests.utils import ERROR_TO_REGEX
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -31,7 +33,6 @@ from tests.proposal.common import (
     get_locked_amount,
     open_proposal,
 )
-from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for open on other statuses
 
@@ -65,7 +66,7 @@ def test_open_not_proposer(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -91,7 +92,7 @@ def test_open_twice(
 ) -> None:
 
     open_proposal(proposal_client, algorand_client, proposer)
-    with pytest.raises(LogicErrorType, match=err.WRONG_PROPOSAL_STATUS):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]):
         open_proposal(proposal_client, algorand_client, proposer)
 
     assert_draft_proposal_global_state(
@@ -113,7 +114,7 @@ def test_open_wrong_title_1(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -138,7 +139,7 @@ def test_open_wrong_title_2(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.WRONG_TITLE_LENGTH):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -163,7 +164,7 @@ def test_open_wrong_funding_type_1(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.WRONG_FUNDING_TYPE):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -188,7 +189,7 @@ def test_open_wrong_funding_type_2(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.WRONG_FUNDING_TYPE):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -215,7 +216,7 @@ def test_open_wrong_requested_amount_1(
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - 1
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(LogicErrorType, match=err.WRONG_MIN_REQUESTED_AMOUNT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_MIN_REQUESTED_AMOUNT]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -243,7 +244,7 @@ def test_open_wrong_requested_amount_2(
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE + 1)
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(LogicError, match=err.WRONG_MAX_REQUESTED_AMOUNT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_MAX_REQUESTED_AMOUNT]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -270,7 +271,7 @@ def test_open_wrong_payment_1(
     proposal_client: ProposalClient,
 ) -> None:
     locked_amount = AlgoAmount(micro_algo=LOCKED_AMOUNT.micro_algo - 1)
-    with pytest.raises(LogicErrorType, match=err.WRONG_LOCKED_AMOUNT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -296,7 +297,7 @@ def test_open_wrong_payment_2(
     proposal_client: ProposalClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT + 1
-    with pytest.raises(LogicErrorType, match=err.WRONG_LOCKED_AMOUNT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -322,7 +323,7 @@ def test_open_wrong_payment_3(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_SENDER):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_SENDER]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -347,7 +348,7 @@ def test_open_wrong_payment_4(
     proposer: SigningAccount,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.WRONG_RECEIVER]):
         open_proposal(
             proposal_client,
             algorand_client,
@@ -693,7 +694,7 @@ def test_open_paused_registry_error(
 
     xgov_registry_mock_client.send.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         open_proposal(
             proposal_client,
             algorand_client,
