@@ -35,12 +35,10 @@ def test_withdraw_balance_success(
     )
 
     # Get account info before withdrawal
-    before_account_info = algorand_client.client.algod.account_info(
-        funded_xgov_registry_client.app_address
-    )
-    before_balance = int(before_account_info["amount"])  # type: ignore
+    before_account_info = algorand_client.account.get_information(funded_xgov_registry_client.app_address)
+    before_balance = before_account_info.amount.micro_algo
     initial_outstanding_funds = funded_xgov_registry_client.state.global_state.outstanding_funds
-    min_balance = int(before_account_info["min-balance"])  # type: ignore
+    min_balance = before_account_info.min_balance.micro_algo
 
     # Calculate expected amount to be withdrawn
     expected_withdraw_amount = (
@@ -48,9 +46,7 @@ def test_withdraw_balance_success(
     )
 
     # Get deployer balance before withdrawal
-    deployer_before = int(
-        algorand_client.client.algod.account_info(deployer.address)["amount"]  # type: ignore
-    )
+    deployer_balance_before = algorand_client.account.get_information(deployer.address).amount.micro_algo
 
     # Execute withdraw_balance
     funded_xgov_registry_client.send.withdraw_balance(
@@ -58,22 +54,18 @@ def test_withdraw_balance_success(
     )
 
     # Get account info after withdrawal
-    after_account_info = algorand_client.client.algod.account_info(
-        funded_xgov_registry_client.app_address
-    )
-    after_balance = int(after_account_info["amount"])  # type: ignore
+    after_account_info = algorand_client.account.get_information(funded_xgov_registry_client.app_address)
+    after_balance = after_account_info.amount.micro_algo
 
     # Get deployer balance after withdrawal
-    deployer_after = int(
-        algorand_client.client.algod.account_info(deployer.address)["amount"]  # type: ignore
-    )
+    deployer_balance_after = algorand_client.account.get_information(deployer.address).amount.micro_algo
 
     # Verify results
     # Balance of registry should be reduced to just enough to cover MBR and outstanding funds
     assert after_balance == min_balance + initial_outstanding_funds
 
     # Deployer should have received the withdrawn funds minus fees
-    assert deployer_after >= deployer_before + expected_withdraw_amount - min_fee_times_2.amount_in_micro_algo
+    assert deployer_balance_after >= deployer_balance_before + expected_withdraw_amount - min_fee_times_2.amount_in_micro_algo
 
 
 def test_withdraw_balance_not_manager(
@@ -101,6 +93,7 @@ def test_withdraw_balance_insufficient_fee(
 
 
 def test_withdraw_balance_no_funds_available(
+    algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
@@ -108,17 +101,11 @@ def test_withdraw_balance_no_funds_available(
     Test that transaction fails if no withdrawable funds are available.
     """
     # Get the registry state to determine if there are funds above MBR and outstanding funds
-    registry_info = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address
-    )
+    registry_info = algorand_client.account.get_information(xgov_registry_client.app_address)
     outstanding_funds = xgov_registry_client.state.global_state.outstanding_funds
 
     # Ensure no excess funds by withdrawing any that exist
-    available = (
-        int(registry_info["amount"])  # type: ignore
-        - int(registry_info["min-balance"])  # type: ignore
-        - outstanding_funds
-    )
+    available = registry_info.amount.micro_algo - registry_info.min_balance.micro_algo - outstanding_funds
 
     # If there are available funds, withdraw them first
     if available > 0:

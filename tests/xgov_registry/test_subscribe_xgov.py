@@ -18,9 +18,7 @@ def test_subscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
-    initial_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    initial_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     xgov_fee = get_xgov_fee(xgov_registry_client)
     xgov_registry_client.send.subscribe_xgov(
@@ -38,9 +36,7 @@ def test_subscribe_xgov_success(
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-    final_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    final_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     assert final_amount == initial_amount + xgov_fee.micro_algo
     assert final_xgovs == initial_xgovs + 1
@@ -53,15 +49,14 @@ def test_subscribe_xgov_success(
 
 
 def test_app_subscribe_xgov_success(
+    algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     min_fee_times_3: AlgoAmount,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
-    initial_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    initial_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
     xgov_subscriber_app.send.subscribe_xgov(
         args=AppSubscribeXgovArgs(
             app_id=xgov_registry_client.app_id,
@@ -73,9 +68,7 @@ def test_app_subscribe_xgov_success(
         )
     )
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-    final_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    final_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     assert final_amount == initial_amount + get_xgov_fee(xgov_registry_client).micro_algo
     assert final_xgovs == initial_xgovs + 1

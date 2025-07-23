@@ -13,9 +13,7 @@ def test_subscribe_proposer_success(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    initial_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    initial_amount = algorand_client.account.get_information(xgov_registry_client.app_address,).amount.micro_algo
 
     proposer_fee = get_proposer_fee(xgov_registry_client)
     xgov_registry_client.send.subscribe_proposer(
@@ -31,9 +29,7 @@ def test_subscribe_proposer_success(
         params=CommonAppCallParams(sender=no_role_account.address)
     )
 
-    final_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    final_amount: int = algorand_client.account.get_information(xgov_registry_client.app_address,).amount.micro_algo
 
     assert final_amount == initial_amount + proposer_fee.micro_algo
 

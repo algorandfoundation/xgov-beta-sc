@@ -19,12 +19,8 @@ def test_pay_grant_proposal_success(
     proposer: SigningAccount,
     reviewed_proposal_client: ProposalClient,
 ) -> None:
-    initial_treasury_amount: int = algorand_client.client.algod.account_info(
-        funded_xgov_registry_client.app_address
-    )["amount"]
-    initial_proposer_amount: int = algorand_client.client.algod.account_info(
-        proposer.address
-    )["amount"]
+    initial_treasury_amount = algorand_client.account.get_information(funded_xgov_registry_client.app_address).amount.micro_algo
+    initial_proposer_amount = algorand_client.account.get_information(proposer.address).amount.micro_algo
     requested_amount = reviewed_proposal_client.state.global_state.requested_amount
     locked_amount = reviewed_proposal_client.state.global_state.locked_amount
 
@@ -35,12 +31,8 @@ def test_pay_grant_proposal_success(
         params=CommonAppCallParams(sender=xgov_payor.address, static_fee=min_fee_times_4)
     )
 
-    final_treasury_amount: int = algorand_client.client.algod.account_info(
-        funded_xgov_registry_client.app_address
-    )["amount"]
-    final_proposer_amount: int = algorand_client.client.algod.account_info(
-        proposer.address
-    )["amount"]
+    final_treasury_amount = algorand_client.account.get_information(funded_xgov_registry_client.app_address).amount.micro_algo
+    final_proposer_amount = algorand_client.account.get_information(proposer.address).amount.micro_algo
 
     assert  initial_treasury_amount - final_treasury_amount == requested_amount
     assert  final_proposer_amount - initial_proposer_amount == requested_amount + locked_amount
