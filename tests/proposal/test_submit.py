@@ -1,7 +1,5 @@
 import pytest
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algosdk.transaction import SuggestedParams
+from algokit_utils import SigningAccount, AlgorandClient
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -20,42 +18,29 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     assert_final_proposal_global_state,
-    logic_error_type,
     open_proposal,
     submit_proposal,
 )
-from tests.utils import ERROR_TO_REGEX
-from tests.xgov_registry.common import LogicErrorType
 
 
 def test_submit_success(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: AddressAndSigner,
-    sp_min_fee_times_2: SuggestedParams,
+    draft_proposal_client: ProposalClient,
+    proposer: SigningAccount,
 ) -> None:
-
-    sp = sp_min_fee_times_2
-
-    reg_gs = xgov_registry_mock_client.get_global_state()
+    reg_gs = xgov_registry_mock_client.state.global_state
 
     daemon_ops_funding_bps = relative_to_absolute_amount(
         reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
-    xgov_daemon_balance_before_submit = algorand_client.account.get_information(  # type: ignore
-        xgov_daemon.address
-    )[
-        "amount"
-    ]
+    xgov_daemon_balance_before_submit = algorand_client.account.get_information(xgov_daemon.address).amount.micro_algo
 
     submit_proposal(
         proposal_client=draft_proposal_client,
-        xgov_registry_mock_client=xgov_registry_mock_client,
+        xgov_registry_client=xgov_registry_mock_client,
         proposer=proposer,
-        xgov_daemon=xgov_daemon,
-        sp_min_fee_times_2=sp,
     )
 
     assert_account_balance(
@@ -64,10 +49,8 @@ def test_submit_success(
         expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,  # type: ignore
     )
 
-    global_state = draft_proposal_client.get_global_state()
-
     assert_final_proposal_global_state(
-        global_state,
+        draft_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
     )
@@ -76,16 +59,12 @@ def test_submit_success(
 def test_submit_not_proposer(
     draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    no_role_account: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    sp_min_fee_times_2: SuggestedParams,
+    no_role_account: SigningAccount,
+    xgov_daemon: SigningAccount,
 ) -> None:
-
-    sp = sp_min_fee_times_2
-
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         submit_proposal(
             proposal_client=draft_proposal_client,
             xgov_registry_mock_client=xgov_registry_mock_client,

@@ -1,11 +1,9 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams
-
+from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams, LogicError
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, DepositFundsArgs,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
 
 
 def test_withdraw_balance_success(
@@ -76,7 +74,7 @@ def test_withdraw_balance_not_manager(
     """
     Test that only the xGov Manager can withdraw the balance.
     """
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         funded_xgov_registry_client.send.withdraw_balance(
             params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
         )
@@ -88,7 +86,7 @@ def test_withdraw_balance_insufficient_fee(
     """
     Test that transaction fails if fee is insufficient.
     """
-    with pytest.raises(LogicErrorType, match=err.INSUFFICIENT_FEE):
+    with pytest.raises(LogicError, match=err.INSUFFICIENT_FEE):
         funded_xgov_registry_client.send.withdraw_balance()
 
 
@@ -114,7 +112,7 @@ def test_withdraw_balance_no_funds_available(
         )
 
     # Now try to withdraw again, which should fail
-    with pytest.raises(LogicErrorType, match=err.INSUFFICIENT_FUNDS):
+    with pytest.raises(LogicError, match=err.INSUFFICIENT_FUNDS):
         xgov_registry_client.send.withdraw_balance(
             params=CommonAppCallParams(static_fee=min_fee_times_2)
         )

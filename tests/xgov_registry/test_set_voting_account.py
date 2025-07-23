@@ -1,11 +1,10 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams
+from algokit_utils import SigningAccount, CommonAppCallParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, SetVotingAccountArgs, GetXgovBoxArgs,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
 
 
 def test_set_voting_account_as_xgov(
@@ -37,7 +36,7 @@ def test_set_voting_account_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,
@@ -75,7 +74,7 @@ def test_set_voting_account_paused_registry_error(
     xgov: SigningAccount,
 ) -> None:
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,
