@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import TransactionParameters, AlgorandClient, PaymentParams, SigningAccount, AlgoAmount
+from algokit_utils import AlgorandClient, PaymentParams, SigningAccount, AlgoAmount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, DepositFundsArgs,

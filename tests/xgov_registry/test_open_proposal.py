@@ -1,341 +1,244 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.transaction import SuggestedParams
+from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams, AlgoAmount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient,
+    XGovRegistryClient, OpenProposalArgs,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import (
-    LogicErrorType,
-    proposer_box_name,
-)
+from tests.xgov_registry.common import LogicErrorType, get_open_proposal_fee
 
 
 def test_open_proposal_success(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    initial_pending_proposals = xgov_registry_client.state.global_state.pending_proposals
+    xgov_registry_client.send.open_proposal(
+        args=OpenProposalArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.open_proposal_fee,
-                ),
-            ),
-            signer=proposer.signer,
+                    amount=get_open_proposal_fee(xgov_registry_client),
+                )
+            )
         ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp_min_fee_times_3,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
     )
 
-    after_global_state = xgov_registry_client.get_global_state()
-    assert after_global_state.pending_proposals == (global_state.pending_proposals + 1)
+    final_pending_proposals = xgov_registry_client.state.global_state.pending_proposals
+    assert final_pending_proposals == initial_pending_proposals + 1
 
 
 def test_open_proposal_not_a_proposer(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=no_role_account.signer,
+                        amount=get_open_proposal_fee(xgov_registry_client),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_3)
         )
 
 
 def test_open_proposal_active_proposal(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-
-    xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
+    xgov_registry_client.send.open_proposal(
+        args=OpenProposalArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.open_proposal_fee,
-                ),
-            ),
-            signer=proposer.signer,
+                    amount=open_proposal_fee,
+                )
+            )
         ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp_min_fee_times_3,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
     )
 
     with pytest.raises(LogicErrorType, match=err.ALREADY_ACTIVE_PROPOSAL):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=open_proposal_fee,
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )
 
 
 def test_open_proposal_wrong_fee(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     with pytest.raises(LogicErrorType, match=err.INSUFFICIENT_FEE):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=get_open_proposal_fee(xgov_registry_client),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_2,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address)
         )
 
 
 def test_open_proposal_wrong_amount(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
     with pytest.raises(LogicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=1_000,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=AlgoAmount(micro_algo=get_open_proposal_fee(xgov_registry_client).micro_algo - 1),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )
 
 
 def test_open_proposal_wrong_recipient(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
     with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=proposer.address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=get_open_proposal_fee(xgov_registry_client),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )
 
 
 def test_open_proposal_paused_registry_error(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    xgov_registry_client.pause_registry()
+    open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
+    xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=open_proposal_fee,
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )
 
-    xgov_registry_client.resume_registry()
-
-    xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    xgov_registry_client.send.resume_registry()
+    xgov_registry_client.send.open_proposal(
+        args=OpenProposalArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=proposer.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.open_proposal_fee,
-                ),
-            ),
-            signer=proposer.signer,
+                    amount=open_proposal_fee,
+                )
+            )
         ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp_min_fee_times_3,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
     )
-
-    after_global_state = xgov_registry_client.get_global_state()
-
-    assert after_global_state.pending_proposals == (global_state.pending_proposals + 1)
 
 
 def test_open_proposal_paused_proposal_error(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    xgov_registry_client.pause_proposals()
+    open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
+    xgov_registry_client.send.pause_proposals()
     with pytest.raises(LogicErrorType, match=err.PAUSED_PROPOSALS):
-        xgov_registry_client.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=open_proposal_fee,
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )
 
-    xgov_registry_client.resume_proposals()
-
-    xgov_registry_client.open_proposal(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.open_proposal_fee,
-                ),
+    xgov_registry_client.send.resume_proposals()
+    xgov_registry_client.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
+                        sender=proposer.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=open_proposal_fee,
+                    )
+                )
             ),
-            signer=proposer.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp_min_fee_times_3,
-            boxes=[(0, proposer_box_name(proposer.address))],
-        ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
     )
-
-    after_global_state = xgov_registry_client.get_global_state()
-
-    assert after_global_state.pending_proposals == (global_state.pending_proposals + 1)
-
 
 def test_open_proposal_no_committee_declared(
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client_committee_not_declared.get_global_state()
     with pytest.raises(LogicErrorType):
-        xgov_registry_client_committee_not_declared.open_proposal(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+        xgov_registry_client_committee_not_declared.send.open_proposal(
+            args=OpenProposalArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=proposer.address,
                         receiver=xgov_registry_client_committee_not_declared.app_address,
-                        amount=global_state.open_proposal_fee,
-                    ),
-                ),
-                signer=proposer.signer,
+                        amount=get_open_proposal_fee(xgov_registry_client_committee_not_declared),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp_min_fee_times_3,
-                boxes=[(0, proposer_box_name(proposer.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
         )

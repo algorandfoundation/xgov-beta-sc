@@ -1,6 +1,5 @@
 import pytest
 from algokit_utils import SigningAccount, CommonAppCallParams
-from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, SetXgovSubscriberArgs,
