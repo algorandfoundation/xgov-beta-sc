@@ -199,7 +199,10 @@ def reviewed_proposal_client(
     xgov_council: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    approved_proposal_client.send.review(args=ReviewArgs(block=False))
+    approved_proposal_client.send.review(
+        args=ReviewArgs(block=False),
+        params=CommonAppCallParams(sender=xgov_council.address)
+    )
     return approved_proposal_client
 
 
@@ -208,8 +211,12 @@ def blocked_proposal_client(
     approved_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
-    approved_proposal_client.send.review(args=ReviewArgs(block=True))
+    approved_proposal_client.send.review(
+        args=ReviewArgs(block=True),
+        params=CommonAppCallParams(sender=xgov_council.address, static_fee=min_fee_times_2)
+    )
     return approved_proposal_client
 
 
@@ -217,7 +224,6 @@ def blocked_proposal_client(
 def funded_proposal_client(
     reviewed_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),

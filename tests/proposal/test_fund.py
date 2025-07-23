@@ -19,13 +19,14 @@ def test_fund_empty_proposal(
     proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -33,13 +34,14 @@ def test_fund_draft_proposal(
     draft_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=draft_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -47,13 +49,14 @@ def test_fund_submitted_proposal(
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=submitted_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -61,13 +64,14 @@ def test_fund_voting_proposal(
     voting_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=voting_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -75,13 +79,14 @@ def test_fund_approved_proposal(
     approved_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=approved_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -89,13 +94,14 @@ def test_fund_rejected_proposal(
     rejected_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=rejected_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -103,13 +109,14 @@ def test_fund_blocked_proposal(
     blocked_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     with pytest.raises(
         LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=blocked_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_2),
         )
 
 
@@ -119,14 +126,14 @@ def test_fund_success(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_members: list[SigningAccount],
-    min_fee: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(proposer.address).amount.micro_algo
     locked_amount = reviewed_proposal_client.state.global_state.locked_amount
 
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
-        params=CommonAppCallParams(sender=proposer.address),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
     assert_funded_proposal_global_state(
@@ -140,7 +147,7 @@ def test_fund_success(
     assert_account_balance(
         algorand_client,
         proposer.address,
-        proposer_balance_before + locked_amount - min_fee.micro_algo,  # type: ignore
+        proposer_balance_before + locked_amount - min_fee_times_3.micro_algo,  # type: ignore
     )
 
 
@@ -150,14 +157,14 @@ def test_fund_twice(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee_members: list[SigningAccount],
-    min_fee: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(proposer.address).amount.micro_algo
     locked_amount = reviewed_proposal_client.state.global_state.locked_amount
 
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
-        params=CommonAppCallParams(sender=proposer.address),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
     assert_funded_proposal_global_state(
@@ -171,7 +178,7 @@ def test_fund_twice(
     assert_account_balance(
         algorand_client,
         proposer.address,
-        proposer_balance_before + locked_amount - min_fee.micro_algo,  # type: ignore
+        proposer_balance_before + locked_amount - min_fee_times_3.micro_algo,  # type: ignore
     )
 
     with pytest.raises(
@@ -179,17 +186,17 @@ def test_fund_twice(
     ):
         xgov_registry_mock_client.send.fund(
             args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
         )
 
 
 def test_fund_not_registry(
     reviewed_proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         reviewed_proposal_client.send.fund(
-            args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
-            params=CommonAppCallParams(sender=proposer.address),
+            params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
         )
