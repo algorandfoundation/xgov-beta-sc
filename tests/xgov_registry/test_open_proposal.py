@@ -229,7 +229,7 @@ def test_open_proposal_no_committee_declared(
     proposer: SigningAccount,
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> None:
-    # with pytest.raises(LogicError, match=err.EMPTY_COMMITTEE_ID):
+    with pytest.raises(LogicError):  #TODO: match=err.EMPTY_COMMITTEE_ID on the Registry handles errors
         xgov_registry_client_committee_not_declared.send.open_proposal(
             args=OpenProposalArgs(
                 payment=algorand_client.create_transaction.payment(
