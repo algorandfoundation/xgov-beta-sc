@@ -1,5 +1,6 @@
-from algokit_utils import LogicError, AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
+from algokit_utils import AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
 from algosdk.constants import MIN_TXN_FEE
+from algosdk.encoding import decode_address
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient, OpenArgs, ProposalComposer, UploadMetadataArgs, UnassignVotersArgs, AssignVotersArgs,
@@ -10,7 +11,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
-from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS
+from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS, VOTER_BOX_KEY_PREFIX
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -39,8 +40,6 @@ from tests.common import (
 )
 from tests.utils import time_warp
 
-logic_error_type: type[LogicError] = LogicError
-
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
@@ -49,6 +48,10 @@ PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 PROPOSAL_TITLE = "Test Proposal"
 METADATA_B64 = "TUVUQURBVEE="
 DEFAULT_FOCUS = 42
+
+
+def get_voter_box_key(voter_address: str) -> bytes:
+    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
 
 
 def get_locked_amount(requested_amount: AlgoAmount) -> AlgoAmount:
@@ -327,7 +330,7 @@ def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
     assert (
-        algorand_client.account.get_information(address)["amount"] == expected_balance  # type: ignore
+        algorand_client.account.get_information(address).amount == expected_balance  # type: ignore
     )
 
 
@@ -383,7 +386,7 @@ def open_proposal(
             focus=focus,
             requested_amount=requested_amount.amount_in_micro_algo,
         ),
-        params = CommonAppCallParams(signer=proposer.signer)
+        params = CommonAppCallParams(sender=proposer.address)
     )
 
     if metadata != b"":
@@ -410,7 +413,7 @@ def upload_metadata(
                         ],
                 is_first_in_group=i == 0,
             ),
-            params = CommonAppCallParams(signer=proposer.signer)
+            params = CommonAppCallParams(sender=proposer.address)
         )
 
 
@@ -440,13 +443,13 @@ def assign_voters(
 ) -> None:
     proposal_client_composer.assign_voters(
         args=AssignVotersArgs(voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]]),
-        params = CommonAppCallParams(signer=xgov_daemon.signer)
+        params = CommonAppCallParams(sender=xgov_daemon.address)
     )
     rest_of_committee_members = committee_members[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.assign_voters(
             args=AssignVotersArgs(voters=[(cm.address, 10) for cm in rest_of_committee_members[i * bulks: (i + 1) * bulks]]),
-            params = CommonAppCallParams(signer=xgov_daemon.signer)
+            params = CommonAppCallParams(sender=xgov_daemon.address)
         )
 
 

@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams
+from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, RequestSubscribeXgovArgs, ApproveSubscribeXgovArgs,
@@ -8,7 +8,9 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, get_xgov_fee
+
+from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import get_xgov_fee
 
 
 def test_request_subscribe_xgov_success(
@@ -50,7 +52,7 @@ def test_request_subscribe_xgov_already_xgov(
         params=CommonAppCallParams(sender=xgov_subscriber.address)
     )
 
-    with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.ALREADY_XGOV]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=app_xgov_subscribe_requested.app_address,
@@ -73,7 +75,7 @@ def test_request_subscribe_xgov_wrong_recipient(
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,
@@ -96,7 +98,7 @@ def test_request_subscribe_xgov_wrong_amount(
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,
@@ -121,7 +123,7 @@ def test_request_subscribe_xgov_paused_registry_error(
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.request_subscribe_xgov(
             args=RequestSubscribeXgovArgs(
                 xgov_address=xgov_subscriber_app.app_address,

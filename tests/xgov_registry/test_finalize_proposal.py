@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import CommonAppCallParams, SigningAccount, AlgoAmount
+from algokit_utils import CommonAppCallParams, SigningAccount, AlgoAmount, LogicError
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -9,6 +9,7 @@ from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
 
 from tests.common import DEFAULT_COMMITTEE_MEMBERS
+from tests.utils import ERROR_TO_REGEX
 from tests.proposal.common import (
     REQUESTED_AMOUNT,
     assert_blocked_proposal_global_state,
@@ -17,7 +18,6 @@ from tests.proposal.common import (
     assert_funded_proposal_global_state,
     assert_rejected_proposal_global_state,
 )
-from tests.xgov_registry.common import LogicErrorType
 
 
 def test_finalize_funded_proposal_success(
@@ -55,7 +55,7 @@ def test_finalize_empty_proposal_not_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_id=proposal_client.app_id),
             params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_3)
@@ -93,7 +93,7 @@ def test_finalize_draft_proposal_not_xgov_daemon(
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_4)
@@ -216,7 +216,7 @@ def test_finalize_blocked_proposal_not_xgov_daemon(
 #     xgov_registry_client: XGovRegistryClient,
 #     funded_unassigned_voters_proposal_client: ProposalClient,
 # ) -> None:
-#     with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
+#     with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PROPOSAL]):
 #         xgov_registry_client.send.finalize_proposal(
 #             args=FinalizeProposalArgs(proposal_id=funded_unassigned_voters_proposal_client.app_id),
 #             params=CommonAppCallParams(sender=xgov_daemon.address, static_fee=min_fee_times_3)

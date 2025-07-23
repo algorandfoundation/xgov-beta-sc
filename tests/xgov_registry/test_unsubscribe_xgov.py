@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, AlgoAmount
+from algokit_utils import SigningAccount, CommonAppCallParams, AlgoAmount, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, UnsubscribeXgovArgs, GetXgovBoxArgs,
@@ -10,7 +10,8 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import UnsubscribeXgovArgs as AppUnsubscribeXgovArgs
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
+
+from tests.utils import ERROR_TO_REGEX
 
 
 def test_unsubscribe_xgov_success(
@@ -28,7 +29,7 @@ def test_unsubscribe_xgov_success(
 
     assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(LogicErrorType, match="entry exists"):
+    with pytest.raises(LogicError, match="entry exists"):
         xgov_registry_client.send.get_xgov_box(
             args=GetXgovBoxArgs(xgov_address=xgov.address)
         )
@@ -63,7 +64,7 @@ def test_unsubscribe_xgov_not_an_xgov(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=no_role_account.address)
         )
@@ -76,7 +77,7 @@ def test_unsubscribe_xgov_paused_registry_error(
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     xgov_registry_client.send.pause_registry()
 
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=xgov.address),
         )
@@ -92,7 +93,7 @@ def test_unsubscribe_xgov_paused_registry_error(
 
     assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(LogicErrorType, match="entry exists"):
+    with pytest.raises(LogicError, match="entry exists"):
         xgov_registry_client.send.get_xgov_box(
             args=GetXgovBoxArgs(xgov_address=xgov.address)
         )

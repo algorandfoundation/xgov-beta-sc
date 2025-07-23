@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams
+from algokit_utils import SigningAccount, AlgorandClient, PaymentParams, AlgoAmount, CommonAppCallParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, SubscribeXgovArgs, GetXgovBoxArgs,
@@ -9,7 +9,9 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import SubscribeXgovArgs as AppSubscribeXgovArgs
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, get_xgov_fee
+
+from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import get_xgov_fee
 
 
 def test_subscribe_xgov_success(
@@ -18,9 +20,7 @@ def test_subscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
-    initial_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    initial_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     xgov_fee = get_xgov_fee(xgov_registry_client)
     xgov_registry_client.send.subscribe_xgov(
@@ -38,9 +38,7 @@ def test_subscribe_xgov_success(
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-    final_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    final_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     assert final_amount == initial_amount + xgov_fee.micro_algo
     assert final_xgovs == initial_xgovs + 1
@@ -53,15 +51,14 @@ def test_subscribe_xgov_success(
 
 
 def test_app_subscribe_xgov_success(
+    algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     min_fee_times_3: AlgoAmount,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
-    initial_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    initial_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
     xgov_subscriber_app.send.subscribe_xgov(
         args=AppSubscribeXgovArgs(
             app_id=xgov_registry_client.app_id,
@@ -73,9 +70,7 @@ def test_app_subscribe_xgov_success(
         )
     )
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-    final_amount: int = xgov_registry_client.algorand.client.algod.account_info(
-        xgov_registry_client.app_address,
-    )["amount"]
+    final_amount = algorand_client.account.get_information(xgov_registry_client.app_address).amount.micro_algo
 
     assert final_amount == initial_amount + get_xgov_fee(xgov_registry_client).micro_algo
     assert final_xgovs == initial_xgovs + 1
@@ -92,7 +87,7 @@ def test_subscribe_xgov_already_xgov(
     xgov: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.ALREADY_XGOV]):
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
                 voting_address=xgov.address,
@@ -113,7 +108,7 @@ def test_subscribe_xgov_wrong_recipient(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
                 voting_address=no_role_account.address,
@@ -134,7 +129,7 @@ def test_subscribe_xgov_wrong_amount(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PAYMENT]):
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
                 voting_address=no_role_account.address,
@@ -157,7 +152,7 @@ def test_subscribe_xgov_paused_registry_error(
 ) -> None:
     xgov_registry_client.send.pause_registry()
     xgov_fee = get_xgov_fee(xgov_registry_client)
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
                 voting_address=no_role_account.address,

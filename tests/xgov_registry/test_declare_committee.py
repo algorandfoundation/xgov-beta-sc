@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams
+from algokit_utils import SigningAccount, CommonAppCallParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, DeclareCommitteeArgs,
@@ -10,10 +10,8 @@ from tests.common import (
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
 )
-from tests.xgov_registry.common import (
-    LogicErrorType,
-    assert_committee,
-)
+from tests.utils import ERROR_TO_REGEX
+from tests.xgov_registry.common import assert_committee
 
 
 def test_declare_committee_success(
@@ -41,7 +39,7 @@ def test_declare_committee_not_manager(
     no_role_account: SigningAccount,
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client_committee_not_declared.send.declare_committee(
             args=DeclareCommitteeArgs(
                 committee_id=DEFAULT_COMMITTEE_ID,
@@ -59,7 +57,7 @@ def test_declare_committee_too_large(
     max_committee_size = (
         xgov_registry_client_committee_not_declared.state.global_state.max_committee_size
     )
-    with pytest.raises(LogicErrorType, match=err.COMMITTEE_SIZE_TOO_LARGE):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.COMMITTEE_SIZE_TOO_LARGE]):
         xgov_registry_client_committee_not_declared.send.declare_committee(
             args=DeclareCommitteeArgs(
                 committee_id=DEFAULT_COMMITTEE_ID,

@@ -1,11 +1,12 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, AppClientCompilationParams
+from algokit_utils import SigningAccount, CommonAppCallParams, AppClientCompilationParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
+
+from tests.utils import ERROR_TO_REGEX
 
 
 def test_update_xgov_registry_success(
@@ -22,7 +23,7 @@ def test_update_xgov_registry_not_manager(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.update.update_xgov_registry(
             compilation_params=AppClientCompilationParams(
                 deploy_time_params={"entropy": b""}

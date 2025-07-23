@@ -1,5 +1,5 @@
 from typing import Final
-from algokit_utils import LogicError, AlgoAmount
+from algokit_utils import AlgoAmount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, TypedGlobalState
@@ -7,8 +7,6 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 from smart_contracts.xgov_registry.config import (
     MIN_REQUESTED_AMOUNT,
 )
-
-LogicErrorType: type[LogicError] = LogicError
 
 TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1

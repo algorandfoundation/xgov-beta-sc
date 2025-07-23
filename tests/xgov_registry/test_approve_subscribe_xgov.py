@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, CommonAppCallParams
+from algokit_utils import SigningAccount, AlgorandClient, CommonAppCallParams, LogicError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, ApproveSubscribeXgovArgs, GetXgovBoxArgs,
@@ -8,7 +8,7 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType
+from tests.utils import ERROR_TO_REGEX
 
 
 def test_approve_subscribe_xgov_success(
@@ -43,7 +43,7 @@ def test_approve_subscribe_xgov_not_subscriber(
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.approve_subscribe_xgov(
             args=ApproveSubscribeXgovArgs(
                 request_id=xgov_registry_client.state.global_state.request_id - 1

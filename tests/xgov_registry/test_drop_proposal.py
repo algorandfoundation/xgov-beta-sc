@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import CommonAppCallParams, SigningAccount, AlgoAmount
+from algokit_utils import CommonAppCallParams, SigningAccount, AlgoAmount, LogicError
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
@@ -7,8 +7,9 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
+
+from tests.utils import ERROR_TO_REGEX
 from tests.proposal.common import REQUESTED_AMOUNT, assert_draft_proposal_global_state
-from tests.xgov_registry.common import LogicErrorType
 
 
 def test_drop_proposal_success(
@@ -48,7 +49,7 @@ def test_drop_proposal_not_proposer(
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.drop_proposal(
             args=DropProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_3)
@@ -61,7 +62,7 @@ def test_drop_invalid_proposal(
     proposer: SigningAccount,
     draft_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PROPOSAL]):
         xgov_registry_client.send.drop_proposal(
             args=DropProposalArgs(proposal_id=xgov_registry_client.app_id),
             params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
@@ -75,7 +76,7 @@ def test_drop_paused_registry(
     draft_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.drop_proposal(
             args=DropProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)

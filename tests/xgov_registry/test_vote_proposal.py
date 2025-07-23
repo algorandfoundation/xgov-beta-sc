@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, AlgoAmount
+from algokit_utils import SigningAccount, CommonAppCallParams, AlgoAmount, LogicError
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
@@ -8,8 +8,9 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient, VoteProposalArgs, GetXgovBoxArgs,
 )
 from smart_contracts.errors import std_errors as err
+
 from tests.common import DEFAULT_COMMITTEE_VOTES
-from tests.xgov_registry.common import LogicErrorType
+from tests.utils import ERROR_TO_REGEX
 
 
 def test_vote_proposal_success(
@@ -45,7 +46,7 @@ def test_vote_proposal_not_in_voting_phase(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.PROPOSAL_IS_NOT_VOTING):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PROPOSAL_IS_NOT_VOTING]):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=proposal_client.app_id,
@@ -60,7 +61,7 @@ def test_vote_proposal_not_a_proposal_app(
     committee_members: list[SigningAccount],
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.INVALID_PROPOSAL):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.INVALID_PROPOSAL]):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=xgov_registry_client.app_id,
@@ -76,7 +77,7 @@ def test_vote_proposal_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
@@ -94,7 +95,7 @@ def test_vote_proposal_wrong_voting_address(
     xgov: SigningAccount,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.MUST_BE_VOTING_ADDRESS):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.MUST_BE_VOTING_ADDRESS]):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
@@ -113,7 +114,7 @@ def test_vote_proposal_paused_registry_error(
     voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
