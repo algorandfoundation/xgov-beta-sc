@@ -1,9 +1,12 @@
+from algokit_utils import LogicError
 from algosdk.util import algos_to_microalgos
 
 from smart_contracts.proposal.constants import (
     BPS,
     COMMITTEE_ID_LENGTH,
 )
+
+logic_error_type: type[LogicError] = LogicError
 
 
 def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:

@@ -9,6 +9,9 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+
+# TODO add tests for finalize on other statuses
+from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_account_balance,
     assert_blocked_proposal_global_state,
@@ -17,7 +20,6 @@ from tests.proposal.common import (
     assert_funded_proposal_global_state,
     assert_rejected_proposal_global_state,
     finalize_proposal,
-    logic_error_type,
     unassign_voters,
 )
 from tests.utils import ERROR_TO_REGEX

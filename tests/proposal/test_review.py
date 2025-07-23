@@ -10,9 +10,9 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 from smart_contracts.errors import std_errors as err
 
 # TODO add tests for review on other statuses
+from tests.common import logic_error_type
 from tests.proposal.common import (
     assert_reviewed_proposal_global_state,
-    logic_error_type,
 )
 from tests.utils import ERROR_TO_REGEX
 

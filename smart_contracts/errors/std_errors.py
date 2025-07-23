@@ -78,3 +78,5 @@ WRONG_METHOD_CALL = "Wrong Method Call"
 COMMITTEE_SIZE_TOO_LARGE = "Committee size is too large"
 
 INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"
+
+INVALID_REGISTRY_ID = "Invalid registry ID"
