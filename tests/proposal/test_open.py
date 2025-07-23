@@ -1,6 +1,6 @@
 import pytest
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
+
+from algokit_utils import AlgorandClient, SigningAccount, AlgoAmount, LogicError
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -29,30 +29,24 @@ from tests.proposal.common import (
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
     get_locked_amount,
-    logic_error_type,
     open_proposal,
 )
-from tests.utils import ERROR_TO_REGEX
 from tests.xgov_registry.common import LogicErrorType
 
 # TODO add tests for open on other statuses
 
 
 def test_open_success(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
 
-    open_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    global_state = proposal_client.get_global_state()
+    open_proposal(proposal_client, algorand_client, proposer)
 
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
@@ -60,29 +54,26 @@ def test_open_success(
     assert_account_balance(
         algorand_client,
         proposal_client.app_address,
-        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,
+        LOCKED_AMOUNT.micro_algo + PROPOSAL_PARTIAL_FEE,
     )
 
 
 def test_open_not_proposer(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
         open_proposal(
             proposal_client,
             algorand_client,
             no_role_account,
-            xgov_registry_mock_client.app_id,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -93,26 +84,18 @@ def test_open_not_proposer(
 
 
 def test_open_twice(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
 
-    open_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        open_proposal(
-            proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-        )
-
-    global_state = proposal_client.get_global_state()
+    open_proposal(proposal_client, algorand_client, proposer)
+    with pytest.raises(LogicErrorType, match=err.WRONG_PROPOSAL_STATUS):
+        open_proposal(proposal_client, algorand_client, proposer)
 
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
@@ -125,24 +108,21 @@ def test_open_twice(
 
 
 def test_open_wrong_title_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_TITLE_LENGTH):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             title="",
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -153,24 +133,21 @@ def test_open_wrong_title_1(
 
 
 def test_open_wrong_title_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_TITLE_LENGTH]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_TITLE_LENGTH):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             title="a" * (TITLE_MAX_BYTES + 1),
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -181,24 +158,21 @@ def test_open_wrong_title_2(
 
 
 def test_open_wrong_funding_type_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_FUNDING_TYPE):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             funding_type=FUNDING_NULL,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -209,24 +183,21 @@ def test_open_wrong_funding_type_1(
 
 
 def test_open_wrong_funding_type_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_FUNDING_TYPE]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_FUNDING_TYPE):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             funding_type=FUNDING_NULL + 1,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -237,29 +208,24 @@ def test_open_wrong_funding_type_2(
 
 
 def test_open_wrong_requested_amount_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - 1
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_MIN_REQUESTED_AMOUNT]
-    ):
+    with pytest.raises(LogicErrorType, match=err.WRONG_MIN_REQUESTED_AMOUNT):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             requested_amount=requested_amount,
             locked_amount=locked_amount,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -270,29 +236,24 @@ def test_open_wrong_requested_amount_1(
 
 
 def test_open_wrong_requested_amount_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_LARGE + 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE + 1)
     locked_amount = get_locked_amount(requested_amount)
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_MAX_REQUESTED_AMOUNT]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_MAX_REQUESTED_AMOUNT):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             requested_amount=requested_amount,
             locked_amount=locked_amount,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -303,25 +264,22 @@ def test_open_wrong_requested_amount_2(
 
 
 def test_open_wrong_payment_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    locked_amount = LOCKED_AMOUNT - 1
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
+    locked_amount = AlgoAmount(micro_algo=LOCKED_AMOUNT.micro_algo - 1)
+    with pytest.raises(LogicErrorType, match=err.WRONG_LOCKED_AMOUNT):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             locked_amount=locked_amount,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -332,25 +290,22 @@ def test_open_wrong_payment_1(
 
 
 def test_open_wrong_payment_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT + 1
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_LOCKED_AMOUNT]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_LOCKED_AMOUNT):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             locked_amount=locked_amount,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -361,25 +316,22 @@ def test_open_wrong_payment_2(
 
 
 def test_open_wrong_payment_3(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_SENDER]):
+    with pytest.raises(LogicError, match=err.WRONG_SENDER):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             payment_sender=no_role_account,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -390,24 +342,21 @@ def test_open_wrong_payment_3(
 
 
 def test_open_wrong_payment_4(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.WRONG_RECEIVER]):
+    with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             payment_receiver=proposer.address,
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -418,20 +367,16 @@ def test_open_wrong_payment_4(
 
 
 def test_open_funding_category_small_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
 
-    open_proposal(
-        proposal_client, algorand_client, proposer, xgov_registry_mock_client.app_id
-    )
-
-    global_state = proposal_client.get_global_state()
+    open_proposal(proposal_client, algorand_client, proposer)
 
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
     )
@@ -444,27 +389,24 @@ def test_open_funding_category_small_1(
 
 
 def test_open_funding_category_small_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MIN_REQUESTED_AMOUNT + 1
+    requested_amount = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT + 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -479,27 +421,24 @@ def test_open_funding_category_small_2(
 
 
 def test_open_funding_category_small_3(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_SMALL - 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL - 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -514,27 +453,24 @@ def test_open_funding_category_small_3(
 
 
 def test_open_funding_category_small_4(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_SMALL
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -549,27 +485,24 @@ def test_open_funding_category_small_4(
 
 
 def test_open_funding_category_medium_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_SMALL + 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL + 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -585,27 +518,24 @@ def test_open_funding_category_medium_1(
 
 
 def test_open_funding_category_medium_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM - 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM - 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -621,27 +551,24 @@ def test_open_funding_category_medium_2(
 
 
 def test_open_funding_category_medium_3(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -657,27 +584,24 @@ def test_open_funding_category_medium_3(
 
 
 def test_open_funding_category_large_1(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_MEDIUM + 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM + 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -693,27 +617,24 @@ def test_open_funding_category_large_1(
 
 
 def test_open_funding_category_large_2(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_LARGE - 1
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE - 1)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -729,27 +650,24 @@ def test_open_funding_category_large_2(
 
 
 def test_open_funding_category_large_3(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_LARGE
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE)
     locked_amount = get_locked_amount(requested_amount)
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
 
-    global_state = proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
         requested_amount=requested_amount,
@@ -765,33 +683,31 @@ def test_open_funding_category_large_3(
 
 
 def test_open_paused_registry_error(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> None:
-    requested_amount = MAX_REQUESTED_AMOUNT_LARGE
+    requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE)
     locked_amount = get_locked_amount(requested_amount)
 
-    xgov_registry_mock_client.pause_registry()
+    xgov_registry_mock_client.send.pause_registry()
 
     with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
         open_proposal(
             proposal_client,
             algorand_client,
             proposer,
-            xgov_registry_mock_client.app_id,
             requested_amount=requested_amount,
             locked_amount=locked_amount,
         )
 
-    xgov_registry_mock_client.resume_registry()
+    xgov_registry_mock_client.send.resume_registry()
 
     open_proposal(
         proposal_client,
         algorand_client,
         proposer,
-        xgov_registry_mock_client.app_id,
         requested_amount=requested_amount,
         locked_amount=locked_amount,
     )
