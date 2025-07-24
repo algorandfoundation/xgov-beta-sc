@@ -27,6 +27,7 @@ def deploy() -> None:
         XGovRegistryFactory,
         XGovRegistryFactoryCreateParams,
         XGovRegistryMethodCallCreateParams,
+        XGovRegistryMethodCallUpdateParams,
     )
 
     algorand_client = AlgorandClient.from_environment()
@@ -58,12 +59,23 @@ def deploy() -> None:
         ),
     )
 
+    update_params = XGovRegistryFactoryCreateParams(
+        factory.app_factory
+    ).update_xgov_registry(
+        compilation_params=AppClientCompilationParams(
+            deploy_time_params=template_values,
+        ),
+    )
+
     app_client, _ = factory.deploy(
         on_schema_break=OnSchemaBreak.AppendApp,
         on_update=(OnUpdate.UpdateApp if not fresh_deploy else OnUpdate.AppendApp),
         create_params=XGovRegistryMethodCallCreateParams(
             extra_program_pages=create_params.extra_program_pages,
             method=create_params.method.name,
+        ),
+        update_params=XGovRegistryMethodCallUpdateParams(
+            method=update_params.method.name,
         ),
     )
 
