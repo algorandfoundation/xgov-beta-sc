@@ -17,9 +17,11 @@ from algopy import (
     gtxn,
     itxn,
     op,
+    size_of,
     subroutine,
 )
 
+import smart_contracts.common.abi_types
 import smart_contracts.errors.std_errors as err
 
 from ..common import abi_types as ctyp
@@ -27,7 +29,6 @@ from ..proposal import config as pcfg
 from ..proposal import constants as pcts
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
-from . import avm_types as typ
 from . import config as cfg
 from .constants import (
     ACCOUNT_MBR,
@@ -154,18 +155,26 @@ class XGovRegistry(
         # boxes
         self.xgov_box = BoxMap(
             Account,
-            typ.XGovBoxValue,
+            smart_contracts.common.abi_types.XGovBoxValue,
             key_prefix=cfg.XGOV_BOX_MAP_PREFIX,
         )
 
         self.request_box = BoxMap(
             UInt64,
-            typ.XGovSubscribeRequestBoxValue,
+            smart_contracts.common.abi_types.XGovSubscribeRequestBoxValue,
             key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
         )
 
         self.proposer_box = BoxMap(
-            Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
+            Account,
+            smart_contracts.common.abi_types.ProposerBoxValue,
+            key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX,
+        )
+        # declared here just for MBR calculation purposes, not to be used
+        self.voters = BoxMap(
+            Account,
+            smart_contracts.common.abi_types.VoterBox,
+            key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
     @subroutine
@@ -269,7 +278,9 @@ class XGovRegistry(
         mbr_available_for_committee = open_proposal_fee - to_substract
 
         per_voter_mbr = (
-            UInt64(pcfg.VOTER_BOX_KEY_SIZE + pcfg.VOTER_BOX_VALUE_SIZE)
+            self.voters.key_prefix.length
+            + size_of(Account)
+            + size_of(smart_contracts.common.abi_types.VoterBox)
         ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
 
         self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
@@ -284,7 +295,9 @@ class XGovRegistry(
         self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
 
     @subroutine
-    def make_xgov_box(self, voting_address: arc4.Address) -> typ.XGovBoxValue:
+    def make_xgov_box(
+        self, voting_address: arc4.Address
+    ) -> smart_contracts.common.abi_types.XGovBoxValue:
         """
         Creates a new xGov box with the given voting address.
 
@@ -292,9 +305,9 @@ class XGovRegistry(
             voting_address (arc4.Address): The address of the voting account for the xGov
 
         Returns:
-            typ.XGovBoxValue: The initialized xGov box value
+            smart_contracts.common.abi_types.XGovBoxValue: The initialized xGov box value
         """
-        return typ.XGovBoxValue(
+        return smart_contracts.common.abi_types.XGovBoxValue(
             voting_address=voting_address,
             voted_proposals=arc4.UInt64(0),
             last_vote_timestamp=arc4.UInt64(0),
@@ -307,7 +320,7 @@ class XGovRegistry(
         active_proposal: arc4.Bool,
         kyc_status: arc4.Bool,
         kyc_expiring: arc4.UInt64,
-    ) -> typ.ProposerBoxValue:
+    ) -> smart_contracts.common.abi_types.ProposerBoxValue:
         """
         Creates a new proposer box with the given parameters.
 
@@ -317,9 +330,9 @@ class XGovRegistry(
             kyc_expiring (arc4.UInt64): Timestamp when the KYC expires
 
         Returns:
-            typ.ProposerBoxValue: The initialized proposer box value
+            smart_contracts.common.abi_types.ProposerBoxValue: The initialized proposer box value
         """
-        return typ.ProposerBoxValue(
+        return smart_contracts.common.abi_types.ProposerBoxValue(
             active_proposal=active_proposal,
             kyc_status=kyc_status,
             kyc_expiring=kyc_expiring,
@@ -476,7 +489,9 @@ class XGovRegistry(
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
+    def config_xgov_registry(
+        self, config: smart_contracts.common.abi_types.XGovRegistryConfig
+    ) -> None:
         """
         Sets the configuration of the xGov Registry.
 
@@ -500,6 +515,13 @@ class XGovRegistry(
         self.open_proposal_fee.value = config.open_proposal_fee.native
         self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.native
         self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
+
+        assert (
+            config.min_requested_amount.native
+            < config.max_requested_amount[0].native
+            < config.max_requested_amount[1].native
+            < config.max_requested_amount[2].native
+        )
 
         self.min_requested_amount.value = config.min_requested_amount.native
         self.max_requested_amount_small.value = config.max_requested_amount[0].native
@@ -620,10 +642,12 @@ class XGovRegistry(
 
         # create request box
         rid = self.request_id.value
-        self.request_box[rid] = typ.XGovSubscribeRequestBoxValue(
-            xgov_addr=xgov_address,
-            owner_addr=owner_address,
-            relation_type=relation_type,
+        self.request_box[rid] = (
+            smart_contracts.common.abi_types.XGovSubscribeRequestBoxValue(
+                xgov_addr=xgov_address,
+                owner_addr=owner_address,
+                relation_type=relation_type,
+            )
         )
 
         # increment request id
@@ -822,7 +846,7 @@ class XGovRegistry(
         mbr_before = Global.current_application_address.balance
 
         # Create the Proposal App
-        res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
+        error, tx = arc4.arc4_create(proposal_contract.Proposal.create, Txn.sender)
 
         mbr_after = Global.current_application_address.balance
 
@@ -831,7 +855,7 @@ class XGovRegistry(
 
         # Transfer funds to the new Proposal App, excluding the MBR needed for the Proposal App
         itxn.Payment(
-            receiver=res.created_app.address,
+            receiver=tx.created_app.address,
             amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
             fee=0,
         ).submit()
@@ -839,7 +863,7 @@ class XGovRegistry(
         # Increment pending proposals
         self.pending_proposals.value += 1
 
-        return res.created_app.id
+        return tx.created_app.id
 
     @arc4.abimethod()
     def vote_proposal(
@@ -1128,12 +1152,12 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod(readonly=True)
-    def get_state(self) -> typ.TypedGlobalState:
+    def get_state(self) -> smart_contracts.common.abi_types.TypedGlobalState:
         """
         Returns the xGov Registry state.
         """
 
-        return typ.TypedGlobalState(
+        return smart_contracts.common.abi_types.TypedGlobalState(
             paused_registry=arc4.Bool(bool(self.paused_registry.value)),
             paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
             xgov_manager=self.xgov_manager.value,
@@ -1184,7 +1208,9 @@ class XGovRegistry(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, xgov_address: arc4.Address) -> typ.XGovBoxValue:
+    def get_xgov_box(
+        self, xgov_address: arc4.Address
+    ) -> smart_contracts.common.abi_types.XGovBoxValue:
         """
         Returns the xGov box for the given address.
 
@@ -1192,12 +1218,14 @@ class XGovRegistry(
             xgov_address (arc4.Address): The address of the xGov
 
         Returns:
-            typ.XGovBoxValue: The xGov box value
+            smart_contracts.common.abi_types.XGovBoxValue: The xGov box value
         """
         return self.xgov_box[xgov_address.native].copy()
 
     @arc4.abimethod(readonly=True)
-    def get_proposer_box(self, proposer_address: arc4.Address) -> typ.ProposerBoxValue:
+    def get_proposer_box(
+        self, proposer_address: arc4.Address
+    ) -> smart_contracts.common.abi_types.ProposerBoxValue:
         """
         Returns the Proposer box for the given address.
 
@@ -1205,9 +1233,24 @@ class XGovRegistry(
             proposer_address (arc4.Address): The address of the Proposer
 
         Returns:
-            typ.ProposerBoxValue: The Proposer box value
+            smart_contracts.common.abi_types.ProposerBoxValue: The Proposer box value
         """
         return self.proposer_box[proposer_address.native].copy()
+
+    # @arc4.abimethod(readonly=True)
+    # def get_request_box(
+    #     self, request_id: arc4.UInt64
+    # ) -> smart_contracts.common.abi_types.XGovSubscribeRequestBoxValue:
+    #     """
+    #     Returns the xGov subscribe request box for the given request ID.
+    #
+    #     Args:
+    #         request_id (arc4.UInt64): The ID of the subscribe request
+    #
+    #     Returns:
+    #         smart_contracts.common.abi_types.XGovSubscribeRequestBoxValue: The subscribe request box value
+    #     """
+    #     return self.request_box[request_id.native].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
