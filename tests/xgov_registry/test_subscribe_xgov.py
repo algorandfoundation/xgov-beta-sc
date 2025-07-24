@@ -1,258 +1,206 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.transaction import SuggestedParams
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    PaymentParams,
+    SigningAccount,
+)
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GetXgovBoxArgs,
+    SubscribeXgovArgs,
     XGovRegistryClient,
+)
+from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
+    SubscribeXgovArgs as AppSubscribeXgovArgs,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, xgov_box_name
+from tests.xgov_registry.common import get_xgov_fee
 
 
 def test_subscribe_xgov_success(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
+    initial_amount = algorand_client.account.get_information(
+        xgov_registry_client.app_address
+    ).amount.micro_algo
 
-    before_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
-
-    xgov_registry_client.subscribe_xgov(
-        voting_address=no_role_account.address,
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    xgov_fee = get_xgov_fee(xgov_registry_client)
+    xgov_registry_client.send.subscribe_xgov(
+        args=SubscribeXgovArgs(
+            voting_address=no_role_account.address,
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=before_global_state.xgov_fee,
-                ),
+                    amount=xgov_fee,
+                )
             ),
-            signer=no_role_account.signer,
         ),
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            boxes=[(0, xgov_box_name(no_role_account.address))],
-        ),
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
 
-    after_global_state = xgov_registry_client.get_global_state()
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
+    final_amount = algorand_client.account.get_information(
+        xgov_registry_client.app_address
+    ).amount.micro_algo
 
-    after_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
+    assert final_amount == initial_amount + xgov_fee.micro_algo
+    assert final_xgovs == initial_xgovs + 1
 
-    assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
-    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
+    xgov_box = xgov_registry_client.send.get_xgov_box(
+        args=GetXgovBoxArgs(xgov_address=no_role_account.address),
+    ).abi_return
 
-    xgov_box = xgov_registry_client.get_xgov_box(
-        xgov_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, xgov_box_name(no_role_account.address))]
-        ),
-    )
-
-    assert no_role_account.address == xgov_box.return_value.voting_address
+    assert no_role_account.address == xgov_box.voting_address  # type: ignore
 
 
 def test_app_subscribe_xgov_success(
-    no_role_account: AddressAndSigner,
+    algorand_client: AlgorandClient,
+    no_role_account: SigningAccount,
+    min_fee_times_3: AlgoAmount,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    sp = sp_min_fee_times_3
-
-    xgov_subscriber_app.subscribe_xgov(
-        app_id=xgov_registry_client.app_id,
-        voting_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            foreign_apps=[xgov_registry_client.app_id],
-            boxes=[
-                (
-                    xgov_registry_client.app_id,
-                    xgov_box_name(xgov_subscriber_app.app_address),
-                )
-            ],
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
+    initial_amount = algorand_client.account.get_information(
+        xgov_registry_client.app_address
+    ).amount.micro_algo
+    xgov_subscriber_app.send.subscribe_xgov(
+        args=AppSubscribeXgovArgs(
+            app_id=xgov_registry_client.app_id,
+            voting_address=no_role_account.address,
+        ),
+        params=CommonAppCallParams(
+            static_fee=min_fee_times_3,
+            app_references=[
+                xgov_registry_client.app_id
+            ],  # FIXME: This should have been autopopulated
         ),
     )
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
+    final_amount = algorand_client.account.get_information(
+        xgov_registry_client.app_address
+    ).amount.micro_algo
+
+    assert (
+        final_amount == initial_amount + get_xgov_fee(xgov_registry_client).micro_algo
+    )
+    assert final_xgovs == initial_xgovs + 1
+
+    xgov_box = xgov_registry_client.send.get_xgov_box(
+        args=GetXgovBoxArgs(xgov_address=xgov_subscriber_app.app_address),
+    ).abi_return
+
+    assert no_role_account.address == xgov_box.voting_address  # type: ignore
 
 
 def test_subscribe_xgov_already_xgov(
     algorand_client: AlgorandClient,
-    xgov: AddressAndSigner,
+    xgov: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(LogicErrorType, match=err.ALREADY_XGOV):
-        xgov_registry_client.subscribe_xgov(
-            voting_address=xgov.address,
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    with pytest.raises(LogicError, match=err.ALREADY_XGOV):
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                voting_address=xgov.address,
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=xgov.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee,
-                    ),
+                        amount=get_xgov_fee(xgov_registry_client),
+                    )
                 ),
-                signer=xgov.signer,
             ),
-            transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(xgov.address))],
-            ),
+            params=CommonAppCallParams(sender=xgov.address),
         )
 
 
 def test_subscribe_xgov_wrong_recipient(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
-        xgov_registry_client.subscribe_xgov(
-            voting_address=no_role_account.address,
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                voting_address=no_role_account.address,
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=no_role_account.address,
-                        amount=global_state.proposer_fee,
-                    ),
+                        amount=get_xgov_fee(xgov_registry_client),
+                    )
                 ),
-                signer=no_role_account.signer,
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
 def test_subscribe_xgov_wrong_amount(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(LogicErrorType, match=err.INVALID_PAYMENT):
-        xgov_registry_client.subscribe_xgov(
-            voting_address=no_role_account.address,
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                voting_address=no_role_account.address,
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=100,
-                    ),
+                        amount=AlgoAmount(
+                            micro_algo=get_xgov_fee(xgov_registry_client).micro_algo - 1
+                        ),
+                    )
                 ),
-                signer=no_role_account.signer,
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
 def test_subscribe_xgov_paused_registry_error(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    before_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
-
-    xgov_registry_client.pause_registry()
-
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.subscribe_xgov(
-            voting_address=no_role_account.address,
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    xgov_registry_client.send.pause_registry()
+    xgov_fee = get_xgov_fee(xgov_registry_client)
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                voting_address=no_role_account.address,
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=before_global_state.xgov_fee,
-                    ),
+                        amount=xgov_fee,
+                    )
                 ),
-                signer=no_role_account.signer,
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
-    xgov_registry_client.resume_registry()
-
-    xgov_registry_client.subscribe_xgov(
-        voting_address=no_role_account.address,
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    xgov_registry_client.send.resume_registry()
+    xgov_registry_client.send.subscribe_xgov(
+        args=SubscribeXgovArgs(
+            voting_address=no_role_account.address,
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=before_global_state.xgov_fee,
-                ),
+                    amount=xgov_fee,
+                )
             ),
-            signer=no_role_account.signer,
         ),
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            boxes=[(0, xgov_box_name(no_role_account.address))],
-        ),
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
-
-    after_global_state = xgov_registry_client.get_global_state()
-
-    after_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
-
-    assert (before_info["amount"] + before_global_state.xgov_fee) == after_info["amount"]  # type: ignore
-    assert (before_global_state.xgovs + 1) == after_global_state.xgovs
-
-    xgov_box = xgov_registry_client.get_xgov_box(
-        xgov_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, xgov_box_name(no_role_account.address))]
-        ),
-    )
-
-    assert no_role_account.address == xgov_box.return_value.voting_address

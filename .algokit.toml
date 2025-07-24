@@ -16,13 +16,18 @@ artifacts = 'smart_contracts/artifacts'
 
 [project.deploy]
 command = "poetry run python -m smart_contracts deploy"
+
+[project.deploy.testnet]
 environment_secrets = [
   "DEPLOYER_MNEMONIC",
   "DISPENSER_MNEMONIC",
 ]
 
-[project.deploy.localnet]
-environment_secrets = []
+[project.deploy.mainnet]
+environment_secrets = [
+  "DEPLOYER_MNEMONIC",
+  "DISPENSER_MNEMONIC",
+]
 
 [project.run]
 # Commands intented for use locally and in CI
@@ -33,8 +38,8 @@ test = { commands = [
   'poetry run pytest',
 ], description = 'Run smart contract tests' }
 audit = { commands = [
-  'poetry run pip-audit --ignore-vuln GHSA-vqfr-h8mv-ghfj',
-], description = 'Audit with pip-audit' }
+  'poetry run pip-audit',
+], description = 'Audit with pip-audit. NOTE: If used with poetry >v2, make sure to install `poetry-plugin-export` as per https://github.com/python-poetry/poetry-plugin-export#installation.' }
 lint = { commands = [
   'poetry run black --check --diff .',
   'poetry run ruff check .',

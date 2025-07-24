@@ -1,12 +1,16 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 from algosdk.error import AlgodHTTPError
-from algosdk.transaction import SuggestedParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
+    DropProposalArgs,
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
@@ -17,9 +21,7 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
-    logic_error_type,
 )
-from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for drop on other statuses
 
@@ -35,33 +37,21 @@ NO_COMMITTEE = {
 def test_drop_success(
     draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    sp_min_fee_times_3: SuggestedParams,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
-
-    sp = sp_min_fee_times_3
-
-    proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
+    proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
-    )[
-        "amount"
-    ]
+    ).amount.micro_algo
 
-    xgov_registry_mock_client.drop_proposal(
-        proposal_app=draft_proposal_client.app_id,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
-        ),
+    xgov_registry_mock_client.send.drop_proposal(
+        args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
-    global_state = draft_proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        draft_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
@@ -74,7 +64,9 @@ def test_drop_success(
     assert_account_balance(
         algorand_client,
         proposer.address,
-        proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
+        proposer_balance_before_drop
+        + LOCKED_AMOUNT.micro_algo
+        - min_fee_times_3.micro_algo,
     )
 
     with pytest.raises(AlgodHTTPError, match="box not found"):  # type: ignore
@@ -86,47 +78,29 @@ def test_drop_success(
 def test_drop_twice(
     draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    sp_min_fee_times_3: SuggestedParams,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
-
-    sp = sp_min_fee_times_3
-
-    proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
+    proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
-    )[
-        "amount"
-    ]
+    ).amount.micro_algo
 
-    xgov_registry_mock_client.drop_proposal(
-        proposal_app=draft_proposal_client.app_id,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            suggested_params=sp,
-            boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
-        ),
+    xgov_registry_mock_client.send.drop_proposal(
+        args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        xgov_registry_mock_client.drop_proposal(
-            proposal_app=draft_proposal_client.app_id,
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp,
-                boxes=[(draft_proposal_client.app_id, METADATA_BOX_KEY)],
-                note="replay",
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
+        xgov_registry_mock_client.send.drop_proposal(
+            args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+            params=CommonAppCallParams(
+                sender=proposer.address, static_fee=min_fee_times_3
             ),
         )
 
-    global_state = draft_proposal_client.get_global_state()
-
     assert_draft_proposal_global_state(
-        global_state,
+        draft_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
@@ -139,42 +113,33 @@ def test_drop_twice(
     assert_account_balance(
         algorand_client,
         proposer.address,
-        proposer_balance_before_drop + LOCKED_AMOUNT - sp.min_fee,  # type: ignore
+        proposer_balance_before_drop
+        + LOCKED_AMOUNT.micro_algo
+        - min_fee_times_3.micro_algo,
     )
 
 
 def test_drop_empty_proposal(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    sp_min_fee_times_2: SuggestedParams,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
-    sp = sp_min_fee_times_2
-
-    proposer_balance_before_drop = algorand_client.account.get_information(  # type: ignore
+    proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
-    )[
-        "amount"
-    ]
+    ).amount.micro_algo
 
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        xgov_registry_mock_client.drop_proposal(
-            proposal_app=proposal_client.app_id,
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                suggested_params=sp,
-                boxes=[(proposal_client.app_id, METADATA_BOX_KEY)],
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
+        xgov_registry_mock_client.send.drop_proposal(
+            args=DropProposalArgs(proposal_app=proposal_client.app_id),
+            params=CommonAppCallParams(
+                sender=proposer.address, static_fee=min_fee_times_2
             ),
         )
 
-    global_state = proposal_client.get_global_state()
-
     assert_empty_proposal_global_state(
-        global_state, proposer.address, xgov_registry_mock_client.app_id
+        proposal_client, proposer.address, xgov_registry_mock_client.app_id
     )
 
     assert_account_balance(
@@ -182,5 +147,5 @@ def test_drop_empty_proposal(
     )
 
     assert_account_balance(
-        algorand_client, proposer.address, proposer_balance_before_drop  # type: ignore
+        algorand_client, proposer.address, proposer_balance_before_drop
     )

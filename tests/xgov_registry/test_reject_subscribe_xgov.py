@@ -1,73 +1,44 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algosdk import error
-from algosdk.transaction import SuggestedParams
+from algokit_utils import CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GetXgovBoxArgs,
+    RejectSubscribeXgovArgs,
     XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, request_box_name, xgov_box_name
 
 
 def test_reject_subscribe_xgov_success(
-    xgov_subscriber: AddressAndSigner,
+    xgov_subscriber: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
-    sp: SuggestedParams,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
-
-    request_id = before_global_state.request_id - 1
-
-    xgov_registry_client.reject_subscribe_xgov(
-        request_id=request_id,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_subscriber.address,
-            signer=xgov_subscriber.signer,
-            suggested_params=sp,
-            boxes=[
-                (0, request_box_name(request_id)),
-                (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
-            ],
-            foreign_apps=[app_xgov_subscribe_requested.app_id],
+    xgov_registry_client.send.reject_subscribe_xgov(
+        args=RejectSubscribeXgovArgs(
+            request_id=xgov_registry_client.state.global_state.request_id - 1
         ),
+        params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
-    with pytest.raises(error.AlgodHTTPError):  # type: ignore
-        xgov_registry_client.algod_client.application_box_by_name(
-            application_id=xgov_registry_client.app_id,
-            box_name=xgov_box_name(app_xgov_subscribe_requested.app_address),
+    with pytest.raises(LogicError, match="exists"):
+        xgov_registry_client.send.get_xgov_box(
+            args=GetXgovBoxArgs(xgov_address=app_xgov_subscribe_requested.app_address)
         )
 
 
 def test_reject_subscribe_xgov_not_subscriber(
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
-    algorand_client: AlgorandClient,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    request_id = before_global_state.request_id - 1
-
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.reject_subscribe_xgov(
-            request_id=request_id,
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[
-                    (0, request_box_name(request_id)),
-                    (0, xgov_box_name(app_xgov_subscribe_requested.app_address)),
-                ],
-                foreign_apps=[app_xgov_subscribe_requested.app_id],
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        xgov_registry_client.send.reject_subscribe_xgov(
+            args=RejectSubscribeXgovArgs(
+                request_id=xgov_registry_client.state.global_state.request_id - 1
             ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )

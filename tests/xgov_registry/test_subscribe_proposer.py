@@ -1,244 +1,155 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algokit_utils.models import Account
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.transaction import SuggestedParams
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    PaymentParams,
+    SigningAccount,
+)
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GetProposerBoxArgs,
+    SubscribeProposerArgs,
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, proposer_box_name
+from tests.xgov_registry.common import get_proposer_fee
 
 
 def test_subscribe_proposer_success(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp: SuggestedParams,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-
-    before_info = xgov_registry_client.algod_client.account_info(
+    initial_amount = algorand_client.account.get_information(
         xgov_registry_client.app_address,
-    )
+    ).amount.micro_algo
 
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    proposer_fee = get_proposer_fee(xgov_registry_client)
+    xgov_registry_client.send.subscribe_proposer(
+        args=SubscribeProposerArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee,
-                ),
-            ),
-            signer=no_role_account.signer,
+                    amount=proposer_fee,
+                )
+            )
         ),
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(no_role_account.address))],
-        ),
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
 
-    after_info = xgov_registry_client.algod_client.account_info(
+    final_amount: int = algorand_client.account.get_information(
         xgov_registry_client.app_address,
-    )
+    ).amount.micro_algo
 
-    assert (before_info["amount"] + global_state.proposer_fee) == after_info["amount"]  # type: ignore
+    assert final_amount == initial_amount + proposer_fee.micro_algo
 
-    proposer_box = xgov_registry_client.get_proposer_box(
-        proposer_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, proposer_box_name(no_role_account.address))]
-        ),
-    )
+    proposer_box = xgov_registry_client.send.get_proposer_box(
+        args=GetProposerBoxArgs(proposer_address=no_role_account.address)
+    ).abi_return
 
-    assert not proposer_box.return_value.active_proposal
-    assert not proposer_box.return_value.kyc_status
-    assert proposer_box.return_value.kyc_expiring == 0
+    assert not proposer_box.active_proposal  # type: ignore
+    assert not proposer_box.kyc_status  # type: ignore
+    assert proposer_box.kyc_expiring == 0  # type: ignore
 
 
 def test_subscribe_proposer_already_proposer(
     algorand_client: AlgorandClient,
-    deployer: Account,
-    no_role_account: AddressAndSigner,
+    proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=no_role_account.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee,
-                ),
-            ),
-            signer=no_role_account.signer,
-        ),
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(no_role_account.address))],
-        ),
-    )
-
-    with pytest.raises(LogicErrorType, match=err.ALREADY_PROPOSER):
-        xgov_registry_client.subscribe_proposer(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
-                        sender=no_role_account.address,
+    with pytest.raises(LogicError, match=err.ALREADY_PROPOSER):
+        xgov_registry_client.send.subscribe_proposer(
+            args=SubscribeProposerArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
+                        sender=proposer.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee,
-                    ),
-                ),
-                signer=no_role_account.signer,
+                        amount=get_proposer_fee(xgov_registry_client),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, proposer_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=proposer.address),
         )
 
 
 def test_subscribe_proposer_wrong_recipient(
     algorand_client: AlgorandClient,
-    deployer: Account,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(LogicErrorType, match=err.WRONG_RECEIVER):
-        xgov_registry_client.subscribe_proposer(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    with pytest.raises(LogicError, match=err.WRONG_RECEIVER):
+        xgov_registry_client.send.subscribe_proposer(
+            args=SubscribeProposerArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=no_role_account.address,
-                        amount=global_state.proposer_fee,
-                    ),
-                ),
-                signer=no_role_account.signer,
+                        amount=get_proposer_fee(xgov_registry_client),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, proposer_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
 def test_subscribe_proposer_wrong_amount(
     algorand_client: AlgorandClient,
-    deployer: Account,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(LogicErrorType, match=err.WRONG_PAYMENT_AMOUNT):
-        xgov_registry_client.subscribe_proposer(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    with pytest.raises(LogicError, match=err.WRONG_PAYMENT_AMOUNT):
+        xgov_registry_client.send.subscribe_proposer(
+            args=SubscribeProposerArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=100,
-                    ),
-                ),
-                signer=no_role_account.signer,
+                        amount=AlgoAmount(
+                            micro_algo=get_proposer_fee(xgov_registry_client).micro_algo
+                            - 1
+                        ),
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, proposer_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
 def test_subscribe_proposer_paused_registry_error(
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    global_state = xgov_registry_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
-
-    before_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
-
-    xgov_registry_client.pause_registry()
-
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.subscribe_proposer(
-            payment=TransactionWithSigner(
-                txn=algorand_client.transactions.payment(
-                    PayParams(
+    xgov_registry_client.send.pause_registry()
+    proposer_fee = get_proposer_fee(xgov_registry_client)
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.send.subscribe_proposer(
+            args=SubscribeProposerArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
                         sender=no_role_account.address,
                         receiver=xgov_registry_client.app_address,
-                        amount=global_state.proposer_fee,
-                    ),
-                ),
-                signer=no_role_account.signer,
+                        amount=proposer_fee,
+                    )
+                )
             ),
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[(0, proposer_box_name(no_role_account.address))],
-            ),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
-    xgov_registry_client.resume_registry()
+    xgov_registry_client.send.resume_registry()
 
-    xgov_registry_client.subscribe_proposer(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
+    xgov_registry_client.send.subscribe_proposer(
+        args=SubscribeProposerArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
                     sender=no_role_account.address,
                     receiver=xgov_registry_client.app_address,
-                    amount=global_state.proposer_fee,
-                ),
-            ),
-            signer=no_role_account.signer,
+                    amount=proposer_fee,
+                )
+            )
         ),
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp,
-            boxes=[(0, proposer_box_name(no_role_account.address))],
-        ),
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
-
-    after_info = xgov_registry_client.algod_client.account_info(
-        xgov_registry_client.app_address,
-    )
-
-    assert (before_info["amount"] + global_state.proposer_fee) == after_info["amount"]  # type: ignore
-
-    proposer_box = xgov_registry_client.get_proposer_box(
-        proposer_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            boxes=[(0, proposer_box_name(no_role_account.address))]
-        ),
-    )
-
-    assert not proposer_box.return_value.active_proposal
-    assert not proposer_box.return_value.kyc_status
-    assert proposer_box.return_value.kyc_expiring == 0
