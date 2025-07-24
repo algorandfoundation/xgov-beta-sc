@@ -1,9 +1,16 @@
 import pytest
-from algokit_utils import AlgorandClient, SigningAccount, CommonAppCallParams, LogicError
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    XgovRegistryMockClient, FinalizeProposalArgs,
+    FinalizeProposalArgs,
+    XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
 from tests.proposal.common import (
@@ -16,7 +23,6 @@ from tests.proposal.common import (
     finalize_proposal,
     unassign_voters,
 )
-from tests.utils import ERROR_TO_REGEX
 
 # TODO add tests for finalize on other statuses
 
@@ -27,10 +33,13 @@ def test_finalize_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
     xgov_registry_mock_client.send.finalize_proposal(
         args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
-        params=CommonAppCallParams(sender=xgov_daemon.address)
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, static_fee=min_fee_times_3
+        ),
     )
 
     assert_empty_proposal_global_state(
@@ -39,16 +48,18 @@ def test_finalize_empty_proposal(
         xgov_registry_mock_client.app_id,
         finalized=True,
     )
-    min_balance = algorand_client.account.get_information(proposal_client.app_address).min_balance.micro_algo
-    assert_account_balance(algorand_client, proposal_client.app_address, min_balance)  # type: ignore
+    min_balance = algorand_client.account.get_information(
+        proposal_client.app_address
+    ).min_balance.micro_algo
+    assert_account_balance(algorand_client, proposal_client.app_address, min_balance)
 
     # Test that finalize cannot be replayed from this state
-    with pytest.raises(
-        LookupError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_3
+            ),
         )
 
 
@@ -58,13 +69,18 @@ def test_finalize_draft_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     proposer: SigningAccount,
+    min_fee_times_4: AlgoAmount,
 ) -> None:
     locked_amount = draft_proposal_client.state.global_state.locked_amount
-    proposer_balance = algorand_client.account.get_information(proposer.address).amount.micro_algo
+    proposer_balance = algorand_client.account.get_information(
+        proposer.address
+    ).amount.micro_algo
 
     xgov_registry_mock_client.send.finalize_proposal(
         args=FinalizeProposalArgs(proposal_app=draft_proposal_client.app_id),
-        params=CommonAppCallParams(sender=xgov_daemon.address)
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, static_fee=min_fee_times_4
+        ),
     )
 
     assert_draft_proposal_global_state(
@@ -74,23 +90,23 @@ def test_finalize_draft_proposal(
         finalized=True,
     )
 
-    min_balance = algorand_client.account.get_information(  # type: ignore
+    min_balance = algorand_client.account.get_information(
         draft_proposal_client.app_address
     ).min_balance.micro_algo
     assert_account_balance(
-        algorand_client, draft_proposal_client.app_address, min_balance  # type: ignore
+        algorand_client, draft_proposal_client.app_address, min_balance
     )
     assert_account_balance(
-        algorand_client, proposer.address, proposer_balance + locked_amount  # type: ignore
+        algorand_client, proposer.address, proposer_balance + locked_amount
     )
 
     # Test that finalize cannot be replayed from this state
-    with pytest.raises(
-        LookupError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=draft_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_4
+            ),
         )
 
 
@@ -100,13 +116,14 @@ def test_finalize_submitted_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=submitted_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_2
+            ),
         )
 
 
@@ -116,13 +133,14 @@ def test_finalize_voting_proposal(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=voting_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_2
+            ),
         )
 
 
@@ -132,13 +150,14 @@ def test_finalize_approved_proposal(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=approved_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_3
+            ),
         )
 
 
@@ -148,13 +167,14 @@ def test_finalize_reviewed_proposal(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=reviewed_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_3
+            ),
         )
 
 
@@ -187,17 +207,15 @@ def test_finalize_success_rejected_proposal(
         finalized=True,
     )
 
-    min_balance = algorand_client.account.get_information(  # type: ignore
+    min_balance = algorand_client.account.get_information(
         rejected_proposal_client.app_address
     ).min_balance.micro_algo
     assert_account_balance(
-        algorand_client, rejected_proposal_client.app_address, min_balance  # type: ignore
+        algorand_client, rejected_proposal_client.app_address, min_balance
     )
 
     # Test that finalize cannot be replayed from this state
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         finalize_proposal(
             xgov_registry_mock_client,
             rejected_proposal_client.app_id,
@@ -236,17 +254,15 @@ def test_finalize_success_blocked_proposal(
         approvals=10 * len(committee_members[:4]),
     )
 
-    min_balance = algorand_client.account.get_information(  # type: ignore
+    min_balance = algorand_client.account.get_information(
         blocked_proposal_client.app_address
     ).min_balance.micro_algo
     assert_account_balance(
-        algorand_client, blocked_proposal_client.app_address, min_balance  # type: ignore
+        algorand_client, blocked_proposal_client.app_address, min_balance
     )
 
     # Test that finalize cannot be replayed from this state
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         finalize_proposal(
             xgov_registry_mock_client,
             blocked_proposal_client.app_id,
@@ -285,17 +301,15 @@ def test_finalize_success_funded_proposal(
         approvals=10 * len(committee_members[:4]),
     )
 
-    min_balance = algorand_client.account.get_information(  # type: ignore
+    min_balance = algorand_client.account.get_information(
         funded_proposal_client.app_address
     ).min_balance.micro_algo
     assert_account_balance(
-        algorand_client, funded_proposal_client.app_address, min_balance  # type: ignore
+        algorand_client, funded_proposal_client.app_address, min_balance
     )
 
     # Test that finalize cannot be replayed from this state
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         finalize_proposal(
             xgov_registry_mock_client,
             funded_proposal_client.app_id,
@@ -319,9 +333,8 @@ def test_finalize_not_registry(
     )
     composer.send()
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         rejected_proposal_client.send.finalize(
-            args=FinalizeProposalArgs(proposal_app=rejected_proposal_client.app_id),
             params=CommonAppCallParams(sender=no_role_account.address)
         )
 
@@ -333,18 +346,20 @@ def test_finalize_wrong_box_ref(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
         committee_members[:-1],
         xgov_daemon,
-        xgov_registry_mock_client.app_id,
     )
     composer.send()
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTERS_ASSIGNED]):
+    with pytest.raises(LogicError, match=err.VOTERS_ASSIGNED):
         xgov_registry_mock_client.send.finalize_proposal(
             args=FinalizeProposalArgs(proposal_app=rejected_proposal_client.app_id),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, static_fee=min_fee_times_2
+            ),
         )

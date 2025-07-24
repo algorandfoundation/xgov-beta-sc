@@ -1,13 +1,13 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, LogicError
+from algokit_utils import CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, SetProposerKycArgs, GetProposerBoxArgs,
+    GetProposerBoxArgs,
+    SetProposerKycArgs,
+    XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import UNLIMITED_KYC_EXPIRATION
-
-from tests.utils import ERROR_TO_REGEX
 
 
 def test_set_proposer_kyc_success(
@@ -21,14 +21,14 @@ def test_set_proposer_kyc_success(
             kyc_status=True,
             kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         ),
-        params=CommonAppCallParams(sender=kyc_provider.address)
+        params=CommonAppCallParams(sender=kyc_provider.address),
     )
 
     proposer_box = xgov_registry_client.send.get_proposer_box(
         args=GetProposerBoxArgs(proposer_address=proposer_no_kyc.address)
     ).abi_return
-    assert proposer_box.kyc_status
-    assert proposer_box.kyc_expiring == UNLIMITED_KYC_EXPIRATION
+    assert proposer_box.kyc_status  # type: ignore
+    assert proposer_box.kyc_expiring == UNLIMITED_KYC_EXPIRATION  # type: ignore
 
 
 def test_set_proposer_kyc_not_kyc_provider(
@@ -36,14 +36,14 @@ def test_set_proposer_kyc_not_kyc_provider(
     proposer_no_kyc: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.set_proposer_kyc(
             args=SetProposerKycArgs(
                 proposer=proposer_no_kyc.address,
                 kyc_status=True,
                 kyc_expiring=UNLIMITED_KYC_EXPIRATION,
             ),
-            params=CommonAppCallParams(sender=no_role_account.address)
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
@@ -52,12 +52,12 @@ def test_set_proposer_kyc_not_a_proposer(
     kyc_provider: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PROPOSER_DOES_NOT_EXIST]):
+    with pytest.raises(LogicError, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.send.set_proposer_kyc(
             args=SetProposerKycArgs(
                 proposer=no_role_account.address,
                 kyc_status=True,
                 kyc_expiring=UNLIMITED_KYC_EXPIRATION,
             ),
-            params=CommonAppCallParams(sender=kyc_provider.address)
+            params=CommonAppCallParams(sender=kyc_provider.address),
         )

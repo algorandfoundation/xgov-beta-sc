@@ -1,12 +1,12 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, LogicError
+from algokit_utils import CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, SetVotingAccountArgs, GetXgovBoxArgs,
+    GetXgovBoxArgs,
+    SetVotingAccountArgs,
+    XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-
-from tests.utils import ERROR_TO_REGEX
 
 
 def test_set_voting_account_as_xgov(
@@ -17,20 +17,20 @@ def test_set_voting_account_as_xgov(
     xgov_box = xgov_registry_client.send.get_xgov_box(
         args=GetXgovBoxArgs(xgov_address=xgov.address)
     ).abi_return
-    assert xgov_box.voting_address == xgov.address
+    assert xgov_box.voting_address == xgov.address  # type: ignore
 
     xgov_registry_client.send.set_voting_account(
         args=SetVotingAccountArgs(
             xgov_address=xgov.address,
             voting_address=no_role_account.address,
         ),
-        params=CommonAppCallParams(sender=xgov.address)
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
     xgov_box = xgov_registry_client.send.get_xgov_box(
         args=GetXgovBoxArgs(xgov_address=xgov.address)
     ).abi_return
-    assert xgov_box.voting_address == no_role_account.address
+    assert xgov_box.voting_address == no_role_account.address  # type: ignore
 
 
 def test_set_voting_account_not_an_xgov(
@@ -38,13 +38,13 @@ def test_set_voting_account_not_an_xgov(
     xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,
                 voting_address=no_role_account.address,
             ),
-            params=CommonAppCallParams(sender=no_role_account.address)
+            params=CommonAppCallParams(sender=no_role_account.address),
         )
 
 
@@ -58,7 +58,7 @@ def test_set_voting_account_as_voting_address(
             xgov_address=xgov.address,
             voting_address=no_role_account.address,
         ),
-        params=CommonAppCallParams(sender=xgov.address)
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
     xgov_registry_client.send.set_voting_account(
@@ -66,7 +66,7 @@ def test_set_voting_account_as_voting_address(
             xgov_address=xgov.address,
             voting_address=xgov.address,
         ),
-        params=CommonAppCallParams(sender=no_role_account.address)
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
 
 
@@ -76,13 +76,13 @@ def test_set_voting_account_paused_registry_error(
     xgov: SigningAccount,
 ) -> None:
     xgov_registry_client.send.pause_registry()
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
         xgov_registry_client.send.set_voting_account(
             args=SetVotingAccountArgs(
                 xgov_address=xgov.address,
                 voting_address=no_role_account.address,
             ),
-            params=CommonAppCallParams(sender=xgov.address)
+            params=CommonAppCallParams(sender=xgov.address),
         )
 
     xgov_registry_client.send.resume_registry()
@@ -92,5 +92,5 @@ def test_set_voting_account_paused_registry_error(
             xgov_address=xgov.address,
             voting_address=no_role_account.address,
         ),
-        params=CommonAppCallParams(sender=xgov.address)
+        params=CommonAppCallParams(sender=xgov.address),
     )

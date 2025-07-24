@@ -1,5 +1,5 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, LogicError
+from algokit_utils import AlgorandClient, LogicError, SigningAccount
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
@@ -11,7 +11,6 @@ from smart_contracts.errors import std_errors as err
 from tests.common import (
     relative_to_absolute_amount,
 )
-from tests.utils import ERROR_TO_REGEX
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,
@@ -36,7 +35,9 @@ def test_submit_success(
     daemon_ops_funding_bps = relative_to_absolute_amount(
         reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
-    xgov_daemon_balance_before_submit = algorand_client.account.get_information(xgov_daemon.address).amount.micro_algo
+    xgov_daemon_balance_before_submit = algorand_client.account.get_information(
+        xgov_daemon.address
+    ).amount.micro_algo
 
     submit_proposal(
         proposal_client=draft_proposal_client,
@@ -47,7 +48,7 @@ def test_submit_success(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,
     )
 
     assert_final_proposal_global_state(
@@ -65,7 +66,7 @@ def test_submit_not_proposer(
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    # FIXME: with pytest.raises(LogicError, match=err.UNAUTHORIZED):
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -94,8 +95,9 @@ def test_submit_empty_proposal(
     xgov_daemon: SigningAccount,
 ) -> None:
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         submit_proposal(
             proposal_client=proposal_client,
@@ -122,8 +124,9 @@ def test_submit_twice(
     )
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -145,7 +148,7 @@ def test_submit_too_early(
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.TOO_EARLY]):
+    # FIXME: with pytest.raises(LogicError, match=err.TOO_EARLY):
     with pytest.raises(LogicError, match=err.TOO_EARLY):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -181,7 +184,7 @@ def test_submit_no_metadata(
         proposer,
         metadata=b"",
     )
-    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.MISSING_METADATA]):
+    # FIXME: with pytest.raises(LogicError, match=err.MISSING_METADATA):
     with pytest.raises(LogicError, match=err.MISSING_METADATA):
         submit_proposal(
             proposal_client=proposal_client,
@@ -202,12 +205,12 @@ def test_submit_paused_registry_error(
     daemon_ops_funding_bps = relative_to_absolute_amount(
         reg_gs.open_proposal_fee, reg_gs.daemon_ops_funding_bps
     )
-    xgov_daemon_balance_before_submit = algorand_client.account.get_information(  # type: ignore
+    xgov_daemon_balance_before_submit = algorand_client.account.get_information(
         xgov_daemon.address
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.pause_registry()
-    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
+    # FIXME: with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -226,7 +229,7 @@ def test_submit_paused_registry_error(
     assert_account_balance(
         algorand_client=algorand_client,
         address=xgov_daemon.address,
-        expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,  # type: ignore
+        expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,
     )
 
     assert_final_proposal_global_state(

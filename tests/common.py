@@ -1,10 +1,12 @@
 from typing import Final
+
 from algokit_utils import AlgoAmount
 
 from smart_contracts.proposal.constants import (
     BPS,
     COMMITTEE_ID_LENGTH,
 )
+
 
 def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:
     return amount * fraction_in_bps // BPS

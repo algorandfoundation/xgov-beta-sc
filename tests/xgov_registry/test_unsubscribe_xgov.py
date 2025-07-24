@@ -1,17 +1,19 @@
 import pytest
-from algokit_utils import SigningAccount, CommonAppCallParams, AlgoAmount, LogicError
+from algokit_utils import AlgoAmount, CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, UnsubscribeXgovArgs, GetXgovBoxArgs,
+    GetXgovBoxArgs,
+    UnsubscribeXgovArgs,
+    XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
-    XGovSubscriberAppMockClient,
     SubscribeXgovArgs,
+    XGovSubscriberAppMockClient,
 )
-from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import UnsubscribeXgovArgs as AppUnsubscribeXgovArgs
+from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
+    UnsubscribeXgovArgs as AppUnsubscribeXgovArgs,
+)
 from smart_contracts.errors import std_errors as err
-
-from tests.utils import ERROR_TO_REGEX
 
 
 def test_unsubscribe_xgov_success(
@@ -22,7 +24,7 @@ def test_unsubscribe_xgov_success(
 
     xgov_registry_client.send.unsubscribe_xgov(
         args=UnsubscribeXgovArgs(xgov_address=xgov.address),
-        params=CommonAppCallParams(sender=xgov.address)
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
@@ -48,15 +50,19 @@ def test_app_unsubscribe_xgov_success(
         ),
         params=CommonAppCallParams(
             static_fee=min_fee_times_3,
-            app_references=[xgov_registry_client.app_id]  #FIXME: This should have been autopopulated
-        )
+            app_references=[
+                xgov_registry_client.app_id
+            ],  # FIXME: This should have been autopopulated
+        ),
     )
 
     xgov_subscriber_app.send.unsubscribe_xgov(
         args=AppUnsubscribeXgovArgs(app_id=xgov_registry_client.app_id),
         params=CommonAppCallParams(
-            app_references=[xgov_registry_client.app_id]  # FIXME: This should have been autopopulated
-        )
+            app_references=[
+                xgov_registry_client.app_id
+            ]  # FIXME: This should have been autopopulated
+        ),
     )
 
 
@@ -64,7 +70,7 @@ def test_unsubscribe_xgov_not_an_xgov(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=no_role_account.address)
         )
@@ -77,7 +83,7 @@ def test_unsubscribe_xgov_paused_registry_error(
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     xgov_registry_client.send.pause_registry()
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.PAUSED_REGISTRY]):
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
         xgov_registry_client.send.unsubscribe_xgov(
             args=UnsubscribeXgovArgs(xgov_address=xgov.address),
         )
@@ -86,7 +92,7 @@ def test_unsubscribe_xgov_paused_registry_error(
 
     xgov_registry_client.send.unsubscribe_xgov(
         args=UnsubscribeXgovArgs(xgov_address=xgov.address),
-        params=CommonAppCallParams(sender=xgov.address)
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs

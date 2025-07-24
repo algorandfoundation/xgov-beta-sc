@@ -1,16 +1,26 @@
 import pytest
-from algokit_utils import AlgorandClient, SigningAccount, LogicError
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient, AssignVotersArgs
+from smart_contracts.artifacts.proposal.proposal_client import (
+    AssignVotersArgs,
+    ProposalClient,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    XgovRegistryMockClient, VoteArgs,
+    VoteArgs,
+    XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
     assert_rejected_proposal_global_state,
 )
-from tests.utils import ERROR_TO_REGEX, time_warp
+from tests.utils import time_warp
 
 
 def test_scrutiny_empty_proposal(
@@ -18,10 +28,8 @@ def test_scrutiny_empty_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
 ) -> None:
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
-        proposal_client.send.send.scrutiny()
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
+        proposal_client.send.scrutiny()
 
 
 def test_scrutiny_draft_proposal(
@@ -30,9 +38,7 @@ def test_scrutiny_draft_proposal(
     proposer: SigningAccount,
 ) -> None:
 
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         draft_proposal_client.send.scrutiny()
 
 
@@ -43,9 +49,7 @@ def test_scrutiny_final_proposal(
     proposer: SigningAccount,
 ) -> None:
 
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         submitted_proposal_client.send.scrutiny()
 
 
@@ -59,7 +63,7 @@ def test_scrutiny_voting_ongoing_1(
     Proposal is in voting status, and no votes have been cast yet.
     """
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
+    with pytest.raises(LogicError, match=err.VOTING_ONGOING):
         voting_proposal_client.send.scrutiny()
 
 
@@ -68,21 +72,23 @@ def test_scrutiny_voting_ongoing_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount]
+    committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Proposal is in voting status, and not all committee members have voted yet.
     """
-    xgov_registry_mock_client.send.send.vote(
+    xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee_members[0].address,
             approvals=10,
             rejections=0,
         ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
+    with pytest.raises(LogicError, match=err.VOTING_ONGOING):
         voting_proposal_client.send.scrutiny()
 
 
@@ -92,6 +98,7 @@ def test_scrutiny_voting_ongoing_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Proposal is in voting status, and there is 1 vote missing.
@@ -103,10 +110,11 @@ def test_scrutiny_voting_ongoing_3(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTING_ONGOING]):
+    with pytest.raises(LogicError, match=err.VOTING_ONGOING):
         voting_proposal_client.send.scrutiny()
 
 
@@ -116,22 +124,22 @@ def test_scrutiny_twice(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     for committee_member in committee_members:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     voting_proposal_client.send.scrutiny()
 
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         voting_proposal_client.send.scrutiny()
 
     assert_approved_proposal_global_state(
@@ -149,6 +157,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -158,35 +167,38 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     num_of_rejections = 0
 
     for committee_member in committee_members[:num_of_approvals]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     voting_proposal_client.send.scrutiny()
@@ -208,6 +220,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -217,35 +230,38 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     num_of_rejections = 1
 
     for committee_member in committee_members[:num_of_approvals]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     voting_proposal_client.send.scrutiny()
@@ -267,6 +283,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -276,35 +293,38 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     num_of_rejections = 9
 
     for committee_member in committee_members[:num_of_approvals]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
         num_of_approvals : num_of_approvals + num_of_rejections
     ]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.send.vote(
+        xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     voting_proposal_client.send.scrutiny()
@@ -326,6 +346,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -341,7 +362,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
@@ -353,7 +375,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
@@ -363,10 +386,13 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -385,6 +411,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -400,7 +427,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
@@ -412,7 +440,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
@@ -422,10 +451,13 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -444,6 +476,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -459,7 +492,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
@@ -472,6 +506,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
                 approvals=0,
                 rejections=10,
             ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
@@ -482,9 +517,12 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
                 approvals=0,
                 rejections=0,
             ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -503,6 +541,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -518,7 +557,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
@@ -530,7 +570,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
@@ -540,10 +581,13 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -562,6 +606,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -577,7 +622,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[
@@ -589,7 +635,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
@@ -599,10 +646,13 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -621,6 +671,7 @@ def test_scrutiny_after_time_approve_small_1(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -633,13 +684,14 @@ def test_scrutiny_after_time_approve_small_1(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny()
@@ -659,6 +711,7 @@ def test_scrutiny_after_time_approve_small_2(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -672,7 +725,8 @@ def test_scrutiny_after_time_approve_small_2(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -681,13 +735,14 @@ def test_scrutiny_after_time_approve_small_2(
             voter=committee_members[4].address,
             approvals=0,
             rejections=10,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny()
@@ -708,6 +763,7 @@ def test_scrutiny_after_time_approve_small_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -721,7 +777,8 @@ def test_scrutiny_after_time_approve_small_3(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -730,7 +787,8 @@ def test_scrutiny_after_time_approve_small_3(
             voter=committee_members[4].address,
             approvals=0,
             rejections=10,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     xgov_registry_mock_client.send.vote(
@@ -739,13 +797,14 @@ def test_scrutiny_after_time_approve_small_3(
             voter=committee_members[5].address,
             approvals=0,
             rejections=0,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny()
@@ -767,6 +826,7 @@ def test_scrutiny_after_time_approve_small_4(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -780,7 +840,8 @@ def test_scrutiny_after_time_approve_small_4(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -789,7 +850,8 @@ def test_scrutiny_after_time_approve_small_4(
             voter=committee_members[2].address,
             approvals=0,
             rejections=10,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     for committee_member in committee_members[3:-1]:
@@ -799,13 +861,14 @@ def test_scrutiny_after_time_approve_small_4(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny()
@@ -827,6 +890,7 @@ def test_scrutiny_after_time_approve_small_5(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -840,7 +904,8 @@ def test_scrutiny_after_time_approve_small_5(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
@@ -850,13 +915,14 @@ def test_scrutiny_after_time_approve_small_5(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny()
@@ -876,6 +942,7 @@ def test_scrutiny_after_time_reject_small_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -885,10 +952,12 @@ def test_scrutiny_after_time_reject_small_1(
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -903,6 +972,7 @@ def test_scrutiny_after_time_reject_small_2(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -915,16 +985,19 @@ def test_scrutiny_after_time_reject_small_2(
             voter=committee_members[0].address,
             approvals=0,
             rejections=10,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -941,6 +1014,7 @@ def test_scrutiny_after_time_reject_small_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -954,16 +1028,19 @@ def test_scrutiny_after_time_reject_small_3(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -980,6 +1057,7 @@ def test_scrutiny_after_time_reject_small_4(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -994,7 +1072,8 @@ def test_scrutiny_after_time_reject_small_4(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -1003,16 +1082,19 @@ def test_scrutiny_after_time_reject_small_4(
             voter=committee_members[2].address,
             approvals=10,
             rejections=0,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1030,6 +1112,7 @@ def test_scrutiny_after_time_reject_small_5(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1044,7 +1127,8 @@ def test_scrutiny_after_time_reject_small_5(
                 voter=committee_member.address,
                 approvals=0,
                 rejections=10,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     for committee_member in committee_members[len(committee_members) // 2 : -1]:
@@ -1054,16 +1138,19 @@ def test_scrutiny_after_time_reject_small_5(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1081,6 +1168,7 @@ def test_scrutiny_after_time_reject_small_6(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1094,16 +1182,19 @@ def test_scrutiny_after_time_reject_small_6(
             voter=committee_members[0].address,
             approvals=10,
             rejections=0,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1120,6 +1211,7 @@ def test_scrutiny_after_time_reject_small_7(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """ "
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1134,16 +1226,19 @@ def test_scrutiny_after_time_reject_small_7(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1160,6 +1255,7 @@ def test_scrutiny_after_time_reject_small_8(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1174,16 +1270,19 @@ def test_scrutiny_after_time_reject_small_8(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1200,6 +1299,7 @@ def test_scrutiny_after_time_reject_small_9(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1215,7 +1315,8 @@ def test_scrutiny_after_time_reject_small_9(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -1224,16 +1325,19 @@ def test_scrutiny_after_time_reject_small_9(
             voter=committee_members[2].address,
             approvals=0,
             rejections=10,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1251,6 +1355,7 @@ def test_scrutiny_after_time_reject_small_10(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1266,7 +1371,8 @@ def test_scrutiny_after_time_reject_small_10(
                 voter=committee_member.address,
                 approvals=10,
                 rejections=0,
-            )
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -1275,16 +1381,19 @@ def test_scrutiny_after_time_reject_small_10(
             voter=committee_members[2].address,
             approvals=0,
             rejections=0,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1303,6 +1412,7 @@ def test_scrutiny_after_time_reject_small_11(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     committee_members: list[SigningAccount],
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1312,11 +1422,17 @@ def test_scrutiny_after_time_reject_small_11(
     """
     submitted_proposal_client.send.assign_voters(
         args=AssignVotersArgs(voters=[(committee_members[0].address, 48)]),
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, signer=xgov_daemon.signer
+        ),
     )
 
     for committee_member in committee_members[1:]:
         submitted_proposal_client.send.assign_voters(
             args=AssignVotersArgs(voters=[(committee_member.address, 8)]),
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address, signer=xgov_daemon.signer
+            ),
         )
 
     xgov_registry_mock_client.send.vote(
@@ -1325,16 +1441,19 @@ def test_scrutiny_after_time_reject_small_11(
             voter=committee_members[0].address,
             approvals=48,
             rejections=0,
-        )
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
     voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = submitted_proposal_client.state.global_state.send.vote_open_ts
+    vote_open_ts = submitted_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    submitted_proposal_client.send.scrutiny()
+    submitted_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
 
     assert_rejected_proposal_global_state(
         submitted_proposal_client,
@@ -1357,7 +1476,5 @@ def test_scrutiny_paused_registry_error(
     xgov_registry_mock_client.send.resume_registry()
     # Should fail for non-paused_registry related reasons
 
-    with pytest.raises(
-        LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.send.scrutiny()

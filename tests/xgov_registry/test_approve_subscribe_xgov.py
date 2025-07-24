@@ -1,14 +1,20 @@
 import pytest
-from algokit_utils import SigningAccount, AlgorandClient, CommonAppCallParams, LogicError
+from algokit_utils import (
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, ApproveSubscribeXgovArgs, GetXgovBoxArgs,
+    ApproveSubscribeXgovArgs,
+    GetXgovBoxArgs,
+    XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
     XGovSubscriberAppMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.utils import ERROR_TO_REGEX
 
 
 def test_approve_subscribe_xgov_success(
@@ -22,7 +28,7 @@ def test_approve_subscribe_xgov_success(
         args=ApproveSubscribeXgovArgs(
             request_id=xgov_registry_client.state.global_state.request_id - 1
         ),
-        params=CommonAppCallParams(sender=xgov_subscriber.address)
+        params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
@@ -34,7 +40,7 @@ def test_approve_subscribe_xgov_success(
         ),
     ).abi_return
 
-    assert no_role_account.address == xgov_box.voting_address
+    assert no_role_account.address == xgov_box.voting_address  # type: ignore
 
 
 def test_approve_subscribe_xgov_not_subscriber(
@@ -43,10 +49,10 @@ def test_approve_subscribe_xgov_not_subscriber(
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
-    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.approve_subscribe_xgov(
             args=ApproveSubscribeXgovArgs(
                 request_id=xgov_registry_client.state.global_state.request_id - 1
             ),
-            params=CommonAppCallParams(sender=no_role_account.address)
+            params=CommonAppCallParams(sender=no_role_account.address),
         )

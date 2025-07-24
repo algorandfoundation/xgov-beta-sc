@@ -1,7 +1,15 @@
 import pytest
-from algokit_utils import AlgorandClient, SigningAccount, CommonAppCallParams, LogicError
+from algokit_utils import (
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient, ReviewArgs
+from smart_contracts.artifacts.proposal.proposal_client import (
+    ProposalClient,
+    ReviewArgs,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     XgovRegistryMockClient,
 )
@@ -9,7 +17,6 @@ from smart_contracts.errors import std_errors as err
 
 # TODO add tests for review on other statuses
 from tests.proposal.common import assert_reviewed_proposal_global_state
-from tests.utils import ERROR_TO_REGEX
 
 
 def test_review_empty_proposal(
@@ -18,12 +25,13 @@ def test_review_empty_proposal(
     xgov_council: SigningAccount,
 ) -> None:
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
 
@@ -34,12 +42,13 @@ def test_review_draft_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         draft_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
 
@@ -50,12 +59,13 @@ def test_review_submitted_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         submitted_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
 
@@ -66,12 +76,13 @@ def test_review_voting_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         voting_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
 
@@ -83,12 +94,13 @@ def test_review_rejected_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         rejected_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
 
@@ -102,7 +114,7 @@ def test_review_success(
 
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address)
+        params=CommonAppCallParams(sender=xgov_council.address),
     )
 
     assert_reviewed_proposal_global_state(
@@ -124,16 +136,17 @@ def test_review_twice(
 
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address)
+        params=CommonAppCallParams(sender=xgov_council.address),
     )
 
     with pytest.raises(
-        # FIXME: LogicError, match=ERROR_TO_REGEX[err.WRONG_PROPOSAL_STATUS]
-        LogicError, match=err.WRONG_PROPOSAL_STATUS
+        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
+        LogicError,
+        match=err.WRONG_PROPOSAL_STATUS,
     ):
         approved_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=xgov_council.address)
+            params=CommonAppCallParams(sender=xgov_council.address),
         )
 
     assert_reviewed_proposal_global_state(
@@ -150,9 +163,9 @@ def test_review_not_council(
     xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+    # FIXME: with pytest.raises(LogicError, match=err.UNAUTHORIZED):
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         approved_proposal_client.send.review(
             args=ReviewArgs(block=False),
-            params=CommonAppCallParams(sender=no_role_account.address)
+            params=CommonAppCallParams(sender=no_role_account.address),
         )

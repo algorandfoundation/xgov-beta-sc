@@ -1,15 +1,27 @@
 import pytest
 from algokit_utils import (
+    AlgoAmount,
     AlgorandClient,
-    TransactionParameters,
-    SigningAccount, AlgoAmount, CommonAppCallParams,
+    CommonAppCallParams,
+    SigningAccount,
 )
 from algokit_utils.config import config
 
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient, ReviewArgs
+from smart_contracts.artifacts.proposal.proposal_client import (
+    ProposalClient,
+    ReviewArgs,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    XgovRegistryMockClient, XgovRegistryMockFactory, SetXgovDaemonArgs, SetXgovCouncilArgs, SetCommitteeIdArgs,
-    SetCommitteeMembersArgs, SetCommitteeVotesArgs, CreateEmptyProposalArgs, VoteArgs, FundArgs
+    CreateEmptyProposalArgs,
+    FundArgs,
+    SetCommitteeIdArgs,
+    SetCommitteeMembersArgs,
+    SetCommitteeVotesArgs,
+    SetXgovCouncilArgs,
+    SetXgovDaemonArgs,
+    VoteArgs,
+    XgovRegistryMockClient,
+    XgovRegistryMockFactory,
 )
 from smart_contracts.xgov_registry.config import MAX_REQUESTED_AMOUNT_LARGE
 from tests.common import (
@@ -18,7 +30,6 @@ from tests.common import (
     DEFAULT_COMMITTEE_VOTES,
     INITIAL_FUNDS,
 )
-from tests.conftest import min_fee_times_2
 from tests.proposal.common import (
     assign_voters,
     open_proposal,
@@ -53,17 +64,25 @@ def xgov_registry_mock_client(
         typed_factory=XgovRegistryMockFactory,
         default_sender=deployer.address,
     )
-    client, _ = factory.send.create.bare()
+    client, _ = factory.send.create.bare()  # type: ignore
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=client.app_address,
-        min_spending_balance=INITIAL_FUNDS,
+        min_spending_balance=AlgoAmount(micro_algo=int(INITIAL_FUNDS.micro_algo) * 100),
     )
 
     client.send.set_xgov_daemon(args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon.address))
-    client.send.set_xgov_council(args=SetXgovCouncilArgs(xgov_council=xgov_council.address))
-    client.send.set_committee_id(args=SetCommitteeIdArgs(committee_id=DEFAULT_COMMITTEE_ID))
-    client.send.set_committee_members(args=SetCommitteeMembersArgs(committee_members=DEFAULT_COMMITTEE_MEMBERS))
-    client.send.set_committee_votes(args=SetCommitteeVotesArgs(committee_votes=DEFAULT_COMMITTEE_VOTES))
+    client.send.set_xgov_council(
+        args=SetXgovCouncilArgs(xgov_council=xgov_council.address)
+    )
+    client.send.set_committee_id(
+        args=SetCommitteeIdArgs(committee_id=DEFAULT_COMMITTEE_ID)
+    )
+    client.send.set_committee_members(
+        args=SetCommitteeMembersArgs(committee_members=DEFAULT_COMMITTEE_MEMBERS)
+    )
+    client.send.set_committee_votes(
+        args=SetCommitteeVotesArgs(committee_votes=DEFAULT_COMMITTEE_VOTES)
+    )
 
     return client
 
@@ -82,13 +101,13 @@ def proposal_client(
 
     proposal_app_id = xgov_registry_mock_client.send.create_empty_proposal(
         args=CreateEmptyProposalArgs(proposer=proposer.address),
-        params=CommonAppCallParams(static_fee=min_fee_times_3)
+        params=CommonAppCallParams(static_fee=min_fee_times_3),
     )
 
     client = ProposalClient(
         algorand=algorand_client,
-        app_id=proposal_app_id.abi_return,
-        default_sender=proposer.address
+        app_id=proposal_app_id.abi_return,  # type: ignore
+        default_sender=proposer.address,
     )
 
     return client
@@ -101,11 +120,7 @@ def draft_proposal_client(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
-    open_proposal(
-        proposal_client,
-        algorand_client,
-        proposer
-    )
+    open_proposal(proposal_client, algorand_client, proposer)
     return proposal_client
 
 
@@ -179,7 +194,7 @@ def approved_proposal_client(
                 approvals=10,
                 rejections=0,
             ),
-            params=CommonAppCallParams(static_fee=min_fee_times_2)
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
     reg_gs = xgov_registry_mock_client.state.global_state
@@ -201,7 +216,7 @@ def reviewed_proposal_client(
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address)
+        params=CommonAppCallParams(sender=xgov_council.address),
     )
     return approved_proposal_client
 
@@ -215,7 +230,9 @@ def blocked_proposal_client(
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=True),
-        params=CommonAppCallParams(sender=xgov_council.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
     return approved_proposal_client
 
@@ -224,9 +241,11 @@ def blocked_proposal_client(
 def funded_proposal_client(
     reviewed_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    min_fee_times_3: AlgoAmount,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
+        params=CommonAppCallParams(static_fee=min_fee_times_3),
     )
     return reviewed_proposal_client
 
@@ -234,16 +253,24 @@ def funded_proposal_client(
 @pytest.fixture(scope="function")
 def alternative_proposal_client(
     algorand_client: AlgorandClient,
+    min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
+    config.configure(
+        debug=False,
+        populate_app_call_resources=True,
+    )
+
     proposal_app_id = xgov_registry_mock_client.send.create_empty_proposal(
         args=CreateEmptyProposalArgs(proposer=no_role_account.address),
+        params=CommonAppCallParams(static_fee=min_fee_times_3),
     )
 
     client = ProposalClient(
         algorand=algorand_client,
-        app_id=proposal_app_id.return_value,
+        app_id=proposal_app_id.abi_return,  # type: ignore
+        default_sender=no_role_account.address,
     )
 
     return client

@@ -1,39 +1,45 @@
 import pytest
 from algokit_utils import (
+    AlgoAmount,
     AlgorandClient,
+    AppClientCompilationParams,
     CommonAppCallParams,
-    SigningAccount,
     PaymentParams,
-    AlgoAmount, AppClientCompilationParams)
-
+    SigningAccount,
+)
 from algokit_utils.config import config
 
 from smart_contracts.artifacts.proposal.proposal_client import (
-    ProposalClient,
+    AssignVotersArgs,
     OpenArgs,
-    AssignVotersArgs, UnassignVotersArgs, ReviewArgs,
+    ProposalClient,
+    ReviewArgs,
+    UnassignVotersArgs,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient,
-    XGovRegistryConfig,
-    XGovRegistryFactory,
-    SetCommitteeManagerArgs,
-    SetXgovCouncilArgs,
-    SetXgovDaemonArgs,
-    SetPayorArgs,
-    SetKycProviderArgs,
-    SetXgovSubscriberArgs,
     ConfigXgovRegistryArgs,
     DeclareCommitteeArgs,
     DepositFundsArgs,
-    SubscribeXgovArgs,
-    SubscribeProposerArgs,
+    OpenProposalArgs,
+    PayGrantProposalArgs,
+    RequestSubscribeXgovArgs,
+    SetCommitteeManagerArgs,
+    SetKycProviderArgs,
+    SetPayorArgs,
     SetProposerKycArgs,
-    OpenProposalArgs, VoteProposalArgs, PayGrantProposalArgs, RequestSubscribeXgovArgs,
+    SetXgovCouncilArgs,
+    SetXgovDaemonArgs,
+    SetXgovSubscriberArgs,
+    SubscribeProposerArgs,
+    SubscribeXgovArgs,
+    VoteProposalArgs,
+    XGovRegistryClient,
+    XGovRegistryConfig,
+    XGovRegistryFactory,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
+    XGovSubscriberAppMockClient,
     XGovSubscriberAppMockFactory,
-    XGovSubscriberAppMockClient
 )
 from smart_contracts.proposal import enums as enm
 from smart_contracts.xgov_registry import config as regcfg
@@ -55,53 +61,54 @@ from tests.utils import time_warp
 from tests.xgov_registry.common import (
     TREASURY_AMOUNT,
     UNLIMITED_KYC_EXPIRATION,
-    get_xgov_fee,
-    get_proposer_fee,
     get_open_proposal_fee,
+    get_proposer_fee,
+    get_xgov_fee,
 )
 
 
-@pytest.fixture(scope="function")
-def xgov_registry_config_dict() -> dict:
-    return {
-    "xgov_fee": regcfg.XGOV_FEE,
-    "proposer_fee": regcfg.PROPOSER_FEE,
-    "open_proposal_fee": regcfg.OPEN_PROPOSAL_FEE,
-    "daemon_ops_funding_bps": regcfg.DAEMON_OPS_FUNDING_BPS,
-    "proposal_commitment_bps": regcfg.PROPOSAL_COMMITMENT_BPS,
-    "min_requested_amount": regcfg.MIN_REQUESTED_AMOUNT,
-    "max_requested_amount": (
-        regcfg.MAX_REQUESTED_AMOUNT_SMALL,
-        regcfg.MAX_REQUESTED_AMOUNT_MEDIUM,
-        regcfg.MAX_REQUESTED_AMOUNT_LARGE,
-    ),
-    "discussion_duration": (
-        regcfg.DISCUSSION_DURATION_SMALL,
-        regcfg.DISCUSSION_DURATION_MEDIUM,
-        regcfg.DISCUSSION_DURATION_LARGE,
-        regcfg.DISCUSSION_DURATION_XLARGE,
-    ),
-    "voting_duration": (
-        regcfg.VOTING_DURATION_SMALL,
-        regcfg.VOTING_DURATION_MEDIUM,
-        regcfg.VOTING_DURATION_LARGE,
-        regcfg.VOTING_DURATION_XLARGE,
-    ),
-    "quorum": (
-        regcfg.QUORUM_SMALL,
-        regcfg.QUORUM_MEDIUM,
-        regcfg.QUORUM_LARGE,
-    ),
-    "weighted_quorum": (
-        regcfg.WEIGHTED_QUORUM_SMALL,
-        regcfg.WEIGHTED_QUORUM_MEDIUM,
-        regcfg.WEIGHTED_QUORUM_LARGE,
-    ),
-}
+@pytest.fixture(scope="function")  # type: ignore
+def xgov_registry_config_dict() -> dict:  # type: ignore
+    return {  # type: ignore
+        "xgov_fee": regcfg.XGOV_FEE,
+        "proposer_fee": regcfg.PROPOSER_FEE,
+        "open_proposal_fee": regcfg.OPEN_PROPOSAL_FEE,
+        "daemon_ops_funding_bps": regcfg.DAEMON_OPS_FUNDING_BPS,
+        "proposal_commitment_bps": regcfg.PROPOSAL_COMMITMENT_BPS,
+        "min_requested_amount": regcfg.MIN_REQUESTED_AMOUNT,
+        "max_requested_amount": (
+            regcfg.MAX_REQUESTED_AMOUNT_SMALL,
+            regcfg.MAX_REQUESTED_AMOUNT_MEDIUM,
+            regcfg.MAX_REQUESTED_AMOUNT_LARGE,
+        ),
+        "discussion_duration": (
+            regcfg.DISCUSSION_DURATION_SMALL,
+            regcfg.DISCUSSION_DURATION_MEDIUM,
+            regcfg.DISCUSSION_DURATION_LARGE,
+            regcfg.DISCUSSION_DURATION_XLARGE,
+        ),
+        "voting_duration": (
+            regcfg.VOTING_DURATION_SMALL,
+            regcfg.VOTING_DURATION_MEDIUM,
+            regcfg.VOTING_DURATION_LARGE,
+            regcfg.VOTING_DURATION_XLARGE,
+        ),
+        "quorum": (
+            regcfg.QUORUM_SMALL,
+            regcfg.QUORUM_MEDIUM,
+            regcfg.QUORUM_LARGE,
+        ),
+        "weighted_quorum": (
+            regcfg.WEIGHTED_QUORUM_SMALL,
+            regcfg.WEIGHTED_QUORUM_MEDIUM,
+            regcfg.WEIGHTED_QUORUM_LARGE,
+        ),
+    }
 
-@pytest.fixture(scope="function")
-def xgov_registry_config(xgov_registry_config_dict: dict) -> XGovRegistryConfig:
-    return XGovRegistryConfig(**xgov_registry_config_dict)
+
+@pytest.fixture(scope="function")  # type: ignore
+def xgov_registry_config(xgov_registry_config_dict: dict) -> XGovRegistryConfig:  # type: ignore
+    return XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
 
 
 @pytest.fixture(scope="function")
@@ -181,9 +188,10 @@ def xgov_registry_client(
             size=DEFAULT_COMMITTEE_MEMBERS,
             votes=DEFAULT_COMMITTEE_VOTES,
         ),
-        params=CommonAppCallParams(sender=committee_manager.address)
+        params=CommonAppCallParams(sender=committee_manager.address),
     )
     return xgov_registry_client_committee_not_declared
+
 
 @pytest.fixture(scope="function")
 def funded_xgov_registry_client(
@@ -230,9 +238,9 @@ def xgov(
                     receiver=xgov_registry_client_committee_not_declared.app_address,
                     amount=get_xgov_fee(xgov_registry_client_committee_not_declared),
                 )
-            )
+            ),
         ),
-        params=CommonAppCallParams(sender=account.address)
+        params=CommonAppCallParams(sender=account.address),
     )
     return account
 
@@ -252,13 +260,15 @@ def proposer_no_kyc(
         args=SubscribeProposerArgs(
             payment=algorand_client.create_transaction.payment(
                 PaymentParams(
-                sender=account.address,
-                receiver=xgov_registry_client_committee_not_declared.app_address,
-                amount=get_proposer_fee(xgov_registry_client_committee_not_declared),
-            )
+                    sender=account.address,
+                    receiver=xgov_registry_client_committee_not_declared.app_address,
+                    amount=get_proposer_fee(
+                        xgov_registry_client_committee_not_declared
+                    ),
+                )
             )
         ),
-        params=CommonAppCallParams(sender=account.address)
+        params=CommonAppCallParams(sender=account.address),
     )
     return account
 
@@ -275,7 +285,7 @@ def proposer(
             kyc_status=True,
             kyc_expiring=UNLIMITED_KYC_EXPIRATION,
         ),
-        params=CommonAppCallParams(sender=kyc_provider.address)
+        params=CommonAppCallParams(sender=kyc_provider.address),
     )
     return proposer_no_kyc
 
@@ -290,29 +300,29 @@ def proposal_client(
     open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=proposer,
-        min_spending_balance=AlgoAmount(algo=2*open_proposal_fee.algo),
+        min_spending_balance=AlgoAmount(algo=2 * open_proposal_fee.algo),
         min_funding_increment=open_proposal_fee,
     )
     proposal_app_id = xgov_registry_client.send.open_proposal(
         args=OpenProposalArgs(
             payment=algorand_client.create_transaction.payment(
                 PaymentParams(
-                sender=proposer.address,
-                receiver=xgov_registry_client.app_address,
-                amount=open_proposal_fee,
-            )
+                    sender=proposer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=open_proposal_fee,
+                )
             )
         ),
         params=CommonAppCallParams(
             sender=proposer.address,
             static_fee=min_fee_times_3,
-        )
+        ),
     ).abi_return
 
     return ProposalClient(
         algorand=algorand_client,
-        app_id=proposal_app_id,
-        default_sender=proposer.address
+        app_id=proposal_app_id,  # type: ignore
+        default_sender=proposer.address,
     )
 
 
@@ -332,10 +342,10 @@ def draft_proposal_client(
         args=OpenArgs(
             payment=algorand_client.create_transaction.payment(
                 PaymentParams(
-                sender=proposer.address,
-                receiver=proposal_client.app_address,
-                amount=locked_amount,
-            )
+                    sender=proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=locked_amount,
+                )
             ),
             title=PROPOSAL_TITLE,
             funding_type=enm.FUNDING_RETROACTIVE,
@@ -371,27 +381,27 @@ def voting_proposal_client(
         algorand_client.account.ensure_funded_from_environment(
             account_to_fund=committee_member,
             min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
-            min_funding_increment=xgov_fee
+            min_funding_increment=xgov_fee,
         )
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
                 payment=algorand_client.create_transaction.payment(
                     PaymentParams(
-                    sender=committee_member.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=xgov_fee,
-                )
+                        sender=committee_member.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=xgov_fee,
+                    )
                 ),
                 voting_address=committee_member.address,
             ),
-            params=CommonAppCallParams(sender=committee_member.address)
+            params=CommonAppCallParams(sender=committee_member.address),
         )
 
         draft_proposal_client.send.assign_voters(
             args=AssignVotersArgs(
                 voters=[(committee_member.address, 10)],
             ),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return draft_proposal_client
 
@@ -429,7 +439,7 @@ def voting_proposal_client_requested_too_much(
             requested_amount=requested_amount.micro_algo,
             focus=DEFAULT_FOCUS,
         ),
-        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3)
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
     composer = proposal_client.new_group()
@@ -447,7 +457,7 @@ def voting_proposal_client_requested_too_much(
         algorand_client.account.ensure_funded_from_environment(
             account_to_fund=committee_member,
             min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
-            min_funding_increment=xgov_fee
+            min_funding_increment=xgov_fee,
         )
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
@@ -460,12 +470,12 @@ def voting_proposal_client_requested_too_much(
                 ),
                 voting_address=committee_member.address,
             ),
-            params=CommonAppCallParams(sender=committee_member.address)
+            params=CommonAppCallParams(sender=committee_member.address),
         )
 
         proposal_client.send.assign_voters(
             args=AssignVotersArgs(voters=[(committee_member.address, 10)]),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return proposal_client
 
@@ -480,7 +490,9 @@ def rejected_proposal_client(
     voting_duration = reg_gs.voting_duration_small
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
-    voting_proposal_client.send.scrutiny(params=CommonAppCallParams(static_fee=min_fee_times_2))
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(static_fee=min_fee_times_2)
+    )
     return voting_proposal_client
 
 
@@ -495,9 +507,11 @@ def rejected_unassigned_voters_proposal_client(
     for i in range(1 + len(committee_members) // bulks):
         rejected_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
-                voters=[cm.address for cm in committee_members[i * bulks: (i + 1) * bulks]]
+                voters=[
+                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ]
             ),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return rejected_proposal_client
 
@@ -520,8 +534,10 @@ def approved_proposal_client(
             params=CommonAppCallParams(
                 sender=committee_member.address,
                 static_fee=min_fee_times_2,
-                app_references=[voting_proposal_client.app_id]  # FIXME: This should have been autopopulated
-            )
+                app_references=[
+                    voting_proposal_client.app_id
+                ],  # FIXME: This should have been autopopulated
+            ),
         )
 
     reg_gs = xgov_registry_client.state.global_state
@@ -539,7 +555,7 @@ def reviewed_proposal_client(
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address)
+        params=CommonAppCallParams(sender=xgov_council.address),
     )
     return approved_proposal_client
 
@@ -552,7 +568,9 @@ def blocked_proposal_client(
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=True),
-        params=CommonAppCallParams(sender=xgov_council.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
     return approved_proposal_client
 
@@ -576,8 +594,10 @@ def approved_proposal_client_requested_too_much(
             params=CommonAppCallParams(
                 sender=committee_member.address,
                 static_fee=min_fee_times_2,
-                app_references=[voting_proposal_client_requested_too_much.app_id]  #FIXME: This should have been autopopulated
-            )
+                app_references=[
+                    voting_proposal_client_requested_too_much.app_id
+                ],  # FIXME: This should have been autopopulated
+            ),
         )
 
     reg_gs = xgov_registry_client.state.global_state
@@ -599,7 +619,9 @@ def funded_proposal_client(
         args=PayGrantProposalArgs(
             proposal_id=reviewed_proposal_client.app_id,
         ),
-        params=CommonAppCallParams(sender=xgov_payor.address, static_fee=min_fee_times_4)
+        params=CommonAppCallParams(
+            sender=xgov_payor.address, static_fee=min_fee_times_4
+        ),
     )
     return reviewed_proposal_client
 
@@ -614,9 +636,11 @@ def funded_unassigned_voters_proposal_client(
     for i in range(1 + len(committee_members) // bulks):
         funded_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
-                voters=[cm.address for cm in committee_members[i * bulks: (i + 1) * bulks]],
+                voters=[
+                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
             ),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return funded_proposal_client
 
@@ -631,9 +655,11 @@ def blocked_unassigned_voters_proposal_client(
     for i in range(1 + len(committee_members) // bulks):
         blocked_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
-                voters=[cm.address for cm in committee_members[i * bulks: (i + 1) * bulks]],
+                voters=[
+                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                ],
             ),
-            params=CommonAppCallParams(sender=xgov_daemon.address)
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return blocked_proposal_client
 
@@ -649,9 +675,11 @@ def xgov_subscriber_app(
     )
 
     factory = algorand_client.client.get_typed_app_factory(
-        XGovSubscriberAppMockFactory, default_sender=deployer.address, default_signer=deployer.signer
+        XGovSubscriberAppMockFactory,
+        default_sender=deployer.address,
+        default_signer=deployer.signer,
     )
-    client, _ = factory.send.create.bare()
+    client, _ = factory.send.create.bare()  # type: ignore
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=client.app_address,
         min_spending_balance=INITIAL_FUNDS,
@@ -679,7 +707,7 @@ def app_xgov_subscribe_requested(
                 )
             ),
         ),
-        params=CommonAppCallParams(sender=no_role_account.address)
+        params=CommonAppCallParams(sender=no_role_account.address),
     )
 
     return xgov_subscriber_app

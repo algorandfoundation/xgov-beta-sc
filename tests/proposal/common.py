@@ -1,17 +1,33 @@
-from algokit_utils import AlgoAmount, SigningAccount, AlgorandClient, PaymentParams, CommonAppCallParams
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    PaymentParams,
+    SigningAccount,
+)
 from algosdk.constants import MIN_TXN_FEE
 from algosdk.encoding import decode_address
 
 from smart_contracts.artifacts.proposal.proposal_client import (
-    ProposalClient, OpenArgs, ProposalComposer, UploadMetadataArgs, UnassignVotersArgs, AssignVotersArgs,
+    AssignVotersArgs,
+    OpenArgs,
+    ProposalClient,
+    ProposalComposer,
+    UnassignVotersArgs,
+    UploadMetadataArgs,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, FinalizeProposalArgs
+    XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
+    FinalizeProposalArgs,
     XgovRegistryMockClient,
 )
-from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS, VOTER_BOX_KEY_PREFIX
+from smart_contracts.proposal.config import (
+    GLOBAL_BYTES,
+    GLOBAL_UINTS,
+    VOTER_BOX_KEY_PREFIX,
+)
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -55,7 +71,11 @@ def get_voter_box_key(voter_address: str) -> bytes:
 
 
 def get_locked_amount(requested_amount: AlgoAmount) -> AlgoAmount:
-    return AlgoAmount(micro_algo=relative_to_absolute_amount(requested_amount.amount_in_micro_algo, PROPOSAL_COMMITMENT_BPS))
+    return AlgoAmount(
+        micro_algo=relative_to_absolute_amount(
+            requested_amount.amount_in_micro_algo, PROPOSAL_COMMITMENT_BPS
+        )
+    )
 
 
 REQUESTED_AMOUNT = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
@@ -329,8 +349,8 @@ def assert_funded_proposal_global_state(  # type: ignore
 def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
-    assert (
-        algorand_client.account.get_information(address).amount == expected_balance  # type: ignore
+    assert algorand_client.account.get_information(address).amount == AlgoAmount(
+        micro_algo=expected_balance
     )
 
 
@@ -372,31 +392,42 @@ def open_proposal(
     if payment_receiver == "":
         payment_receiver = proposal_client.app_address
 
-    composer = proposal_client.new_group().open(
-        args=OpenArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=payment_sender.address,
-                    receiver=payment_receiver,
-                    amount=locked_amount,
-                ),
+    args = OpenArgs(
+        payment=algorand_client.create_transaction.payment(
+            PaymentParams(
+                sender=payment_sender.address,
+                signer=payment_sender.signer,
+                receiver=payment_receiver,
+                amount=locked_amount,
             ),
-            title=title,
-            funding_type=funding_type,
-            focus=focus,
-            requested_amount=requested_amount.amount_in_micro_algo,
         ),
-        params = CommonAppCallParams(sender=proposer.address)
+        title=title,
+        funding_type=funding_type,
+        focus=focus,
+        requested_amount=requested_amount.amount_in_micro_algo,
     )
 
+    params = CommonAppCallParams(sender=proposer.address, signer=proposer.signer)
+
     if metadata != b"":
-        upload_metadata(
-            composer,
-            proposer,
-            metadata,
+        composer = proposal_client.new_group().open(
+            args=args,
+            params=params,
         )
 
-    composer.send()
+        if metadata != b"":
+            upload_metadata(
+                composer,
+                proposer,
+                metadata,
+            )
+
+        composer.send()
+    else:
+        proposal_client.send.open(
+            args=args,
+            params=params,
+        )
 
 
 def upload_metadata(
@@ -409,11 +440,11 @@ def upload_metadata(
         proposal_client_composer.upload_metadata(
             args=UploadMetadataArgs(
                 payload=metadata[
-                        i * MAX_UPLOAD_PAYLOAD_SIZE: (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
-                        ],
+                    i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
+                ],
                 is_first_in_group=i == 0,
             ),
-            params = CommonAppCallParams(sender=proposer.address)
+            params=CommonAppCallParams(sender=proposer.address, signer=proposer.signer),
         )
 
 
@@ -424,14 +455,27 @@ def unassign_voters(
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.unassign_voters(
-        args=UnassignVotersArgs(voters=[cm.address for cm in committee_members[: bulks - 1]],),
-        params = CommonAppCallParams(signer=xgov_daemon.signer)
+        args=UnassignVotersArgs(
+            voters=[cm.address for cm in committee_members[: bulks - 1]],
+        ),
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, signer=xgov_daemon.signer
+        ),
     )
     rest_of_committee_members = committee_members[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.unassign_voters(
-            args=UnassignVotersArgs(voters=[cm.address for cm in rest_of_committee_members[i * bulks: (i + 1) * bulks]]),
-            params = CommonAppCallParams(signer=xgov_daemon.signer)
+            args=UnassignVotersArgs(
+                voters=[
+                    cm.address
+                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
+                ]
+            ),
+            params=CommonAppCallParams(
+                sender=xgov_daemon.address,
+                signer=xgov_daemon.signer,
+                note=i.to_bytes(4, "big"),
+            ),
         )
 
 
@@ -442,14 +486,21 @@ def assign_voters(
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.assign_voters(
-        args=AssignVotersArgs(voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]]),
-        params = CommonAppCallParams(sender=xgov_daemon.address)
+        args=AssignVotersArgs(
+            voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]]
+        ),
+        params=CommonAppCallParams(sender=xgov_daemon.address),
     )
     rest_of_committee_members = committee_members[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.assign_voters(
-            args=AssignVotersArgs(voters=[(cm.address, 10) for cm in rest_of_committee_members[i * bulks: (i + 1) * bulks]]),
-            params = CommonAppCallParams(sender=xgov_daemon.address)
+            args=AssignVotersArgs(
+                voters=[
+                    (cm.address, 10)
+                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
+                ]
+            ),
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
 
 
@@ -457,10 +508,15 @@ def finalize_proposal(
     xgov_registry_client: XgovRegistryMockClient,
     proposal_app_id: int,
     xgov_daemon: SigningAccount,
+    static_fee: AlgoAmount = AlgoAmount(micro_algo=MIN_TXN_FEE * 3),  # noqa: B008
 ) -> None:
     xgov_registry_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(proposal_id=proposal_app_id,),
-        params = CommonAppCallParams(signer=xgov_daemon.signer)
+        args=FinalizeProposalArgs(
+            proposal_app=proposal_app_id,
+        ),
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, signer=xgov_daemon.signer, static_fee=static_fee
+        ),
     )
 
 
@@ -479,5 +535,7 @@ def submit_proposal(
             time_warp(open_ts + discussion_duration)  # so we could actually submit
 
     proposal_client.send.submit(
-        params=CommonAppCallParams(sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE*2))
+        params=CommonAppCallParams(
+            sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
+        )
     )

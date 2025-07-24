@@ -1,8 +1,10 @@
 from typing import Final
+
 from algokit_utils import AlgoAmount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    XGovRegistryClient, TypedGlobalState
+    TypedGlobalState,
+    XGovRegistryClient,
 )
 from smart_contracts.xgov_registry.config import (
     MIN_REQUESTED_AMOUNT,
@@ -78,7 +80,9 @@ def assert_committee(
     assert global_state.committee_votes == committee_votes
 
 
-def assert_get_state(xgov_registry_client: XGovRegistryClient, get_state: TypedGlobalState) -> None:
+def assert_get_state(
+    xgov_registry_client: XGovRegistryClient, get_state: TypedGlobalState
+) -> None:
     global_state = xgov_registry_client.state.global_state
     assert global_state.xgov_fee == get_state.xgov_fee
     assert global_state.daemon_ops_funding_bps == get_state.daemon_ops_funding_bps
@@ -114,4 +118,6 @@ def get_proposer_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
 
 
 def get_open_proposal_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
-    return AlgoAmount(micro_algo=xgov_registry_client.state.global_state.open_proposal_fee)
+    return AlgoAmount(
+        micro_algo=xgov_registry_client.state.global_state.open_proposal_fee
+    )

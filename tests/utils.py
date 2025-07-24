@@ -1,8 +1,9 @@
 import re
+import uuid
 from re import Pattern
 from typing import Optional
 
-from algokit_utils import AlgorandClient, PaymentParams, AlgoAmount
+from algokit_utils import AlgoAmount, AlgorandClient, PaymentParams
 from algosdk.v2client.algod import AlgodClient
 
 from smart_contracts.errors import std_errors as err
@@ -38,6 +39,7 @@ def round_warp(to_round: Optional[int] = None) -> None:
                 sender=dispenser.address,
                 receiver=dispenser.address,
                 amount=AlgoAmount(micro_algo=0),
+                note=uuid.uuid4().hex.encode("utf-8"),
             )
         )
 

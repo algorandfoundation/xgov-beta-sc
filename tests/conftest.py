@@ -2,8 +2,9 @@ from pathlib import Path
 
 import pytest
 from algokit_utils import (
+    AlgoAmount,
     AlgorandClient,
-    SigningAccount, AlgoAmount,
+    SigningAccount,
 )
 from algosdk.constants import MIN_TXN_FEE
 from dotenv import load_dotenv
@@ -31,17 +32,17 @@ def min_fee() -> AlgoAmount:
 
 @pytest.fixture(scope="session")
 def min_fee_times_2() -> AlgoAmount:
-    return AlgoAmount(micro_algo=MIN_TXN_FEE*2)
+    return AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
 
 
 @pytest.fixture(scope="session")
 def min_fee_times_3() -> AlgoAmount:
-    return AlgoAmount(micro_algo=MIN_TXN_FEE*3)
+    return AlgoAmount(micro_algo=MIN_TXN_FEE * 3)
 
 
 @pytest.fixture(scope="session")
 def min_fee_times_4() -> AlgoAmount:
-    return AlgoAmount(micro_algo=MIN_TXN_FEE*4)
+    return AlgoAmount(micro_algo=MIN_TXN_FEE * 4)
 
 
 @pytest.fixture(scope="session")
@@ -122,6 +123,7 @@ def committee_member(algorand_client: AlgorandClient) -> SigningAccount:
         min_spending_balance=INITIAL_FUNDS,
     )
     return account
+
 
 @pytest.fixture(scope="session")
 def committee_members(algorand_client: AlgorandClient) -> list[SigningAccount]:
