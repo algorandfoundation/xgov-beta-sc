@@ -11,9 +11,9 @@ Documentation: <https://tbd/>
 
 | App Spec      | Link                                                                                                                                    |
 |:--------------|:----------------------------------------------------------------------------------------------------------------------------------------|
-| xGov Registry | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/xgov_registry/XGovRegistry.arc32.json) |
-| Proposal      | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Proposal.arc32.json)          |
-| xGov Council  | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Council.arc32.json)           |
+| xGov Registry | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/xgov_registry/XGovRegistry.arc56.json) |
+| Proposal      | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Proposal.arc56.json)          |
+| xGov Council  | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Council.arc56.json)           |
 
 1. Download the App Spec JSON file;
 1. Navigate to the [Lora App Lab](https://lora.algokit.io/testnet/app-lab);
