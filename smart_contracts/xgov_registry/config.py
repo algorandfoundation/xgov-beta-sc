@@ -59,34 +59,34 @@ PERC_TO_BPS = 100
 WEEKS_TO_SECONDS = 7 * 24 * 3_600
 
 ## Fees
-XGOV_FEE: Final[int] = 1 * ALGO_TO_MICROALGO                            # 1 ALGO
-PROPOSER_FEE: Final[int] = 100 * ALGO_TO_MICROALGO                      # 100 ALGO
-OPEN_PROPOSAL_FEE: Final[int] = 100 * ALGO_TO_MICROALGO                 # 100 ALGO
+XGOV_FEE: Final[int] = 1 * ALGO_TO_MICROALGO  # 1 ALGO
+PROPOSER_FEE: Final[int] = 100 * ALGO_TO_MICROALGO  # 100 ALGO
+OPEN_PROPOSAL_FEE: Final[int] = 100 * ALGO_TO_MICROALGO  # 100 ALGO
 
 ## Commissions
-DAEMON_OPS_FUNDING_BPS: Final[int] = 5 * PERC_TO_BPS                    # 5%
-PROPOSAL_COMMITMENT_BPS: Final[int] = 3 * PERC_TO_BPS                   # 3%
+DAEMON_OPS_FUNDING_BPS: Final[int] = 5 * PERC_TO_BPS  # 5%
+PROPOSAL_COMMITMENT_BPS: Final[int] = 3 * PERC_TO_BPS  # 3%
 
 ## Amounts
-MIN_REQUESTED_AMOUNT: Final[int] = 2_500 * ALGO_TO_MICROALGO            # 2,500 ALGO
-MAX_REQUESTED_AMOUNT_SMALL: Final[int] = 25_000 * ALGO_TO_MICROALGO     # 25,000 ALGO
-MAX_REQUESTED_AMOUNT_MEDIUM: Final[int] = 100_000 * ALGO_TO_MICROALGO   # 100,000 ALGO
-MAX_REQUESTED_AMOUNT_LARGE: Final[int] = 200_000 * ALGO_TO_MICROALGO    # 200,000 ALGO
+MIN_REQUESTED_AMOUNT: Final[int] = 2_500 * ALGO_TO_MICROALGO  # 2,500 ALGO
+MAX_REQUESTED_AMOUNT_SMALL: Final[int] = 25_000 * ALGO_TO_MICROALGO  # 25,000 ALGO
+MAX_REQUESTED_AMOUNT_MEDIUM: Final[int] = 100_000 * ALGO_TO_MICROALGO  # 100,000 ALGO
+MAX_REQUESTED_AMOUNT_LARGE: Final[int] = 200_000 * ALGO_TO_MICROALGO  # 200,000 ALGO
 
 ## Durations
-DISCUSSION_DURATION_SMALL: Final[int] = 3 * WEEKS_TO_SECONDS            # 3 weeks
-DISCUSSION_DURATION_MEDIUM: Final[int] = 3 * WEEKS_TO_SECONDS           # 3 weeks
-DISCUSSION_DURATION_LARGE: Final[int] = 3 * WEEKS_TO_SECONDS            # 3 weeks
-DISCUSSION_DURATION_XLARGE: Final[int] = 4 * WEEKS_TO_SECONDS           # 4 weeks
-VOTING_DURATION_SMALL: Final[int] = 1 * WEEKS_TO_SECONDS                # 1 week
-VOTING_DURATION_MEDIUM: Final[int] = 1 * WEEKS_TO_SECONDS               # 1 week
-VOTING_DURATION_LARGE: Final[int] = 2 * WEEKS_TO_SECONDS                # 2 weeks
-VOTING_DURATION_XLARGE: Final[int] = 4 * WEEKS_TO_SECONDS               # 4 weeks
+DISCUSSION_DURATION_SMALL: Final[int] = 3 * WEEKS_TO_SECONDS  # 3 weeks
+DISCUSSION_DURATION_MEDIUM: Final[int] = 3 * WEEKS_TO_SECONDS  # 3 weeks
+DISCUSSION_DURATION_LARGE: Final[int] = 3 * WEEKS_TO_SECONDS  # 3 weeks
+DISCUSSION_DURATION_XLARGE: Final[int] = 4 * WEEKS_TO_SECONDS  # 4 weeks
+VOTING_DURATION_SMALL: Final[int] = 1 * WEEKS_TO_SECONDS  # 1 week
+VOTING_DURATION_MEDIUM: Final[int] = 1 * WEEKS_TO_SECONDS  # 1 week
+VOTING_DURATION_LARGE: Final[int] = 2 * WEEKS_TO_SECONDS  # 2 weeks
+VOTING_DURATION_XLARGE: Final[int] = 4 * WEEKS_TO_SECONDS  # 4 weeks
 
 ## Quorums
-QUORUM_SMALL: Final[int] = 30 * PERC_TO_BPS                             # 30%
-QUORUM_MEDIUM: Final[int] = 50 * PERC_TO_BPS                            # 50%
-QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS                             # 70%
-WEIGHTED_QUORUM_SMALL: Final[int] = 50 * PERC_TO_BPS                    # 50%
-WEIGHTED_QUORUM_MEDIUM: Final[int] = 60 * PERC_TO_BPS                   # 60%
-WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS                    # 70%
+QUORUM_SMALL: Final[int] = 30 * PERC_TO_BPS  # 30%
+QUORUM_MEDIUM: Final[int] = 50 * PERC_TO_BPS  # 50%
+QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
+WEIGHTED_QUORUM_SMALL: Final[int] = 50 * PERC_TO_BPS  # 50%
+WEIGHTED_QUORUM_MEDIUM: Final[int] = 60 * PERC_TO_BPS  # 60%
+WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
