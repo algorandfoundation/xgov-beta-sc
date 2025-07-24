@@ -5,6 +5,7 @@ import random
 from algokit_utils import (
     AlgorandClient,
     AppClientCompilationParams,
+    CommonAppCallCreateParams,
     OnSchemaBreak,
     OnUpdate,
 )
@@ -24,6 +25,7 @@ def deploy() -> None:
         SetXgovSubscriberArgs,
         XGovRegistryConfig,
         XGovRegistryFactory,
+        XGovRegistryFactoryCreateParams,
         XGovRegistryMethodCallCreateParams,
     )
 
@@ -47,10 +49,22 @@ def deploy() -> None:
         ),
     )
 
+    create_params = XGovRegistryFactoryCreateParams(factory.app_factory).create(
+        params=CommonAppCallCreateParams(
+            extra_program_pages=3,
+        ),
+        compilation_params=AppClientCompilationParams(
+            deploy_time_params=template_values,
+        ),
+    )
+
     app_client, _ = factory.deploy(
         on_schema_break=OnSchemaBreak.AppendApp,
         on_update=(OnUpdate.UpdateApp if not fresh_deploy else OnUpdate.AppendApp),
-        create_params=XGovRegistryMethodCallCreateParams(extra_program_pages=3),
+        create_params=XGovRegistryMethodCallCreateParams(
+            extra_program_pages=create_params.extra_program_pages,
+            method=create_params.method.name,
+        ),
     )
 
     test_admin = os.environ["TEST_ADMIN"]
