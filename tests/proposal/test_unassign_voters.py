@@ -155,9 +155,9 @@ def test_unassign_funded_not_daemon(
         xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
         assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1),
         voters_count=len(committee) - 1,
     )
@@ -185,9 +185,9 @@ def test_unassign_blocked_not_daemon(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
         assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1),
         voters_count=len(committee) - 1,
     )

@@ -142,11 +142,11 @@ def quorums_reached(
     voted_members: int,
     total_votes: int,
     *,
-    by_unanimity: bool = True,
+    plebiscite: bool = True,
 ) -> bool:
     proposal_values = proposal_client.state.global_state
     proposal_registry_values = get_proposal_values_from_registry(proposal_client)
-    if by_unanimity:
+    if plebiscite:
         return (
             voted_members == proposal_values.committee_members
             and total_votes == proposal_values.committee_votes

@@ -116,9 +116,9 @@ def test_review_success(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
 
@@ -150,9 +150,9 @@ def test_review_twice(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
 

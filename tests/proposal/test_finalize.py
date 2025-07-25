@@ -253,9 +253,9 @@ def test_finalize_success_blocked_proposal(
         finalized=True,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     min_balance = algorand_client.account.get_information(
@@ -303,9 +303,9 @@ def test_finalize_success_funded_proposal(
         finalized=True,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     min_balance = algorand_client.account.get_information(

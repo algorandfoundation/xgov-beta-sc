@@ -151,9 +151,9 @@ def test_fund_success(
         xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     assert_account_balance(
@@ -187,9 +187,9 @@ def test_fund_twice(
         xgov_registry_mock_client.app_id,
         voted_members=len(
             committee
-        ),  # by default, the xGov Committee approves by unanimity
+        ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by unanimity
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     assert_account_balance(

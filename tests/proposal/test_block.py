@@ -111,9 +111,9 @@ def test_block_success(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee),  # xGov Committee votes at unanimity by default
+        voted_members=len(committee),  # xGov Committee votes at plebiscite by default
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # xGov Committee votes at unanimity by default
+        * len(committee),  # xGov Committee votes at plebiscite by default
     )
 
     assert_account_balance(
@@ -148,9 +148,9 @@ def test_block_twice(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee),  # xGov Committee votes at unanimity by default
+        voted_members=len(committee),  # xGov Committee votes at plebiscite by default
         approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # xGov Committee votes at unanimity by default
+        * len(committee),  # xGov Committee votes at plebiscite by default
     )
 
     assert_account_balance(

@@ -674,7 +674,7 @@ def test_scrutiny_after_time_approve_small_1(
     """
     voted_members, total_votes, member_idx = 0, 0, 0
     while not quorums_reached(
-        voting_proposal_client, voted_members, total_votes, by_unanimity=False
+        voting_proposal_client, voted_members, total_votes, plebiscite=False
     ):
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
