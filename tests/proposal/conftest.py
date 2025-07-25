@@ -29,10 +29,13 @@ from tests.common import (
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
     INITIAL_FUNDS,
+    CommitteeMember,
 )
 from tests.proposal.common import (
     assign_voters,
+    get_proposal_values_from_registry,
     open_proposal,
+    quorums_reached,
     submit_proposal,
 )
 from tests.utils import time_warp
@@ -142,7 +145,7 @@ def submitted_proposal_client(
 @pytest.fixture(scope="function")
 def voting_proposal_client(
     submitted_proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
@@ -150,7 +153,7 @@ def voting_proposal_client(
 
     assign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
@@ -165,9 +168,7 @@ def rejected_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
+    voting_duration = get_proposal_values_from_registry(voting_proposal_client).voting_duration
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
@@ -183,23 +184,27 @@ def approved_proposal_client(
     voting_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
-    for committee_member in committee_members[:4]:
+    voted_members, total_votes, member_idx = 0, 0, 0
+    while not quorums_reached(voting_proposal_client, voted_members, total_votes):
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=committee[member_idx].account.address,
+                approvals=committee[member_idx].votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
+        voted_members += 1
+        total_votes += committee[member_idx].votes
+        member_idx += 1
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
+    voting_duration = get_proposal_values_from_registry(
+        voting_proposal_client
+    ).voting_duration
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
