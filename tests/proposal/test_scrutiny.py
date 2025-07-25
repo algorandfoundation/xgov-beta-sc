@@ -16,9 +16,12 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
     assert_rejected_proposal_global_state,
+    members_for_both_quorums,
+    quorums_reached,
 )
 from tests.utils import time_warp
 
@@ -72,7 +75,7 @@ def test_scrutiny_voting_ongoing_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -81,8 +84,8 @@ def test_scrutiny_voting_ongoing_2(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[0].address,
-            approvals=10,
+            voter=committee[0].account.address,
+            approvals=committee[0].votes,
             rejections=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -97,18 +100,18 @@ def test_scrutiny_voting_ongoing_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Proposal is in voting status, and there is 1 vote missing.
     """
-    for committee_member in committee_members[:-1]:
+    for cm in committee[:-1]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -123,15 +126,15 @@ def test_scrutiny_twice(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
-    for committee_member in committee_members:
+    for cm in committee:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -146,8 +149,8 @@ def test_scrutiny_twice(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * len(committee_members),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
 
@@ -156,7 +159,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -166,35 +169,33 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     num_of_approvals = 1
     num_of_rejections = 0
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -207,10 +208,11 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -219,7 +221,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -229,35 +231,33 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     num_of_approvals = 2
     num_of_rejections = 1
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -270,10 +270,11 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -282,7 +283,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -292,35 +293,33 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     num_of_approvals = 11
     num_of_rejections = 9
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -333,10 +332,11 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -345,7 +345,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -355,35 +355,33 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     num_of_approvals = 0
     num_of_rejections = 0
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -398,10 +396,11 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -410,7 +409,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -420,35 +419,33 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     num_of_approvals = 0
     num_of_rejections = 1
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -463,10 +460,11 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -475,7 +473,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -485,35 +483,33 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     num_of_approvals = 1
     num_of_rejections = 1
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -528,10 +524,11 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -540,7 +537,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -550,35 +547,33 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     num_of_approvals = 1
     num_of_rejections = 2
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -593,10 +588,11 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -605,7 +601,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -615,35 +611,33 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     num_of_approvals = 10
     num_of_rejections = 10
 
-    for committee_member in committee_members[:num_of_approvals]:
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[
-        num_of_approvals : num_of_approvals + num_of_rejections
-    ]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[num_of_approvals + num_of_rejections :]:
+    for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -658,10 +652,11 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members),
-        approvals=10 * num_of_approvals,
-        rejections=10 * num_of_rejections,
-        nulls=10 * (len(committee_members) - num_of_approvals - num_of_rejections),
+        voted_members=len(committee),
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (len(committee) - num_of_approvals - num_of_rejections),
     )
 
 
@@ -670,23 +665,29 @@ def test_scrutiny_after_time_approve_small_1(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
-    4 committee members vote and approve, reaching the regular and weighted quorums and relative majority of approvals
+    Members vote and approve, reaching the regular and weighted quorums and relative majority of approvals
     """
-    for committee_member in committee_members[:4]:
+    voted_members, total_votes, member_idx = 0, 0, 0
+    while not quorums_reached(
+        voting_proposal_client, voted_members, total_votes, by_unanimity=False
+    ):
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=committee[member_idx].account.address,
+                approvals=committee[member_idx].votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
+        voted_members += 1
+        total_votes += committee[member_idx].votes
+        member_idx += 1
 
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -696,12 +697,13 @@ def test_scrutiny_after_time_approve_small_1(
 
     voting_proposal_client.send.scrutiny()
 
+    members_quorum = members_for_both_quorums(voting_proposal_client, committee)
     assert_approved_proposal_global_state(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=4,
-        approvals=10 * 4,
+        voted_members=members_quorum,
+        approvals=DEFAULT_MEMBER_VOTES * members_quorum,
     )
 
 
@@ -710,20 +712,26 @@ def test_scrutiny_after_time_approve_small_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
-    4 committee members vote, reaching the regular and weighted quorums
-    3 approve and 1 rejects, reaching the relative majority of approvals
+    Members vote, reaching the regular and weighted quorums
+    Majority approves, 1 rejects, reaching the relative majority of approvals
     """
-    for committee_member in committee_members[:3]:
+    num_of_rejections = 1
+
+    voting_members = members_for_both_quorums(voting_proposal_client, committee)
+    assert (
+        voting_members <= len(committee) - num_of_rejections
+    )  # We need at least 1 voting member to reject
+    for cm in committee[: voting_members - num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -732,9 +740,9 @@ def test_scrutiny_after_time_approve_small_2(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[4].address,
+            voter=committee[-1].account.address,
             approvals=0,
-            rejections=10,
+            rejections=committee[-1].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -751,9 +759,9 @@ def test_scrutiny_after_time_approve_small_2(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=4,
-        approvals=10 * 3,
-        rejections=10,
+        voted_members=voting_members,
+        approvals=DEFAULT_MEMBER_VOTES * (voting_members - num_of_rejections),
+        rejections=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -762,20 +770,27 @@ def test_scrutiny_after_time_approve_small_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
-    4 committee members vote, reaching the regular and weighted quorums
-    2 approve, 1 rejects and 1 abstains, reaching the relative majority of approvals
+    Members vote, reaching the regular and weighted quorums
+    Majority approves, 1 rejects, and 1 abstains, reaching the relative majority of approvals
     """
-    for committee_member in committee_members[:2]:
+    num_of_rejections = 1
+    num_of_abstains = 1
+
+    voting_members = members_for_both_quorums(voting_proposal_client, committee)
+    assert (
+        voting_members <= len(committee) - num_of_rejections - num_of_abstains
+    )  # We need at least 1 voting member to reject and 1 to abstain
+    for cm in committee[: voting_members - (num_of_rejections + num_of_abstains)]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -784,9 +799,9 @@ def test_scrutiny_after_time_approve_small_3(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[4].address,
+            voter=committee[-(num_of_rejections + num_of_abstains)].account.address,
             approvals=0,
-            rejections=10,
+            rejections=committee[-(num_of_rejections + num_of_abstains)].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -794,7 +809,7 @@ def test_scrutiny_after_time_approve_small_3(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[5].address,
+            voter=committee[-num_of_abstains].account.address,
             approvals=0,
             rejections=0,
         ),
@@ -813,10 +828,11 @@ def test_scrutiny_after_time_approve_small_3(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=4,
-        approvals=10 * 2,
-        rejections=10,
-        nulls=10,
+        voted_members=voting_members,
+        approvals=DEFAULT_MEMBER_VOTES
+        * (voting_members - num_of_rejections - num_of_abstains),
+        rejections=DEFAULT_MEMBER_VOTES,
+        nulls=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -825,20 +841,27 @@ def test_scrutiny_after_time_approve_small_4(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
-    19 committee members vote, reaching the regular and weighted quorums
-    2 approve, 1 rejects and 16 abstain, reaching the relative majority of approvals
+    Members vote, reaching the regular and weighted quorums
+    2 approve, 1 rejects, and the majority abstain, reaching the relative majority of approvals
     """
-    for committee_member in committee_members[:2]:
+    num_of_approvals = 2
+    num_of_rejections = 1
+
+    voting_members = members_for_both_quorums(voting_proposal_client, committee)
+    assert (
+        voting_members <= len(committee) - num_of_approvals - num_of_rejections
+    )  # We need at least 2 voting members to approve and 1 to reject
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -847,18 +870,18 @@ def test_scrutiny_after_time_approve_small_4(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[2].address,
+            voter=committee[num_of_approvals].account.address,
             approvals=0,
-            rejections=10,
+            rejections=committee[num_of_approvals].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    for committee_member in committee_members[3:-1]:
+    for cm in committee[(num_of_approvals + num_of_rejections) : voting_members]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
                 rejections=0,
             ),
@@ -877,10 +900,11 @@ def test_scrutiny_after_time_approve_small_4(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members) - 1,
-        approvals=10 * 2,
-        rejections=10,
-        nulls=10 * (len(committee_members) - 3 - 1),
+        voted_members=voting_members,
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
+        nulls=DEFAULT_MEMBER_VOTES
+        * (voting_members - num_of_approvals - num_of_rejections),
     )
 
 
@@ -889,32 +913,40 @@ def test_scrutiny_after_time_approve_small_5(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
-    19 committee members vote, reaching the regular and weighted quorums
-    10 approve and 9 abstain, reaching the relative majority of approvals
+    Members vote, reaching the regular and weighted quorums
+    10 approve and 9 reject, reaching the relative majority of approvals
     """
-    for committee_member in committee_members[: len(committee_members) // 2]:
+    num_of_approvals = 10
+    num_of_rejections = 9
+
+    members_for_quorums = members_for_both_quorums(voting_proposal_client, committee)
+    assert num_of_approvals + num_of_rejections >= members_for_quorums
+    assert num_of_approvals + num_of_rejections <= len(
+        committee
+    )  # We need at least 10 voting members to approve and 9 to abstain
+    for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[len(committee_members) // 2 : -1]:
+    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -931,9 +963,9 @@ def test_scrutiny_after_time_approve_small_5(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members) - 1,
-        approvals=10 * (len(committee_members) // 2),
-        rejections=10 * ((len(committee_members) // 2) - 1),
+        voted_members=num_of_approvals + num_of_rejections,
+        approvals=DEFAULT_MEMBER_VOTES * num_of_approvals,
+        rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
     )
 
 
@@ -971,7 +1003,7 @@ def test_scrutiny_after_time_reject_small_2(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -979,12 +1011,13 @@ def test_scrutiny_after_time_reject_small_2(
     1 committee member votes and rejects
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
+    # TODO: Parametrize this test with dynamic quorums
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[0].address,
+            voter=committee[0].account.address,
             approvals=0,
-            rejections=10,
+            rejections=committee[0].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -1004,7 +1037,7 @@ def test_scrutiny_after_time_reject_small_2(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
-        rejections=10,
+        rejections=committee[0].votes,
     )
 
 
@@ -1013,7 +1046,7 @@ def test_scrutiny_after_time_reject_small_3(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1021,13 +1054,14 @@ def test_scrutiny_after_time_reject_small_3(
     2 committee members vote and reject
     reached the regular quorum but did not reach the weighted quorum and the relative majority of approvals
     """
-    for committee_member in committee_members[:2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -1047,7 +1081,7 @@ def test_scrutiny_after_time_reject_small_3(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=2,
-        rejections=10 * 2,
+        rejections=DEFAULT_MEMBER_VOTES * 2,
     )
 
 
@@ -1056,7 +1090,7 @@ def test_scrutiny_after_time_reject_small_4(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1065,13 +1099,14 @@ def test_scrutiny_after_time_reject_small_4(
     2 vote reject and 1 approve
     did not reach the relative majority of approvals
     """
-    for committee_member in committee_members[:2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -1079,8 +1114,8 @@ def test_scrutiny_after_time_reject_small_4(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[2].address,
-            approvals=10,
+            voter=committee[2].account.address,
+            approvals=committee[2].votes,
             rejections=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1101,8 +1136,8 @@ def test_scrutiny_after_time_reject_small_4(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=3,
-        rejections=10 * 2,
-        approvals=10,
+        rejections=DEFAULT_MEMBER_VOTES * 2,
+        approvals=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -1111,7 +1146,7 @@ def test_scrutiny_after_time_reject_small_5(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1120,23 +1155,24 @@ def test_scrutiny_after_time_reject_small_5(
     10 vote reject and 9 approve
     did not reach the relative majority of approvals
     """
-    for committee_member in committee_members[: len(committee_members) // 2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[: len(committee) // 2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
+                voter=cm.account.address,
                 approvals=0,
-                rejections=10,
+                rejections=cm.votes,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for committee_member in committee_members[len(committee_members) // 2 : -1]:
+    for cm in committee[len(committee) // 2 : -1]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1156,9 +1192,9 @@ def test_scrutiny_after_time_reject_small_5(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members) - 1,
-        rejections=10 * (len(committee_members) // 2),
-        approvals=10 * ((len(committee_members) // 2) - 1),
+        voted_members=len(committee) - 1,
+        rejections=DEFAULT_MEMBER_VOTES * (len(committee) // 2),
+        approvals=DEFAULT_MEMBER_VOTES * ((len(committee) // 2) - 1),
     )
 
 
@@ -1167,7 +1203,7 @@ def test_scrutiny_after_time_reject_small_6(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1176,11 +1212,12 @@ def test_scrutiny_after_time_reject_small_6(
     1 vote approve
     relative majority of approvals is reached
     """
+    # TODO: Parametrize this test with dynamic quorums
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[0].address,
-            approvals=10,
+            voter=committee[0].account.address,
+            approvals=committee[0].votes,
             rejections=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1201,7 +1238,7 @@ def test_scrutiny_after_time_reject_small_6(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
-        approvals=10,
+        approvals=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -1210,7 +1247,7 @@ def test_scrutiny_after_time_reject_small_7(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """ "
@@ -1219,12 +1256,13 @@ def test_scrutiny_after_time_reject_small_7(
     2 votes approve
     relative majority of approvals is reached
     """
-    for committee_member in committee_members[:2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1245,7 +1283,7 @@ def test_scrutiny_after_time_reject_small_7(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=2,
-        approvals=10 * 2,
+        approvals=DEFAULT_MEMBER_VOTES * 2,
     )
 
 
@@ -1254,7 +1292,7 @@ def test_scrutiny_after_time_reject_small_8(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1263,12 +1301,13 @@ def test_scrutiny_after_time_reject_small_8(
     3 votes approve
     relative majority of approvals is reached
     """
-    for committee_member in committee_members[:3]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:3]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1289,7 +1328,7 @@ def test_scrutiny_after_time_reject_small_8(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=3,
-        approvals=10 * 3,
+        approvals=DEFAULT_MEMBER_VOTES * 3,
     )
 
 
@@ -1298,7 +1337,7 @@ def test_scrutiny_after_time_reject_small_9(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1308,12 +1347,13 @@ def test_scrutiny_after_time_reject_small_9(
     1 vote reject
     relative majority of approvals is reached
     """
-    for committee_member in committee_members[:2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1322,9 +1362,9 @@ def test_scrutiny_after_time_reject_small_9(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[2].address,
+            voter=committee[2].account.address,
             approvals=0,
-            rejections=10,
+            rejections=committee[2].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -1344,8 +1384,8 @@ def test_scrutiny_after_time_reject_small_9(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=3,
-        approvals=10 * 2,
-        rejections=10,
+        approvals=DEFAULT_MEMBER_VOTES * 2,
+        rejections=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -1354,7 +1394,7 @@ def test_scrutiny_after_time_reject_small_10(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1364,12 +1404,13 @@ def test_scrutiny_after_time_reject_small_10(
     1 vote abstain
     relative majority of approvals is reached
     """
-    for committee_member in committee_members[:2]:
+    # TODO: Parametrize this test with dynamic quorums
+    for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
-                voter=committee_member.address,
-                approvals=10,
+                voter=cm.account.address,
+                approvals=cm.votes,
                 rejections=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
@@ -1378,7 +1419,7 @@ def test_scrutiny_after_time_reject_small_10(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=voting_proposal_client.app_id,
-            voter=committee_members[2].address,
+            voter=committee[2].account.address,
             approvals=0,
             rejections=0,
         ),
@@ -1400,8 +1441,8 @@ def test_scrutiny_after_time_reject_small_10(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=3,
-        approvals=10 * 2,
-        nulls=10,
+        approvals=DEFAULT_MEMBER_VOTES * 2,
+        nulls=DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -1411,7 +1452,7 @@ def test_scrutiny_after_time_reject_small_11(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """
@@ -1420,16 +1461,17 @@ def test_scrutiny_after_time_reject_small_11(
     1 vote approve with voting power 48, reaching the weighted quorum
     relative majority of approvals is reached
     """
+    # TODO: Parametrize this test with dynamic quorums
     submitted_proposal_client.send.assign_voters(
-        args=AssignVotersArgs(voters=[(committee_members[0].address, 48)]),
+        args=AssignVotersArgs(voters=[(committee[0].account.address, 48)]),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, signer=xgov_daemon.signer
         ),
     )
 
-    for committee_member in committee_members[1:]:
+    for cm in committee[1:]:
         submitted_proposal_client.send.assign_voters(
-            args=AssignVotersArgs(voters=[(committee_member.address, 8)]),
+            args=AssignVotersArgs(voters=[(cm.account.address, 8)]),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, signer=xgov_daemon.signer
             ),
@@ -1438,7 +1480,7 @@ def test_scrutiny_after_time_reject_small_11(
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
             proposal_app=submitted_proposal_client.app_id,
-            voter=committee_members[0].address,
+            voter=committee[0].account.address,
             approvals=48,
             rejections=0,
         ),

@@ -10,24 +10,24 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import DEFAULT_COMMITTEE_VOTES
+from tests.common import DEFAULT_COMMITTEE_VOTES, CommitteeMember
 
 
 def test_vote_proposal_success(
     min_fee_times_2: AlgoAmount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
             proposal_id=voting_proposal_client.app_id,
-            xgov_address=committee_members[0].address,
-            approval_votes=10,
+            xgov_address=committee[0].account.address,
+            approval_votes=committee[0].votes,
             rejection_votes=0,
         ),
         params=CommonAppCallParams(
-            sender=committee_members[0].address,
+            sender=committee[0].account.address,
             static_fee=min_fee_times_2,
             app_references=[
                 voting_proposal_client.app_id
@@ -36,7 +36,7 @@ def test_vote_proposal_success(
     )
 
     xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=committee_members[0].address)
+        args=GetXgovBoxArgs(xgov_address=committee[0].account.address)
     ).abi_return
 
     assert xgov_box.voted_proposals == 1  # type: ignore
@@ -44,7 +44,7 @@ def test_vote_proposal_success(
 
 
 def test_vote_proposal_not_in_voting_phase(
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> None:
@@ -52,23 +52,23 @@ def test_vote_proposal_not_in_voting_phase(
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=proposal_client.app_id,
-                xgov_address=committee_members[0].address,
-                approval_votes=DEFAULT_COMMITTEE_VOTES,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
                 rejection_votes=0,
             ),
         )
 
 
 def test_vote_proposal_not_a_proposal_app(
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.INVALID_PROPOSAL):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=xgov_registry_client.app_id,
-                xgov_address=committee_members[0].address,
-                approval_votes=DEFAULT_COMMITTEE_VOTES,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
                 rejection_votes=0,
             ),
         )
@@ -111,7 +111,7 @@ def test_vote_proposal_wrong_voting_address(
 
 def test_vote_proposal_paused_registry_error(
     min_fee_times_2: AlgoAmount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
@@ -120,8 +120,8 @@ def test_vote_proposal_paused_registry_error(
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
-                xgov_address=committee_members[0].address,
-                approval_votes=10,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
                 rejection_votes=0,
             ),
         )
@@ -130,12 +130,12 @@ def test_vote_proposal_paused_registry_error(
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
             proposal_id=voting_proposal_client.app_id,
-            xgov_address=committee_members[0].address,
-            approval_votes=10,
+            xgov_address=committee[0].account.address,
+            approval_votes=committee[0].votes,
             rejection_votes=0,
         ),
         params=CommonAppCallParams(
-            sender=committee_members[0].address,
+            sender=committee[0].account.address,
             static_fee=min_fee_times_2,
             app_references=[
                 voting_proposal_client.app_id

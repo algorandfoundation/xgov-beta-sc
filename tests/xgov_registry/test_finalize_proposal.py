@@ -8,7 +8,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal import enums as enm
-from tests.common import DEFAULT_COMMITTEE_MEMBERS
+from tests.common import DEFAULT_COMMITTEE_MEMBERS, DEFAULT_MEMBER_VOTES
 from tests.proposal.common import (
     REQUESTED_AMOUNT,
     assert_blocked_proposal_global_state,
@@ -47,7 +47,7 @@ def test_finalize_funded_proposal_success(
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
-        approvals=10 * DEFAULT_COMMITTEE_MEMBERS,
+        approvals=DEFAULT_MEMBER_VOTES * DEFAULT_COMMITTEE_MEMBERS,
     )
 
     pending_proposals_after = xgov_registry_client.state.global_state.pending_proposals
@@ -199,7 +199,7 @@ def test_finalize_funded_proposal_not_xgov_daemon(
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
-        approvals=10 * DEFAULT_COMMITTEE_MEMBERS,
+        approvals=DEFAULT_MEMBER_VOTES * DEFAULT_COMMITTEE_MEMBERS,
     )
 
     pending_proposals_after = xgov_registry_client.state.global_state.pending_proposals
@@ -234,7 +234,7 @@ def test_finalize_blocked_proposal_not_xgov_daemon(
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
         voted_members=DEFAULT_COMMITTEE_MEMBERS,
-        approvals=10 * DEFAULT_COMMITTEE_MEMBERS,
+        approvals=DEFAULT_MEMBER_VOTES * DEFAULT_COMMITTEE_MEMBERS,
     )
 
     pending_proposals_after = xgov_registry_client.state.global_state.pending_proposals

@@ -16,6 +16,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 from smart_contracts.errors import std_errors as err
 
 # TODO add tests for review on other statuses
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import assert_reviewed_proposal_global_state
 
 
@@ -25,7 +26,6 @@ def test_review_empty_proposal(
     xgov_council: SigningAccount,
 ) -> None:
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -42,7 +42,6 @@ def test_review_draft_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -58,11 +57,7 @@ def test_review_submitted_proposal(
     xgov_council: SigningAccount,
 ) -> None:
 
-    with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
-        LogicError,
-        match=err.WRONG_PROPOSAL_STATUS,
-    ):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         submitted_proposal_client.send.review(
             args=ReviewArgs(block=False),
             params=CommonAppCallParams(sender=xgov_council.address),
@@ -76,7 +71,6 @@ def test_review_voting_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -94,7 +88,6 @@ def test_review_rejected_proposal(
 ) -> None:
 
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -108,7 +101,7 @@ def test_review_success(
     approved_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_council: SigningAccount,
 ) -> None:
 
@@ -121,8 +114,11 @@ def test_review_success(
         approved_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by unanimity
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by unanimity
     )
 
 
@@ -130,7 +126,7 @@ def test_review_twice(
     approved_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_council: SigningAccount,
 ) -> None:
 
@@ -140,7 +136,6 @@ def test_review_twice(
     )
 
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -153,8 +148,11 @@ def test_review_twice(
         approved_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by unanimity
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by unanimity
     )
 
 
@@ -163,7 +161,6 @@ def test_review_not_council(
     xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=err.UNAUTHORIZED):
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         approved_proposal_client.send.review(
             args=ReviewArgs(block=False),
