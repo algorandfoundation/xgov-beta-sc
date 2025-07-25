@@ -1,3 +1,6 @@
+import dataclasses
+from typing import Optional
+
 from algokit_utils import (
     AlgoAmount,
     AlgorandClient,
@@ -8,6 +11,7 @@ from algokit_utils import (
 from algosdk.constants import MIN_TXN_FEE
 from algosdk.encoding import decode_address
 
+import smart_contracts.proposal.enums
 from smart_contracts.artifacts.proposal.proposal_client import (
     AssignVotersArgs,
     OpenArgs,
@@ -43,15 +47,13 @@ from smart_contracts.proposal.enums import (
     STATUS_SUBMITTED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry.config import (
-    MIN_REQUESTED_AMOUNT,
-    OPEN_PROPOSAL_FEE,
-    PROPOSAL_COMMITMENT_BPS,
-)
+from smart_contracts.xgov_registry import config as reg_cfg
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_MEMBER_VOTES,
+    CommitteeMember,
     relative_to_absolute_amount,
 )
 from tests.utils import time_warp
@@ -59,11 +61,19 @@ from tests.utils import time_warp
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
-PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
+PROPOSAL_PARTIAL_FEE = reg_cfg.OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 PROPOSAL_TITLE = "Test Proposal"
 METADATA_B64 = "TUVUQURBVEE="
 DEFAULT_FOCUS = 42
+
+
+@dataclasses.dataclass
+class ProposalRegistryValues:
+    discussion_duration: int = 0
+    voting_duration: int = 0
+    members_quorum: int = 0
+    votes_quorum: int = 0
 
 
 def get_voter_box_key(voter_address: str) -> bytes:
@@ -73,13 +83,93 @@ def get_voter_box_key(voter_address: str) -> bytes:
 def get_locked_amount(requested_amount: AlgoAmount) -> AlgoAmount:
     return AlgoAmount(
         micro_algo=relative_to_absolute_amount(
-            requested_amount.amount_in_micro_algo, PROPOSAL_COMMITMENT_BPS
+            requested_amount.amount_in_micro_algo, reg_cfg.PROPOSAL_COMMITMENT_BPS
         )
     )
 
 
-REQUESTED_AMOUNT = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
+REQUESTED_AMOUNT = AlgoAmount(micro_algo=reg_cfg.MIN_REQUESTED_AMOUNT)
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
+
+
+def get_proposal_values_from_registry(
+    proposal_client: ProposalClient,
+) -> Optional[ProposalRegistryValues]:
+    global_state = proposal_client.state.global_state
+    funding_category = global_state.funding_category
+    committee_members = global_state.committee_members
+    committee_votes = global_state.committee_votes
+    match funding_category:
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_SMALL:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_SMALL,
+                voting_duration=reg_cfg.VOTING_DURATION_SMALL,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_SMALL
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_SMALL
+                ),
+            )
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_MEDIUM:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_MEDIUM,
+                voting_duration=reg_cfg.VOTING_DURATION_MEDIUM,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_MEDIUM
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_MEDIUM
+                ),
+            )
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_LARGE:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_LARGE,
+                voting_duration=reg_cfg.VOTING_DURATION_LARGE,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_LARGE
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_LARGE
+                ),
+            )
+        case _:
+            return None
+
+
+def quorums_reached(
+    proposal_client: ProposalClient,
+    voted_members: int,
+    total_votes: int,
+    *,
+    by_unanimity: bool = True,
+) -> bool:
+    proposal_values = proposal_client.state.global_state
+    proposal_registry_values = get_proposal_values_from_registry(proposal_client)
+    if by_unanimity:
+        return (
+            voted_members == proposal_values.committee_members
+            and total_votes == proposal_values.committee_votes
+        )
+    else:
+        return (
+            voted_members >= proposal_registry_values.members_quorum
+            and total_votes >= proposal_registry_values.votes_quorum
+        )
+
+
+def members_for_both_quorums(
+    proposal_client: ProposalClient, committee: list[CommitteeMember]
+) -> int:
+    for cm in committee:
+        assert (
+            cm.votes == DEFAULT_MEMBER_VOTES
+        )  # Required to compute the number of voting members to reach both quorums
+    proposal_registry_values = get_proposal_values_from_registry(proposal_client)
+    weighted_quorum_members = (
+        proposal_registry_values.votes_quorum // DEFAULT_MEMBER_VOTES
+    )
+    return max(proposal_registry_values.members_quorum, weighted_quorum_members)
 
 
 def assert_proposal_global_state(
@@ -450,24 +540,24 @@ def upload_metadata(
 
 def unassign_voters(
     proposal_client_composer: ProposalComposer,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.unassign_voters(
         args=UnassignVotersArgs(
-            voters=[cm.address for cm in committee_members[: bulks - 1]],
+            voters=[cm.account.address for cm in committee[: bulks - 1]],
         ),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, signer=xgov_daemon.signer
         ),
     )
-    rest_of_committee_members = committee_members[bulks - 1 :]
+    rest_of_committee_members = committee[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.unassign_voters(
             args=UnassignVotersArgs(
                 voters=[
-                    cm.address
+                    cm.account.address
                     for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
                 ]
             ),
@@ -481,22 +571,22 @@ def unassign_voters(
 
 def assign_voters(
     proposal_client_composer: ProposalComposer,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.assign_voters(
         args=AssignVotersArgs(
-            voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]]
+            voters=[(cm.account.address, cm.votes) for cm in committee[: bulks - 1]]
         ),
         params=CommonAppCallParams(sender=xgov_daemon.address),
     )
-    rest_of_committee_members = committee_members[bulks - 1 :]
+    rest_of_committee_members = committee[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.assign_voters(
             args=AssignVotersArgs(
                 voters=[
-                    (cm.address, 10)
+                    (cm.account.address, cm.votes)
                     for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
                 ]
             ),
