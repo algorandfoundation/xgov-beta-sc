@@ -141,9 +141,9 @@ def committee(algorand_client: AlgorandClient) -> list[CommitteeMember]:
         )
         for _ in range(DEFAULT_COMMITTEE_MEMBERS)
     ]
-    for member in members:
+    for cm in members:
         algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=member.account.address,
+            account_to_fund=cm.account.address,
             min_spending_balance=INITIAL_FUNDS,
         )
     return members
