@@ -168,7 +168,9 @@ def rejected_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
-    voting_duration = get_proposal_values_from_registry(voting_proposal_client).voting_duration
+    voting_duration = get_proposal_values_from_registry(
+        voting_proposal_client
+    ).voting_duration
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
