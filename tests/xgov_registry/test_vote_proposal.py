@@ -48,7 +48,7 @@ def test_vote_proposal_not_in_voting_phase(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.PROPOSAL_IS_NOT_VOTING):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=proposal_client.app_id,

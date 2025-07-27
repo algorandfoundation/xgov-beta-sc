@@ -95,7 +95,7 @@ def test_pay_grant_proposal_not_reviewed(
     funded_xgov_registry_client: XGovRegistryClient,
     approved_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.PROPOSAL_WAS_NOT_REVIEWED):
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         funded_xgov_registry_client.send.pay_grant_proposal(
             args=PayGrantProposalArgs(proposal_id=approved_proposal_client.app_id),
             params=CommonAppCallParams(
