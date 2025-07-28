@@ -518,16 +518,6 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
-        self.set_max_committee_size(
-            config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
-        )
-
-        self.xgov_fee.value = config.xgov_fee.native
-        self.proposer_fee.value = config.proposer_fee.native
-        self.open_proposal_fee.value = config.open_proposal_fee.native
-        self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.native
-        self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
-
         xgov_box_mbr = self.calc_box_map_mbr(
             self.xgov_box.key_prefix.length,
             size_of(Account),
@@ -559,6 +549,16 @@ class XGovRegistry(
             < config.max_requested_amount[1].native
             < config.max_requested_amount[2].native
         ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
+
+        self.set_max_committee_size(
+            config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
+        )
+
+        self.xgov_fee.value = config.xgov_fee.native
+        self.proposer_fee.value = config.proposer_fee.native
+        self.open_proposal_fee.value = config.open_proposal_fee.native
+        self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.native
+        self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
 
         self.min_requested_amount.value = config.min_requested_amount.native
         self.max_requested_amount_small.value = config.max_requested_amount[0].native
