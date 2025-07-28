@@ -32,6 +32,3 @@ GS_KEY_NULLS: Final[bytes] = b"nulls"
 # Boxes
 VOTER_BOX_KEY_PREFIX: Final[str] = "V"
 METADATA_BOX_KEY: Final[str] = "M"
-
-VOTER_BOX_KEY_SIZE: Final[int] = 33  # 1 byte for prefix + 32 bytes for address
-VOTER_BOX_VALUE_SIZE: Final[int] = 9  # 8 bytes for votes + 1 byte for voted flag

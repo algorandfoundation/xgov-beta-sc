@@ -17,17 +17,17 @@ from algopy import (
     gtxn,
     itxn,
     op,
+    size_of,
     subroutine,
 )
 
+import smart_contracts.common.abi_types as typ
 import smart_contracts.errors.std_errors as err
 
-from ..common import abi_types as ctyp
 from ..proposal import config as pcfg
 from ..proposal import constants as pcts
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as penm
-from . import avm_types as typ
 from . import config as cfg
 from .constants import (
     ACCOUNT_MBR,
@@ -139,7 +139,7 @@ class XGovRegistry(
 
         self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
 
-        self.committee_id = GlobalState(ctyp.Bytes32, key=cfg.GS_KEY_COMMITTEE_ID)
+        self.committee_id = GlobalState(typ.Bytes32, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
 
@@ -165,7 +165,15 @@ class XGovRegistry(
         )
 
         self.proposer_box = BoxMap(
-            Account, typ.ProposerBoxValue, key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX
+            Account,
+            typ.ProposerBoxValue,
+            key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX,
+        )
+        # declared here just for MBR calculation purposes, not to be used
+        self.voters = BoxMap(
+            Account,
+            typ.VoterBox,
+            key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
     @subroutine
@@ -245,6 +253,25 @@ class XGovRegistry(
         return amount * fraction_in_bps // BPS
 
     @subroutine
+    def calc_box_map_mbr(
+        self, key_prefix_length: UInt64, key_type_size: UInt64, value_type_size: UInt64
+    ) -> UInt64:
+        """
+        Calculates the MBR (Minimum Box Requirement) for a BoxMap.
+
+        Args:
+            key_prefix_length (UInt64): The length of the key prefix in bytes
+            key_type_size (UInt64): The size of the key type in bytes
+            value_type_size (UInt64): The size of the value type in bytes
+
+        Returns:
+            UInt64: The calculated MBR for the BoxMap
+        """
+        return (
+            key_prefix_length + key_type_size + value_type_size
+        ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
+
+    @subroutine
     def set_max_committee_size(
         self, open_proposal_fee: UInt64, daemon_ops_funding_bps: UInt64
     ) -> None:
@@ -268,9 +295,9 @@ class XGovRegistry(
 
         mbr_available_for_committee = open_proposal_fee - to_substract
 
-        per_voter_mbr = (
-            UInt64(pcfg.VOTER_BOX_KEY_SIZE + pcfg.VOTER_BOX_VALUE_SIZE)
-        ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
+        per_voter_mbr = self.calc_box_map_mbr(
+            self.voters.key_prefix.length, size_of(Account), size_of(typ.VoterBox)
+        )
 
         self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
 
@@ -490,6 +517,38 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
+
+        xgov_box_mbr = self.calc_box_map_mbr(
+            self.xgov_box.key_prefix.length,
+            size_of(Account),
+            size_of(typ.XGovBoxValue),
+        )
+
+        xgov_request_box_mbr = self.calc_box_map_mbr(
+            self.request_box.key_prefix.length,
+            size_of(UInt64),
+            size_of(typ.XGovSubscribeRequestBoxValue),
+        )
+
+        proposer_box_mbr = self.calc_box_map_mbr(
+            self.proposer_box.key_prefix.length,
+            size_of(Account),
+            size_of(typ.ProposerBoxValue),
+        )
+
+        assert (
+            config.xgov_fee.native >= xgov_box_mbr
+            and config.xgov_fee.native >= xgov_request_box_mbr
+        ), err.INVALID_XGOV_FEE
+
+        assert config.proposer_fee.native >= proposer_box_mbr, err.INVALID_PROPOSER_FEE
+
+        assert (
+            config.min_requested_amount.native
+            < config.max_requested_amount[0].native
+            < config.max_requested_amount[1].native
+            < config.max_requested_amount[2].native
+        ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
 
         self.set_max_committee_size(
             config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
@@ -756,13 +815,13 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def declare_committee(
-        self, committee_id: ctyp.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+        self, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.
 
         Args:
-            committee_id (ctyp.Bytes32): The ID of the xGov Committee
+            committee_id (typ.Bytes32): The ID of the xGov Committee
             size (arc4.UInt64): The size of the xGov Committee
             votes (arc4.UInt64): The voting power of the xGov Committee
 
@@ -822,7 +881,7 @@ class XGovRegistry(
         mbr_before = Global.current_application_address.balance
 
         # Create the Proposal App
-        res = arc4.arc4_create(proposal_contract.Proposal, Txn.sender)
+        error, tx = arc4.arc4_create(proposal_contract.Proposal.create, Txn.sender)
 
         mbr_after = Global.current_application_address.balance
 
@@ -831,7 +890,7 @@ class XGovRegistry(
 
         # Transfer funds to the new Proposal App, excluding the MBR needed for the Proposal App
         itxn.Payment(
-            receiver=res.created_app.address,
+            receiver=tx.created_app.address,
             amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
             fee=0,
         ).submit()
@@ -839,7 +898,7 @@ class XGovRegistry(
         # Increment pending proposals
         self.pending_proposals.value += 1
 
-        return res.created_app.id
+        return tx.created_app.id
 
     @arc4.abimethod()
     def vote_proposal(
@@ -876,10 +935,6 @@ class XGovRegistry(
 
         # verify proposal id is genuine proposal
         assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
-
-        # Verify the proposal is in the voting state
-        status = self.get_proposal_status(proposal_id.native)
-        assert status == UInt64(penm.STATUS_VOTING), err.PROPOSAL_IS_NOT_VOTING
 
         # make sure they're voting on behalf of an xGov
         exists = xgov_address.native in self.xgov_box
@@ -947,11 +1002,8 @@ class XGovRegistry(
         assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        status = self.get_proposal_status(proposal_id.native)
         proposer = self.get_proposal_proposer(proposal_id.native)
         requested_amount = self.get_proposal_requested_amount(proposal_id.native)
-        # Verify the proposal is in the reviewed state
-        assert status == UInt64(penm.STATUS_REVIEWED), err.PROPOSAL_WAS_NOT_REVIEWED
 
         assert proposer in self.proposer_box, err.WRONG_PROPOSER
 
@@ -1208,6 +1260,21 @@ class XGovRegistry(
             typ.ProposerBoxValue: The Proposer box value
         """
         return self.proposer_box[proposer_address.native].copy()
+
+    # @arc4.abimethod(readonly=True)
+    # def get_request_box(
+    #     self, request_id: arc4.UInt64
+    # ) -> typ.XGovSubscribeRequestBoxValue:
+    #     """
+    #     Returns the xGov subscribe request box for the given request ID.
+    #
+    #     Args:
+    #         request_id (arc4.UInt64): The ID of the subscribe request
+    #
+    #     Returns:
+    #         typ.XGovSubscribeRequestBoxValue: The subscribe request box value
+    #     """
+    #     return self.request_box[request_id.native].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:

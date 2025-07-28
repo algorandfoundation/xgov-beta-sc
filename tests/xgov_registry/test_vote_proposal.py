@@ -1,16 +1,27 @@
 import pytest
-from algokit_utils import AlgoAmount, CommonAppCallParams, LogicError, SigningAccount
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    PaymentParams,
+    SigningAccount,
+)
 
 from smart_contracts.artifacts.proposal.proposal_client import (
+    AssignVotersArgs,
     ProposalClient,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     GetXgovBoxArgs,
+    SubscribeXgovArgs,
     VoteProposalArgs,
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
 from tests.common import DEFAULT_COMMITTEE_VOTES
+from tests.proposal.common import submit_proposal
+from tests.xgov_registry.common import get_xgov_fee
 
 
 def test_vote_proposal_success(
@@ -46,15 +57,59 @@ def test_vote_proposal_success(
 def test_vote_proposal_not_in_voting_phase(
     committee_members: list[SigningAccount],
     xgov_registry_client: XGovRegistryClient,
-    proposal_client: ProposalClient,
+    draft_proposal_client: ProposalClient,
+    algorand_client: AlgorandClient,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
-    with pytest.raises(LogicError, match=err.PROPOSAL_IS_NOT_VOTING):
+    xgov_fee = get_xgov_fee(xgov_registry_client)
+    submit_proposal(
+        proposal_client=draft_proposal_client,
+        xgov_registry_client=xgov_registry_client,
+        proposer=proposer,
+    )
+    for committee_member in committee_members[:1]:
+        algorand_client.account.ensure_funded_from_environment(
+            account_to_fund=committee_member,
+            min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
+            min_funding_increment=xgov_fee,
+        )
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
+                        sender=committee_member.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=xgov_fee,
+                    )
+                ),
+                voting_address=committee_member.address,
+            ),
+            params=CommonAppCallParams(sender=committee_member.address),
+        )
+
+        draft_proposal_client.send.assign_voters(
+            args=AssignVotersArgs(
+                voters=[(committee_member.address, 10)],
+            ),
+            params=CommonAppCallParams(sender=xgov_daemon.address),
+        )
+
+    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
-                proposal_id=proposal_client.app_id,
+                proposal_id=draft_proposal_client.app_id,
                 xgov_address=committee_members[0].address,
-                approval_votes=DEFAULT_COMMITTEE_VOTES,
+                approval_votes=10,
                 rejection_votes=0,
+            ),
+            params=CommonAppCallParams(
+                sender=committee_members[0].address,
+                static_fee=min_fee_times_2,
+                app_references=[
+                    draft_proposal_client.app_id
+                ],  # FIXME: This should have been autopopulated
             ),
         )
 
