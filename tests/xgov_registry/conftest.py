@@ -48,6 +48,7 @@ from tests.common import (
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
     INITIAL_FUNDS,
+    CommitteeMember,
 )
 from tests.proposal.common import (
     DEFAULT_FOCUS,
@@ -365,7 +366,7 @@ def draft_proposal_client(
 def voting_proposal_client(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     proposer: SigningAccount,
     draft_proposal_client: ProposalClient,
@@ -377,9 +378,9 @@ def voting_proposal_client(
         xgov_registry_client=xgov_registry_client,
         proposer=proposer,
     )
-    for committee_member in committee_members:
+    for cm in committee:
         algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=committee_member,
+            account_to_fund=cm.account,
             min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
             min_funding_increment=xgov_fee,
         )
@@ -387,19 +388,19 @@ def voting_proposal_client(
             args=SubscribeXgovArgs(
                 payment=algorand_client.create_transaction.payment(
                     PaymentParams(
-                        sender=committee_member.address,
+                        sender=cm.account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=xgov_fee,
                     )
                 ),
-                voting_address=committee_member.address,
+                voting_address=cm.account.address,
             ),
-            params=CommonAppCallParams(sender=committee_member.address),
+            params=CommonAppCallParams(sender=cm.account.address),
         )
 
         draft_proposal_client.send.assign_voters(
             args=AssignVotersArgs(
-                voters=[(committee_member.address, 10)],
+                voters=[(cm.account.address, cm.votes)],
             ),
             params=CommonAppCallParams(sender=xgov_daemon.address),
         )
@@ -414,7 +415,7 @@ def voting_proposal_client_requested_too_much(
     proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
     outstanding_funds = xgov_registry_client.state.global_state.outstanding_funds
     requested_amount = AlgoAmount(micro_algo=outstanding_funds + 1)
@@ -453,9 +454,9 @@ def voting_proposal_client_requested_too_much(
     )
 
     xgov_fee = get_xgov_fee(xgov_registry_client)
-    for committee_member in committee_members:
+    for cm in committee:
         algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=committee_member,
+            account_to_fund=cm.account,
             min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
             min_funding_increment=xgov_fee,
         )
@@ -463,18 +464,18 @@ def voting_proposal_client_requested_too_much(
             args=SubscribeXgovArgs(
                 payment=algorand_client.create_transaction.payment(
                     PaymentParams(
-                        sender=committee_member.address,
+                        sender=cm.account.address,
                         receiver=xgov_registry_client.app_address,
                         amount=xgov_fee,
                     )
                 ),
-                voting_address=committee_member.address,
+                voting_address=cm.account.address,
             ),
-            params=CommonAppCallParams(sender=committee_member.address),
+            params=CommonAppCallParams(sender=cm.account.address),
         )
 
         proposal_client.send.assign_voters(
-            args=AssignVotersArgs(voters=[(committee_member.address, 10)]),
+            args=AssignVotersArgs(voters=[(cm.account.address, cm.votes)]),
             params=CommonAppCallParams(sender=xgov_daemon.address),
         )
     return proposal_client
@@ -500,15 +501,15 @@ def rejected_proposal_client(
 def rejected_unassigned_voters_proposal_client(
     xgov_daemon: SigningAccount,
     rejected_proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
     bulks = 6
 
-    for i in range(1 + len(committee_members) // bulks):
+    for i in range(1 + len(committee) // bulks):
         rejected_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
                 voters=[
-                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                    cm.account.address for cm in committee[i * bulks : (i + 1) * bulks]
                 ]
             ),
             params=CommonAppCallParams(sender=xgov_daemon.address),
@@ -521,18 +522,18 @@ def approved_proposal_client(
     min_fee_times_2: AlgoAmount,
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
-    for committee_member in committee_members:
+    for cm in committee:
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
-                xgov_address=committee_member.address,
-                approval_votes=10,
+                xgov_address=cm.account.address,
+                approval_votes=cm.votes,
                 rejection_votes=0,
             ),
             params=CommonAppCallParams(
-                sender=committee_member.address,
+                sender=cm.account.address,
                 static_fee=min_fee_times_2,
                 app_references=[
                     voting_proposal_client.app_id
@@ -581,18 +582,18 @@ def approved_proposal_client_requested_too_much(
     min_fee_times_2: AlgoAmount,
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client_requested_too_much: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
-    for committee_member in committee_members:
+    for cm in committee:
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client_requested_too_much.app_id,
-                xgov_address=committee_member.address,
-                approval_votes=10,
+                xgov_address=cm.account.address,
+                approval_votes=cm.votes,
                 rejection_votes=0,
             ),
             params=CommonAppCallParams(
-                sender=committee_member.address,
+                sender=cm.account.address,
                 static_fee=min_fee_times_2,
                 app_references=[
                     voting_proposal_client_requested_too_much.app_id
@@ -630,14 +631,14 @@ def funded_proposal_client(
 def funded_unassigned_voters_proposal_client(
     xgov_daemon: SigningAccount,
     funded_proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
     bulks = 6
-    for i in range(1 + len(committee_members) // bulks):
+    for i in range(1 + len(committee) // bulks):
         funded_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
                 voters=[
-                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                    cm.account.address for cm in committee[i * bulks : (i + 1) * bulks]
                 ],
             ),
             params=CommonAppCallParams(sender=xgov_daemon.address),
@@ -649,14 +650,14 @@ def funded_unassigned_voters_proposal_client(
 def blocked_unassigned_voters_proposal_client(
     xgov_daemon: SigningAccount,
     blocked_proposal_client: ProposalClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> ProposalClient:
     bulks = 6
-    for i in range(1 + len(committee_members) // bulks):
+    for i in range(1 + len(committee) // bulks):
         blocked_proposal_client.send.unassign_voters(
             args=UnassignVotersArgs(
                 voters=[
-                    cm.address for cm in committee_members[i * bulks : (i + 1) * bulks]
+                    cm.account.address for cm in committee[i * bulks : (i + 1) * bulks]
                 ],
             ),
             params=CommonAppCallParams(sender=xgov_daemon.address),

@@ -9,7 +9,12 @@ from algokit_utils import (
 from algosdk.constants import MIN_TXN_FEE
 from dotenv import load_dotenv
 
-from tests.common import DEFAULT_COMMITTEE_MEMBERS, INITIAL_FUNDS
+from tests.common import (
+    DEFAULT_COMMITTEE_MEMBERS,
+    DEFAULT_MEMBER_VOTES,
+    INITIAL_FUNDS,
+    CommitteeMember,
+)
 
 
 @pytest.fixture(autouse=True, scope="session")
@@ -116,26 +121,32 @@ def kyc_provider(algorand_client: AlgorandClient) -> SigningAccount:
 
 
 @pytest.fixture(scope="session")
-def committee_member(algorand_client: AlgorandClient) -> SigningAccount:
-    account = algorand_client.account.random()
+def committee_member(algorand_client: AlgorandClient) -> CommitteeMember:
+    cm = CommitteeMember(
+        account=algorand_client.account.random(), votes=DEFAULT_MEMBER_VOTES
+    )
+
     algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=account.address,
+        account_to_fund=cm.account.address,
         min_spending_balance=INITIAL_FUNDS,
     )
-    return account
+    return cm
 
 
 @pytest.fixture(scope="session")
-def committee_members(algorand_client: AlgorandClient) -> list[SigningAccount]:
-    accounts = [
-        algorand_client.account.random() for _ in range(DEFAULT_COMMITTEE_MEMBERS)
+def committee(algorand_client: AlgorandClient) -> list[CommitteeMember]:
+    members = [
+        CommitteeMember(
+            account=algorand_client.account.random(), votes=DEFAULT_MEMBER_VOTES
+        )
+        for _ in range(DEFAULT_COMMITTEE_MEMBERS)
     ]
-    for account in accounts:
+    for cm in members:
         algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=account.address,
+            account_to_fund=cm.account.address,
             min_spending_balance=INITIAL_FUNDS,
         )
-    return accounts
+    return members
 
 
 @pytest.fixture(scope="session")

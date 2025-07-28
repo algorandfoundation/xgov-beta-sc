@@ -11,6 +11,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     METADATA_B64,
@@ -31,7 +32,7 @@ from tests.proposal.common import (
 def test_assign_voters_success(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -40,7 +41,7 @@ def test_assign_voters_success(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
     composer.send()
 
@@ -56,10 +57,10 @@ def test_assign_voters_success(
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (
-                get_voter_box_key(committee_member.address),
+                get_voter_box_key(cm.account.address),
                 "AAAAAAAAAAoA",
             )
-            for committee_member in committee_members
+            for cm in committee
         ],
     )
 
@@ -68,7 +69,7 @@ def test_assign_voters_success(
 def test_assign_voters_not_xgov_daemon(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_member: SigningAccount,
+    committee_member: CommitteeMember,
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -78,7 +79,7 @@ def test_assign_voters_not_xgov_daemon(
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=proposer,
-            committee_members=[committee_member],
+            committee=[committee_member],
         )
         composer.send()
 
@@ -99,7 +100,7 @@ def test_assign_voters_not_xgov_daemon(
 def test_assign_voters_empty_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_member: SigningAccount,
+    committee_member: CommitteeMember,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -109,7 +110,7 @@ def test_assign_voters_empty_proposal(
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=xgov_daemon,
-            committee_members=[committee_member],
+            committee=[committee_member],
         )
         composer.send()
 
@@ -130,7 +131,7 @@ def test_assign_voters_empty_proposal(
 def test_assign_voters_draft_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_member: SigningAccount,
+    committee_member: CommitteeMember,
     xgov_registry_mock_client: XgovRegistryMockClient,
     draft_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -140,7 +141,7 @@ def test_assign_voters_draft_proposal(
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=xgov_daemon,
-            committee_members=[committee_member],
+            committee=[committee_member],
         )
         composer.send()
 
@@ -167,7 +168,7 @@ def test_assign_voters_draft_proposal(
 def test_assign_voters_voting_open(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -176,7 +177,7 @@ def test_assign_voters_voting_open(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
     composer.send()
 
@@ -185,7 +186,7 @@ def test_assign_voters_voting_open(
         assign_voters(
             proposal_client_composer=composer,
             xgov_daemon=xgov_daemon,
-            committee_members=committee_members[:1],
+            committee=committee[:1],
         )
         composer.send()
 
@@ -201,10 +202,10 @@ def test_assign_voters_voting_open(
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (
-                get_voter_box_key(committee_member.address),
+                get_voter_box_key(cm.account.address),
                 "AAAAAAAAAAoA",
             )
-            for committee_member in committee_members
+            for cm in committee
         ],
     )
 
@@ -213,7 +214,7 @@ def test_assign_voters_voting_open(
 def test_assign_voters_not_same_app(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     alternative_submitted_proposal_client: ProposalClient,
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -222,7 +223,7 @@ def test_assign_voters_not_same_app(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
     composer.composer().build()
 
@@ -230,7 +231,7 @@ def test_assign_voters_not_same_app(
     assign_voters(
         proposal_client_composer=alternative_composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
     alternative_composer.composer().build()
 
@@ -249,7 +250,7 @@ def test_assign_voters_not_same_app(
 def test_assign_voters_not_same_method(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
 ) -> None:
@@ -258,7 +259,7 @@ def test_assign_voters_not_same_method(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
 
     with pytest.raises(LogicError, match=err.WRONG_METHOD_CALL):
@@ -269,7 +270,7 @@ def test_assign_voters_not_same_method(
 def test_assign_voters_not_same_method_2(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
 ) -> None:
@@ -277,7 +278,7 @@ def test_assign_voters_not_same_method_2(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members,
+        committee=committee,
     )
     composer.get_state()
 
@@ -289,7 +290,7 @@ def test_assign_voters_not_same_method_2(
 def test_assign_voters_one_call_not_xgov_daemon(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -298,12 +299,12 @@ def test_assign_voters_one_call_not_xgov_daemon(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=committee_members[:-1],
+        committee=committee[:-1],
     )
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=proposer,
-        committee_members=[committee_members[-1]],
+        committee=[committee[-1]],
     )
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         composer.send()
@@ -312,7 +313,8 @@ def test_assign_voters_one_call_not_xgov_daemon(
 def test_assign_voters_more_than_allowed(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
+    committee_member: CommitteeMember,
     xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -321,7 +323,7 @@ def test_assign_voters_more_than_allowed(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee_members=[*committee_members, proposer],
+        committee=[*committee, committee_member],
     )
     composer.send()
 
@@ -329,8 +331,9 @@ def test_assign_voters_more_than_allowed(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=10 * (len(committee_members) + 1),  # proposer is also assigned
-        voters_count=len(committee_members) + 1,
+        assigned_votes=DEFAULT_MEMBER_VOTES
+        * (len(committee) + 1),  # proposer is also assigned
+        voters_count=len(committee) + 1,
     )
 
     assert_boxes(
@@ -339,9 +342,9 @@ def test_assign_voters_more_than_allowed(
         expected_boxes=[(METADATA_BOX_KEY.encode(), METADATA_B64)]
         + [
             (
-                get_voter_box_key(committee_member.address),
+                get_voter_box_key(cm.account.address),
                 "AAAAAAAAAAoA",
             )
-            for committee_member in [*committee_members, proposer]
+            for cm in [*committee, committee_member]
         ],
     )

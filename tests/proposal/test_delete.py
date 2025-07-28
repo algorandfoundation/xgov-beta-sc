@@ -12,6 +12,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from tests.common import CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     finalize_proposal,
@@ -117,13 +118,13 @@ def test_delete_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
@@ -151,12 +152,12 @@ def test_delete_not_xgov_daemon(
     xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
