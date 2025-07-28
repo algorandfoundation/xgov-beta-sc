@@ -78,3 +78,9 @@ WRONG_METHOD_CALL = "Wrong Method Call"
 COMMITTEE_SIZE_TOO_LARGE = "Committee size is too large"
 
 INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"
+
+INCOSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
+
+INVALID_XGOV_FEE = "Invalid xGov fee"
+
+INVALID_PROPOSER_FEE = "Invalid proposer fee"
