@@ -19,7 +19,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import DEFAULT_COMMITTEE_VOTES, CommitteeMember, DEFAULT_MEMBER_VOTES
+from tests.common import DEFAULT_COMMITTEE_VOTES, DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import submit_proposal
 from tests.xgov_registry.common import get_xgov_fee
 
