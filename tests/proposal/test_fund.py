@@ -13,6 +13,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     assert_funded_proposal_global_state,
@@ -131,7 +132,7 @@ def test_fund_success(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_3: AlgoAmount,
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(
@@ -148,8 +149,11 @@ def test_fund_success(
         reviewed_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     assert_account_balance(
@@ -164,7 +168,7 @@ def test_fund_twice(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_3: AlgoAmount,
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(
@@ -181,8 +185,11 @@ def test_fund_twice(
         reviewed_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     assert_account_balance(
@@ -205,7 +212,6 @@ def test_fund_not_registry(
     proposer: SigningAccount,
     min_fee_times_3: AlgoAmount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=err.UNAUTHORIZED):
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         reviewed_proposal_client.send.fund(
             params=CommonAppCallParams(

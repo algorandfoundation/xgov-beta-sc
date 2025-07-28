@@ -18,6 +18,16 @@ The Proposer creates a Proposal Application from the xGov Registry.
 
 Upon Proposal creation, an Open Proposal Fee **MUST** be paid to the xGov Treasury.
 
+The Open Proposal Fee **MUST NOT** be lower than the sum of:
+
+- Proposal Application MBR;
+
+- Proposal Escrow Account MBR;
+
+- Full Metadata Box MBR;
+
+- Daemon Operations Funding.
+
 The Proposal Application MBR is deducted from the Open Proposal Fee; the remainder
 **MUST** be entirely transferred to the Proposal Escrow.
 

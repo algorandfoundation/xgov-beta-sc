@@ -13,6 +13,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     assert_blocked_proposal_global_state,
@@ -184,12 +185,12 @@ def test_finalize_success_rejected_proposal(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
@@ -229,12 +230,12 @@ def test_finalize_success_blocked_proposal(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
     composer = blocked_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
@@ -250,8 +251,11 @@ def test_finalize_success_blocked_proposal(
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     min_balance = algorand_client.account.get_information(
@@ -276,12 +280,12 @@ def test_finalize_success_funded_proposal(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
     composer = funded_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members,
+        committee,
         xgov_daemon,
     )
     composer.send()
@@ -297,8 +301,11 @@ def test_finalize_success_funded_proposal(
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, the xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
     min_balance = algorand_client.account.get_information(
@@ -323,12 +330,12 @@ def test_finalize_not_registry(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members[:-1],
+        committee[:-1],
         xgov_daemon,
     )
     composer.send()
@@ -345,13 +352,13 @@ def test_finalize_wrong_box_ref(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee_members[:-1],
+        committee[:-1],
         xgov_daemon,
     )
     composer.send()

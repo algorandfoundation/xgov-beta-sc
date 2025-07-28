@@ -66,7 +66,6 @@ def test_submit_not_proposer(
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=err.UNAUTHORIZED):
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -95,7 +94,6 @@ def test_submit_empty_proposal(
     xgov_daemon: SigningAccount,
 ) -> None:
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -124,7 +122,6 @@ def test_submit_twice(
     )
 
     with pytest.raises(
-        # FIXME: LogicError, match=err.WRONG_PROPOSAL_STATUS
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
@@ -148,7 +145,6 @@ def test_submit_too_early(
     xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
 ) -> None:
-    # FIXME: with pytest.raises(LogicError, match=err.TOO_EARLY):
     with pytest.raises(LogicError, match=err.TOO_EARLY):
         submit_proposal(
             proposal_client=draft_proposal_client,
@@ -184,7 +180,6 @@ def test_submit_no_metadata(
         proposer,
         metadata=b"",
     )
-    # FIXME: with pytest.raises(LogicError, match=err.MISSING_METADATA):
     with pytest.raises(LogicError, match=err.MISSING_METADATA):
         submit_proposal(
             proposal_client=proposal_client,
@@ -210,7 +205,6 @@ def test_submit_paused_registry_error(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.pause_registry()
-    # FIXME: with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
         submit_proposal(
             proposal_client=draft_proposal_client,

@@ -14,6 +14,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     assert_blocked_proposal_global_state,
@@ -85,7 +86,6 @@ def test_block_reviewed_proposal(
     reviewed_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
 ) -> None:
-
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         reviewed_proposal_client.send.review(
             args=ReviewArgs(block=True),
@@ -98,7 +98,7 @@ def test_block_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
 ) -> None:
 
     xgov_treasury_balance_before = algorand_client.account.get_information(
@@ -111,8 +111,11 @@ def test_block_success(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  # by default, xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  # by default, xGov Committee approves by plebiscite
     )
 
     assert_account_balance(
@@ -127,7 +130,7 @@ def test_block_twice(
     xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    committee_members: list[SigningAccount],
+    committee: list[CommitteeMember],
     xgov_council: SigningAccount,
 ) -> None:
 
@@ -147,8 +150,11 @@ def test_block_twice(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(committee_members[:4]),
-        approvals=10 * len(committee_members[:4]),
+        voted_members=len(
+            committee
+        ),  #  by default, the xGov Committee approves by plebiscite
+        approvals=DEFAULT_MEMBER_VOTES
+        * len(committee),  #  by default, the xGov Committee approves by plebiscite
     )
 
     assert_account_balance(

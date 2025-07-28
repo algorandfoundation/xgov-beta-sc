@@ -10,7 +10,7 @@ A Proposal consists of:
 - Proposal metadata.
 
 The Proposal Application is created and funded by the xGov Registry App (see [Creation
-section](./proposal-creation.md)).
+section](./proposal-creation.md)) through the Open Proposal Fee.
 
 ## Lifecycle
 
