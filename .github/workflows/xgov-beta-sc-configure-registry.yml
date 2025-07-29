@@ -1,0 +1,119 @@
+name: Configure xgov-beta-sc Registry
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: "Network to configure registry on (e.g., testnet, mainnet)"
+        required: true
+        default: "testnet"
+        type: string
+      max_requested_amount:
+        description: "csv of max requested amounts for each proposal size (small, medium, large)"
+        required: false
+        default: ""
+        type: string
+      discussion_duration:
+        description: "csv of discussion durations for each proposal size (small, medium, large, xlarge)"
+        required: false
+        default: ""
+        type: string
+      voting_duration:
+        description: "csv of voting durations for each proposal size (small, medium, large, xlarge)"
+        required: false
+        default: ""
+        type: string
+      quorum:
+        description: "csv of quorum for each proposal size (small, medium, large)"
+        required: false
+        default: ""
+        type: string
+      weighted_quorum:
+        description: "csv of weighted quorum for each proposal size (small, medium, large)"
+        required: false
+        default: ""
+        type: string
+      xgov_fee:
+        description: "xgov fee in microalgos"
+        required: false
+        default: ""
+        type: string
+      proposer_fee:
+        description: "proposer fee in microalgos"
+        required: false
+        default: ""
+        type: string
+      open_proposal_fee:
+        description: "open proposal fee in microalgos"
+        required: false
+        default: ""
+        type: string
+      daemon_ops_funding_bps:
+        description: "daemon ops funding % in basis points"
+        required: false
+        default: ""
+        type: string
+      proposal_commitment_bps:
+        description: "proposal commitment % in basis points"
+        required: false
+        default: ""
+        type: string
+      min_requested_amount:
+        description: "min requested amount in microalgos"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  set-roles:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install algokit
+        run: pipx install algokit
+
+      - name: Bootstrap dependencies
+        run: algokit project bootstrap all
+
+      - name: Configure git
+        shell: bash
+        run: |
+          # set git user and email as test invoke git
+          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
+
+      - name: Configure xgov-beta-sc registry
+        run: algokit project deploy ${{ github.event.inputs.network }}
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: configure_xgov_registry
+          # This is the account that becomes the creator of the contract
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+          # Pinata API JWT to publish deployed App Spec on IPFS
+          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
+          # Environment variables for xgov-beta-sc configuration
+          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ github.event.inputs.max_requested_amount }}
+          XGOV_CFG_DISCUSSION_DURATION: ${{ github.event.inputs.discussion_duration }}
+          XGOV_CFG_VOTING_DURATION: ${{ github.event.inputs.voting_duration }}
+          XGOV_CFG_QUORUM: ${{ github.event.inputs.quorum }}
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ github.event.inputs.weighted_quorum }}
+          XGOV_CFG_XGOV_FEE: ${{ github.event.inputs.xgov_fee }}
+          XGOV_CFG_PROPOSER_FEE: ${{ github.event.inputs.proposer_fee }}
+          XGOV_CFG_OPEN_PROPOSAL_FEE: ${{ github.event.inputs.open_proposal_fee }}
+          XGOV_CFG_DAEMON_OPS_FUNDING_BPS: ${{ github.event.inputs.daemon_ops_funding_bps }}
+          XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ github.event.inputs.proposal_commitment_bps }}
+          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ github.event.inputs.min_requested_amount }}
+          

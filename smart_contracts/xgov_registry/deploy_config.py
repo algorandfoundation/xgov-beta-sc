@@ -13,8 +13,7 @@ from algokit_utils import (
 logger = logging.getLogger(__name__)
 
 
-# define deployment behaviour based on supplied app spec
-def deploy() -> None:
+def _deploy_xgov_registry() -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         ConfigXgovRegistryArgs,
         SetCommitteeManagerArgs,
@@ -149,3 +148,213 @@ def deploy() -> None:
         )
     else:
         logger.info("Skipping xGov registry configuration as requested")
+
+
+def _set_roles() -> None:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        APP_SPEC,
+        SetCommitteeManagerArgs,
+        SetKycProviderArgs,
+        SetPayorArgs,
+        SetXgovCouncilArgs,
+        SetXgovDaemonArgs,
+        SetXgovManagerArgs,
+        SetXgovSubscriberArgs,
+        XGovRegistryFactory,
+    )
+
+    algorand_client = AlgorandClient.from_environment()
+    deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=XGovRegistryFactory,
+        default_sender=deployer.address,
+    )
+
+    app_client = factory.get_app_client_by_creator_and_name(
+        creator_address=deployer.address,
+        app_name=APP_SPEC.name,
+    )
+
+    roles_group = app_client.new_group()
+
+    if xgov_manager := os.environ.get("XGOV_REG_SET_ROLES_XGOV_MANAGER"):
+        roles_group.set_xgov_manager(args=SetXgovManagerArgs(manager=xgov_manager))
+    if payor := os.environ.get("XGOV_REG_SET_ROLES_PAYOR"):
+        roles_group.set_payor(args=SetPayorArgs(payor=payor))
+    if xgov_council := os.environ.get("XGOV_REG_SET_ROLES_XGOV_COUNCIL"):
+        roles_group.set_xgov_council(args=SetXgovCouncilArgs(council=xgov_council))
+    if xgov_subscriber := os.environ.get("XGOV_REG_SET_ROLES_XGOV_SUBSCRIBER"):
+        roles_group.set_xgov_subscriber(
+            args=SetXgovSubscriberArgs(subscriber=xgov_subscriber)
+        )
+    if kyc_provider := os.environ.get("XGOV_REG_SET_ROLES_KYC_PROVIDER"):
+        roles_group.set_kyc_provider(args=SetKycProviderArgs(provider=kyc_provider))
+    if committee_manager := os.environ.get("XGOV_REG_SET_ROLES_COMMITTEE_MANAGER"):
+        roles_group.set_committee_manager(
+            args=SetCommitteeManagerArgs(manager=committee_manager)
+        )
+    if xgov_daemon := os.environ.get("XGOV_REG_SET_ROLES_XGOV_DAEMON"):
+        roles_group.set_xgov_daemon(args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon))
+
+    roles_group.send()
+
+
+def _configure_xgov_registry() -> None:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        APP_SPEC,
+        ConfigXgovRegistryArgs,
+        XGovRegistryConfig,
+        XGovRegistryFactory,
+    )
+
+    algorand_client = AlgorandClient.from_environment()
+    deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=XGovRegistryFactory,
+        default_sender=deployer.address,
+    )
+
+    app_client = factory.get_app_client_by_creator_and_name(
+        creator_address=deployer.address,
+        app_name=APP_SPEC.name,
+    )
+
+    current_state = app_client.state.global_state
+    max_requested_amounts = [
+        int(num)
+        for num in os.environ.get(
+            "XGOV_CFG_MAX_REQUESTED_AMOUNT",
+            ",".join(
+                [
+                    str(current_state.max_requested_amount_small),
+                    str(current_state.max_requested_amount_medium),
+                    str(current_state.max_requested_amount_large),
+                ]
+            ),
+        ).split(",")
+    ]
+    discussion_durations = [
+        int(num)
+        for num in os.environ.get(
+            "XGOV_CFG_DISCUSSION_DURATION",
+            ",".join(
+                [
+                    str(current_state.discussion_duration_small),
+                    str(current_state.discussion_duration_medium),
+                    str(current_state.discussion_duration_large),
+                    str(current_state.discussion_duration_xlarge),
+                ]
+            ),
+        ).split(",")
+    ]
+    voting_durations = [
+        int(num)
+        for num in os.environ.get(
+            "XGOV_CFG_VOTING_DURATION",
+            ",".join(
+                [
+                    str(current_state.voting_duration_small),
+                    str(current_state.voting_duration_medium),
+                    str(current_state.voting_duration_large),
+                    str(current_state.voting_duration_xlarge),
+                ]
+            ),
+        ).split(",")
+    ]
+    quorums = [
+        int(num)
+        for num in os.environ.get(
+            "XGOV_CFG_QUORUM",
+            ",".join(
+                [
+                    str(current_state.quorum_small),
+                    str(current_state.quorum_medium),
+                    str(current_state.quorum_large),
+                ]
+            ),
+        ).split(",")
+    ]
+    weighted_quorums = [
+        int(num)
+        for num in os.environ.get(
+            "XGOV_CFG_WEIGHTED_QUORUM",
+            ",".join(
+                [
+                    str(current_state.weighted_quorum_small),
+                    str(current_state.weighted_quorum_medium),
+                    str(current_state.weighted_quorum_large),
+                ]
+            ),
+        ).split(",")
+    ]
+
+    config = XGovRegistryConfig(
+        xgov_fee=int(os.environ.get("XGOV_CFG_XGOV_FEE", current_state.xgov_fee)),
+        proposer_fee=int(
+            os.environ.get("XGOV_CFG_PROPOSER_FEE", current_state.proposer_fee)
+        ),
+        open_proposal_fee=int(
+            os.environ.get(
+                "XGOV_CFG_OPEN_PROPOSAL_FEE", current_state.open_proposal_fee
+            )
+        ),
+        daemon_ops_funding_bps=int(
+            os.environ.get(
+                "XGOV_CFG_DAEMON_OPS_FUNDING_BPS", current_state.daemon_ops_funding_bps
+            )
+        ),
+        proposal_commitment_bps=int(
+            os.environ.get(
+                "XGOV_CFG_PROPOSAL_COMMITMENT_BPS",
+                current_state.proposal_commitment_bps,
+            )
+        ),
+        min_requested_amount=int(
+            os.environ.get(
+                "XGOV_CFG_MIN_REQUESTED_AMOUNT", current_state.min_requested_amount
+            )
+        ),
+        max_requested_amount=(
+            max_requested_amounts[0],
+            max_requested_amounts[1],
+            max_requested_amounts[2],
+        ),
+        discussion_duration=(
+            discussion_durations[0],
+            discussion_durations[1],
+            discussion_durations[2],
+            discussion_durations[3],
+        ),
+        voting_duration=(
+            voting_durations[0],
+            voting_durations[1],
+            voting_durations[2],
+            voting_durations[3],
+        ),
+        quorum=(quorums[0], quorums[1], quorums[2]),
+        weighted_quorum=(
+            weighted_quorums[0],
+            weighted_quorums[1],
+            weighted_quorums[2],
+        ),
+    )
+    logger.info(f"Configuring xGov registry with: {config}")
+    app_client.send.config_xgov_registry(
+        args=ConfigXgovRegistryArgs(
+            config=config,
+        )
+    )
+
+
+def deploy() -> None:
+    command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
+    if command == "deploy":
+        _deploy_xgov_registry()
+    elif command == "set_roles":
+        _set_roles()
+    elif command == "configure_xgov_registry":
+        _configure_xgov_registry()
+    else:
+        logger.error(f"Unknown command: {command}")

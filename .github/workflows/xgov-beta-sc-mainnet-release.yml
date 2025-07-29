@@ -1,0 +1,216 @@
+name: Mainnet Stable Release xgov-beta-sc
+
+on:
+  push:
+    branches:
+      - "release/v*.*.*"
+
+jobs:
+  validate:
+    name: Validate xgov-beta-sc
+    uses: ./.github/workflows/xgov-beta-sc-ci.yml
+    secrets: inherit
+
+  create-stable-release:
+    runs-on: ubuntu-latest
+    needs: validate
+    outputs:
+      tag: ${{ steps.extract-version.outputs.tag }}
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_ID }}
+          private-key: ${{ secrets.BOT_SK }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Extract version from branch name
+        id: extract-version
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          VERSION=${BRANCH_NAME#release/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Validate release version
+        run: |
+          RELEASE_VERSION="${{ steps.extract-version.outputs.version }}"
+          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+
+          echo "Release version: $RELEASE_VERSION"
+          echo "Current version in pyproject.toml: $CURRENT_VERSION"
+
+          # Function to compare semantic versions
+          version_compare() {
+            local ver1=$1
+            local ver2=$2
+            
+            # Split versions into arrays
+            IFS='.' read -ra VER1 <<< "$ver1"
+            IFS='.' read -ra VER2 <<< "$ver2"
+            
+            # Compare major, minor, patch
+            for i in {0..2}; do
+              local v1=${VER1[i]:-0}
+              local v2=${VER2[i]:-0}
+              
+              if [[ $v1 -gt $v2 ]]; then
+                return 0  # ver1 > ver2
+              elif [[ $v1 -lt $v2 ]]; then
+                return 1  # ver1 < ver2
+              fi
+            done
+            
+            return 2  # ver1 == ver2
+          }
+
+          if version_compare "$RELEASE_VERSION" "$CURRENT_VERSION"; then
+            echo "✅ Release version $RELEASE_VERSION is newer than current version $CURRENT_VERSION"
+          elif [[ $? -eq 2 ]]; then
+            echo "✅ Release version $RELEASE_VERSION matches current version $CURRENT_VERSION"
+          else
+            echo "❌ Release version $RELEASE_VERSION is older than current version $CURRENT_VERSION"
+            echo "Cannot release an older version. Please update the release branch name to use a newer version."
+            exit 1
+          fi
+
+      - name: Check if tag exists
+        id: check-tag
+        run: |
+          if git rev-parse --verify --quiet "refs/tags/${{ steps.extract-version.outputs.tag }}"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update pyproject.toml version
+        if: steps.check-tag.outputs.exists == 'false'
+        run: |
+          sed -i 's/^version = ".*"/version = "${{ steps.extract-version.outputs.version }}"/' pyproject.toml
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions"
+          git add pyproject.toml
+          git commit -m "chore: bump version to ${{ steps.extract-version.outputs.version }}"
+          git push origin ${{ github.ref_name }}
+
+      - name: Create stable release tag
+        if: steps.check-tag.outputs.exists == 'false'
+        run: |
+          git tag -a "${{ steps.extract-version.outputs.tag }}" -m "Stable Release ${{ steps.extract-version.outputs.version }}"
+          git push origin "${{ steps.extract-version.outputs.tag }}"
+
+      - name: Merge release branch back to main
+        if: steps.check-tag.outputs.exists == 'false'
+        run: |
+          # Switch to main branch
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+          # Merge the release branch into main
+          git merge --no-ff origin/${{ github.ref_name }} -m "chore: merge ${{ steps.extract-version.outputs.tag }} back to main [skip-canary]"
+
+          # Push the merge to main
+          git push origin main
+
+      - name: Create GitHub stable release
+        if: steps.check-tag.outputs.exists == 'false'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.extract-version.outputs.tag }}
+          release_name: Release ${{ steps.extract-version.outputs.version }}
+          body: |
+            🚀 **Stable Release ${{ steps.extract-version.outputs.version }}**
+
+            This is a stable release automatically created from the `release/${{ steps.extract-version.outputs.tag }}` branch.
+
+            ## Changes
+            This release includes all changes ready for production deployment.
+
+            ## Deployment
+            This version has been automatically deployed to Algorand Mainnet.
+
+            **✅ Note**: This is a stable production release.
+          draft: false
+          prerelease: false
+
+  deploy-mainnet:
+    runs-on: "ubuntu-latest"
+    needs: [validate, create-stable-release]
+    environment: contract-mainnet
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install algokit
+        run: pipx install algokit
+
+      - name: Bootstrap dependencies
+        run: algokit project bootstrap all
+
+      - name: Configure git
+        shell: bash
+        run: |
+          # set git user and email as test invoke git
+          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
+
+      - name: Deploy to mainnet
+        run: algokit project deploy mainnet
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: deploy
+          # This is the account that becomes the creator of the contract
+          DEPLOYER_MNEMONIC: ${{ secrets.MAINNET_DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.MAINNET_DISPENSER_MNEMONIC }}
+          # Pinata API JWT to publish deployed App Spec on IPFS
+          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
+          # Force fresh deploy for mainnet canary releases
+          XGOV_REG_FRESH_DEPLOY: "true"
+          # Configure the contract on fresh deploy
+          XGOV_REG_CONFIGURE: "true"
+          # Production registry configuration for mainnet
+          XGOV_CFG_XGOV_FEE: ${{ vars.MAINNET_XGOV_FEE || '1_000_000_000'  }} # defaults: 1000 Algos (higher for mainnet)
+          XGOV_CFG_PROPOSER_FEE: ${{ vars.MAINNET_PROPOSER_FEE || '1_000_000_000'  }} # defaults: 1000 Algos
+          XGOV_CFG_OPEN_PROPOSAL_FEE: ${{ vars.MAINNET_OPEN_PROPOSAL_FEE || '1_000_000_000'  }} # defaults: 1000 Algos
+          XGOV_CFG_DAEMON_OPS_FUNDING_BPS: ${{ vars.MAINNET_DAEMON_OPS_FUNDING_BPS || '500'  }} # defaults: 5%
+          XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.MAINNET_PROPOSAL_COMMITMENT_BPS || '300'  }} # defaults: 3%
+          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MAINNET_MIN_REQUESTED_AMOUNT || '100_000_000'  }} # defaults: 100 Algos (higher for mainnet)
+          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAINNET_MAX_REQUESTED_AMOUNT || '500_000_000_000,2_500_000_000_000,5_000_000_000_000'  }} # defaults: 500K (S), 2.5M (M), 5M (L) Algos
+          XGOV_CFG_DISCUSSION_DURATION: ${{ vars.MAINNET_DISCUSSION_DURATION || '604_800,1_209_600,1_814_400,2_419_200'  }} # defaults: 7 (S), 14 (M), 21 (L), 28 (XL) days in seconds
+          XGOV_CFG_VOTING_DURATION: ${{ vars.MAINNET_VOTING_DURATION || '604_800,1_209_600,1_814_400,2_419_200'  }} # defaults: 7 (S), 14 (M), 21 (L), 28 (XL) days in seconds
+          XGOV_CFG_QUORUM: ${{ vars.MAINNET_QUORUM || '1_000,1_500,2_000'  }} # defaults: 10% (S), 15% (M), 20% (L)
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.MAINNET_WEIGHTED_QUORUM || '2_000,3_000,4_000'  }} # defaults: 20% (S), 30% (M), 40% (L)
+
+  notify-deployment:
+    runs-on: ubuntu-latest
+    needs: [create-stable-release, deploy-mainnet]
+    if: always()
+    steps:
+      - name: Notify successful deployment
+        if: needs.deploy-mainnet.result == 'success'
+        run: |
+          echo "✅ Successfully deployed xgov-beta-sc ${{ needs.create-stable-release.outputs.version }} to Algorand Mainnet"
+
+      - name: Notify failed deployment
+        if: needs.deploy-mainnet.result == 'failure'
+        run: |
+          echo "❌ Failed to deploy xgov-beta-sc ${{ needs.create-stable-release.outputs.version }} to Algorand Mainnet"
+          exit 1

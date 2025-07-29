@@ -1,0 +1,95 @@
+name: Set roles for xgov-beta-sc
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: "Network to set roles on (e.g., testnet, mainnet)"
+        required: true
+        default: "testnet"
+        type: string
+      xgov_manager:
+        description: "xgov_manager role address"
+        required: false
+        default: ""
+        type: string
+      payor:
+        description: "payor role address"
+        required: false
+        default: ""
+        type: string
+      xgov_council:
+        description: "xgov_council role address"
+        required: false
+        default: ""
+        type: string
+      xgov_subscriber:
+        description: "xgov_subscriber role address"
+        required: false
+        default: ""
+        type: string
+      kyc_provider:
+        description: "kyc_provider role address"
+        required: false
+        default: ""
+        type: string
+      committee_manager:
+        description: "committee_manager role address"
+        required: false
+        default: ""
+        type: string
+      xgov_daemon:
+        description: "xgov_daemon role address"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  set-roles:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "poetry"
+
+      - name: Install algokit
+        run: pipx install algokit
+
+      - name: Bootstrap dependencies
+        run: algokit project bootstrap all
+
+      - name: Configure git
+        shell: bash
+        run: |
+          # set git user and email as test invoke git
+          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
+
+      - name: Set roles
+        run: algokit project deploy ${{ github.event.inputs.network }}
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: set_roles
+          # This is the account that becomes the creator of the contract
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+          # Pinata API JWT to publish deployed App Spec on IPFS
+          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
+          # Roles to set
+          XGOV_REG_SET_ROLES_XGOV_MANAGER: ${{ github.event.inputs.xgov_manager }}
+          XGOV_REG_SET_ROLES_PAYOR: ${{ github.event.inputs.payor }}
+          XGOV_REG_SET_ROLES_XGOV_COUNCIL: ${{ github.event.inputs.xgov_council }}
+          XGOV_REG_SET_ROLES_XGOV_SUBSCRIBER: ${{ github.event.inputs.xgov_subscriber }}
+          XGOV_REG_SET_ROLES_KYC_PROVIDER: ${{ github.event.inputs.kyc_provider }}
+          XGOV_REG_SET_ROLES_COMMITTEE_MANAGER: ${{ github.event.inputs.committee_manager }}
+          XGOV_REG_SET_ROLES_XGOV_DAEMON: ${{ github.event.inputs.xgov_daemon }}
+
