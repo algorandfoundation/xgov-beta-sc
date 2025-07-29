@@ -65,7 +65,7 @@ on:
         type: string
 
 jobs:
-  set-roles:
+  configure-xgov-beta-sc-registry:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code

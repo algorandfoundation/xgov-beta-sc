@@ -121,12 +121,10 @@ jobs:
 
       - name: Create GitHub stable release
         if: steps.check-tag.outputs.exists == 'false'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.extract-version.outputs.tag }}
-          release_name: Release ${{ steps.extract-version.outputs.version }}
+          name: Release ${{ steps.extract-version.outputs.version }}
           body: |
             🚀 **Stable Release ${{ steps.extract-version.outputs.version }}**
 

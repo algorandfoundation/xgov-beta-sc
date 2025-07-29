@@ -88,12 +88,10 @@ jobs:
 
       - name: Create GitHub canary release
         if: steps.check-changes.outputs.should-deploy == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.create-tag.outputs.tag }}
-          release_name: Canary Release ${{ steps.create-tag.outputs.tag }}
+          name: Canary Release ${{ steps.create-tag.outputs.tag }}
           body: |
             🚀 **Canary Release ${{ steps.create-tag.outputs.tag }}**
 

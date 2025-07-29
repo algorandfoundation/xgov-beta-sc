@@ -357,4 +357,6 @@ def deploy() -> None:
     elif command == "configure_xgov_registry":
         _configure_xgov_registry()
     else:
-        logger.error(f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry")
+        logger.error(
+            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry"
+        )
