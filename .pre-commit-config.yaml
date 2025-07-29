@@ -35,6 +35,21 @@ repos:
         minimum_pre_commit_version: '2.9.2'
         files: '^(smart_contracts|tests)/'
 
+  # Security and Infrastructure as Code scanning
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.2.457
+    hooks:
+      - id: checkov
+        name: checkov
+        description: "Checkov: Static analysis for infrastructure as code"
+        entry: checkov
+        language: python
+        args: [--framework, dockerfile, --framework, github_actions, --framework, yaml]
+        types_or: [yaml, dockerfile]
+        files: '^(\\.github/workflows/.*\\.ya?ml|Dockerfile.*|docker-compose.*\\.ya?ml)$'
+        require_serial: false
+        additional_dependencies: []
+
 #      # Uncomment to enable TEAL static analysis using Tealer package
 #      - id: tealer
 #        name: tealer
