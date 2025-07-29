@@ -70,9 +70,11 @@ jobs:
             return 2  # ver1 == ver2
           }
 
-          if version_compare "$RELEASE_VERSION" "$CURRENT_VERSION"; then
+          version_compare "$RELEASE_VERSION" "$CURRENT_VERSION"
+          COMPARE_RESULT=$?
+          if [[ $COMPARE_RESULT -eq 0 ]]; then
             echo "✅ Release version $RELEASE_VERSION is newer than current version $CURRENT_VERSION"
-          elif [[ $? -eq 2 ]]; then
+          elif [[ $COMPARE_RESULT -eq 2 ]]; then
             echo "✅ Release version $RELEASE_VERSION matches current version $CURRENT_VERSION"
           else
             echo "❌ Release version $RELEASE_VERSION is older than current version $CURRENT_VERSION"

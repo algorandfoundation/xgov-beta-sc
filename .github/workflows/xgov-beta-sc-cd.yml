@@ -45,7 +45,7 @@ jobs:
           PREVIOUS_COMMIT=$(git rev-parse HEAD~1)
 
           # Check if there are changes to *.teal files in specific directories
-          if git diff --name-only $PREVIOUS_COMMIT HEAD | grep -E "^smart_contracts/artifacts/(proposal|xgov_registry)/.*\.teal$"; then
+          if git diff --name-only "$PREVIOUS_COMMIT" HEAD | grep -E "^smart_contracts/artifacts/(proposal|xgov_registry)/.*\.teal$"; then
             echo "should-deploy=true" >> $GITHUB_OUTPUT
             echo "Found changes to *.teal files in proposal or xgov_registry directories"
           else

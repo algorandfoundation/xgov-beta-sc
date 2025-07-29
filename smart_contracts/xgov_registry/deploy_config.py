@@ -197,7 +197,12 @@ def _set_roles() -> None:
     if xgov_daemon := os.environ.get("XGOV_REG_SET_ROLES_XGOV_DAEMON"):
         roles_group.set_xgov_daemon(args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon))
 
-    roles_group.send()
+    try:
+        roles_group.send()
+        logger.info("Roles successfully set using roles_group.send()")
+    except Exception as e:
+        logger.error(f"Failed to set roles using roles_group.send(): {e}")
+        raise
 
 
 def _configure_xgov_registry() -> None:
@@ -357,6 +362,6 @@ def deploy() -> None:
     elif command == "configure_xgov_registry":
         _configure_xgov_registry()
     else:
-        logger.error(
+        raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry"
         )
