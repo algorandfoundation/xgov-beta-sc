@@ -345,12 +345,18 @@ def _configure_xgov_registry() -> None:
             weighted_quorums[2],
         ),
     )
+
     logger.info(f"Configuring xGov registry with: {config}")
-    app_client.send.config_xgov_registry(
-        args=ConfigXgovRegistryArgs(
-            config=config,
+    try:
+        app_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=config,
+            )
         )
-    )
+        logger.info("xGov registry configured successfully")
+    except Exception as e:
+        logger.error(f"Failed to configure xGov registry: {e}")
+        raise
 
 
 def deploy() -> None:
