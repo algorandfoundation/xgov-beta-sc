@@ -111,9 +111,9 @@ jobs:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy
           # This is the account that becomes the creator of the contract
-          DEPLOYER_MNEMONIC: ${{ secrets.MAINNET_DEPLOYER_MNEMONIC }}
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account is used to ensure the deployer account is funded
-          DISPENSER_MNEMONIC: ${{ secrets.MAINNET_DISPENSER_MNEMONIC }}
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # Pinata API JWT to publish deployed App Spec on IPFS
           ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
           # Force fresh deploy for mainnet canary releases
