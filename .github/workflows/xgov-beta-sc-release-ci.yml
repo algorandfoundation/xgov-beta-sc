@@ -6,7 +6,8 @@ on:
     branches:
       - release
 
-validate-release-pr:
+jobs:
+  validate-release-pr:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
