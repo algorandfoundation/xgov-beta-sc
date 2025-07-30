@@ -105,5 +105,3 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy
-          # Pinata API JWT to publish deployed App Spec on IPFS
-          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}

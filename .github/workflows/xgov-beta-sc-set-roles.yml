@@ -64,8 +64,6 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
-          # Pinata API JWT to publish deployed App Spec on IPFS
-          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
           # Roles to set
           XGOV_REG_SET_ROLES_XGOV_MANAGER: ${{ github.event.inputs.xgov_manager }}
           XGOV_REG_SET_ROLES_PAYOR: ${{ github.event.inputs.payor }}

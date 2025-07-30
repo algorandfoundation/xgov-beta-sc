@@ -96,8 +96,6 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
-          # Pinata API JWT to publish deployed App Spec on IPFS
-          ALGOKIT_PINATA_JWT: ${{ secrets.ALGOKIT_PINATA_JWT }}
           # Force fresh deploy for mainnet canary releases
           XGOV_REG_FRESH_DEPLOY: "true"
           # Configure the contract on fresh deploy
