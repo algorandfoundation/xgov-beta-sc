@@ -1,0 +1,85 @@
+name: Configure xgov-beta-sc Registry
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: "Network to configure registry on (e.g., testnet, mainnet)"
+        required: true
+        default: "testnet"
+        type: string
+      config_json:
+        description: |
+          Configuration as JSON. Example:
+          {
+            "max_requested_amount": "10_000_000,20_000_000,30_000_000",
+            "discussion_duration": "60,60,60,60",
+            "voting_duration": "3600,3600,3600,3600",
+            "quorum": "500,1000,2000",
+            "weighted_quorum": "500,1000,2000",
+            "xgov_fee": "1_000_000",
+            "proposer_fee": "1_000_000",
+            "open_proposal_fee": "100_000_000",
+            "daemon_ops_funding_bps": "500",
+            "proposal_commitment_bps": "300",
+            "min_requested_amount": "1_000_000"
+          }
+        required: true
+        default: "{}"
+        type: string
+
+jobs:
+  configure-xgov-beta-sc-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Parse configuration
+        id: parse-config
+        run: |
+          # Parse JSON input or use empty object if not provided
+          CONFIG='${{ github.event.inputs.config_json }}'
+          if [ -z "$CONFIG" ] || [ "$CONFIG" = "{}" ]; then
+            echo "No configuration provided, using defaults"
+            CONFIG="{}"
+          fi
+
+          # Extract values with jq, fallback to empty string if not found
+          echo "max_requested_amount=$(echo "$CONFIG" | jq -r '.max_requested_amount // ""')" >> $GITHUB_OUTPUT
+          echo "discussion_duration=$(echo "$CONFIG" | jq -r '.discussion_duration // ""')" >> $GITHUB_OUTPUT
+          echo "voting_duration=$(echo "$CONFIG" | jq -r '.voting_duration // ""')" >> $GITHUB_OUTPUT
+          echo "quorum=$(echo "$CONFIG" | jq -r '.quorum // ""')" >> $GITHUB_OUTPUT
+          echo "weighted_quorum=$(echo "$CONFIG" | jq -r '.weighted_quorum // ""')" >> $GITHUB_OUTPUT
+          echo "xgov_fee=$(echo "$CONFIG" | jq -r '.xgov_fee // ""')" >> $GITHUB_OUTPUT
+          echo "proposer_fee=$(echo "$CONFIG" | jq -r '.proposer_fee // ""')" >> $GITHUB_OUTPUT
+          echo "open_proposal_fee=$(echo "$CONFIG" | jq -r '.open_proposal_fee // ""')" >> $GITHUB_OUTPUT
+          echo "daemon_ops_funding_bps=$(echo "$CONFIG" | jq -r '.daemon_ops_funding_bps // ""')" >> $GITHUB_OUTPUT
+          echo "proposal_commitment_bps=$(echo "$CONFIG" | jq -r '.proposal_commitment_bps // ""')" >> $GITHUB_OUTPUT
+          echo "min_requested_amount=$(echo "$CONFIG" | jq -r '.min_requested_amount // ""')" >> $GITHUB_OUTPUT
+
+      - name: Configure xgov-beta-sc registry
+        run: algokit project deploy ${{ github.event.inputs.network }}
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: configure_xgov_registry
+          # This is the account that becomes the creator of the contract
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+          # Environment variables for xgov-beta-sc configuration
+          XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ steps.parse-config.outputs.max_requested_amount }}
+          XGOV_CFG_DISCUSSION_DURATION: ${{ steps.parse-config.outputs.discussion_duration }}
+          XGOV_CFG_VOTING_DURATION: ${{ steps.parse-config.outputs.voting_duration }}
+          XGOV_CFG_QUORUM: ${{ steps.parse-config.outputs.quorum }}
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ steps.parse-config.outputs.weighted_quorum }}
+          XGOV_CFG_XGOV_FEE: ${{ steps.parse-config.outputs.xgov_fee }}
+          XGOV_CFG_PROPOSER_FEE: ${{ steps.parse-config.outputs.proposer_fee }}
+          XGOV_CFG_OPEN_PROPOSAL_FEE: ${{ steps.parse-config.outputs.open_proposal_fee }}
+          XGOV_CFG_DAEMON_OPS_FUNDING_BPS: ${{ steps.parse-config.outputs.daemon_ops_funding_bps }}
+          XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ steps.parse-config.outputs.proposal_commitment_bps }}
+          XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ steps.parse-config.outputs.min_requested_amount }}
