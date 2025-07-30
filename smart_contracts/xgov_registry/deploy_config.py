@@ -47,12 +47,15 @@ def _deploy_xgov_registry() -> None:
             "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
         }
 
+    version = os.environ.get("XGOV_REGISTRY_VERSION", None)
+
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer.address,
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
+        version=version,
     )
 
     create_params = XGovRegistryFactoryCreateParams(factory.app_factory).create(

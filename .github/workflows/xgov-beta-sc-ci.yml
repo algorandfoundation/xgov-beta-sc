@@ -8,65 +8,78 @@ on:
     - cron: "0 0 1 * *" # Run once a month at midnight on the 1st of the month
 
 jobs:
-  validate-version:
+  validate-release-pr:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/v')
+    if: github.event_name == 'pull_request' && github.head_ref == 'release'
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Validate release version
+      - name: Validate release PR changes
         run: |
-          BRANCH_NAME="${{ github.head_ref }}"
-          RELEASE_VERSION=${BRANCH_NAME#release/v}
-          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "Validating that PR from release branch only changes pyproject.toml version..."
 
-          echo "Release version from branch: $RELEASE_VERSION"
-          echo "Current version in pyproject.toml: $CURRENT_VERSION"
+          # Get the base branch (should be main)
+          BASE_BRANCH="${{ github.base_ref }}"
+          echo "Base branch: $BASE_BRANCH"
 
-          # Function to compare semantic versions
-          version_compare() {
-            local ver1=$1
-            local ver2=$2
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/$BASE_BRANCH...HEAD)
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
 
-            # Split versions into arrays
-            IFS='.' read -ra VER1 <<< "$ver1"
-            IFS='.' read -ra VER2 <<< "$ver2"
-
-            # Compare major, minor, patch
-            for i in {0..2}; do
-              local v1=${VER1[i]:-0}
-              local v2=${VER2[i]:-0}
-
-              if [[ $v1 -gt $v2 ]]; then
-                return 0  # ver1 > ver2
-              elif [[ $v1 -lt $v2 ]]; then
-                return 1  # ver1 < ver2
-              fi
-            done
-
-            return 2  # ver1 == ver2
-          }
-
-          version_compare "$RELEASE_VERSION" "$CURRENT_VERSION"
-          COMPARE_RESULT=$?
-          if [[ $COMPARE_RESULT -eq 0 ]]; then
-            echo "✅ Release version $RELEASE_VERSION is newer than current version $CURRENT_VERSION"
-          elif [[ $COMPARE_RESULT -eq 2 ]]; then
-            echo "✅ Release version $RELEASE_VERSION matches current version $CURRENT_VERSION"
+          # Check if only pyproject.toml was changed
+          if [[ "$CHANGED_FILES" == "pyproject.toml" ]]; then
+            echo "✅ Only pyproject.toml was changed"
           else
-            echo "❌ Release version $RELEASE_VERSION is older than current version $CURRENT_VERSION"
-            echo "Cannot release an older version. Please update the release branch name to use a newer version."
+            echo "❌ Release PR contains changes to files other than pyproject.toml"
+            echo "Release PRs should only update the version in pyproject.toml"
             exit 1
           fi
 
-          # Check if tag already exists
-          if git ls-remote --tags origin | grep -q "refs/tags/v$RELEASE_VERSION$"; then
-            echo "❌ Tag v$RELEASE_VERSION already exists"
-            echo "Cannot release a version that has already been released."
-            exit 1
+          # Validate that only the version line changed in pyproject.toml
+          VERSION_DIFF=$(git diff origin/$BASE_BRANCH...HEAD -- pyproject.toml | grep "^[+-]" | grep -v "^[+-]\{3\}")
+          echo "Changes in pyproject.toml:"
+          echo "$VERSION_DIFF"
+
+          # Count the number of changed lines (should be 2: one removal, one addition)
+          CHANGE_COUNT=$(echo "$VERSION_DIFF" | wc -l)
+          if [[ $CHANGE_COUNT -eq 2 ]]; then
+            # Check if changes are version-related
+            if echo "$VERSION_DIFF" | grep -q '^-version = ' && echo "$VERSION_DIFF" | grep -q '^+version = '; then
+              echo "✅ Only version line was changed in pyproject.toml"
+
+              # Extract and validate new version format
+              NEW_VERSION=$(echo "$VERSION_DIFF" | grep '^+version = ' | sed 's/+version = "\(.*\)"/\1/')
+              echo "New version: $NEW_VERSION"
+
+              # Validate semantic version format
+              if [[ $NEW_VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                echo "✅ New version follows semantic versioning format"
+
+                # Check if tag already exists
+                if git ls-remote --tags origin | grep -q "refs/tags/v$NEW_VERSION$"; then
+                  echo "❌ Tag v$NEW_VERSION already exists"
+                  echo "Cannot release a version that has already been released."
+                  echo "Please update the version in pyproject.toml to a new version."
+                  exit 1
+                else
+                  echo "✅ Tag v$NEW_VERSION does not exist, version is available for release"
+                fi
+              else
+                echo "❌ New version does not follow semantic versioning format (X.Y.Z)"
+                exit 1
+              fi
+            else
+              echo "❌ Changes in pyproject.toml are not version-related"
+              exit 1
+            fi
           else
-            echo "✅ Tag v$RELEASE_VERSION does not exist, version is available for release"
+            echo "❌ More than just the version line was changed in pyproject.toml"
+            echo "Expected exactly 2 lines changed (one removal, one addition of version line)"
+            exit 1
           fi
 
   validate:
