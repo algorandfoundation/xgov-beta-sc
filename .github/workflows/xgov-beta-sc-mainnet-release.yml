@@ -1,19 +1,22 @@
 name: Mainnet Stable Release xgov-beta-sc
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
-      - "release/v*.*.*"
+      - main
 
 jobs:
   validate:
     name: Validate xgov-beta-sc
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/v')
     uses: ./.github/workflows/xgov-beta-sc-ci.yml
     secrets: inherit
 
   create-stable-release:
     runs-on: ubuntu-latest
     needs: validate
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/v')
     outputs:
       tag: ${{ steps.extract-version.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
@@ -30,99 +33,30 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Extract version from branch name
+      - name: Extract version from merged release branch
         id: extract-version
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${{ github.head_ref }}"
           VERSION=${BRANCH_NAME#release/v}
+          echo "Extracted version from merged branch $BRANCH_NAME: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Validate release version
-        run: |
-          RELEASE_VERSION="${{ steps.extract-version.outputs.version }}"
-          CURRENT_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
-
-          echo "Release version: $RELEASE_VERSION"
-          echo "Current version in pyproject.toml: $CURRENT_VERSION"
-
-          # Function to compare semantic versions
-          version_compare() {
-            local ver1=$1
-            local ver2=$2
-            
-            # Split versions into arrays
-            IFS='.' read -ra VER1 <<< "$ver1"
-            IFS='.' read -ra VER2 <<< "$ver2"
-            
-            # Compare major, minor, patch
-            for i in {0..2}; do
-              local v1=${VER1[i]:-0}
-              local v2=${VER2[i]:-0}
-              
-              if [[ $v1 -gt $v2 ]]; then
-                return 0  # ver1 > ver2
-              elif [[ $v1 -lt $v2 ]]; then
-                return 1  # ver1 < ver2
-              fi
-            done
-            
-            return 2  # ver1 == ver2
-          }
-
-          version_compare "$RELEASE_VERSION" "$CURRENT_VERSION"
-          COMPARE_RESULT=$?
-          if [[ $COMPARE_RESULT -eq 0 ]]; then
-            echo "✅ Release version $RELEASE_VERSION is newer than current version $CURRENT_VERSION"
-          elif [[ $COMPARE_RESULT -eq 2 ]]; then
-            echo "✅ Release version $RELEASE_VERSION matches current version $CURRENT_VERSION"
-          else
-            echo "❌ Release version $RELEASE_VERSION is older than current version $CURRENT_VERSION"
-            echo "Cannot release an older version. Please update the release branch name to use a newer version."
-            exit 1
-          fi
-
-      - name: Check if tag exists
-        id: check-tag
-        run: |
-          if git rev-parse --verify --quiet "refs/tags/${{ steps.extract-version.outputs.tag }}"; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Update pyproject.toml version
-        if: steps.check-tag.outputs.exists == 'false'
         run: |
           sed -i 's/^version = ".*"/version = "${{ steps.extract-version.outputs.version }}"/' pyproject.toml
           git config --global user.email "actions@github.com"
           git config --global user.name "github-actions"
           git add pyproject.toml
-          git commit -m "chore: bump version to ${{ steps.extract-version.outputs.version }}"
-          git push origin ${{ github.ref_name }}
+          git commit -m "chore: bump version to ${{ steps.extract-version.outputs.version }} [skip-canary]"
+          git push origin main
 
       - name: Create stable release tag
-        if: steps.check-tag.outputs.exists == 'false'
         run: |
           git tag -a "${{ steps.extract-version.outputs.tag }}" -m "Stable Release ${{ steps.extract-version.outputs.version }}"
           git push origin "${{ steps.extract-version.outputs.tag }}"
 
-      - name: Merge release branch back to main
-        if: steps.check-tag.outputs.exists == 'false'
-        run: |
-          # Switch to main branch
-          git fetch origin main
-          git checkout main
-          git pull origin main
-
-          # Merge the release branch into main
-          git merge --no-ff origin/${{ github.ref_name }} -m "chore: merge ${{ steps.extract-version.outputs.tag }} back to main [skip-canary]"
-
-          # Push the merge to main
-          git push origin main
-
       - name: Create GitHub stable release
-        if: steps.check-tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.extract-version.outputs.tag }}
