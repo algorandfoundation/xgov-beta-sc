@@ -3,6 +3,7 @@ import os
 import random
 
 from algokit_utils import (
+    AlgoAmount,
     AlgorandClient,
     AppClientCompilationParams,
     CommonAppCallCreateParams,
@@ -11,6 +12,8 @@ from algokit_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+dispenser_min_spending = AlgoAmount.from_algo(3)
 
 
 def _deploy_xgov_registry() -> None:
@@ -31,6 +34,9 @@ def _deploy_xgov_registry() -> None:
 
     algorand_client = AlgorandClient.from_environment()
     deployer = algorand_client.account.from_environment("DEPLOYER")
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer.address, min_spending_balance=dispenser_min_spending
+    )
 
     template_values = {"entropy": b""}
 
@@ -165,6 +171,9 @@ def _set_roles() -> None:
 
     algorand_client = AlgorandClient.from_environment()
     deployer = algorand_client.account.from_environment("DEPLOYER")
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer.address, min_spending_balance=dispenser_min_spending
+    )
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
@@ -215,6 +224,9 @@ def _configure_xgov_registry() -> None:
 
     algorand_client = AlgorandClient.from_environment()
     deployer = algorand_client.account.from_environment("DEPLOYER")
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer.address, min_spending_balance=dispenser_min_spending
+    )
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
