@@ -75,29 +75,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Install poetry
-        run: pipx install poetry
-
-      - name: Set up Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "poetry"
-
-      - name: Install algokit
-        run: pipx install algokit
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
 
       - name: Start LocalNet
         run: algokit localnet start
-
-      - name: Bootstrap dependencies
-        run: algokit project bootstrap all
-
-      - name: Configure git
-        shell: bash
-        run: |
-          # set git user and email as test invoke git
-          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
 
       - name: Audit python dependencies
         run: algokit project run audit
