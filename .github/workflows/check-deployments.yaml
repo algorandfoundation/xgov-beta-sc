@@ -1,0 +1,44 @@
+name: Check xGov deployments on release merge
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-deployments:
+    if: startsWith(github.head_ref, 'release')
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: read
+      contents: read
+
+    steps:
+      - name: Check deployments to environments
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Checking deployment status..."
+
+          check_env() {
+            local ENV_NAME=$1
+            DEPLOYMENTS=$(gh api repos/${REPO}/deployments -q "[?environment=='${ENV_NAME}'] | sort_by(&created_at) | reverse | .[:5]")
+
+            DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq '.[0].id')
+            if [ -z "$DEPLOYMENT_ID" ]; then
+              echo "❌ No deployment found for $ENV_NAME"
+              exit 1
+            fi
+
+            STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses -q "sort_by(&created_at) | reverse | .[0].state")
+            if [ "$STATUS" != "success" ]; then
+              echo "❌ Latest deployment to $ENV_NAME is not successful: $STATUS"
+              exit 1
+            fi
+
+            echo "✅ $ENV_NAME deployment OK"
+          }
+
+          check_env "contract-testnet"
+          check_env "github-pages"
