@@ -23,20 +23,33 @@ jobs:
 
           check_env() {
             local ENV_NAME=$1
-            DEPLOYMENTS=$(gh api repos/${REPO}/deployments -q "[?environment=='${ENV_NAME}'] | sort_by(&created_at) | reverse | .[:5]")
-
-            DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq '.[0].id')
-            if [ -z "$DEPLOYMENT_ID" ]; then
+          
+            # Fetch the latest 10 deployments
+            DEPLOYMENTS=$(gh api repos/${REPO}/deployments --jq '.')
+          
+            DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq --arg env "$ENV_NAME" '
+              map(select(.environment == $env)) 
+              | sort_by(.created_at) 
+              | reverse 
+              | .[0].id
+            ')
+          
+            if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
               echo "❌ No deployment found for $ENV_NAME"
               exit 1
             fi
-
-            STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses -q "sort_by(&created_at) | reverse | .[0].state")
+          
+            STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses --jq '
+              sort_by(.created_at) 
+              | reverse 
+              | .[0].state
+            ')
+          
             if [ "$STATUS" != "success" ]; then
               echo "❌ Latest deployment to $ENV_NAME is not successful: $STATUS"
               exit 1
             fi
-
+          
             echo "✅ $ENV_NAME deployment OK"
           }
 
