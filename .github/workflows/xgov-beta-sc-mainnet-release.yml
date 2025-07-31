@@ -111,6 +111,8 @@ jobs:
           XGOV_REG_FRESH_DEPLOY: "false"
           # Configure the contract on fresh deploy
           XGOV_REG_CONFIGURE: "false"
+          # Should the contract be configured with roles?
+          XGOV_REG_SET_ROLES: "false"
           # Version of the xgov-beta-sc registry to deploy
           XGOV_REGISTRY_VERSION: ${{ needs.create-stable-release.outputs.version }}
           # Production registry configuration for mainnet
