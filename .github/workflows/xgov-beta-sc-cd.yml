@@ -147,7 +147,7 @@ jobs:
           # Should the contract be configured?
           XGOV_REG_CONFIGURE: ${{ github.event.inputs.xgov-reg-configure || 'false' }}
           # Should the contract be configured with roles?
-          XGOV_REG_SET_ROLES: ${{ vars.XGOV_REG_SET_ROLES || 'true' }} # defaults to true, set to false if you want to skip setting roles
+          XGOV_REG_SET_ROLES: ${{ github.event.inputs.xgov-reg-set-roles || vars.XGOV_REG_SET_ROLES || 'true' }} # defaults to true, set to false if you want to skip setting roles
           # Registry configuration
           XGOV_CFG_XGOV_FEE: ${{ vars.XGOV_FEE || '1_000_000' }} # defaults: 1 ALGO in microALGO
           XGOV_CFG_PROPOSER_FEE: ${{ vars.PROPOSER_FEE || '1_000_000' }} # defaults: 1 ALGO in microALGO
