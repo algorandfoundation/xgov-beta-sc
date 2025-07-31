@@ -87,21 +87,30 @@ def _deploy_xgov_registry() -> None:
         ),
     )
 
-    test_admin = os.environ["TEST_ADMIN"]
-    test_xgov_daemon = os.environ["TEST_XGOV_DAEMON"]
-    logger.info(f"Setting administrative roles to {test_admin}")
-    admin_roles = app_client.new_group()
-    admin_roles.set_committee_manager(
-        args=SetCommitteeManagerArgs(
-            manager=test_admin,
+    should_set_roles = os.environ.get("XGOV_REG_SET_ROLES", "false").lower() == "true"
+    if should_set_roles:
+        test_admin = os.environ["TEST_ADMIN"]
+        test_xgov_daemon = os.environ["TEST_XGOV_DAEMON"]
+        logger.info(f"Setting administrative roles to {test_admin}")
+        admin_roles = app_client.new_group()
+        admin_roles.set_committee_manager(
+            args=SetCommitteeManagerArgs(
+                manager=test_admin,
+            )
         )
-    )
-    admin_roles.set_xgov_daemon(args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon))
-    admin_roles.set_xgov_council(args=SetXgovCouncilArgs(council=test_admin))
-    admin_roles.set_xgov_subscriber(args=SetXgovSubscriberArgs(subscriber=test_admin))
-    admin_roles.set_payor(args=SetPayorArgs(payor=test_admin))
-    admin_roles.set_kyc_provider(args=SetKycProviderArgs(provider=test_admin))
-    admin_roles.send()
+        admin_roles.set_xgov_daemon(
+            args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon)
+        )
+        admin_roles.set_xgov_council(args=SetXgovCouncilArgs(council=test_admin))
+        admin_roles.set_xgov_subscriber(
+            args=SetXgovSubscriberArgs(subscriber=test_admin)
+        )
+        admin_roles.set_payor(args=SetPayorArgs(payor=test_admin))
+        admin_roles.set_kyc_provider(args=SetKycProviderArgs(provider=test_admin))
+        admin_roles.send()
+
+    else:
+        logger.info("Skipping setting roles as requested")
 
     should_configure = os.environ.get("XGOV_REG_CONFIGURE", "false").lower() == "true"
     if should_configure:

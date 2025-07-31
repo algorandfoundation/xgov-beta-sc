@@ -26,16 +26,11 @@ jobs:
             echo "❌ Not a release branch: $BRANCH_NAME"
             echo "Expected branch name: release"
             echo "is-release-branch=false" >> $GITHUB_OUTPUT
-          fi  validate:
-    name: Validate xgov-beta-sc
-    needs: validate-release-branch
-    if: needs.validate-release-branch.outputs.is-release-branch == 'true'
-    uses: ./.github/workflows/xgov-beta-sc-ci.yml
-    secrets: inherit
+          fi
 
   create-stable-release:
     runs-on: ubuntu-latest
-    needs: [validate-release-branch, validate]
+    needs: [validate-release-branch]
     if: needs.validate-release-branch.outputs.is-release-branch == 'true'
     outputs:
       tag: ${{ steps.extract-version.outputs.tag }}
@@ -89,7 +84,7 @@ jobs:
 
   deploy-mainnet:
     runs-on: "ubuntu-latest"
-    needs: [validate, create-stable-release]
+    needs: [create-stable-release]
     environment: contract-mainnet
     steps:
       - name: Checkout source code
@@ -107,24 +102,14 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
-          # Force fresh deploy for mainnet canary releases
+          # Do not perform a fresh deploy
           XGOV_REG_FRESH_DEPLOY: "false"
-          # Configure the contract on fresh deploy
+          # Do not configure the contract
           XGOV_REG_CONFIGURE: "false"
+          # Should the contract be configured with roles?
+          XGOV_REG_SET_ROLES: "false"
           # Version of the xgov-beta-sc registry to deploy
           XGOV_REGISTRY_VERSION: ${{ needs.create-stable-release.outputs.version }}
-          # Production registry configuration for mainnet
-          # XGOV_CFG_XGOV_FEE: ${{ vars.MAINNET_XGOV_FEE || '1_000_000' }} # defaults: 1 Algo
-          # XGOV_CFG_PROPOSER_FEE: ${{ vars.MAINNET_PROPOSER_FEE || '100_000_000' }} # defaults: 100 Algos
-          # XGOV_CFG_OPEN_PROPOSAL_FEE: ${{ vars.MAINNET_OPEN_PROPOSAL_FEE || '100_000_000' }} # defaults: 100 Algos
-          # XGOV_CFG_DAEMON_OPS_FUNDING_BPS: ${{ vars.MAINNET_DAEMON_OPS_FUNDING_BPS || '500' }} # defaults: 5%
-          # XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ vars.MAINNET_PROPOSAL_COMMITMENT_BPS || '300' }} # defaults: 3%
-          # XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ vars.MAINNET_MIN_REQUESTED_AMOUNT || '2_500_000_000' }} # defaults: 2,500 Algos
-          # XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAINNET_MAX_REQUESTED_AMOUNT || '25_000_000_000,100_000_000_000,200_000_000_000' }} # defaults: 25K (S), 100K (M), 200K (L) Algos
-          # XGOV_CFG_DISCUSSION_DURATION: ${{ vars.MAINNET_DISCUSSION_DURATION || '1_814_400,1_814_400,1_814_400,1_814_400' }} # defaults: 3 (S), 3 (M), 3 (L), 3 (XL) weeks in seconds
-          # XGOV_CFG_VOTING_DURATION: ${{ vars.MAINNET_VOTING_DURATION || '604_800,604_800,1_209_600,1_209_600' }} # defaults: 1 (S), 1 (M), 2 (L), 2 (XL) weeks in seconds
-          # XGOV_CFG_QUORUM: ${{ vars.MAINNET_QUORUM || '3_000,5_000,7_000' }} # defaults: 30% (S), 50% (M), 70% (L)
-          # XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.MAINNET_WEIGHTED_QUORUM || '5_000,6_000,7_000' }} # defaults: 50% (S), 60% (M), 70% (L)
 
   notify-deployment:
     runs-on: ubuntu-latest
