@@ -7,31 +7,9 @@ on:
       - main
 
 jobs:
-  validate-release-branch:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
-    outputs:
-      is-release-branch: ${{ steps.check-branch.outputs.is-release-branch }}
-    steps:
-      - name: Validate release branch
-        id: check-branch
-        run: |
-          BRANCH_NAME="${{ github.head_ref }}"
-          echo "Checking branch name: $BRANCH_NAME"
-
-          if [[ $BRANCH_NAME == "release" ]]; then
-            echo "✅ Valid release branch: $BRANCH_NAME"
-            echo "is-release-branch=true" >> $GITHUB_OUTPUT
-          else
-            echo "❌ Not a release branch: $BRANCH_NAME"
-            echo "Expected branch name: release"
-            echo "is-release-branch=false" >> $GITHUB_OUTPUT
-          fi
-
   create-stable-release:
     runs-on: ubuntu-latest
-    needs: [validate-release-branch]
-    if: needs.validate-release-branch.outputs.is-release-branch == 'true'
+    if: github.head_ref == 'release'
     outputs:
       tag: ${{ steps.extract-version.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
