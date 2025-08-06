@@ -24,7 +24,7 @@ The xGov Architecture consists of the following components:
 | [Proposal Escrow](./specs/proposal.md#escrow)                           | Algorand Application Account    |
 | [Proposal Voters](./specs/proposal-submission.md#submission)            | Boxes                           |
 
-![xGov Architecture](../_images/architecture.svg "xGov Architecture Overview")
+![xGov Architecture](./_images/architecture.svg "xGov Architecture Overview")
 
 The _on-chain_ components are used for:
 
