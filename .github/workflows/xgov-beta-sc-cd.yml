@@ -39,7 +39,7 @@ jobs:
       version: ${{ steps.extract-version.outputs.version }}
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
     steps:
-      - uses: actions/create-github-app-token@v1
+      - uses: actions/create-github-app-token@v2
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}

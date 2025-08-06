@@ -1,6 +1,6 @@
 # xGov Beta Architecture
 
-Documentation: <https://tbd/>
+Documentation: [https://algorandfoundation.github.io/xgov-beta-sc](https://algorandfoundation.github.io/xgov-beta-sc/)
 
 ## Deployments
 
