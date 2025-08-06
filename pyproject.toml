@@ -7,7 +7,7 @@ authors = ["Algorand Foundation <contact@algorand.foundation>"]
 readme = "README.md"
 homepage = "https://xgov.algorand.co/"
 repository = "https://https://github.com/algorandfoundation/xgov-beta-sc"
-documentation = "https://.../"
+documentation = "https://algorandfoundation.github.io/xgov-beta-sc/"
 
 [tool.poetry.dependencies]
 python = "^3.12"
