@@ -4,10 +4,10 @@ Documentation: <https://tbd/>
 
 ## Deployments
 
-| Network  |                 xGov Registry                 |
-|:---------|:---------------------------------------------:|
-| Main Net |     [TBD](https://lora.algokit.io/app-id)     |
-| Test Net | [TBD](https://lora.algokit.io/testnet/app-id) |
+| Network  |                            xGov Registry                             |
+|:---------|:--------------------------------------------------------------------:|
+| Main Net | [3147789458](https://lora.algokit.io/mainnet/application/3147789458) |
+| Test Net |  [742949200](https://lora.algokit.io/testnet/application/742949200)  |
 
 | App Spec      | Link                                                                                                                                    |
 |:--------------|:----------------------------------------------------------------------------------------------------------------------------------------|
