@@ -25,13 +25,14 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - uses: actions/create-github-app-token@v2
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}
           private-key: ${{ secrets.BOT_SK }}
-          
+
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
@@ -42,7 +43,11 @@ jobs:
         with:
           mdbook-version: '0.4.43'
 
-      - name: Build docs
+      - name: Install mdBook Mermaid plugin
+        shell: bash
+        run: cargo install mdbook-mermaid && mdbook-mermaid install .
+
+      - name: Build mdBook
         run: mdbook build
 
       - name: Setup Pages
