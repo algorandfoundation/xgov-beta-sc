@@ -18,6 +18,7 @@ git-repository-url = "https://github.com/algorandfoundation/xgov-beta-sc"
 git-repository-icon = "fa-github"
 edit-url-template = "https://github.com/algorandfoundation/xgov-beta-sc/edit/main/{path}"
 site-url = "https://xgov.algorand.co/"
+additional-js = ["mermaid.min.js", "mermaid-init.js"]
 
 [output.html.fold]
 enable = true
