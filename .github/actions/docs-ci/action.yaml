@@ -8,17 +8,13 @@ runs:
       with:
         mdbook-version: '0.4.43'
 
-    - name: Install Dependencies
+    - name: Test docs
       shell: bash
-      run: cargo install mdbook-mermaid && mdbook-mermaid install .
+      run: mdbook test
 
     - name: Build docs
       shell: bash
       run: mdbook build
-
-    - name: Test docs
-      shell: bash
-      run: mdbook test
 
     - name: Check markdown linting
       uses: DavidAnson/markdownlint-cli2-action@v20
