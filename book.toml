@@ -6,6 +6,9 @@ multilingual = false
 language = "en"
 src = "docs"
 
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
+
 [output.html]
 default-theme = "light"
 preferred-dark-theme = "navy"
