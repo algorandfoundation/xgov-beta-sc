@@ -2,23 +2,28 @@ name: Docs CI action
 description: 'Lint docs, build and test mdBook'
 runs:
   using: "composite"
+
   steps:
-    - name: Setup mdBook
-      uses: peaceiris/actions-mdbook@v2
-      with:
-        mdbook-version: '0.4.43'
-
-    - name: Test docs
-      shell: bash
-      run: mdbook test
-
-    - name: Build docs
-      shell: bash
-      run: mdbook build
-
-    - name: Check markdown linting
+    - name: Check Markdown linting
       uses: DavidAnson/markdownlint-cli2-action@v20
       with:
         globs: |
           README.md
           docs/*.md
+
+    - name: Setup mdBook
+      uses: peaceiris/actions-mdbook@v2
+      with:
+        mdbook-version: '0.4.43'
+
+    - name: Test mdBook
+      shell: bash
+      run: mdbook test
+
+    - name: Install mdBook Mermaid plugin
+      shell: bash
+      run: cargo install mdbook-mermaid && mdbook-mermaid install .
+
+    - name: Build mdBook
+      shell: bash
+      run: mdbook build
