@@ -11,6 +11,11 @@ runs:
           README.md
           docs/*.md
 
+    - name: Link Checker
+      uses: lycheeverse/lychee-action@v2
+      with:
+        fail: true
+
     - name: Setup mdBook
       uses: peaceiris/actions-mdbook@v2
       with:
