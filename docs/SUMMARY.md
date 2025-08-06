@@ -27,6 +27,7 @@
 - [Testing](./implementation/testing.md)
 - [Configuration](./implementation/configuration.md)
 - [Deployment](./implementation/deployment.md)
+- [CI/CD](./implementation/ci-cd.md)
 
 ---
 
