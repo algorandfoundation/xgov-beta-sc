@@ -7,88 +7,50 @@ on:
 
 jobs:
   check-deployments:
-    if: github.head_ref == 'release'
+    if: startsWith(github.head_ref, 'release')
     runs-on: ubuntu-latest
     permissions:
       deployments: read
       contents: read
-      actions: read
-      checks: read
 
     steps:
-      - uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ secrets.BOT_ID }}
-          private-key: ${{ secrets.BOT_SK }}
-
       - name: Check deployments to environments
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO: ${{ github.repository }}
         run: |
           echo "Checking deployment status..."
 
           check_env() {
             local ENV_NAME=$1
-            echo "Checking deployment for environment: $ENV_NAME"
 
-            # Try to fetch deployments with error handling
-            if ! DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=10 --jq '.' 2>/dev/null); then
-              echo "⚠️ Cannot access deployments API. Checking workflow runs instead..."
-              
-              # Alternative: Check recent workflow runs for successful deployments
-              WORKFLOW_RUNS=$(gh api repos/${REPO}/actions/runs?per_page=10 --jq '.workflow_runs[] | select(.conclusion == "success" and (.name | contains("deploy") or contains("Deploy")))')
-              
-              if [ -z "$WORKFLOW_RUNS" ]; then
-                echo "❌ No successful deployment workflows found recently"
-                return 1
-              else
-                echo "✅ Found recent successful deployment workflows"
-                return 0
-              fi
-            fi
+            # Fetch the latest 10 deployments
+            DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=10 --jq '.')
 
             DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq --arg env "$ENV_NAME" '
-              map(select(.environment == $env)) 
-              | sort_by(.created_at) 
-              | reverse 
+              map(select(.environment == $env))
+              | sort_by(.created_at)
+              | reverse
               | .[0].id
             ')
 
             if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
               echo "❌ No deployment found for $ENV_NAME"
-              return 1
+              exit 1
             fi
 
-            if ! STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses --jq 'sort_by(.created_at) | reverse | .[0].state' 2>/dev/null); then
-              echo "⚠️ Cannot access deployment status for $ENV_NAME"
-              return 1
-            fi
+            STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses --jq '
+              sort_by(.created_at)
+              | reverse
+              | .[0].state
+            ')
 
             if [ "$STATUS" != "success" ]; then
               echo "❌ Latest deployment to $ENV_NAME is not successful: $STATUS"
-              return 1
+              exit 1
             fi
 
-            echo "✅ $ENV_NAME deployment OK (status: $STATUS)"
-            return 0
+            echo "✅ $ENV_NAME deployment OK"
           }
 
-          # Check environments (continue on individual failures to see all results)
-          EXIT_CODE=0
-
-          if ! check_env "contract-testnet"; then
-            EXIT_CODE=1
-          fi
-
-          if ! check_env "github-pages"; then
-            EXIT_CODE=1
-          fi
-
-          if [ $EXIT_CODE -eq 1 ]; then
-            echo "❌ Some deployment checks failed"
-            exit 1
-          else
-            echo "✅ All deployment checks passed"
-          fi
+          check_env "contract-testnet"
+          check_env "github-pages"
