@@ -80,6 +80,15 @@ jobs:
             OVERALL_SUCCESS=false
           fi
 
+          # Check pagos environment
+          PAGOS_FOUND=false
+          if check_env "github-pagos"; then
+            PAGOS_FOUND=true
+          else
+            echo "❌ No successful pagos deployment found"
+            OVERALL_SUCCESS=false
+          fi
+
           if [ "$OVERALL_SUCCESS" = true ]; then
             echo "✅ All deployment checks passed"
           else
