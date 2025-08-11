@@ -9,9 +9,6 @@ on:
 jobs:
   check-deployments:
     runs-on: ubuntu-latest
-    permissions:
-      deployments: read
-      contents: read
 
     steps:
       - uses: actions/create-github-app-token@v2
