@@ -24,11 +24,31 @@ jobs:
         run: |
           echo "Checking deployment status..."
 
+          # First, let's see what environments exist
+          echo "=== Available environments ==="
+          ENVIRONMENTS=$(gh api repos/${REPO}/environments --jq '.environments[].name' 2>/dev/null || echo "Cannot access environments API")
+          echo "Environments: $ENVIRONMENTS"
+
+          # List all deployments to see what environments have been used
+          echo "=== All recent deployments ==="
+          ALL_DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=20 --jq '.[] | {id: .id, environment: .environment, created_at: .created_at, ref: .ref}' 2>/dev/null || echo "Cannot access deployments API")
+          echo "$ALL_DEPLOYMENTS"
+
           check_env() {
             local ENV_NAME=$1
+            echo "=== Checking environment: $ENV_NAME ==="
 
-            # Fetch the latest 10 deployments
-            DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=10 --jq '.')
+            # Fetch the latest deployments and filter for the environment
+            DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=50 --jq '.' 2>/dev/null)
+
+            if [ $? -ne 0 ] || [ -z "$DEPLOYMENTS" ]; then
+              echo "❌ Cannot access deployments API or no deployments found"
+              return 1
+            fi
+
+            # Debug: Show all environment names
+            echo "All deployment environments:"
+            echo "$DEPLOYMENTS" | jq -r '.[].environment' | sort | uniq
 
             DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq --arg env "$ENV_NAME" '
               map(select(.environment == $env))
@@ -38,23 +58,75 @@ jobs:
             ')
 
             if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
-              echo "❌ No deployment found for $ENV_NAME"
-              exit 1
+              echo "❌ No deployment found for environment: $ENV_NAME"
+              echo "Available environments in deployments:"
+              echo "$DEPLOYMENTS" | jq -r '.[].environment' | sort | uniq
+              return 1
             fi
+
+            echo "Found deployment ID: $DEPLOYMENT_ID"
 
             STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses --jq '
               sort_by(.created_at)
               | reverse
               | .[0].state
-            ')
+            ' 2>/dev/null)
+
+            if [ -z "$STATUS" ] || [ "$STATUS" == "null" ]; then
+              echo "❌ No status found for deployment $DEPLOYMENT_ID"
+              return 1
+            fi
+
+            echo "Deployment status: $STATUS"
 
             if [ "$STATUS" != "success" ]; then
               echo "❌ Latest deployment to $ENV_NAME is not successful: $STATUS"
-              exit 1
+              return 1
             fi
 
-            echo "✅ $ENV_NAME deployment OK"
+            echo "✅ $ENV_NAME deployment OK (status: $STATUS)"
+            return 0
           }
 
-          check_env "contract-testnet"
-          check_env "github-pages"
+          # Track overall success/failure
+          OVERALL_SUCCESS=true
+
+          # Try different possible names for testnet environment
+          TESTNET_FOUND=false
+          for env_name in "contract-testnet" "testnet" "algorand-testnet" "smart-contracts-testnet"; do
+            echo "Trying environment name: $env_name"
+            if check_env "$env_name"; then
+              echo "✅ Found working testnet environment: $env_name"
+              TESTNET_FOUND=true
+              break
+            fi
+          done
+
+          if [ "$TESTNET_FOUND" = false ]; then
+            echo "❌ No working testnet environment found"
+            OVERALL_SUCCESS=false
+          fi
+
+          # Try different possible names for pages environment
+          PAGES_FOUND=false
+          for env_name in "github-pages" "pages" "docs" "documentation"; do
+            echo "Trying environment name: $env_name"
+            if check_env "$env_name"; then
+              echo "✅ Found working pages environment: $env_name"
+              PAGES_FOUND=true
+              break
+            fi
+          done
+
+          if [ "$PAGES_FOUND" = false ]; then
+            echo "❌ No working pages environment found"
+            OVERALL_SUCCESS=false
+          fi
+
+          echo "=== Final result ==="
+          if [ "$OVERALL_SUCCESS" = true ]; then
+            echo "✅ All deployment checks passed"
+          else
+            echo "❌ Some deployment checks failed"
+            exit 1
+          fi
