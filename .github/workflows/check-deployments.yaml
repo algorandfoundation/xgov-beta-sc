@@ -1,13 +1,13 @@
 name: Check xGov deployments on release merge
 
 on:
+  workflow_call:
   pull_request:
     branches:
       - main
 
 jobs:
   check-deployments:
-    if: github.head_ref == 'release'
     runs-on: ubuntu-latest
 
     steps:
