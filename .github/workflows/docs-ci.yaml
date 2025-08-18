@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  validate-docs:
     runs-on: "ubuntu-latest"
     if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
 
