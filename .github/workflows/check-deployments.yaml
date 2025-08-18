@@ -7,17 +7,25 @@ on:
 
 jobs:
   check-deployments:
-    if: github.head_ref == 'release'
     runs-on: ubuntu-latest
 
     steps:
+      - name: Skip for non-release PRs
+        if: github.head_ref != 'release'
+        run: |
+          echo "This check only runs for PRs from the 'release' branch."
+          echo "Current PR is from '${{ github.head_ref }}' branch - skipping deployment checks."
+          echo "✅ No deployment validation needed for this PR."
+
       - uses: actions/create-github-app-token@v2
+        if: github.head_ref == 'release'
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}
           private-key: ${{ secrets.BOT_SK }}
 
       - name: Check deployments to environments
+        if: github.head_ref == 'release'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO: ${{ github.repository }}

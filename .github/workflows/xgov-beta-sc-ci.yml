@@ -11,7 +11,7 @@ on:
     - cron: "0 0 1 * *" # Run once a month at midnight on the 1st of the month
 
 jobs:
-  validate:
+  validate-xgov-beta-sc:
     runs-on: "ubuntu-latest"
     if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
 
