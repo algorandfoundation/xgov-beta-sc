@@ -9,7 +9,7 @@ on:
 jobs:
   create-stable-release:
     runs-on: ubuntu-latest
-    if: github.head_ref == 'release'
+    if: github.event.pull_request.merged == true && github.head_ref == 'release'
     outputs:
       tag: ${{ steps.extract-version.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
