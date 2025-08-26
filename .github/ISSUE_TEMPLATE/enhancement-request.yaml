@@ -1,0 +1,37 @@
+name: "✨ Enhancement request"
+description: Suggest an enhancement or feature for the xGov smart contracts.
+title: "✨ [Enhancement]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest an enhancement for the xGov platform! Your input is invaluable in helping us improve the platform.
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem Description
+      description: Please describe the problem you encountered in detail.
+    validations:
+      required: true
+  - type: textarea
+    id: solution-description
+    attributes:
+      label: Solution Description
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternative Solution(s)
+      description: A clear and concise description of any alternative solutions or features you've considered.
+    validations:
+      required: false
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Context
+      description: Add any other context about the enhancement you think would be helpful.
+    validations:
+      required: false
