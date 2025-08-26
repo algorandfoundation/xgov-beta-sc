@@ -97,7 +97,11 @@ def _deploy_xgov_registry() -> None:
 
     compiled_proposal = proposal_factory.app_factory.compile()
     app_client.send.init_proposal_contract(
-        args=(len(compiled_proposal.approval_program),)
+        args=(len(compiled_proposal.approval_program),),
+        params=CommonAppCallCreateParams(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
     )
     max_app_total_arg_len = 2048
     method_selector_length = 4
