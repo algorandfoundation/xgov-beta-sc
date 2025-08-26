@@ -5,6 +5,7 @@ from algopy import (
     Application,
     ARC4Contract,
     BoxMap,
+    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -14,6 +15,7 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
+    compile_contract,
     gtxn,
     itxn,
     op,
@@ -152,6 +154,7 @@ class XGovRegistry(
         )
 
         # boxes
+        self.proposal_approval_program = BoxRef(key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX)
         self.xgov_box = BoxMap(
             Account,
             typ.XGovBoxValue,
@@ -360,6 +363,41 @@ class XGovRegistry(
 
         self.xgov_manager.value = arc4.Address(Txn.sender)
         assert self.entropy() == TemplateVar[Bytes]("entropy")
+
+    @arc4.abimethod()
+    def init_proposal_contract(self, size: arc4.UInt64) -> None:
+        """
+        Initializes the Proposal Approval Program contract.
+
+        Args:
+            size (arc4.UInt64): The size of the Proposal Approval Program contract
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+
+        # Initialize the Proposal Approval Program contract
+        self.proposal_approval_program.create(size=size.native)
+
+    @arc4.abimethod()
+    def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
+        """
+        Loads the Proposal Approval Program contract.
+
+        Args:
+            offset (arc4.UInt64): The offset in the Proposal Approval Program contract
+            data (Bytes): The data to load into the Proposal Approval Program contract
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+
+        # Load the Proposal Approval Program contract
+        self.proposal_approval_program.replace(start_index=offset.native, value=data)
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
@@ -880,8 +918,44 @@ class XGovRegistry(
 
         mbr_before = Global.current_application_address.balance
 
-        # Create the Proposal App
-        error, tx = arc4.arc4_create(proposal_contract.Proposal.create, Txn.sender)
+        proposal_approval, exist = self.proposal_approval_program.maybe()
+        assert exist, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
+
+        # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
+        # we only use the first element here as we assume the clear state program is small enough
+        compiled_clear_state_1, compiled_clear_state_2 = compile_contract(
+            proposal_contract.Proposal
+        ).clear_state_program
+
+        bytes_per_page = UInt64(2048)
+        total_size = proposal_approval.length + compiled_clear_state_1.length
+        extra_pages = total_size // bytes_per_page
+
+        error, tx = arc4.abi_call(
+            proposal_contract.Proposal.create,
+            Txn.sender,
+            approval_program=proposal_approval,
+            clear_state_program=compiled_clear_state_1,
+            global_num_uint=pcfg.GLOBAL_UINTS,
+            global_num_bytes=pcfg.GLOBAL_BYTES,
+            extra_program_pages=extra_pages,
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.MISSING_CONFIG:
+                    assert False, err.MISSING_CONFIG  # noqa
+                case err.EMPTY_COMMITTEE_ID:
+                    assert False, err.EMPTY_COMMITTEE_ID  # noqa
+                case err.WRONG_COMMITTEE_MEMBERS:
+                    assert False, err.WRONG_COMMITTEE_MEMBERS  # noqa
+                case err.WRONG_COMMITTEE_VOTES:
+                    assert False, err.WRONG_COMMITTEE_VOTES  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
         mbr_after = Global.current_application_address.balance
 
@@ -976,6 +1050,8 @@ class XGovRegistry(
                     assert False, err.VOTING_PERIOD_EXPIRED  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
     def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -1027,6 +1103,8 @@ class XGovRegistry(
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
     def finalize_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -1068,6 +1146,8 @@ class XGovRegistry(
                     assert False, err.VOTERS_ASSIGNED  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
         self.decrement_pending_proposals(proposal_id.native)
 
@@ -1105,6 +1185,8 @@ class XGovRegistry(
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
         self.decrement_pending_proposals(proposal_id.native)
 
@@ -1261,20 +1343,20 @@ class XGovRegistry(
         """
         return self.proposer_box[proposer_address.native].copy()
 
-    # @arc4.abimethod(readonly=True)
-    # def get_request_box(
-    #     self, request_id: arc4.UInt64
-    # ) -> typ.XGovSubscribeRequestBoxValue:
-    #     """
-    #     Returns the xGov subscribe request box for the given request ID.
-    #
-    #     Args:
-    #         request_id (arc4.UInt64): The ID of the subscribe request
-    #
-    #     Returns:
-    #         typ.XGovSubscribeRequestBoxValue: The subscribe request box value
-    #     """
-    #     return self.request_box[request_id.native].copy()
+    @arc4.abimethod(readonly=True)
+    def get_request_box(
+        self, request_id: arc4.UInt64
+    ) -> typ.XGovSubscribeRequestBoxValue:
+        """
+        Returns the xGov subscribe request box for the given request ID.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the subscribe request
+
+        Returns:
+            typ.XGovSubscribeRequestBoxValue: The subscribe request box value
+        """
+        return self.request_box[request_id.native].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:

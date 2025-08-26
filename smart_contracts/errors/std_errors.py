@@ -84,3 +84,5 @@ INCOSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
 INVALID_XGOV_FEE = "Invalid xGov fee"
 
 INVALID_PROPOSER_FEE = "Invalid proposer fee"
+
+MISSING_PROPOSAL_APPROVAL_PROGRAM = "Missing proposal approval program"

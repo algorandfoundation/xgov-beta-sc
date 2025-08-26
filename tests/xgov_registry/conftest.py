@@ -13,6 +13,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     AssignVotersArgs,
     OpenArgs,
     ProposalClient,
+    ProposalFactory,
     ReviewArgs,
     UnassignVotersArgs,
 )
@@ -175,6 +176,32 @@ def xgov_registry_client_committee_not_declared(
     client.send.config_xgov_registry(
         args=ConfigXgovRegistryArgs(config=xgov_registry_config),
     )
+
+    proposal_factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=ProposalFactory,
+    )
+
+    compiled_proposal = proposal_factory.app_factory.compile()
+    client.send.init_proposal_contract(args=(len(compiled_proposal.approval_program),))
+    max_app_total_arg_len = 2048
+    method_selector_length = 4
+    uint64_length = 8
+    dynamic_byte_array_length_overhead = 2
+    data_size_per_transaction = (
+        max_app_total_arg_len
+        - method_selector_length
+        - uint64_length
+        - dynamic_byte_array_length_overhead
+    )
+    bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
+    for i in range(bulks):
+        chunk = compiled_proposal.approval_program[
+            i * data_size_per_transaction : (i + 1) * data_size_per_transaction
+        ]
+        client.send.load_proposal_contract(
+            args=(i * data_size_per_transaction, chunk),
+        )
+
     return client
 
 
