@@ -12,11 +12,11 @@ report vulnerabilities within the xGov Beta [smart contracts implementation](htt
 Rewards (in ALGO) will be tiered based on the criticality of the discovered flaws,
 categorized as follows:
 
-| SEVERITY | DESCRIPTION                                                                                                 | REWARD AMOUNT         |
-|:---------|:------------------------------------------------------------------------------------------------------------|:----------------------|
-| High     | Bugs that could lead to the loss of user-committed funds in Proposals.                                      | \\( 50{,}000 \\) ALGO |
-| Medium   | Flaws that could result in the loss of xGov Treasury funds.                                                 | \\( 30{,}000 \\) ALGO |
-| Low      | Issues that might lead to an inconsistent state (e.g., unauthorized voting, bypassing process gates, etc.). | \\( 15{,}000 \\) ALGO |
+| SEVERITY | DESCRIPTION                                                                                                 | REWARD AMOUNT |
+| :------- | :---------------------------------------------------------------------------------------------------------- | :------------ |
+| High     | Bugs that could lead to the loss of user-committed funds in Proposals.                                      | 50,000 ALGO   |
+| Medium   | Flaws that could result in the loss of xGov Treasury funds.                                                 | 30,000 ALGO   |
+| Low      | Issues that might lead to an inconsistent state (e.g., unauthorized voting, bypassing process gates, etc.). | 15,000 ALGO   |
 
 We encourage all interested security researchers to participate and contribute to
 the secure evolution of the xGov platform.
@@ -29,15 +29,15 @@ to be disclosed privately.
 Please follow these guidelines:
 
 1. **Reporting Channel:** All bug reports **MUST** be submitted to the dedicated
-Algorand Foundation security email address: [security@algorand.foundation](mailto:security@algorand.foundation).
+   Algorand Foundation security email address: [security@algorand.foundation](mailto:security@algorand.foundation).
 
 1. **Confidentiality:** All communications and information shared during the disclosure
-process **MUST** be kept confidential.
+   process **MUST** be kept confidential.
 
 1. **No Public Disclosure:** Please do not publicly disclose any vulnerability until
-it has been patched and approved for public release by the Algorand Foundation.
-Unauthorized public disclosure will result in disqualification from the bug bounty
-program.
+   it has been patched and approved for public release by the Algorand Foundation.
+   Unauthorized public disclosure will result in disqualification from the bug bounty
+   program.
 
 1. **Documentation:** Your report should be as detailed as possible, including:
    - Repository version and commit hash.
@@ -49,7 +49,7 @@ program.
    - A template table with finding logs on the source code references, example:
 
 | FINDING ID | SEVERITY | LOCATION (path-to-file:line-number)                                      | DESCRIPTION | PROPOSED SOLUTION (Optional) |
-|:----------:|:---------|:-------------------------------------------------------------------------|:------------|:-----------------------------|
+| :--------: | :------- | :----------------------------------------------------------------------- | :---------- | :--------------------------- |
 |   H-001    | High     | `smart_contracts/xgov_registry/contract.py:42`                           | ...         | ...                          |
 |   L-001    | Low      | `smart_contracts/artifacts/xgov_registry/XGovRegistry.approval.teal:420` | ...         | ...                          |
 
