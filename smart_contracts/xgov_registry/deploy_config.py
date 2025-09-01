@@ -7,20 +7,26 @@ from algokit_utils import (
     AlgorandClient,
     AppClientCompilationParams,
     CommonAppCallCreateParams,
+    CommonAppCallParams,
     OnSchemaBreak,
     OnUpdate,
 )
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
+from smart_contracts.xgov_registry.helpers import (
+    load_proposal_contract_data_size_per_transaction,
+)
 
 logger = logging.getLogger(__name__)
 
 deployer_min_spending = AlgoAmount.from_algo(3)
+registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box storage
 
 
 def _deploy_xgov_registry() -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         ConfigXgovRegistryArgs,
+        InitProposalContractArgs,
         SetCommitteeManagerArgs,
         SetKycProviderArgs,
         SetPayorArgs,
@@ -95,24 +101,23 @@ def _deploy_xgov_registry() -> None:
         typed_factory=ProposalFactory,
     )
 
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=app_client.app_address,
+        min_spending_balance=registry_min_spending,
+    )
+
     compiled_proposal = proposal_factory.app_factory.compile()
     app_client.send.init_proposal_contract(
-        args=(len(compiled_proposal.approval_program),),
-        params=CommonAppCallCreateParams(
+        args=InitProposalContractArgs(
+            size=len(compiled_proposal.approval_program),
+        ),
+        params=CommonAppCallParams(
             sender=deployer.address,
             signer=deployer.signer,
         ),
     )
-    max_app_total_arg_len = 2048
-    method_selector_length = 4
-    uint64_length = 8
-    dynamic_byte_array_length_overhead = 2
-    data_size_per_transaction = (
-        max_app_total_arg_len
-        - method_selector_length
-        - uint64_length
-        - dynamic_byte_array_length_overhead
-    )
+
+    data_size_per_transaction = load_proposal_contract_data_size_per_transaction()
     bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
     for i in range(bulks):
         chunk = compiled_proposal.approval_program[

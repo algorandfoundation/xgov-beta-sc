@@ -34,6 +34,7 @@ from . import config as cfg
 from .constants import (
     ACCOUNT_MBR,
     BPS,
+    BYTES_PER_APP_PAGE,
     MAX_MBR_PER_APP,
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
@@ -398,6 +399,20 @@ class XGovRegistry(
 
         # Load the Proposal Approval Program contract
         self.proposal_approval_program.replace(start_index=offset.native, value=data)
+
+    @arc4.abimethod()
+    def delete_proposal_contract_box(self) -> None:
+        """
+        Deletes the Proposal Approval Program contract box.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the current xGov Manager
+        """
+
+        assert self.is_xgov_manager(), err.UNAUTHORIZED
+
+        # Delete the Proposal Approval Program contract box
+        self.proposal_approval_program.delete()
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
@@ -927,7 +942,7 @@ class XGovRegistry(
             proposal_contract.Proposal
         ).clear_state_program
 
-        bytes_per_page = UInt64(2048)
+        bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
         total_size = proposal_approval.length + compiled_clear_state_1.length
         extra_pages = total_size // bytes_per_page
 

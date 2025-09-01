@@ -26,3 +26,10 @@ MAX_MBR_PER_APP: Final[int] = (
 MAX_MBR_PER_BOX: Final[int] = (
     MAX_BOX_SIZE + MAX_BOX_KEY_SIZE
 ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR  # 13.14 ALGO in microAlgos
+
+BYTES_PER_APP_PAGE: Final[int] = 2048  # 2 KiB in bytes
+
+MAX_APP_TOTAL_ARG_LEN: Final[int] = 2048
+METHOD_SELECTOR_LENGTH: Final[int] = 4
+UINT64_LENGTH: Final[int] = 8
+DYNAMIC_BYTE_ARRAY_LENGTH_OVERHEAD: Final[int] = 2

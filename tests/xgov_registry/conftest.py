@@ -44,6 +44,9 @@ from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_moc
 )
 from smart_contracts.proposal import enums as enm
 from smart_contracts.xgov_registry import config as regcfg
+from smart_contracts.xgov_registry.helpers import (
+    load_proposal_contract_data_size_per_transaction,
+)
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -183,16 +186,7 @@ def xgov_registry_client_committee_not_declared(
 
     compiled_proposal = proposal_factory.app_factory.compile()
     client.send.init_proposal_contract(args=(len(compiled_proposal.approval_program),))
-    max_app_total_arg_len = 2048
-    method_selector_length = 4
-    uint64_length = 8
-    dynamic_byte_array_length_overhead = 2
-    data_size_per_transaction = (
-        max_app_total_arg_len
-        - method_selector_length
-        - uint64_length
-        - dynamic_byte_array_length_overhead
-    )
+    data_size_per_transaction = load_proposal_contract_data_size_per_transaction()
     bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
     for i in range(bulks):
         chunk = compiled_proposal.approval_program[
