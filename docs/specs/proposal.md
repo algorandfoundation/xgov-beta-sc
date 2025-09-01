@@ -62,7 +62,7 @@ The Proposal’s requested amount (\\( A \\)) **MUST** be bounded as follows:
 | Democratic Quorum              |         \\( Q_{d,S} \\)         |           \\( Q_{d,M} \\)           |           \\( Q_{d,L} \\)           |
 | Weighted Quorum                |         \\( Q_{w,S} \\)         |           \\( Q_{w,M} \\)           |           \\( Q_{w,L} \\)           |
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > Refer to the [Proposal implementation configuration](../implementation/configuration.md)
 > for the parameters’ value.
 
@@ -94,7 +94,7 @@ A Proposal **SHALL** be in one of the following enumerated statuses:
 | `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                   |
 | `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                           |
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > The `FINALIZED` boolean flag is not an enumerated state, since it can be superposed
 > to several states (i.e., `EMPTY`, `DRAFT`, `REJECTED`, `BLOCKED`, and `FUNDED`).
 > Example: a Proposal can be `FUNDED` and `FINALIZED`.

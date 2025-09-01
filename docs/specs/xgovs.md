@@ -10,7 +10,7 @@ and less accessible).
 
 The xGov Address and the current Voting Address **MAY** update the Voting Address.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > xGov Address can be associated with any Account type. This ensures the compatibility
 > and inclusivity of xGov participation (direct or delegated).
 
@@ -30,14 +30,14 @@ is executed in two steps:
   1. The Algorand Foundation verifies the declared and accountable xGov/Owner Addresses
   relationship off-chain (based on the Relation Type) and eventually approves it.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > At the time of writing, the only Relation Type value is `1`, dedicated to the Reti
 > Pool protocol.
 
 An xGov Fee **MUST** be paid to the xGov Treasury for the subscription or subscription
 request.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > The xGov Manager **MAY** update the xGov Fee.
 
 The xGov Fee has the following scope:
