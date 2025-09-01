@@ -104,8 +104,17 @@ If the Algorand Foundation approves the subscription request:
 
 1. The xGov Subscription Request Box **MUST** be destroyed;
 
-2. An xGov Box **MUST** be created using the xGov Address declared on the subscription
+1. An xGov Box **MUST** be created using the xGov Address declared on the subscription
 request.
 
-3. The Owner Address declared on the subscription request **MUST** be assigned to
+1. The Owner Address declared on the subscription request **MUST** be assigned to
 the Voting Address in the created xGov Box.
+
+#### Relation Types
+
+The following enumerative `relation_type` (`uint64`) are currently defined:
+
+| RELATION TYPE | ENUM |
+|:--------------|:----:|
+| Reti Pooling  | `1`  |
+| Compx LST     | `2`  |
