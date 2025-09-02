@@ -379,8 +379,12 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        # Initialize the Proposal Approval Program contract
-        self.proposal_approval_program.create(size=size.native)
+        box, exist = self.proposal_approval_program.maybe()
+        if exist:
+            self.proposal_approval_program.resize(size.native)
+        else:
+            # Initialize the Proposal Approval Program contract
+            self.proposal_approval_program.create(size=size.native)
 
     @arc4.abimethod()
     def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
