@@ -18,7 +18,7 @@ The Proposer KYC status **MUST** be valid and not expired to receive Proposal fu
 
 A Proposer Fee **MUST** be paid to the xGov Treasury for the subscription.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > The xGov Manager **MAY** modify the Proposer Fee.
 
 The Proposer Fee has the following scope:
