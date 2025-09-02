@@ -7,10 +7,10 @@ in this document, are to be interpreted as described in [RFC 2119](https://datat
 The data types (like `uint64`, `byte[]`, etc.) in this document are to be interpreted
 as specified in [ARC-4](https://arc.algorand.foundation/ARCs/arc-0004).
 
-{{#include ./.include/styles.md:note}}
+{{#include ./_include/styles.md:note}}
 > Notes like this are non-normative
 
-{{#include ./.include/styles.md:example}}
+{{#include ./_include/styles.md:example}}
 > Sections like this are examples aiming to clarify the specifications.
 
 ```text

@@ -32,6 +32,6 @@ The xGov Treasury is an Algorand Address controlled by the xGov Registry.
 
 - Created Proposal Applications.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > Partial Open Proposal Fees are equal to the Open Proposal Fee discounted by the
 > Proposal Application MBR.

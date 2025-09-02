@@ -23,7 +23,7 @@ The Proposal **MUST NOT** be submitted without Metadata.
 Upon proposal submission, a percentage of the Open Proposal Fee **SHALL** be transferred
 from the Proposal Escrow to the xGov Daemon to cover the operation fees.
 
-{{#include ../.include/styles.md:note}}
+{{#include ../_include/styles.md:note}}
 > The xGov Manager **MAY** update the percentage of the Open Proposal Fee transferred
 > to the xGov Daemon.
 
