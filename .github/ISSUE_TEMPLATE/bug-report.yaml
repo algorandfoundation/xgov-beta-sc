@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug! Your input is invaluable in helping us improve the xGov platform.
+        Thanks for taking the time to report a bug! Your input is invaluable in helping us improve the xGov platform.\n**DO NOT USE THIS FORM TO REPORT HIGH-SEVERITY BUGS. SEE THE INFO ON THE XGOV [BUG BOUNTY PROGRAM](https://algorandfoundation.github.io/xgov-beta-sc/BUG-BOUNTY.html) FOR MORE DETAILS.**
   - type: textarea
     id: description
     attributes:
