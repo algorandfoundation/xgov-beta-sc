@@ -49,6 +49,7 @@ GS_KEY_COMMITTEE_MEMBERS: Final[bytes] = b"committee_members"
 GS_KEY_COMMITTEE_VOTES: Final[bytes] = b"committee_votes"
 GS_KEY_MAX_COMMITTEE_SIZE: Final[bytes] = b"max_committee_size"
 
+PROPOSAL_APPROVAL_PROGRAM_BOX: Final[bytes] = b"pa"
 XGOV_BOX_MAP_PREFIX: Final[bytes] = b"x"
 REQUEST_BOX_MAP_PREFIX: Final[bytes] = b"r"
 PROPOSER_BOX_MAP_PREFIX: Final[bytes] = b"p"

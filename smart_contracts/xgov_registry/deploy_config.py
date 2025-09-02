@@ -7,18 +7,26 @@ from algokit_utils import (
     AlgorandClient,
     AppClientCompilationParams,
     CommonAppCallCreateParams,
+    CommonAppCallParams,
     OnSchemaBreak,
     OnUpdate,
+)
+
+from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
+from smart_contracts.xgov_registry.helpers import (
+    load_proposal_contract_data_size_per_transaction,
 )
 
 logger = logging.getLogger(__name__)
 
 deployer_min_spending = AlgoAmount.from_algo(3)
+registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box storage
 
 
 def _deploy_xgov_registry() -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         ConfigXgovRegistryArgs,
+        InitProposalContractArgs,
         SetCommitteeManagerArgs,
         SetKycProviderArgs,
         SetPayorArgs,
@@ -86,6 +94,38 @@ def _deploy_xgov_registry() -> None:
             method=update_params.method.name,
         ),
     )
+
+    logger.info("uploading proposal approval program to box")
+
+    proposal_factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=ProposalFactory,
+    )
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=app_client.app_address,
+        min_spending_balance=registry_min_spending,
+    )
+
+    compiled_proposal = proposal_factory.app_factory.compile()
+    app_client.send.init_proposal_contract(
+        args=InitProposalContractArgs(
+            size=len(compiled_proposal.approval_program),
+        ),
+        params=CommonAppCallParams(
+            sender=deployer.address,
+            signer=deployer.signer,
+        ),
+    )
+
+    data_size_per_transaction = load_proposal_contract_data_size_per_transaction()
+    bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
+    for i in range(bulks):
+        chunk = compiled_proposal.approval_program[
+            i * data_size_per_transaction : (i + 1) * data_size_per_transaction
+        ]
+        app_client.send.load_proposal_contract(
+            args=(i * data_size_per_transaction, chunk),
+        )
 
     should_set_roles = os.environ.get("XGOV_REG_SET_ROLES", "false").lower() == "true"
     if should_set_roles:
@@ -251,99 +291,88 @@ def _configure_xgov_registry() -> None:
     )
 
     current_state = app_client.state.global_state
-    max_requested_amounts = [
-        int(num)
-        for num in os.environ.get(
-            "XGOV_CFG_MAX_REQUESTED_AMOUNT",
-            ",".join(
-                [
-                    str(current_state.max_requested_amount_small),
-                    str(current_state.max_requested_amount_medium),
-                    str(current_state.max_requested_amount_large),
-                ]
-            ),
-        ).split(",")
-    ]
-    discussion_durations = [
-        int(num)
-        for num in os.environ.get(
-            "XGOV_CFG_DISCUSSION_DURATION",
-            ",".join(
-                [
-                    str(current_state.discussion_duration_small),
-                    str(current_state.discussion_duration_medium),
-                    str(current_state.discussion_duration_large),
-                    str(current_state.discussion_duration_xlarge),
-                ]
-            ),
-        ).split(",")
-    ]
-    voting_durations = [
-        int(num)
-        for num in os.environ.get(
-            "XGOV_CFG_VOTING_DURATION",
-            ",".join(
-                [
-                    str(current_state.voting_duration_small),
-                    str(current_state.voting_duration_medium),
-                    str(current_state.voting_duration_large),
-                    str(current_state.voting_duration_xlarge),
-                ]
-            ),
-        ).split(",")
-    ]
-    quorums = [
-        int(num)
-        for num in os.environ.get(
-            "XGOV_CFG_QUORUM",
-            ",".join(
-                [
-                    str(current_state.quorum_small),
-                    str(current_state.quorum_medium),
-                    str(current_state.quorum_large),
-                ]
-            ),
-        ).split(",")
-    ]
-    weighted_quorums = [
-        int(num)
-        for num in os.environ.get(
-            "XGOV_CFG_WEIGHTED_QUORUM",
-            ",".join(
-                [
-                    str(current_state.weighted_quorum_small),
-                    str(current_state.weighted_quorum_medium),
-                    str(current_state.weighted_quorum_large),
-                ]
-            ),
-        ).split(",")
-    ]
+
+    # Helper function to parse comma-separated integers with fallback to defaults
+    def parse_comma_separated_ints(env_var_name: str, defaults: list[int]) -> list[int]:
+        env_value = os.environ.get(env_var_name, "")
+        if not env_value or env_value.strip() == "":
+            return defaults
+        try:
+            return [int(num.strip()) for num in env_value.split(",") if num.strip()]
+        except ValueError:
+            logger.warning(f"Invalid format for {env_var_name}, using defaults")
+            return defaults
+
+    # Helper function to parse single integer with fallback to default
+    def parse_int(env_var_name: str, default: int) -> int:
+        env_value = os.environ.get(env_var_name, "")
+        if not env_value or env_value.strip() == "":
+            return default
+        try:
+            return int(env_value.strip())
+        except ValueError:
+            logger.warning(
+                f"Invalid format for {env_var_name}, using default: {default}"
+            )
+            return default
+
+    max_requested_amounts = parse_comma_separated_ints(
+        "XGOV_CFG_MAX_REQUESTED_AMOUNT",
+        [
+            current_state.max_requested_amount_small,
+            current_state.max_requested_amount_medium,
+            current_state.max_requested_amount_large,
+        ],
+    )
+    discussion_durations = parse_comma_separated_ints(
+        "XGOV_CFG_DISCUSSION_DURATION",
+        [
+            current_state.discussion_duration_small,
+            current_state.discussion_duration_medium,
+            current_state.discussion_duration_large,
+            current_state.discussion_duration_xlarge,
+        ],
+    )
+    voting_durations = parse_comma_separated_ints(
+        "XGOV_CFG_VOTING_DURATION",
+        [
+            current_state.voting_duration_small,
+            current_state.voting_duration_medium,
+            current_state.voting_duration_large,
+            current_state.voting_duration_xlarge,
+        ],
+    )
+    quorums = parse_comma_separated_ints(
+        "XGOV_CFG_QUORUM",
+        [
+            current_state.quorum_small,
+            current_state.quorum_medium,
+            current_state.quorum_large,
+        ],
+    )
+    weighted_quorums = parse_comma_separated_ints(
+        "XGOV_CFG_WEIGHTED_QUORUM",
+        [
+            current_state.weighted_quorum_small,
+            current_state.weighted_quorum_medium,
+            current_state.weighted_quorum_large,
+        ],
+    )
 
     config = XGovRegistryConfig(
-        xgov_fee=int(os.environ.get("XGOV_CFG_XGOV_FEE", current_state.xgov_fee)),
-        proposer_fee=int(
-            os.environ.get("XGOV_CFG_PROPOSER_FEE", current_state.proposer_fee)
+        xgov_fee=parse_int("XGOV_CFG_XGOV_FEE", current_state.xgov_fee),
+        proposer_fee=parse_int("XGOV_CFG_PROPOSER_FEE", current_state.proposer_fee),
+        open_proposal_fee=parse_int(
+            "XGOV_CFG_OPEN_PROPOSAL_FEE", current_state.open_proposal_fee
         ),
-        open_proposal_fee=int(
-            os.environ.get(
-                "XGOV_CFG_OPEN_PROPOSAL_FEE", current_state.open_proposal_fee
-            )
+        daemon_ops_funding_bps=parse_int(
+            "XGOV_CFG_DAEMON_OPS_FUNDING_BPS", current_state.daemon_ops_funding_bps
         ),
-        daemon_ops_funding_bps=int(
-            os.environ.get(
-                "XGOV_CFG_DAEMON_OPS_FUNDING_BPS", current_state.daemon_ops_funding_bps
-            )
+        proposal_commitment_bps=parse_int(
+            "XGOV_CFG_PROPOSAL_COMMITMENT_BPS", current_state.proposal_commitment_bps
         ),
-        proposal_commitment_bps=int(
-            os.environ.get(
-                "XGOV_CFG_PROPOSAL_COMMITMENT_BPS",
-                current_state.proposal_commitment_bps,
-            )
-        ),
-        min_requested_amount=int(
-            os.environ.get(
-                "XGOV_CFG_MIN_REQUESTED_AMOUNT", current_state.min_requested_amount
-            )
+        min_requested_amount=parse_int(
+            "XGOV_CFG_MIN_REQUESTED_AMOUNT", current_state.min_requested_amount
         ),
         max_requested_amount=(
             max_requested_amounts[0],
