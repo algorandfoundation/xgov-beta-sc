@@ -15,6 +15,7 @@ algokit-utils = "^4.2.0"
 python-dotenv = "^1.1.1"
 algorand-python = "==2.9.0"
 poetry-core = "^2.1.3"
+types-hvac = "^2.3.0.20250809"
 
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^2.2.0"
