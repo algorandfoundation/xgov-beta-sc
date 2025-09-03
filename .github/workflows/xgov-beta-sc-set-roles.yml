@@ -44,6 +44,10 @@ on:
         default: ""
         type: string
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   set-roles:
     runs-on: ubuntu-latest
@@ -60,8 +64,11 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: set_roles
-          # This is the account that becomes the creator of the contract
-          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # Vault configuration for transaction signing
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ${{ secrets.VAULT_ROLE }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_MOUNT_PATH || 'oidc' }}
+          VAULT_KEY_NAME: ${{ secrets.VAULT_KEY_NAME }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # Roles to set
@@ -72,4 +79,3 @@ jobs:
           XGOV_REG_SET_ROLES_KYC_PROVIDER: ${{ github.event.inputs.kyc_provider }}
           XGOV_REG_SET_ROLES_COMMITTEE_MANAGER: ${{ github.event.inputs.committee_manager }}
           XGOV_REG_SET_ROLES_XGOV_DAEMON: ${{ github.event.inputs.xgov_daemon }}
-
