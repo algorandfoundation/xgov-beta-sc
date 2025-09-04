@@ -14,7 +14,7 @@ to the xGov voting power.
 
 Vote **SHALL NOT** be modified.
 
-{{#include ../.include/styles.md:example}}
+{{#include ../_include/styles.md:example}}
 > Pooled Vote Example: Let's have an xGov Staking Pool with `N` votes. The Pool
 > **SHOULD** collect poolers’ opinions _before_ expressing the Pool vote accordingly.
 > Once the Pool is ready to vote, the allocation of `N` votes among _“Approve”_,

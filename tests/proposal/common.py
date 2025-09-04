@@ -153,8 +153,8 @@ def quorums_reached(
         )
     else:
         return (
-            voted_members >= proposal_registry_values.members_quorum
-            and total_votes >= proposal_registry_values.votes_quorum
+            voted_members >= proposal_registry_values.members_quorum  # type: ignore
+            and total_votes >= proposal_registry_values.votes_quorum  # type: ignore
         )
 
 
@@ -167,9 +167,9 @@ def members_for_both_quorums(
         )  # Required to compute the number of voting members to reach both quorums
     proposal_registry_values = get_proposal_values_from_registry(proposal_client)
     weighted_quorum_members = (
-        proposal_registry_values.votes_quorum // DEFAULT_MEMBER_VOTES
+        proposal_registry_values.votes_quorum // DEFAULT_MEMBER_VOTES  # type: ignore
     )
-    return max(proposal_registry_values.members_quorum, weighted_quorum_members)
+    return max(proposal_registry_values.members_quorum, weighted_quorum_members)  # type: ignore
 
 
 def assert_proposal_global_state(
