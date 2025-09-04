@@ -722,10 +722,12 @@ class XGovRegistry(
             payment (gtxn.PaymentTransaction): The payment transaction covering the xGov fee
 
         Raises:
+            err.UNAUTHORIZED: If the sender is not the declared Application owner address
             err.ALREADY_XGOV: If the sender is already an xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
+        assert Txn.sender == owner_address.native, err.UNAUTHORIZED
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # ensure the xgov_address is not already an xGov
