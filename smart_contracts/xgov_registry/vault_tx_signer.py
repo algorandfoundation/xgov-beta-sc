@@ -452,7 +452,7 @@ class HashicorpVaultMultisigTransactionSigner(TransactionSigner):
         """
         self.msig.validate()  # type: ignore
 
-        pk_to_signed_txs: dict[bytes, SignedTransaction] = {}
+        pk_to_signed_txs: dict[bytes, list[SignedTransaction]] = {}
         for signer in self.vault_transaction_signers:
             signed_txns = signer.sign_transactions(txn_group, indexes)
             pk = signer.public_key_bytes
