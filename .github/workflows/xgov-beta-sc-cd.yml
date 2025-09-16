@@ -23,6 +23,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   validate:
     name: Validate xgov-beta-sc
@@ -138,8 +142,11 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy
-          # This is the account that becomes the creator of the contract
-          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # Vault configuration for transaction signing
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ${{ secrets.VAULT_ROLE }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_MOUNT_PATH || 'oidc' }}
+          VAULT_KEY_NAME: ${{ secrets.VAULT_KEY_NAME }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # Should the contract be deployed fresh?

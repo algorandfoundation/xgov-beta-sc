@@ -16,6 +16,7 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
 from smart_contracts.xgov_registry.helpers import (
     load_proposal_contract_data_size_per_transaction,
 )
+from smart_contracts.xgov_registry.vault_tx_signer import create_vault_signer_from_env
 
 logger = logging.getLogger(__name__)
 
@@ -41,9 +42,22 @@ def _deploy_xgov_registry() -> None:
     )
 
     algorand_client = AlgorandClient.from_environment()
-    deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    # Try to create Vault signer first, fallback to environment if not available
+    try:
+        vault_signer = create_vault_signer_from_env()
+        deployer_address = vault_signer.address
+        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
+    except (ValueError, KeyError) as e:
+        logger.info(
+            f"Vault signer not available ({e}), falling back to environment-based deployer"
+        )
+        deployer = algorand_client.account.from_environment("DEPLOYER")
+        deployer_address = deployer.address
+        vault_signer = None
+
     algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer.address, min_spending_balance=deployer_min_spending
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
     template_values = {"entropy": b""}
@@ -59,7 +73,7 @@ def _deploy_xgov_registry() -> None:
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
-        default_sender=deployer.address,
+        default_sender=deployer_address,
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -112,8 +126,8 @@ def _deploy_xgov_registry() -> None:
             size=len(compiled_proposal.approval_program),
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=deployer_address,
+            signer=vault_signer if vault_signer else deployer.signer,
         ),
     )
 
@@ -222,18 +236,31 @@ def _set_roles() -> None:
     )
 
     algorand_client = AlgorandClient.from_environment()
-    deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    # Try to create Vault signer first, fallback to environment if not available
+    try:
+        vault_signer = create_vault_signer_from_env()
+        deployer_address = vault_signer.address
+        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
+    except (ValueError, KeyError) as e:
+        logger.info(
+            f"Vault signer not available ({e}), falling back to environment-based deployer"
+        )
+        deployer = algorand_client.account.from_environment("DEPLOYER")
+        deployer_address = deployer.address
+        vault_signer = None
+
     algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer.address, min_spending_balance=deployer_min_spending
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
-        default_sender=deployer.address,
+        default_sender=deployer_address,
     )
 
     app_client = factory.get_app_client_by_creator_and_name(
-        creator_address=deployer.address,
+        creator_address=deployer_address,
         app_name=APP_SPEC.name,
     )
 
@@ -275,18 +302,31 @@ def _configure_xgov_registry() -> None:
     )
 
     algorand_client = AlgorandClient.from_environment()
-    deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    # Try to create Vault signer first, fallback to environment if not available
+    try:
+        vault_signer = create_vault_signer_from_env()
+        deployer_address = vault_signer.address
+        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
+    except (ValueError, KeyError) as e:
+        logger.info(
+            f"Vault signer not available ({e}), falling back to environment-based deployer"
+        )
+        deployer = algorand_client.account.from_environment("DEPLOYER")
+        deployer_address = deployer.address
+        vault_signer = None
+
     algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer.address, min_spending_balance=deployer_min_spending
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
-        default_sender=deployer.address,
+        default_sender=deployer_address,
     )
 
     app_client = factory.get_app_client_by_creator_and_name(
-        creator_address=deployer.address,
+        creator_address=deployer_address,
         app_name=APP_SPEC.name,
     )
 
