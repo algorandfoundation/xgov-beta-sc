@@ -45,6 +45,30 @@ def test_request_subscribe_xgov_success(
     assert final_request_id == initial_request_id + 1
 
 
+def test_request_subscribe_unauthorized(
+    algorand_client: AlgorandClient,
+    deployer: SigningAccount,
+    no_role_account: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
+) -> None:
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        xgov_registry_client.send.request_subscribe_xgov(
+            args=RequestSubscribeXgovArgs(
+                xgov_address=xgov_subscriber_app.app_address,
+                owner_address=no_role_account.address,
+                relation_type=0,
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
+                        sender=deployer.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=get_xgov_fee(xgov_registry_client),
+                    )
+                ),
+            )
+        )
+
+
 def test_request_subscribe_xgov_already_xgov(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
