@@ -32,7 +32,7 @@ jobs:
         run: algokit project run lint
 
       - name: Test vault signer setup
-        run: algokit project run deploy testnet
+        run: algokit project deploy testnet
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: test_vault_signer
