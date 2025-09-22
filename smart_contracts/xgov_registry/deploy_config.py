@@ -566,6 +566,7 @@ def _configure_xgov_registry() -> None:
 
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
+    logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
     if command == "deploy":
         _deploy_xgov_registry()
     elif command == "set_roles":
@@ -573,6 +574,7 @@ def deploy() -> None:
     elif command == "configure_xgov_registry":
         _configure_xgov_registry()
     elif command == "test_vault_signer":
+        logger.info("Testing vault multisig signer creation")
         # Just test creating the vault signer and print the address
         vault_signer, deployer_address, _ = _create_vault_signer_from_env()
         if vault_signer:
