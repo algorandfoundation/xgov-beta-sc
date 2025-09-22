@@ -36,6 +36,12 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: test_vault_signer
+          # The deployer account
+          DISPENSER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ci-xgov-beta-sc-staging
+          VAULT_OIDC_MOUNT_PATH: oidc
+          VAULT_KEY_NAME: xgov-beta-sc-ci-staging
 
       - name: Run tests
         shell: bash
