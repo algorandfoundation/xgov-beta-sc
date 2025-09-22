@@ -1,134 +1,105 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algosdk import error
-from algosdk.transaction import SuggestedParams
+from algokit_utils import AlgoAmount, CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GetXgovBoxArgs,
+    UnsubscribeXgovArgs,
     XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
+    SubscribeXgovArgs,
     XGovSubscriberAppMockClient,
 )
+from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
+    UnsubscribeXgovArgs as AppUnsubscribeXgovArgs,
+)
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, xgov_box_name
 
 
 def test_unsubscribe_xgov_success(
-    xgov: AddressAndSigner,
     xgov_registry_client: XGovRegistryClient,
+    xgov: SigningAccount,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
 
-    xgov_registry_client.unsubscribe_xgov(
-        xgov_address=xgov.address,
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            boxes=[(0, xgov_box_name(xgov.address))],
-        ),
+    xgov_registry_client.send.unsubscribe_xgov(
+        args=UnsubscribeXgovArgs(xgov_address=xgov.address),
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
-    after_global_state = xgov_registry_client.get_global_state()
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
 
-    assert (before_global_state.xgovs - 1) == after_global_state.xgovs
+    assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(error.AlgodHTTPError):  # type: ignore
-        xgov_registry_client.algod_client.application_box_by_name(
-            application_id=xgov_registry_client.app_id,
-            box_name=xgov_box_name(xgov.address),
+    with pytest.raises(LogicError, match="entry exists"):
+        xgov_registry_client.send.get_xgov_box(
+            args=GetXgovBoxArgs(xgov_address=xgov.address)
         )
 
 
 def test_app_unsubscribe_xgov_success(
-    no_role_account: AddressAndSigner,
+    min_fee_times_3: AlgoAmount,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     xgov_subscriber_app: XGovSubscriberAppMockClient,
-    sp_min_fee_times_3: SuggestedParams,
 ) -> None:
-    xgov_subscriber_app.subscribe_xgov(
-        app_id=xgov_registry_client.app_id,
-        voting_address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            suggested_params=sp_min_fee_times_3,
-            foreign_apps=[xgov_registry_client.app_id],
-            boxes=[
-                (
-                    xgov_registry_client.app_id,
-                    xgov_box_name(xgov_subscriber_app.app_address),
-                )
-            ],
+    xgov_subscriber_app.send.subscribe_xgov(
+        args=SubscribeXgovArgs(
+            app_id=xgov_registry_client.app_id,
+            voting_address=no_role_account.address,
+        ),
+        params=CommonAppCallParams(
+            static_fee=min_fee_times_3,
+            app_references=[
+                xgov_registry_client.app_id
+            ],  # FIXME: This should have been autopopulated
         ),
     )
 
-    xgov_subscriber_app.unsubscribe_xgov(
-        app_id=xgov_registry_client.app_id,
-        transaction_parameters=TransactionParameters(
-            sender=no_role_account.address,
-            signer=no_role_account.signer,
-            foreign_apps=[xgov_registry_client.app_id],
-            boxes=[
-                (
-                    xgov_registry_client.app_id,
-                    xgov_box_name(xgov_subscriber_app.app_address),
-                )
-            ],
+    xgov_subscriber_app.send.unsubscribe_xgov(
+        args=AppUnsubscribeXgovArgs(app_id=xgov_registry_client.app_id),
+        params=CommonAppCallParams(
+            app_references=[
+                xgov_registry_client.app_id
+            ]  # FIXME: This should have been autopopulated
         ),
     )
 
 
 def test_unsubscribe_xgov_not_an_xgov(
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.unsubscribe_xgov(
-            xgov_address=no_role_account.address,
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        xgov_registry_client.send.unsubscribe_xgov(
+            args=UnsubscribeXgovArgs(xgov_address=no_role_account.address)
         )
 
 
 def test_unsubscribe_xgov_paused_registry_error(
-    xgov: AddressAndSigner,
+    xgov: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    before_global_state = xgov_registry_client.get_global_state()
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
+    xgov_registry_client.send.pause_registry()
 
-    xgov_registry_client.pause_registry()
-
-    with pytest.raises(LogicErrorType, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.unsubscribe_xgov(
-            xgov_address=xgov.address,
-            transaction_parameters=TransactionParameters(
-                sender=xgov.address,
-                signer=xgov.signer,
-                boxes=[(0, xgov_box_name(xgov.address))],
-            ),
+    with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
+        xgov_registry_client.send.unsubscribe_xgov(
+            args=UnsubscribeXgovArgs(xgov_address=xgov.address),
         )
 
-    xgov_registry_client.resume_registry()
+    xgov_registry_client.send.resume_registry()
 
-    xgov_registry_client.unsubscribe_xgov(
-        xgov_address=xgov.address,
-        transaction_parameters=TransactionParameters(
-            sender=xgov.address,
-            signer=xgov.signer,
-            boxes=[(0, xgov_box_name(xgov.address))],
-        ),
+    xgov_registry_client.send.unsubscribe_xgov(
+        args=UnsubscribeXgovArgs(xgov_address=xgov.address),
+        params=CommonAppCallParams(sender=xgov.address),
     )
 
-    after_global_state = xgov_registry_client.get_global_state()
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
 
-    assert (before_global_state.xgovs - 1) == after_global_state.xgovs
+    assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(error.AlgodHTTPError):  # type: ignore
-        xgov_registry_client.algod_client.application_box_by_name(
-            application_id=xgov_registry_client.app_id,
-            box_name=xgov_box_name(xgov.address),
+    with pytest.raises(LogicError, match="entry exists"):
+        xgov_registry_client.send.get_xgov_box(
+            args=GetXgovBoxArgs(xgov_address=xgov.address)
         )

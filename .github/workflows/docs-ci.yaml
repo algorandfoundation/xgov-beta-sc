@@ -1,0 +1,23 @@
+name: Validate docs
+
+on:
+  workflow_call:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-docs:
+    runs-on: "ubuntu-latest"
+    if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v5
+
+      - name: Docs CI actions
+        uses: ./.github/actions/docs-ci

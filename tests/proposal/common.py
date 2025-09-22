@@ -1,25 +1,37 @@
-import uuid
+import dataclasses
+from typing import Optional
 
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.beta.composer import PayParams
-from algosdk.atomic_transaction_composer import TransactionWithSigner
-from algosdk.encoding import encode_address
-from algosdk.transaction import SuggestedParams
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    CommonAppCallParams,
+    PaymentParams,
+    SigningAccount,
+)
+from algosdk.constants import MIN_TXN_FEE
+from algosdk.encoding import decode_address
 
+import smart_contracts.proposal.enums
 from smart_contracts.artifacts.proposal.proposal_client import (
-    Composer,
-    GlobalState,
+    AssignVotersArgs,
+    OpenArgs,
     ProposalClient,
+    ProposalComposer,
+    UnassignVotersArgs,
+    UploadMetadataArgs,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
+    FinalizeProposalArgs,
     XgovRegistryMockClient,
 )
-from smart_contracts.proposal.config import GLOBAL_BYTES, GLOBAL_UINTS, METADATA_BOX_KEY
+from smart_contracts.proposal.config import (
+    GLOBAL_BYTES,
+    GLOBAL_UINTS,
+    VOTER_BOX_KEY_PREFIX,
+)
 from smart_contracts.proposal.enums import (
     FUNDING_CATEGORY_NULL,
     FUNDING_CATEGORY_SMALL,
@@ -35,42 +47,133 @@ from smart_contracts.proposal.enums import (
     STATUS_SUBMITTED,
     STATUS_VOTING,
 )
-from smart_contracts.xgov_registry.config import (
-    MIN_REQUESTED_AMOUNT,
-    OPEN_PROPOSAL_FEE,
-    PROPOSAL_COMMITMENT_BPS,
-)
+from smart_contracts.xgov_registry import config as reg_cfg
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
     DEFAULT_COMMITTEE_VOTES,
+    DEFAULT_MEMBER_VOTES,
+    CommitteeMember,
     relative_to_absolute_amount,
 )
 from tests.utils import time_warp
-from tests.xgov_registry.common import (
-    get_voter_box_key,
-)
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
 PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
-PROPOSAL_PARTIAL_FEE = OPEN_PROPOSAL_FEE - PROPOSAL_MBR
+PROPOSAL_PARTIAL_FEE = reg_cfg.OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 PROPOSAL_TITLE = "Test Proposal"
 METADATA_B64 = "TUVUQURBVEE="
 DEFAULT_FOCUS = 42
 
 
-def get_locked_amount(requested_amount: int) -> int:
-    return relative_to_absolute_amount(requested_amount, PROPOSAL_COMMITMENT_BPS)
+@dataclasses.dataclass
+class ProposalRegistryValues:
+    discussion_duration: int = 0
+    voting_duration: int = 0
+    members_quorum: int = 0
+    votes_quorum: int = 0
 
 
-REQUESTED_AMOUNT = MIN_REQUESTED_AMOUNT
+def get_voter_box_key(voter_address: str) -> bytes:
+    return VOTER_BOX_KEY_PREFIX.encode() + decode_address(voter_address)  # type: ignore
+
+
+def get_locked_amount(requested_amount: AlgoAmount) -> AlgoAmount:
+    return AlgoAmount(
+        micro_algo=relative_to_absolute_amount(
+            requested_amount.amount_in_micro_algo, reg_cfg.PROPOSAL_COMMITMENT_BPS
+        )
+    )
+
+
+REQUESTED_AMOUNT = AlgoAmount(micro_algo=reg_cfg.MIN_REQUESTED_AMOUNT)
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
+def get_proposal_values_from_registry(
+    proposal_client: ProposalClient,
+) -> Optional[ProposalRegistryValues]:
+    global_state = proposal_client.state.global_state
+    funding_category = global_state.funding_category
+    committee_members = global_state.committee_members
+    committee_votes = global_state.committee_votes
+    match funding_category:
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_SMALL:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_SMALL,
+                voting_duration=reg_cfg.VOTING_DURATION_SMALL,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_SMALL
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_SMALL
+                ),
+            )
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_MEDIUM:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_MEDIUM,
+                voting_duration=reg_cfg.VOTING_DURATION_MEDIUM,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_MEDIUM
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_MEDIUM
+                ),
+            )
+        case smart_contracts.proposal.enums.FUNDING_CATEGORY_LARGE:
+            return ProposalRegistryValues(
+                discussion_duration=reg_cfg.DISCUSSION_DURATION_LARGE,
+                voting_duration=reg_cfg.VOTING_DURATION_LARGE,
+                members_quorum=relative_to_absolute_amount(
+                    committee_members, reg_cfg.QUORUM_LARGE
+                ),
+                votes_quorum=relative_to_absolute_amount(
+                    committee_votes, reg_cfg.WEIGHTED_QUORUM_LARGE
+                ),
+            )
+        case _:
+            return None
+
+
+def quorums_reached(
+    proposal_client: ProposalClient,
+    voted_members: int,
+    total_votes: int,
+    *,
+    plebiscite: bool = True,
+) -> bool:
+    proposal_values = proposal_client.state.global_state
+    proposal_registry_values = get_proposal_values_from_registry(proposal_client)
+    if plebiscite:
+        return (
+            voted_members == proposal_values.committee_members
+            and total_votes == proposal_values.committee_votes
+        )
+    else:
+        return (
+            voted_members >= proposal_registry_values.members_quorum  # type: ignore
+            and total_votes >= proposal_registry_values.votes_quorum  # type: ignore
+        )
+
+
+def members_for_both_quorums(
+    proposal_client: ProposalClient, committee: list[CommitteeMember]
+) -> int:
+    for cm in committee:
+        assert (
+            cm.votes == DEFAULT_MEMBER_VOTES
+        )  # Required to compute the number of voting members to reach both quorums
+    proposal_registry_values = get_proposal_values_from_registry(proposal_client)
+    weighted_quorum_members = (
+        proposal_registry_values.votes_quorum // DEFAULT_MEMBER_VOTES  # type: ignore
+    )
+    return max(proposal_registry_values.members_quorum, weighted_quorum_members)  # type: ignore
+
+
 def assert_proposal_global_state(
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     *,
     proposer_address: str,
     registry_app_id: int,
@@ -92,8 +195,9 @@ def assert_proposal_global_state(
     assigned_votes: int = 0,
     voters_count: int = 0,
 ) -> None:
-    assert encode_address(global_state.proposer.as_bytes) == proposer_address  # type: ignore
-    assert global_state.title.as_str == title
+    global_state = proposal_client.state.global_state
+    assert global_state.proposer == proposer_address
+    assert global_state.title == title
     assert global_state.status == status
     assert global_state.finalized == finalized
     assert global_state.funding_category == funding_category
@@ -101,7 +205,7 @@ def assert_proposal_global_state(
     assert global_state.funding_type == funding_type
     assert global_state.requested_amount == requested_amount
     assert global_state.locked_amount == locked_amount
-    assert global_state.committee_id.as_bytes == committee_id
+    assert bytes(global_state.committee_id) == committee_id
     assert global_state.committee_members == committee_members
     assert global_state.committee_votes == committee_votes
     assert global_state.voted_members == voted_members
@@ -200,7 +304,7 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
 
 
 def assert_proposal_with_status(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     status: int,
@@ -210,7 +314,7 @@ def assert_proposal_with_status(  # type: ignore
 ) -> None:
     params = get_default_params_for_status(status, overrides, finalized=finalized)  # type: ignore
     assert_proposal_global_state(
-        global_state,
+        proposal_client,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
         finalized=finalized,
@@ -219,14 +323,14 @@ def assert_proposal_with_status(  # type: ignore
 
 
 def assert_empty_proposal_global_state(
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     *,
     finalized: bool = False,
 ) -> None:
     assert_proposal_global_state(
-        global_state,
+        proposal_client,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
         finalized=finalized,
@@ -237,7 +341,7 @@ def assert_empty_proposal_global_state(
 
 
 def assert_draft_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     *,
@@ -245,34 +349,34 @@ def assert_draft_proposal_global_state(  # type: ignore
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_DRAFT, finalized=finalized, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_DRAFT, finalized=finalized, **kwargs  # type: ignore
     )
 
 
 def assert_voting_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_VOTING, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_VOTING, **kwargs  # type: ignore
     )
 
 
 def assert_approved_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_APPROVED, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_APPROVED, **kwargs  # type: ignore
     )
 
 
 def assert_rejected_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     *,
@@ -280,34 +384,34 @@ def assert_rejected_proposal_global_state(  # type: ignore
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_REJECTED, finalized=finalized, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_REJECTED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
 def assert_final_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_SUBMITTED, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_SUBMITTED, **kwargs  # type: ignore
     )
 
 
 def assert_reviewed_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_REVIEWED, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_REVIEWED, **kwargs  # type: ignore
     )
 
 
 def assert_blocked_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     *,
@@ -315,12 +419,12 @@ def assert_blocked_proposal_global_state(  # type: ignore
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_BLOCKED, finalized=finalized, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_BLOCKED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
 def assert_funded_proposal_global_state(  # type: ignore
-    global_state: GlobalState,
+    proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
     *,
@@ -328,15 +432,15 @@ def assert_funded_proposal_global_state(  # type: ignore
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        global_state, proposer_address, registry_app_id, STATUS_FUNDED, finalized=finalized, **kwargs  # type: ignore
+        proposal_client, proposer_address, registry_app_id, STATUS_FUNDED, finalized=finalized, **kwargs  # type: ignore
     )
 
 
 def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
-    assert (
-        algorand_client.account.get_information(address)["amount"] == expected_balance  # type: ignore
+    assert algorand_client.account.get_information(address).amount == AlgoAmount(
+        micro_algo=expected_balance
     )
 
 
@@ -361,17 +465,16 @@ def assert_boxes(
 def open_proposal(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: AddressAndSigner,
-    registry_app_id: int,
+    proposer: SigningAccount,
     *,
-    payment_sender: AddressAndSigner = None,  # type: ignore
+    payment_sender: SigningAccount = None,  # type: ignore
     payment_receiver: str = "",
     title: str = PROPOSAL_TITLE,
     metadata: bytes = b"METADATA",
     funding_type: int = FUNDING_PROACTIVE,
     focus: int = DEFAULT_FOCUS,
-    requested_amount: int = REQUESTED_AMOUNT,
-    locked_amount: int = LOCKED_AMOUNT,
+    requested_amount: AlgoAmount = REQUESTED_AMOUNT,
+    locked_amount: AlgoAmount = LOCKED_AMOUNT,
 ) -> None:
     if payment_sender is None:
         payment_sender = proposer
@@ -379,201 +482,150 @@ def open_proposal(
     if payment_receiver == "":
         payment_receiver = proposal_client.app_address
 
-    composer = proposal_client.compose()
-
-    composer.open(
-        payment=TransactionWithSigner(
-            txn=algorand_client.transactions.payment(
-                PayParams(
-                    sender=payment_sender.address,
-                    receiver=payment_receiver,
-                    amount=locked_amount,
-                )
+    args = OpenArgs(
+        payment=algorand_client.create_transaction.payment(
+            PaymentParams(
+                sender=payment_sender.address,
+                signer=payment_sender.signer,
+                receiver=payment_receiver,
+                amount=locked_amount,
             ),
-            signer=payment_sender.signer,
         ),
         title=title,
         funding_type=funding_type,
         focus=focus,
-        requested_amount=requested_amount,
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[registry_app_id],
-        ),
+        requested_amount=requested_amount.amount_in_micro_algo,
     )
 
+    params = CommonAppCallParams(sender=proposer.address, signer=proposer.signer)
+
     if metadata != b"":
-        upload_metadata(
-            composer,
-            proposer,
-            registry_app_id,
-            metadata,
+        composer = proposal_client.new_group().open(
+            args=args,
+            params=params,
         )
 
-    composer.execute()
+        if metadata != b"":
+            upload_metadata(
+                composer,
+                proposer,
+                metadata,
+            )
+
+        composer.send()
+    else:
+        proposal_client.send.open(
+            args=args,
+            params=params,
+        )
 
 
 def upload_metadata(
-    proposal_client_composer: Composer,
-    proposer: AddressAndSigner,
-    registry_app_id: int,
+    proposal_client_composer: ProposalComposer,
+    proposer: SigningAccount,
     metadata: bytes,
 ) -> None:
 
     for i in range((len(metadata) // MAX_UPLOAD_PAYLOAD_SIZE) + 1):
         proposal_client_composer.upload_metadata(
-            payload=metadata[
-                i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
-            ],
-            is_first_in_group=i == 0,
-            transaction_parameters=TransactionParameters(
-                sender=proposer.address,
-                signer=proposer.signer,
-                foreign_apps=[registry_app_id],
-                boxes=[(0, METADATA_BOX_KEY), (0, METADATA_BOX_KEY)],
-                note=uuid.uuid4().bytes,
+            args=UploadMetadataArgs(
+                payload=metadata[
+                    i * MAX_UPLOAD_PAYLOAD_SIZE : (i + 1) * MAX_UPLOAD_PAYLOAD_SIZE
+                ],
+                is_first_in_group=i == 0,
             ),
+            params=CommonAppCallParams(sender=proposer.address, signer=proposer.signer),
         )
 
 
 def unassign_voters(
-    proposal_client_composer: Composer,
-    committee_members: list[AddressAndSigner],
-    xgov_daemon: AddressAndSigner,
-    sp: SuggestedParams,
-    xgov_registry_app_id: int,
+    proposal_client_composer: ProposalComposer,
+    committee: list[CommitteeMember],
+    xgov_daemon: SigningAccount,
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.unassign_voters(
-        voters=[cm.address for cm in committee_members[: bulks - 1]],
-        transaction_parameters=TransactionParameters(
-            sender=xgov_daemon.address,
-            signer=xgov_daemon.signer,
-            foreign_apps=[xgov_registry_app_id],
-            boxes=[
-                (
-                    0,
-                    get_voter_box_key(cm.address),
-                )
-                for cm in committee_members[: bulks - 1]
-            ],
-            suggested_params=sp,
+        args=UnassignVotersArgs(
+            voters=[cm.account.address for cm in committee[: bulks - 1]],
+        ),
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, signer=xgov_daemon.signer
         ),
     )
-    rest_of_committee_members = committee_members[bulks - 1 :]
+    rest_of_committee_members = committee[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.unassign_voters(
-            voters=[
-                cm.address
-                for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
-            ],
-            transaction_parameters=TransactionParameters(
+            args=UnassignVotersArgs(
+                voters=[
+                    cm.account.address
+                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
+                ]
+            ),
+            params=CommonAppCallParams(
                 sender=xgov_daemon.address,
                 signer=xgov_daemon.signer,
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(cm.address),
-                    )
-                    for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
-                ],
-                suggested_params=sp,
+                note=i.to_bytes(4, "big"),
             ),
         )
 
 
 def assign_voters(
-    proposal_client_composer: Composer,
-    committee_members: list[AddressAndSigner],
-    xgov_daemon: AddressAndSigner,
-    sp: SuggestedParams,
-    xgov_registry_app_id: int,
+    proposal_client_composer: ProposalComposer,
+    committee: list[CommitteeMember],
+    xgov_daemon: SigningAccount,
     bulks: int = 8,
 ) -> None:
     proposal_client_composer.assign_voters(
-        voters=[(cm.address, 10) for cm in committee_members[: bulks - 1]],
-        transaction_parameters=TransactionParameters(
-            sender=xgov_daemon.address,
-            signer=xgov_daemon.signer,
-            foreign_apps=[xgov_registry_app_id],
-            boxes=[
-                (
-                    0,
-                    get_voter_box_key(cm.address),
-                )
-                for cm in committee_members[: bulks - 1]
-            ],
-            suggested_params=sp,
+        args=AssignVotersArgs(
+            voters=[(cm.account.address, cm.votes) for cm in committee[: bulks - 1]]
         ),
+        params=CommonAppCallParams(sender=xgov_daemon.address),
     )
-    rest_of_committee_members = committee_members[bulks - 1 :]
+    rest_of_committee_members = committee[bulks - 1 :]
     for i in range(1 + len(rest_of_committee_members) // bulks):
         proposal_client_composer.assign_voters(
-            voters=[
-                (cm.address, 10)
-                for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
-            ],
-            transaction_parameters=TransactionParameters(
-                sender=xgov_daemon.address,
-                signer=xgov_daemon.signer,
-                boxes=[
-                    (
-                        0,
-                        get_voter_box_key(cm.address),
-                    )
+            args=AssignVotersArgs(
+                voters=[
+                    (cm.account.address, cm.votes)
                     for cm in rest_of_committee_members[i * bulks : (i + 1) * bulks]
-                ],
-                suggested_params=sp,
+                ]
             ),
+            params=CommonAppCallParams(sender=xgov_daemon.address),
         )
 
 
 def finalize_proposal(
     xgov_registry_client: XgovRegistryMockClient,
     proposal_app_id: int,
-    xgov_daemon: AddressAndSigner,
-    sp: SuggestedParams,
-    note: str = "",
+    xgov_daemon: SigningAccount,
+    static_fee: AlgoAmount = AlgoAmount(micro_algo=MIN_TXN_FEE * 3),  # noqa: B008
 ) -> None:
-    xgov_registry_client.finalize_proposal(
-        proposal_app=proposal_app_id,
-        transaction_parameters=TransactionParameters(
-            sender=xgov_daemon.address,
-            signer=xgov_daemon.signer,
-            foreign_apps=[proposal_app_id],
-            suggested_params=sp,
-            note=note,
+    xgov_registry_client.send.finalize_proposal(
+        args=FinalizeProposalArgs(
+            proposal_app=proposal_app_id,
+        ),
+        params=CommonAppCallParams(
+            sender=xgov_daemon.address, signer=xgov_daemon.signer, static_fee=static_fee
         ),
     )
 
 
 def submit_proposal(
     proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient | XGovRegistryClient,
-    proposer: AddressAndSigner,
-    xgov_daemon: AddressAndSigner,
-    sp_min_fee_times_2: SuggestedParams,
+    xgov_registry_client: XgovRegistryMockClient | XGovRegistryClient,
+    proposer: SigningAccount,
     should_time_warp: bool = True,  # noqa: FBT001, FBT002
 ) -> None:
-
-    sp = sp_min_fee_times_2
-
     if should_time_warp:
-        reg_gs = xgov_registry_mock_client.get_global_state()
+        reg_gs = xgov_registry_client.state.global_state
         discussion_duration = reg_gs.discussion_duration_large
 
-        open_ts = proposal_client.get_global_state().open_ts
+        open_ts = proposal_client.state.global_state.open_ts
         if open_ts > 0:  # not empty proposal
             time_warp(open_ts + discussion_duration)  # so we could actually submit
 
-    proposal_client.submit(
-        transaction_parameters=TransactionParameters(
-            sender=proposer.address,
-            signer=proposer.signer,
-            foreign_apps=[xgov_registry_mock_client.app_id],
-            accounts=[xgov_daemon.address],
-            suggested_params=sp,
-            note=uuid.uuid4().bytes,
-        ),
+    proposal_client.send.submit(
+        params=CommonAppCallParams(
+            sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
+        )
     )

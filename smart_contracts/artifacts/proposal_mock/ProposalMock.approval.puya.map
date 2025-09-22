@@ -42,11 +42,11 @@
       "op": "global ZeroAddress",
       "defined_out": [
         "0x70726f706f736572",
-        "new_state_value%0#0"
+        "materialized_values%0#0"
       ],
       "stack_out": [
         "0x70726f706f736572",
-        "new_state_value%0#0"
+        "materialized_values%0#0"
       ]
     },
     "112": {
@@ -928,11 +928,11 @@
       "op": "global CallerApplicationID",
       "defined_out": [
         "0x72656769737472795f6170705f6964",
-        "new_state_value%0#0"
+        "materialized_values%0#0"
       ],
       "stack_out": [
         "0x72656769737472795f6170705f6964",
-        "new_state_value%0#0"
+        "materialized_values%0#0"
       ]
     },
     "438": {

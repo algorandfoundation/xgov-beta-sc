@@ -1,0 +1,96 @@
+name: Check xGov deployments on release merge
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-deployments:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Skip for non-release PRs
+        if: github.head_ref != 'release'
+        run: |
+          echo "This check only runs for PRs from the 'release' branch."
+          echo "Current PR is from '${{ github.head_ref }}' branch - skipping deployment checks."
+          echo "✅ No deployment validation needed for this PR."
+
+      - uses: actions/create-github-app-token@v2
+        if: github.head_ref == 'release'
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_ID }}
+          private-key: ${{ secrets.BOT_SK }}
+
+      - name: Check deployments to environments
+        if: github.head_ref == 'release'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Checking deployment status..."
+
+          check_env() {
+            local ENV_NAME=$1
+            echo "Checking environment: $ENV_NAME"
+
+            DEPLOYMENTS=$(gh api repos/${REPO}/deployments?per_page=50 --jq '.' 2>/dev/null)
+
+            if [ $? -ne 0 ] || [ -z "$DEPLOYMENTS" ]; then
+              return 1
+            fi
+
+            DEPLOYMENT_ID=$(echo "$DEPLOYMENTS" | jq --arg env "$ENV_NAME" '
+              map(select(.environment == $env))
+              | sort_by(.created_at)
+              | reverse
+              | .[0].id
+            ')
+
+            if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" == "null" ]; then
+              return 1
+            fi
+
+            STATUS=$(gh api repos/${REPO}/deployments/${DEPLOYMENT_ID}/statuses --jq '
+              sort_by(.created_at)
+              | reverse
+              | .[0].state
+            ' 2>/dev/null)
+
+            if [ -z "$STATUS" ] || [ "$STATUS" == "null" ] || [ "$STATUS" != "success" ]; then
+              return 1
+            fi
+
+            echo "✅ $ENV_NAME deployment OK"
+            return 0
+          }
+
+          # Track overall success/failure
+          OVERALL_SUCCESS=true
+
+          # Check testnet environment
+          TESTNET_FOUND=false
+          if check_env "contract-testnet"; then
+            TESTNET_FOUND=true
+          else
+            echo "❌ No successful testnet deployment found"
+            OVERALL_SUCCESS=false
+          fi
+
+          # Check pages environment
+          PAGES_FOUND=false
+          if check_env "github-pages"; then
+            PAGES_FOUND=true
+          else
+            echo "❌ No successful pages deployment found"
+            OVERALL_SUCCESS=false
+          fi
+
+          if [ "$OVERALL_SUCCESS" = true ]; then
+            echo "✅ All deployment checks passed"
+          else
+            echo "❌ Deployment checks failed"
+            exit 1
+          fi

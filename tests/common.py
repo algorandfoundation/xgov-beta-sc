@@ -1,5 +1,7 @@
-from algokit_utils import LogicError
-from algosdk.util import algos_to_microalgos
+import dataclasses
+from typing import Final
+
+from algokit_utils import AlgoAmount, SigningAccount, LogicError
 
 from smart_contracts.proposal.constants import (
     BPS,
@@ -15,6 +17,13 @@ def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:
 
 DEFAULT_COMMITTEE_ID = b"\x01" * COMMITTEE_ID_LENGTH
 DEFAULT_COMMITTEE_MEMBERS = 20
-DEFAULT_COMMITTEE_VOTES = 200
+DEFAULT_MEMBER_VOTES = 10
+DEFAULT_COMMITTEE_VOTES = DEFAULT_COMMITTEE_MEMBERS * DEFAULT_MEMBER_VOTES
 
-INITIAL_FUNDS: int = algos_to_microalgos(10_000)  # type: ignore[no-untyped-call]
+INITIAL_FUNDS: Final[AlgoAmount] = AlgoAmount(algo=1_000)
+
+
+@dataclasses.dataclass
+class CommitteeMember:
+    account: SigningAccount
+    votes: int

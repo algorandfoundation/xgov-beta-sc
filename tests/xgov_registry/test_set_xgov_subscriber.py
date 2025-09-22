@@ -1,49 +1,32 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.models import Account
-from algosdk.transaction import SuggestedParams
+from algokit_utils import CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    SetXgovSubscriberArgs,
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import LogicErrorType, decode_address, xgov_box_name
 
 
 def test_set_xgov_subscriber_success(
-    deployer: Account,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    xgov_registry_client.set_xgov_subscriber(
-        subscriber=no_role_account.address,
-        transaction_parameters=TransactionParameters(
-            sender=deployer.address,
-            signer=deployer.signer,
-            suggested_params=sp_min_fee_times_2,
-            boxes=[(0, xgov_box_name(deployer.address))],
-        ),
+    xgov_registry_client.send.set_xgov_subscriber(
+        args=SetXgovSubscriberArgs(subscriber=no_role_account.address),
     )
-
-    global_state = xgov_registry_client.get_global_state()
-
-    assert global_state.xgov_subscriber.as_bytes == decode_address(no_role_account.address)  # type: ignore
+    assert (
+        xgov_registry_client.state.global_state.xgov_subscriber
+        == no_role_account.address
+    )
 
 
 def test_set_xgov_subscriber_not_manager(
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    sp_min_fee_times_2: SuggestedParams,
 ) -> None:
-    with pytest.raises(LogicErrorType, match=err.UNAUTHORIZED):
-        xgov_registry_client.set_xgov_subscriber(
-            subscriber=no_role_account.address,
-            transaction_parameters=TransactionParameters(
-                sender=no_role_account.address,
-                signer=no_role_account.signer,
-                suggested_params=sp_min_fee_times_2,
-                boxes=[(0, xgov_box_name(no_role_account.address))],
-            ),
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        xgov_registry_client.send.set_xgov_subscriber(
+            args=SetXgovSubscriberArgs(subscriber=no_role_account.address),
+            params=CommonAppCallParams(sender=no_role_account.address),
         )

@@ -1,8 +1,9 @@
 import re
+import uuid
 from re import Pattern
 from typing import Optional
 
-from algokit_utils.beta.algorand_client import AlgorandClient, PayParams
+from algokit_utils import AlgoAmount, AlgorandClient, PaymentParams
 from algosdk.v2client.algod import AlgodClient
 
 from smart_contracts.errors import std_errors as err
@@ -23,8 +24,7 @@ def round_warp(to_round: Optional[int] = None) -> None:
     Args:
         to_round (Optional): Round to advance to
     """
-    algorand_client = AlgorandClient.default_local_net()
-    algorand_client.set_suggested_params_timeout(0)
+    algorand_client = AlgorandClient.default_localnet()
     dispenser = algorand_client.account.localnet_dispenser()
     if to_round is not None:
         last_round = get_last_round(algorand_client.client.algod)
@@ -34,11 +34,12 @@ def round_warp(to_round: Optional[int] = None) -> None:
         n_rounds = 1
     for _ in range(n_rounds):
         algorand_client.send.payment(
-            PayParams(
+            PaymentParams(
                 signer=dispenser.signer,
                 sender=dispenser.address,
                 receiver=dispenser.address,
-                amount=0,
+                amount=AlgoAmount(micro_algo=0),
+                note=uuid.uuid4().hex.encode("utf-8"),
             )
         )
 
@@ -50,8 +51,7 @@ def time_warp(to_timestamp: int) -> None:
     Args:
         to_timestamp: Timestamp to advance to
     """
-    algorand_client = AlgorandClient.default_local_net()
-    algorand_client.set_suggested_params_timeout(0)
+    algorand_client = AlgorandClient.default_localnet()
     offset = to_timestamp - get_latest_timestamp(algorand_client.client.algod)
     if offset > 0:
         algorand_client.client.algod.set_timestamp_offset(offset)

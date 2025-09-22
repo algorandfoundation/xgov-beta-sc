@@ -321,28 +321,35 @@ class Proposal(
         return value
 
     @subroutine
-    def verify_and_set_committee(self) -> None:
+    def verify_and_set_committee(self) -> typ.Error:
 
         committee_id = typ.Bytes32.from_bytes(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
         )
-        assert committee_id != typ.Bytes32.from_bytes(b""), err.EMPTY_COMMITTEE_ID
+        if committee_id == typ.Bytes32.from_bytes(b""):
+            return typ.Error(err.ARC_65_PREFIX + err.EMPTY_COMMITTEE_ID)
 
         committee_members, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        assert committee_members > UInt64(0), err.WRONG_COMMITTEE_MEMBERS
+        if error != typ.Error(""):
+            return error
+        if committee_members <= UInt64(0):
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_COMMITTEE_MEMBERS)
 
         committee_votes, error = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        assert committee_votes > UInt64(0), err.WRONG_COMMITTEE_VOTES
+        if error != typ.Error(""):
+            return error
+        if committee_votes <= UInt64(0):
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_COMMITTEE_VOTES)
 
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = committee_members
         self.committee_votes.value = committee_votes
+
+        return typ.Error("")
 
     @subroutine
     def assert_draft_and_proposer(self) -> None:
@@ -540,11 +547,18 @@ class Proposal(
         ), err.WRONG_METHOD_CALL
 
     @arc4.abimethod(create="require")
-    def create(self, proposer: arc4.Address) -> None:
+    def create(self, proposer: arc4.Address) -> typ.Error:
         """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Args:
             proposer (arc4.Address): Address of the proposer
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Registry
+            err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
+            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
+            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
         """
         assert (
             Global.caller_application_id != 0
@@ -553,7 +567,7 @@ class Proposal(
         self.proposer.value = proposer.native
         self.registry_app_id.value = Global.caller_application_id
 
-        self.verify_and_set_committee()
+        return self.verify_and_set_committee()
 
     @arc4.abimethod()
     def open(
@@ -676,10 +690,6 @@ class Proposal(
             err.MISSING_METADATA: The proposal description metadata is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_DRAFT
             err.TOO_EARLY: If the proposal is submitted before the minimum time
-            err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
-            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
-            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
-
         """
         self.check_registry_not_paused()
 

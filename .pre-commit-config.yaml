@@ -1,7 +1,8 @@
 repos:
+  # AlgoKit
   - repo: local
     hooks:
-      
+
       - id: black
         name: black
         description: "Black: The uncompromising Python code formatter"
@@ -10,8 +11,7 @@ repos:
         minimum_pre_commit_version: 2.9.2
         require_serial: true
         types_or: [ python, pyi ]
-      
-      
+
       - id: ruff
         name: ruff
         description: "Run 'ruff' for extremely fast Python linting"
@@ -23,8 +23,7 @@ repos:
         additional_dependencies: [ ]
         minimum_pre_commit_version: '0'
         files: '^(smart_contracts|tests)/'
-      
-      
+
       - id: mypy
         name: mypy
         description: '`mypy` will check Python types for correctness'
@@ -35,6 +34,21 @@ repos:
         additional_dependencies: [ ]
         minimum_pre_commit_version: '2.9.2'
         files: '^(smart_contracts|tests)/'
+
+  # Security and Infrastructure as Code scanning
+  - repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.2.457
+    hooks:
+      - id: checkov
+        name: checkov
+        description: "Checkov: Static analysis for infrastructure as code"
+        entry: checkov
+        language: python
+        args: [--framework, dockerfile, --framework, github_actions, --framework, yaml]
+        types_or: [yaml, dockerfile]
+        files: '^(\\.github/workflows/.*\\.ya?ml|Dockerfile.*|docker-compose.*\\.ya?ml)$'
+        require_serial: false
+        additional_dependencies: []
 
 #      # Uncomment to enable TEAL static analysis using Tealer package
 #      - id: tealer
@@ -47,3 +61,64 @@ repos:
 #        additional_dependencies: []
 #        minimum_pre_commit_version: "0"
 #        files: '^.*\.teal$'
+
+  # Docs
+  - repo: local
+    hooks:
+      - id: mdbook-build
+        name: mdbook build
+        description: "Builds mdBook."
+        entry: mdbook build
+        language: rust
+        minimum_pre_commit_version: 3.2.0
+        additional_dependencies: [ ]
+        pass_filenames: false
+
+      - id: mdbook-test
+        name: mdbook test
+        description: "Checks mdBook pass tests."
+        entry: mdbook test
+        language: rust
+        minimum_pre_commit_version: 3.2.0
+        types: [ markdown ]
+        additional_dependencies: [ ]
+        pass_filenames: false
+
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        name: markdownlint
+        description: "Checks the style of Markdown/Commonmark files."
+        entry: markdownlint
+        language: node
+        minimum_pre_commit_version: 0.15.0
+        types: [ markdown ]
+        additional_dependencies: [ ]
+        files: '^(docs/.*\.md|README\.md)$'
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        name: trim trailing whitespace
+        description: "Trims trailing whitespace."
+        entry: trailing-whitespace-fixer
+        language: python
+        minimum_pre_commit_version: 3.2.0
+        types: [ markdown ]
+        additional_dependencies: [ ]
+        files: '^(docs)/'
+
+  - repo: https://github.com/lycheeverse/lychee
+    rev: lychee-v0.19.1
+    hooks:
+    - id: lychee-docker
+      name: lychee
+      description: "Run 'lychee' docker image for fast, async, stream-based link checking"
+      entry: lycheeverse/lychee:0.14
+      language: docker_image
+      args: ["--no-progress"]
+      types: [text]
+      pass_filenames: true
+      require_serial: true
