@@ -479,6 +479,153 @@ class HashicorpVaultMultisigTransactionSigner(TransactionSigner):
         return self._address  # type: ignore
 
 
+# Helper function to create VaultAuth from environment variables
+def _create_vault_auth_from_env() -> VaultAuth:
+    """
+    Create a VaultAuth instance based on available environment variables.
+
+    Returns:
+        VaultAuth: Configured authentication method
+
+    Raises:
+        ValueError: If no valid authentication method is found
+    """
+    # Check authentication methods in order of preference
+
+    # 1. Check for GitHub Actions OIDC (automatic detection)
+    if (
+        os.environ.get("GITHUB_ACTIONS") == "true"
+        and os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+        and os.environ.get("VAULT_OIDC_ROLE")
+    ):
+        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
+        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
+        github_audience = os.environ.get("VAULT_GITHUB_AUDIENCE", "vault")
+        return GitHubActionsAuth(
+            role=oidc_role, mount_point=oidc_mount_path, audience=github_audience
+        )
+
+    # 2. Check for OIDC JWT authentication (service account)
+    elif os.environ.get("VAULT_OIDC_ROLE") and os.environ.get("VAULT_OIDC_JWT"):
+        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
+        oidc_jwt = os.environ.get("VAULT_OIDC_JWT", "")
+        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
+        return OIDCJWTAuth(role=oidc_role, jwt=oidc_jwt, mount_point=oidc_mount_path)
+
+    # 3. Check for OIDC with auth code
+    elif os.environ.get("VAULT_OIDC_ROLE") and os.environ.get("VAULT_OIDC_AUTH_CODE"):
+        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
+        oidc_auth_code = os.environ.get("VAULT_OIDC_AUTH_CODE", "")
+        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
+        return OIDCCallbackAuth(
+            role=oidc_role, auth_code=oidc_auth_code, mount_point=oidc_mount_path
+        )
+
+    # 4. Check for interactive OIDC
+    elif os.environ.get("VAULT_OIDC_ROLE"):
+        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
+        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
+        return OIDCAuth(role=oidc_role, mount_point=oidc_mount_path)
+
+    # 5. Check for AppRole authentication
+    elif os.environ.get("VAULT_ROLE_ID") and os.environ.get("VAULT_SECRET_ID"):
+        role_id = os.environ.get("VAULT_ROLE_ID", "")
+        secret_id = os.environ.get("VAULT_SECRET_ID", "")
+        approle_mount_path = os.environ.get("VAULT_APPROLE_MOUNT_PATH", "approle")
+        return AppRoleAuth(
+            role_id=role_id, secret_id=secret_id, mount_point=approle_mount_path
+        )
+
+    # 6. Fall back to token authentication
+    elif os.environ.get("VAULT_TOKEN"):
+        vault_token = os.environ.get("VAULT_TOKEN", "")
+        return TokenAuth(token=vault_token)
+
+    else:
+        raise ValueError(
+            "Authentication required. Please set one of:\n"
+            "- VAULT_TOKEN (for token auth)\n"
+            "- VAULT_ROLE_ID + VAULT_SECRET_ID (for AppRole auth)\n"
+            "- VAULT_OIDC_ROLE (for OIDC auth)\n"
+            "- VAULT_OIDC_ROLE + VAULT_OIDC_JWT (for OIDC JWT auth)\n"
+            "- VAULT_OIDC_ROLE + VAULT_OIDC_AUTH_CODE (for OIDC callback auth)"
+        )
+
+
+# Factory function to create multisig signer from environment variables (backwards compatible)
+def create_vault_multisig_signer_from_env(
+    msig: Multisig,
+) -> HashicorpVaultMultisigTransactionSigner:
+    """
+    Create a HashiCorp Vault multisig signer using environment variables with Transit engine
+    Supports Token, AppRole, and OIDC authentication methods.
+    Expected environment variables:
+    - VAULT_URL: HashiCorp Vault URL
+    - VAULT_TRANSIT_MOUNT_PATH: Transit engine mount path (optional, defaults to "transit")
+    - VAULT_KEY_NAMES: Comma-separated names of the keys in transit engine for each multisig signer
+
+    For Token authentication:
+    - VAULT_TOKEN: Authentication token
+
+    For AppRole authentication:
+    - VAULT_ROLE_ID: AppRole role ID
+    - VAULT_SECRET_ID: AppRole secret ID
+    - VAULT_APPROLE_MOUNT_PATH: AppRole mount path (optional, defaults to "approle")
+
+    For OIDC authentication:
+    - VAULT_OIDC_ROLE: OIDC role name
+    - VAULT_OIDC_MOUNT_PATH: OIDC mount path (optional, defaults to "oidc")
+
+    For OIDC with auth code:
+    - VAULT_OIDC_ROLE: OIDC role name
+    - VAULT_OIDC_AUTH_CODE: Pre-obtained authorization code
+    - VAULT_OIDC_MOUNT_PATH: OIDC mount path (optional, defaults to "oidc")
+
+    For OIDC JWT (service account):
+    - VAULT_OIDC_ROLE: OIDC role name
+    - VAULT_OIDC_JWT: JWT token
+    - VAULT_OIDC_MOUNT_PATH: OIDC mount path (optional, defaults to "oidc")
+
+    For GitHub Actions OIDC (automatic):
+    - VAULT_OIDC_ROLE: OIDC role name configured for GitHub Actions
+    - VAULT_OIDC_MOUNT_PATH: OIDC mount path (optional, defaults to "oidc")
+    - VAULT_GITHUB_AUDIENCE: Audience for GitHub OIDC token (optional, defaults to "vault")
+    Note: Requires 'id-token: write' permission in GitHub Actions workflow
+    """
+
+    vault_url = os.environ.get("VAULT_URL")
+    transit_mount_path = os.environ.get("VAULT_TRANSIT_MOUNT_PATH", "transit")
+    key_names_str = os.environ.get("VAULT_KEY_NAMES")
+
+    if not vault_url:
+        raise ValueError("VAULT_URL environment variable is required")
+    if not key_names_str:
+        raise ValueError("VAULT_KEY_NAMES environment variable is required")
+
+    key_names = [
+        key_name.strip() for key_name in key_names_str.split(",") if key_name.strip()
+    ]
+    if len(key_names) != len(msig.subsigs):
+        raise ValueError(
+            f"Number of VAULT_KEY_NAMES ({len(key_names)}) does not match "
+            f"number of multisig signers ({len(msig.subsigs)})"
+        )
+
+    # Get authentication method from environment
+    vault_auth = _create_vault_auth_from_env()
+
+    # Create transit engine with the specified parameters
+    transit_engine = TransitSecretEngine(
+        vault_url=vault_url, vault_auth=vault_auth, mount_path=transit_mount_path
+    )
+
+    return HashicorpVaultMultisigTransactionSigner(
+        msig=msig,
+        secret_engine=transit_engine,
+        key_names=key_names,
+    )
+
+
 # Factory function to create signer from environment variables (backwards compatible)
 def create_vault_signer_from_env() -> HashicorpVaultTransactionSigner:
     """
@@ -528,68 +675,8 @@ def create_vault_signer_from_env() -> HashicorpVaultTransactionSigner:
     if not key_name:
         raise ValueError("VAULT_KEY_NAME environment variable is required")
 
-    # Check authentication methods in order of preference
-
-    # 1. Check for GitHub Actions OIDC (automatic detection)
-    if (
-        os.environ.get("GITHUB_ACTIONS") == "true"
-        and os.environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-        and os.environ.get("VAULT_OIDC_ROLE")
-    ):
-        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
-        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
-        github_audience = os.environ.get("VAULT_GITHUB_AUDIENCE", "vault")
-        vault_auth: VaultAuth = GitHubActionsAuth(
-            role=oidc_role, mount_point=oidc_mount_path, audience=github_audience
-        )
-
-    # 2. Check for OIDC JWT authentication (service account)
-    elif os.environ.get("VAULT_OIDC_ROLE") and os.environ.get("VAULT_OIDC_JWT"):
-        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
-        oidc_jwt = os.environ.get("VAULT_OIDC_JWT", "")
-        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
-        vault_auth = OIDCJWTAuth(
-            role=oidc_role, jwt=oidc_jwt, mount_point=oidc_mount_path
-        )
-
-    # 3. Check for OIDC with auth code
-    elif os.environ.get("VAULT_OIDC_ROLE") and os.environ.get("VAULT_OIDC_AUTH_CODE"):
-        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
-        oidc_auth_code = os.environ.get("VAULT_OIDC_AUTH_CODE", "")
-        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
-        vault_auth = OIDCCallbackAuth(
-            role=oidc_role, auth_code=oidc_auth_code, mount_point=oidc_mount_path
-        )
-
-    # 4. Check for interactive OIDC
-    elif os.environ.get("VAULT_OIDC_ROLE"):
-        oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
-        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
-        vault_auth = OIDCAuth(role=oidc_role, mount_point=oidc_mount_path)
-
-    # 5. Check for AppRole authentication
-    elif os.environ.get("VAULT_ROLE_ID") and os.environ.get("VAULT_SECRET_ID"):
-        role_id = os.environ.get("VAULT_ROLE_ID", "")
-        secret_id = os.environ.get("VAULT_SECRET_ID", "")
-        approle_mount_path = os.environ.get("VAULT_APPROLE_MOUNT_PATH", "approle")
-        vault_auth = AppRoleAuth(
-            role_id=role_id, secret_id=secret_id, mount_point=approle_mount_path
-        )
-
-    # 6. Fall back to token authentication
-    elif os.environ.get("VAULT_TOKEN"):
-        vault_token = os.environ.get("VAULT_TOKEN", "")
-        vault_auth = TokenAuth(token=vault_token)
-
-    else:
-        raise ValueError(
-            "Authentication required. Please set one of:\n"
-            "- VAULT_TOKEN (for token auth)\n"
-            "- VAULT_ROLE_ID + VAULT_SECRET_ID (for AppRole auth)\n"
-            "- VAULT_OIDC_ROLE (for OIDC auth)\n"
-            "- VAULT_OIDC_ROLE + VAULT_OIDC_JWT (for OIDC JWT auth)\n"
-            "- VAULT_OIDC_ROLE + VAULT_OIDC_AUTH_CODE (for OIDC callback auth)"
-        )
+    # Get authentication method from environment
+    vault_auth = _create_vault_auth_from_env()
 
     # Create transit engine with the specified parameters
     transit_engine = TransitSecretEngine(

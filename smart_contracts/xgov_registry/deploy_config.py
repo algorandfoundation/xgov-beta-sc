@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+from typing import Optional
 
 from algokit_utils import (
     AlgoAmount,
@@ -11,17 +12,119 @@ from algokit_utils import (
     OnSchemaBreak,
     OnUpdate,
 )
+from algosdk import encoding
+from algosdk.transaction import Multisig
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
 from smart_contracts.xgov_registry.helpers import (
     load_proposal_contract_data_size_per_transaction,
 )
-from smart_contracts.xgov_registry.vault_tx_signer import create_vault_signer_from_env
+from smart_contracts.xgov_registry.vault_tx_signer import (
+    HashicorpVaultMultisigTransactionSigner,
+    TransitSecretEngine,
+    _create_vault_auth_from_env,
+    create_vault_multisig_signer_from_env,
+)
 
 logger = logging.getLogger(__name__)
 
 deployer_min_spending = AlgoAmount.from_algo(3)
 registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box storage
+
+
+def _create_vault_signer_from_env() -> (
+    tuple[Optional[HashicorpVaultMultisigTransactionSigner], str, Optional[object]]
+):
+    """Helper function to create vault multisig signer from environment variables.
+
+    Creates a 1-of-2 multisig where:
+    - One key comes from HashiCorp Vault (retrieved by VAULT_KEY_NAME)
+    - Other key is an Algorand address from environment (MULTISIG_ALGORAND_ADDRESS),
+      defaulting to DEPLOYER address if not set
+
+    The function connects to Vault, retrieves the public key for the specified key name,
+    converts it to an Algorand address, and creates a proper multisig with both addresses.
+
+    Environment variables needed:
+    - VAULT_URL: HashiCorp Vault URL
+    - VAULT_KEY_NAME: Name of the key in Vault's transit engine
+    - MULTISIG_ALGORAND_ADDRESS: Algorand address for the other multisig key
+    - VAULT_TRANSIT_MOUNT_PATH: Transit engine mount path (optional, defaults to "transit")
+    - Plus all standard Vault authentication variables (VAULT_TOKEN, VAULT_ROLE_ID, etc.)
+
+    Returns tuple of (vault_signer, deployer_address, deployer_account) where:
+    - vault_signer is the HashiCorp Vault multisig signer or None if not available
+    - deployer_address is the multisig address to use for deployment
+    - deployer_account is the AlgoKit account object or None if using vault
+    """
+    algorand_client = AlgorandClient.from_environment()
+    github_deployer = algorand_client.account.from_environment("DEPLOYER")
+
+    try:
+        # Get the Algorand address for the multisig
+        algorand_address = os.environ.get(
+            "MULTISIG_ALGORAND_ADDRESS", github_deployer.address
+        )
+        if not algorand_address:
+            raise ValueError(
+                "MULTISIG_ALGORAND_ADDRESS environment variable is required for vault multisig"
+            )
+
+        # Get the vault key name
+        vault_key_name = os.environ.get("VAULT_KEY_NAME")
+        if not vault_key_name:
+            raise ValueError("VAULT_KEY_NAME environment variable is required")
+
+        # Get Vault connection details
+        vault_url = os.environ.get("VAULT_URL")
+        transit_mount_path = os.environ.get("VAULT_TRANSIT_MOUNT_PATH", "transit")
+
+        if not vault_url:
+            raise ValueError("VAULT_URL environment variable is required")
+
+        # Create Vault authentication and transit engine to get the public key
+        vault_auth = _create_vault_auth_from_env()
+        transit_engine = TransitSecretEngine(
+            vault_url=vault_url, vault_auth=vault_auth, mount_path=transit_mount_path
+        )
+
+        # Get the public key bytes from Vault for the specified key
+        vault_public_key_bytes = transit_engine.setup_and_derive_public_key(
+            vault_key_name
+        )
+
+        # Convert to Algorand address
+        vault_address: str = encoding.encode_address(vault_public_key_bytes)  # type: ignore
+        logger.info(
+            f"Retrieved Vault public key for key '{vault_key_name}': {vault_address}"
+        )
+
+        # Set VAULT_KEY_NAMES for the multisig function (it expects comma-separated names)
+        # For a 1-of-2 multisig, we only need one vault key
+        os.environ["VAULT_KEY_NAMES"] = vault_key_name
+
+        # Create 1-of-2 multisig with both addresses (Vault key and provided Algorand address)
+        # Sort addresses to ensure consistent multisig address generation
+        addresses: list[str] = sorted([vault_address, algorand_address])
+        multisig = Multisig(  # type: ignore
+            version=1,
+            threshold=1,
+            addresses=addresses,
+        )
+
+        vault_signer = create_vault_multisig_signer_from_env(multisig)
+        deployer_address = vault_signer.address
+        logger.info(
+            f"Using Vault multisig transaction signer with address: {deployer_address}"
+        )
+        return vault_signer, deployer_address, None
+
+    except (ValueError, KeyError) as e:
+        logger.info(
+            f"Vault signer not available ({e}), falling back to environment-based deployer"
+        )
+        deployer = algorand_client.account.from_environment("DEPLOYER")
+        return None, deployer.address, deployer
 
 
 def _deploy_xgov_registry() -> None:
@@ -44,17 +147,7 @@ def _deploy_xgov_registry() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    try:
-        vault_signer = create_vault_signer_from_env()
-        deployer_address = vault_signer.address
-        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
-    except (ValueError, KeyError) as e:
-        logger.info(
-            f"Vault signer not available ({e}), falling back to environment-based deployer"
-        )
-        deployer = algorand_client.account.from_environment("DEPLOYER")
-        deployer_address = deployer.address
-        vault_signer = None
+    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -74,6 +167,7 @@ def _deploy_xgov_registry() -> None:
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer_address,
+        default_signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -127,7 +221,7 @@ def _deploy_xgov_registry() -> None:
         ),
         params=CommonAppCallParams(
             sender=deployer_address,
-            signer=vault_signer if vault_signer else deployer.signer,
+            signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
         ),
     )
 
@@ -139,6 +233,10 @@ def _deploy_xgov_registry() -> None:
         ]
         app_client.send.load_proposal_contract(
             args=(i * data_size_per_transaction, chunk),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
         )
 
     should_set_roles = os.environ.get("XGOV_REG_SET_ROLES", "false").lower() == "true"
@@ -150,17 +248,47 @@ def _deploy_xgov_registry() -> None:
         admin_roles.set_committee_manager(
             args=SetCommitteeManagerArgs(
                 manager=test_admin,
-            )
+            ),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
         )
         admin_roles.set_xgov_daemon(
-            args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon)
+            args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
         )
-        admin_roles.set_xgov_council(args=SetXgovCouncilArgs(council=test_admin))
+        admin_roles.set_xgov_council(
+            args=SetXgovCouncilArgs(council=test_admin),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
+        )
         admin_roles.set_xgov_subscriber(
-            args=SetXgovSubscriberArgs(subscriber=test_admin)
+            args=SetXgovSubscriberArgs(subscriber=test_admin),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
         )
-        admin_roles.set_payor(args=SetPayorArgs(payor=test_admin))
-        admin_roles.set_kyc_provider(args=SetKycProviderArgs(provider=test_admin))
+        admin_roles.set_payor(
+            args=SetPayorArgs(payor=test_admin),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
+        )
+        admin_roles.set_kyc_provider(
+            args=SetKycProviderArgs(provider=test_admin),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
+        )
         admin_roles.send()
 
     else:
@@ -216,7 +344,11 @@ def _deploy_xgov_registry() -> None:
         app_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=config,
-            )
+            ),
+            params=CommonAppCallParams(
+                sender=deployer_address,
+                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            ),
         )
     else:
         logger.info("Skipping xGov registry configuration as requested")
@@ -238,17 +370,7 @@ def _set_roles() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    try:
-        vault_signer = create_vault_signer_from_env()
-        deployer_address = vault_signer.address
-        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
-    except (ValueError, KeyError) as e:
-        logger.info(
-            f"Vault signer not available ({e}), falling back to environment-based deployer"
-        )
-        deployer = algorand_client.account.from_environment("DEPLOYER")
-        deployer_address = deployer.address
-        vault_signer = None
+    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -304,17 +426,7 @@ def _configure_xgov_registry() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    try:
-        vault_signer = create_vault_signer_from_env()
-        deployer_address = vault_signer.address
-        logger.info(f"Using Vault transaction signer with address: {deployer_address}")
-    except (ValueError, KeyError) as e:
-        logger.info(
-            f"Vault signer not available ({e}), falling back to environment-based deployer"
-        )
-        deployer = algorand_client.account.from_environment("DEPLOYER")
-        deployer_address = deployer.address
-        vault_signer = None
+    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -460,7 +572,17 @@ def deploy() -> None:
         _set_roles()
     elif command == "configure_xgov_registry":
         _configure_xgov_registry()
+    elif command == "test_vault_signer":
+        # Just test creating the vault signer and print the address
+        vault_signer, deployer_address, _ = _create_vault_signer_from_env()
+        if vault_signer:
+            logger.info(f"Vault multisig signer address: {deployer_address}")
+        else:
+            logger.info(
+                "Vault multisig signer not configured, using environment deployer"
+            )
     else:
         raise ValueError(
-            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry"
+            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
+            "test_vault_signer"
         )

@@ -31,6 +31,12 @@ jobs:
       - name: Lint and format python dependencies
         run: algokit project run lint
 
+      - name: Test vault signer setup
+        run: algokit project run deploy testnet
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: test_vault_signer
+
       - name: Run tests
         shell: bash
         run: |
