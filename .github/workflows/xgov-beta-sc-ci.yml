@@ -36,6 +36,8 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: test_vault_signer
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
           # The deployer account
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           VAULT_URL: ${{ secrets.VAULT_URL }}
