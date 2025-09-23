@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # Ensure we checkout the PR branch for PR events
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
