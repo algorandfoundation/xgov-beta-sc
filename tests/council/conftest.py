@@ -5,10 +5,10 @@ from algokit_utils import (
     TransactionParameters,
     ensure_funded,
 )
-from algokit_utils.beta.account_manager import AddressAndSigner
+from algokit_utils.beta import AddressAndSigner
 from algokit_utils.beta.algorand_client import AlgorandClient
 from algokit_utils.config import config
-from algokit_utils.models import Account
+from algokit_utils.models.account import Account
 
 from smart_contracts.artifacts.council.council_client import CouncilClient
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
@@ -16,18 +16,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from tests.common import INITIAL_FUNDS
-from tests.conftest import no_role_account
 from tests.council.common import members_box_name
-from tests.xgov_registry.conftest import (
-    approved_proposal_client,
-    draft_proposal_client,
-    proposal_client,
-    proposer,
-    voting_proposal_client,
-    xgov_registry_client,
-    xgov_registry_client_committee_not_declared,
-    xgov_registry_config,
-)
 
 
 @pytest.fixture(scope="function")
