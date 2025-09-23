@@ -160,6 +160,7 @@ def build(output_dir: Path, contract_path: Path) -> Path:
 
 
 def main(action: str, contract_name: str | None = None) -> None:
+    logger.info(f"Action: {action}, Contract: {contract_name or 'all'}")
     """Main entry point to build and/or deploy smart contracts."""
     artifact_path = root_path / "artifacts"
     # Filter contracts based on an optional specific contract name.
