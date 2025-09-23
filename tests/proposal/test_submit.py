@@ -9,7 +9,6 @@ from smart_contracts.errors import std_errors as err
 
 # TODO add tests for submit on other statuses
 from tests.common import (
-    logic_error_type,
     relative_to_absolute_amount,
 )
 from tests.proposal.common import (

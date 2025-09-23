@@ -15,7 +15,6 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 )
 from smart_contracts.errors import std_errors as err
 from smart_contracts.proposal.config import METADATA_BOX_KEY
-from tests.common import logic_error_type
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,

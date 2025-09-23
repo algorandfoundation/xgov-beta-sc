@@ -20,7 +20,6 @@ from smart_contracts.xgov_registry.config import (
     MAX_REQUESTED_AMOUNT_SMALL,
     MIN_REQUESTED_AMOUNT,
 )
-from tests.common import logic_error_type
 from tests.proposal.common import (
     LOCKED_AMOUNT,
     PROPOSAL_PARTIAL_FEE,

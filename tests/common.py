@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Final
 
-from algokit_utils import AlgoAmount, SigningAccount, LogicError
+from algokit_utils import AlgoAmount, LogicError, SigningAccount
 
 from smart_contracts.proposal.constants import (
     BPS,

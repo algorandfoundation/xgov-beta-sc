@@ -53,6 +53,7 @@ class CouncilVote(arc4.Struct):
 
 CouncilVotingBox = arc4.DynamicArray[CouncilVote]
 
+
 class TypedGlobalState(arc4.Struct):
     paused_registry: arc4.Bool
     paused_proposals: arc4.Bool
