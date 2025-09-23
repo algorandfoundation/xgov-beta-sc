@@ -176,7 +176,9 @@ def main(action: str, contract_name: str | None = None) -> None:
                 logger.info(f"Building app at {contract.path}")
                 build(artifact_path / contract.name, contract.path)
         case "deploy":
-            logger.info(f"Deploying contracts... {[c.name for c in filtered_contracts]}")
+            logger.info(
+                f"Deploying contracts... {[c.name for c in filtered_contracts]}"
+            )
             for contract in filtered_contracts:
                 logger.info(f"Building app at {contract.path}")
                 output_dir = artifact_path / contract.name

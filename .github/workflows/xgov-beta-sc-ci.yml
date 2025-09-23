@@ -18,22 +18,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          # Ensure we checkout the PR branch for PR events
-          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
-
-      - name: Start LocalNet
-        run: algokit localnet start
-
-      - name: Audit python dependencies
-        run: algokit project run audit
-
-      - name: Lint and format python dependencies
-        run: algokit project run lint
 
       - name: Test vault signer setup
         run: algokit project deploy testnet
@@ -48,6 +35,15 @@ jobs:
           VAULT_OIDC_ROLE: ci-xgov-beta-sc-staging
           VAULT_OIDC_MOUNT_PATH: oidc
           VAULT_KEY_NAME: xgov-beta-sc-ci-staging
+
+      - name: Start LocalNet
+        run: algokit localnet start
+
+      - name: Audit python dependencies
+        run: algokit project run audit
+
+      - name: Lint and format python dependencies
+        run: algokit project run lint
 
       - name: Run tests
         shell: bash
