@@ -36,7 +36,7 @@ jobs:
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           VAULT_URL: ${{ secrets.VAULT_URL }}
           VAULT_OIDC_ROLE: ci-xgov-beta-sc-staging
-          VAULT_OIDC_MOUNT_PATH: oidc
+          VAULT_OIDC_MOUNT_PATH: jwt-github
           VAULT_KEY_NAME: xgov-beta-sc-ci-staging
 
       - name: Start LocalNet
