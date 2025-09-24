@@ -203,8 +203,8 @@ class GitHubActionsAuth(VaultAuth):
                 raise ValueError("Failed to obtain OIDC token from GitHub Actions")
 
             # Authenticate with Vault using the JWT token
-            auth_response = vault_client.auth.oidc.login(  # type: ignore
-                role=self.role, jwt=jwt_token, mount_point=self.mount_point  # type: ignore
+            auth_response = vault_client.auth.oidc.jwt_login(  # type: ignore
+                role=self.role, jwt=jwt_token, path=self.mount_point  # type: ignore
             )
 
             vault_client.token = auth_response["auth"]["client_token"]  # type: ignore
