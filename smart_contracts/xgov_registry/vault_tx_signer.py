@@ -167,7 +167,9 @@ class OIDCJWTAuth(VaultAuth):
 class GitHubActionsAuth(VaultAuth):
     """GitHub Actions OIDC authentication - automatically gets the OIDC token"""
 
-    def __init__(self, role: str, mount_point: str = "oidc", audience: str = "vault"):
+    def __init__(
+        self, role: str, mount_point: str = "jwt-github", audience: str = "vault"
+    ):
         self.role = role
         self.mount_point = mount_point
         self.audience = audience
