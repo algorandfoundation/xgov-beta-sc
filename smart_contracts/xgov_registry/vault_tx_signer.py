@@ -501,7 +501,7 @@ def _create_vault_auth_from_env() -> VaultAuth:
         and os.environ.get("VAULT_OIDC_ROLE")
     ):
         oidc_role = os.environ.get("VAULT_OIDC_ROLE", "")
-        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "oidc")
+        oidc_mount_path = os.environ.get("VAULT_OIDC_MOUNT_PATH", "jwt-github")
         github_audience = os.environ.get("VAULT_GITHUB_AUDIENCE", "vault")
         return GitHubActionsAuth(
             role=oidc_role, mount_point=oidc_mount_path, audience=github_audience
@@ -850,7 +850,7 @@ def create_transit_signer_github_actions(
     role: str,
     transit_mount_path: str = "transit",
     key_name: str = "algorand-key",
-    oidc_mount_path: str = "oidc",
+    oidc_mount_path: str = "jwt-github",
     audience: str = "vault",
 ) -> HashicorpVaultTransactionSigner:
     """
