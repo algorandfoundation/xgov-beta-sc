@@ -284,14 +284,6 @@ class TransitSecretEngine(VaultSecretEngine):
     def setup_and_derive_public_key(self, key_name: str) -> bytes:
         """Setup transit engine and derive the public key bytes from the Vault key"""
         try:
-            # Check if transit engine is enabled
-            logger.debug("Checking if transit secrets engine is mounted...")
-            mounts = self.vault_client.sys.list_mounted_secrets_engines()  # type: ignore
-            if f"{self.mount_path}/" not in mounts["data"]:  # type: ignore
-                raise ValueError(
-                    f"Transit secrets engine not mounted at '{self.mount_path}'"
-                )
-            logger.debug("Transit secrets engine is mounted.")
             # Get the public key from Vault (this also verifies the key exists)
             try:
                 logger.debug(
