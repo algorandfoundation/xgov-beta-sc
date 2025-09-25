@@ -1,4 +1,5 @@
 import base64
+import logging
 import os
 from abc import ABC, abstractmethod
 
@@ -18,6 +19,8 @@ from algosdk.transaction import (
 
 ## TODO:
 # Add more auth methods as needed (AWS, GCP, etc.)
+
+logger = logging.getLogger(__name__)
 
 
 class VaultAuth(ABC):
@@ -199,7 +202,24 @@ class GitHubActionsAuth(VaultAuth):
             response_data = json.loads(response.read().decode())  # type: ignore
             jwt_token = response_data.get("value")  # type: ignore
 
-            claims = jwt_token.split(".")[1]  # type: ignore
+            claims_b64 = jwt_token.split(".")[1]  # type: ignore
+            claims = json.loads(base64.urlsafe_b64decode(claims_b64 + "===").decode())  # type: ignore
+            logger.info(
+                json.dumps(
+                    {  # type: ignore
+                        k: claims.get(k)  # type: ignore
+                        for k in (
+                            "aud",
+                            "repository",
+                            "ref",
+                            "workflow",
+                            "environment",
+                            "sub",
+                        )
+                    },
+                    indent=2,
+                )
+            )
 
             if not jwt_token:  # type: ignore
                 raise ValueError("Failed to obtain OIDC token from GitHub Actions")
@@ -221,11 +241,7 @@ class GitHubActionsAuth(VaultAuth):
                 len(jwt_token) if "jwt_token" in locals() and jwt_token else 0  # type: ignore
             )
             raise ValueError(
-                f"GitHub Actions OIDC authentication failed: {exc}, "
-                f"role: {self.role}, mount_point: {self.mount_point}, "
-                f"jwt_token len: {jwt_token_len}"
-                f"audience: {urllib.parse.quote(self.audience)}"
-                f"claims (base64): {claims if 'claims' in locals() else 'N/A'}"  # type: ignore
+                f"GitHub Actions OIDC authentication failed: {exc}"
             ) from exc
 
 
