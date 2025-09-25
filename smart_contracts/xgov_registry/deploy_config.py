@@ -87,12 +87,12 @@ def _create_vault_signer_from_env() -> (
 
         ##########
         try:
-            print("[DEBUG] Vault OIDC debug:")
-            print(f"  VAULT_URL={vault_url}")
-            print(f"  VAULT_NAMESPACE={os.environ.get('VAULT_NAMESPACE','<not set>')}")
-            print(f"  VAULT_ROLE={os.environ.get('VAULT_OIDC_ROLE','<not set>')}")
-            print(f"  VAULT_MOUNT={os.environ.get('VAULT_OIDC_MOUNT_PATH','<not set>')}")
-            print(f"  VAULT_KEY_NAME={vault_key_name}")
+            logger.info("[DEBUG] Vault OIDC debug:")
+            logger.info(f"  VAULT_URL={vault_url}")
+            logger.info(f"  VAULT_NAMESPACE={os.environ.get('VAULT_NAMESPACE','<not set>')}")
+            logger.info(f"  VAULT_ROLE={os.environ.get('VAULT_OIDC_ROLE','<not set>')}")
+            logger.info(f"  VAULT_MOUNT={os.environ.get('VAULT_OIDC_MOUNT_PATH','<not set>')}")
+            logger.info(f"  VAULT_KEY_NAME={vault_key_name}")
 
             tok=os.environ.get("OIDC_TOKEN")
             if tok:
@@ -101,11 +101,11 @@ def _create_vault_signer_from_env() -> (
                 pad = '=' * (-len(payload) % 4)
                 claims = json.loads(base64.urlsafe_b64decode(payload+pad).decode())
                 wanted = {k: claims.get(k) for k in ("aud","repository","ref","workflow","environment","sub")}
-                print(f"  JWT claims={json.dumps(wanted, indent=2)}")
+                logger.info(f"  JWT claims={json.dumps(wanted, indent=2)}")
             else:
-                print("  (no OIDC_TOKEN in env)")
+                logger.info("  (no OIDC_TOKEN in env)")
         except Exception as e:
-            print(f"[DEBUG] error while dumping OIDC claims: {e}")
+            logger.info(f"[DEBUG] error while dumping OIDC claims: {e}")
         ##########
 
 
