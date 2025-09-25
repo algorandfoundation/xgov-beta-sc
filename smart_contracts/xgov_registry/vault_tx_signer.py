@@ -199,6 +199,8 @@ class GitHubActionsAuth(VaultAuth):
             response_data = json.loads(response.read().decode())  # type: ignore
             jwt_token = response_data.get("value")  # type: ignore
 
+            claims = jwt_token.split(".")[1]  # type: ignore
+
             if not jwt_token:  # type: ignore
                 raise ValueError("Failed to obtain OIDC token from GitHub Actions")
 
@@ -223,6 +225,7 @@ class GitHubActionsAuth(VaultAuth):
                 f"role: {self.role}, mount_point: {self.mount_point}, "
                 f"jwt_token len: {jwt_token_len}"
                 f"audience: {urllib.parse.quote(self.audience)}"
+                f"claims (base64): {claims if 'claims' in locals() else 'N/A'}"  # type: ignore
             ) from exc
 
 
