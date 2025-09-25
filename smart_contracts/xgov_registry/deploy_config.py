@@ -11,6 +11,7 @@ from algokit_utils import (
     CommonAppCallParams,
     OnSchemaBreak,
     OnUpdate,
+    PaymentParams,
 )
 from algosdk import encoding
 from algosdk.transaction import Multisig
@@ -84,30 +85,6 @@ def _create_vault_signer_from_env() -> (
 
         # Create Vault authentication and transit engine to get the public key
         vault_auth = _create_vault_auth_from_env()
-
-        ##########
-        try:
-            logger.info("[DEBUG] Vault OIDC debug:")
-            logger.info(f"  VAULT_URL={vault_url}")
-            logger.info(f"  VAULT_NAMESPACE={os.environ.get('VAULT_NAMESPACE','<not set>')}")
-            logger.info(f"  VAULT_ROLE={os.environ.get('VAULT_OIDC_ROLE','<not set>')}")
-            logger.info(f"  VAULT_MOUNT={os.environ.get('VAULT_OIDC_MOUNT_PATH','<not set>')}")
-            logger.info(f"  VAULT_KEY_NAME={vault_key_name}")
-
-            tok=os.environ.get("OIDC_TOKEN")
-            if tok:
-                hdr, payload, sig = tok.split(".")
-                import base64, json
-                pad = '=' * (-len(payload) % 4)
-                claims = json.loads(base64.urlsafe_b64decode(payload+pad).decode())
-                wanted = {k: claims.get(k) for k in ("aud","repository","ref","workflow","environment","sub")}
-                logger.info(f"  JWT claims={json.dumps(wanted, indent=2)}")
-            else:
-                logger.info("  (no OIDC_TOKEN in env)")
-        except Exception as e:
-            logger.info(f"[DEBUG] error while dumping OIDC claims: {e}")
-        ##########
-
 
         transit_engine = TransitSecretEngine(
             vault_url=vault_url, vault_auth=vault_auth, mount_path=transit_mount_path
@@ -608,6 +585,15 @@ def deploy() -> None:
             logger.info(
                 "Vault multisig signer not configured, using environment deployer"
             )
+        algorand_client = AlgorandClient.testnet()
+        algorand_client.send.payment(
+            params=PaymentParams(
+                signer=vault_signer,
+                sender=deployer_address,
+                receiver=deployer_address,
+                amount=AlgoAmount.from_algo(1),
+            )
+        )
     else:
         raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
