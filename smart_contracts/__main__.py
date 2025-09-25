@@ -160,6 +160,7 @@ def build(output_dir: Path, contract_path: Path) -> Path:
 
 
 def main(action: str, contract_name: str | None = None) -> None:
+    logger.info(f"Action: {action}, Contract: {contract_name or 'all'}")
     """Main entry point to build and/or deploy smart contracts."""
     artifact_path = root_path / "artifacts"
     # Filter contracts based on an optional specific contract name.
@@ -175,7 +176,11 @@ def main(action: str, contract_name: str | None = None) -> None:
                 logger.info(f"Building app at {contract.path}")
                 build(artifact_path / contract.name, contract.path)
         case "deploy":
+            logger.info(
+                f"Deploying contracts... {[c.name for c in filtered_contracts]}"
+            )
             for contract in filtered_contracts:
+                logger.info(f"Building app at {contract.path}")
                 output_dir = artifact_path / contract.name
                 app_spec_file_name = next(
                     (
@@ -186,7 +191,11 @@ def main(action: str, contract_name: str | None = None) -> None:
                     None,
                 )
                 if app_spec_file_name is None:
+                    logger.info(
+                        f"No .arc56.json file found for {contract.name}, building first..."
+                    )
                     raise Exception("Could not deploy app, .arc56.json file not found")
+                logger.info(f"Found {app_spec_file_name} for {contract.name}")
                 if contract.deploy:
                     logger.info(f"Deploying app {contract.name}")
                     contract.deploy()
