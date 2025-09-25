@@ -28,7 +28,9 @@ jobs:
 
       - name: Debug Vault OIDC token and login
         run: |
-          echo "=== OIDC token claims ==="
+          set -euo pipefail
+
+          echo "=== OIDC token (audience=vault) ==="
           TOKEN_URL="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=vault"
           OIDC_TOKEN="$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$TOKEN_URL" | jq -r .value)"
           echo "OIDC token length: ${#OIDC_TOKEN}"
@@ -41,8 +43,12 @@ jobs:
           print(json.dumps(claims, indent=2))
           PY
           echo
-          echo "=== Direct Vault login ==="
-          LOGIN_URL="${VAULT_URL}/v1/${VAULT_OIDC_MOUNT_PATH}/login"
+          echo "=== Direct Vault login (auth/${VAULT_OIDC_MOUNT_PATH}/login) ==="
+          LOGIN_URL="${VAULT_URL}/v1/auth/${VAULT_OIDC_MOUNT_PATH}/login"
+          echo "URL: $LOGIN_URL"
+          echo "Namespace: ${VAULT_NAMESPACE:-<unset>}"
+          echo "Role: ${VAULT_OIDC_ROLE}"
+
           RESP="$(curl -sS -w '\n%{http_code}\n' \
             -H "X-Vault-Namespace: ${VAULT_NAMESPACE:-admin}" \
             --request POST \
@@ -53,14 +59,10 @@ jobs:
           echo "HTTP $CODE"
           echo "$BODY" | jq .
         env:
-          VAULT_URL: ${{ secrets.VAULT_URL }}
-          VAULT_OIDC_ROLE: ci-xgov-beta-sc-staging
-          VAULT_OIDC_MOUNT_PATH: jwt-github
-          VAULT_NAMESPACE: admin
-          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
-          OIDC_TOKEN: ${{ env.OIDC_TOKEN }}
-
+          VAULT_URL:              ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE:        ci-xgov-beta-sc-staging
+          VAULT_OIDC_MOUNT_PATH:  jwt-github
+          VAULT_NAMESPACE:        admin
       - name: Test vault signer setup
         run: algokit project deploy testnet
         env:
@@ -74,6 +76,7 @@ jobs:
           VAULT_OIDC_ROLE: ci-xgov-beta-sc-staging
           VAULT_OIDC_MOUNT_PATH: jwt-github
           VAULT_KEY_NAME: xgov-beta-sc-ci-staging
+          VAULT_NAMESPACE: admin
 
       - name: Start LocalNet
         run: algokit localnet start
