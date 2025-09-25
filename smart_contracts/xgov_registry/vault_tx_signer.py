@@ -221,7 +221,8 @@ class GitHubActionsAuth(VaultAuth):
             raise ValueError(
                 f"GitHub Actions OIDC authentication failed: {exc}, "
                 f"role: {self.role}, mount_point: {self.mount_point}, "
-                f"jwt_token len: {jwt_token_len}..."
+                f"jwt_token len: {jwt_token_len}"
+                f"audience: {urllib.parse.quote(self.audience)}"
             ) from exc
 
 
