@@ -29,26 +29,33 @@ jobs:
       - name: Debug Vault OIDC token and login
         run: |
           set -euo pipefail
-
+      
+          # ensure jq is present
+          sudo apt-get update -y >/dev/null
+          sudo apt-get install -y jq >/dev/null
+      
           echo "=== OIDC token (audience=vault) ==="
           TOKEN_URL="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=vault"
           OIDC_TOKEN="$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$TOKEN_URL" | jq -r .value)"
           echo "OIDC token length: ${#OIDC_TOKEN}"
+          export OIDC_TOKEN   # <-- make it visible to python below
+      
           python3 - <<'PY'
           import os, base64, json
           tok=os.environ["OIDC_TOKEN"]
-          hdr,payload,sig = tok.split(".")
-          pad = '=' * (-len(payload) % 4)
-          claims=json.loads(base64.urlsafe_b64decode(payload+pad).decode())
+          _, payload, _ = tok.split(".")
+          payload += "=" * (-len(payload) % 4)
+          claims=json.loads(base64.urlsafe_b64decode(payload).decode())
           print(json.dumps(claims, indent=2))
           PY
+      
           echo
           echo "=== Direct Vault login (auth/${VAULT_OIDC_MOUNT_PATH}/login) ==="
           LOGIN_URL="${VAULT_URL}/v1/auth/${VAULT_OIDC_MOUNT_PATH}/login"
           echo "URL: $LOGIN_URL"
           echo "Namespace: ${VAULT_NAMESPACE:-<unset>}"
           echo "Role: ${VAULT_OIDC_ROLE}"
-
+      
           RESP="$(curl -sS -w '\n%{http_code}\n' \
             -H "X-Vault-Namespace: ${VAULT_NAMESPACE:-admin}" \
             --request POST \
