@@ -634,11 +634,6 @@ def create_vault_multisig_signer_from_env(
     key_names = [
         key_name.strip() for key_name in key_names_str.split(",") if key_name.strip()
     ]
-    if len(key_names) != len(msig.subsigs):
-        raise ValueError(
-            f"Number of VAULT_KEY_NAMES ({len(key_names)}) does not match "
-            f"number of multisig signers ({len(msig.subsigs)})"
-        )
 
     # Get authentication method from environment
     vault_auth = _create_vault_auth_from_env()
