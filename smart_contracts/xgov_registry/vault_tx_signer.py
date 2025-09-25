@@ -285,20 +285,26 @@ class TransitSecretEngine(VaultSecretEngine):
         """Setup transit engine and derive the public key bytes from the Vault key"""
         try:
             # Check if transit engine is enabled
+            logger.debug("Checking if transit secrets engine is mounted...")
             mounts = self.vault_client.sys.list_mounted_secrets_engines()  # type: ignore
             if f"{self.mount_path}/" not in mounts["data"]:  # type: ignore
                 raise ValueError(
                     f"Transit secrets engine not mounted at '{self.mount_path}'"
                 )
-
+            logger.debug("Transit secrets engine is mounted.")
             # Get the public key from Vault (this also verifies the key exists)
             try:
+                logger.debug(
+                    f"Retrieving public key for '{key_name}' from transit engine..."
+                )
                 key_info = self.vault_client.secrets.transit.read_key(  # type: ignore
                     name=key_name, mount_point=self.mount_path
                 )
+                logger.debug(f"Public key for '{key_name}' retrieved successfully.")
             except Exception as e:
                 raise ValueError(f"Key '{key_name}' not found in transit engine") from e
 
+            logger.debug(f"Key info: {key_info}")  # type: ignore
             # Extract public key bytes
             public_key_b64 = key_info["data"]["keys"]["1"]["public_key"]  # type: ignore
             public_key_bytes = base64.b64decode(public_key_b64)  # type: ignore
