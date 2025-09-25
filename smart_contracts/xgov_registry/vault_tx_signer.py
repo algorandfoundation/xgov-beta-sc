@@ -269,8 +269,14 @@ class TransitSecretEngine(VaultSecretEngine):
         self.vault_auth = vault_auth
         self.mount_path = mount_path
 
-        # Initialize the Vault client
-        self.vault_client = hvac.Client(url=self.vault_url)
+        # Initialize the Vault client with namespace if provided
+        vault_namespace = os.environ.get("VAULT_NAMESPACE")
+        if vault_namespace:
+            self.vault_client = hvac.Client(
+                url=self.vault_url, namespace=vault_namespace
+            )
+        else:
+            self.vault_client = hvac.Client(url=self.vault_url)
 
         # Authenticate using the provided auth method
         self.vault_auth.authenticate(self.vault_client)
@@ -998,7 +1004,13 @@ def _create_vault_key_with_auth(
     Returns:
         The Algorand address corresponding to the created key
     """
-    client = hvac.Client(url=vault_url)
+    # Initialize vault client with namespace if provided
+    vault_namespace = os.environ.get("VAULT_NAMESPACE")
+    if vault_namespace:
+        client = hvac.Client(url=vault_url, namespace=vault_namespace)
+    else:
+        client = hvac.Client(url=vault_url)
+
     vault_auth.authenticate(client)
 
     # Create the key
