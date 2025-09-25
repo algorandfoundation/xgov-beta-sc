@@ -215,11 +215,13 @@ class GitHubActionsAuth(VaultAuth):
                 )
 
         except Exception as exc:
-            jwt_preview = jwt_token[:10] if "jwt_token" in locals() else "N/A"  # type: ignore
+            jwt_token_len = (
+                len(jwt_token) if "jwt_token" in locals() and jwt_token else 0  # type: ignore
+            )
             raise ValueError(
                 f"GitHub Actions OIDC authentication failed: {exc}, "
                 f"role: {self.role}, mount_point: {self.mount_point}, "
-                f"jwt_token: {jwt_preview}..."  # type: ignore
+                f"jwt_token len: {jwt_token_len}..."
             ) from exc
 
 
