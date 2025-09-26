@@ -71,6 +71,8 @@ def _create_vault_signer_from_env() -> (
                 "MULTISIG_ALGORAND_ADDRESS environment variable is required for vault multisig"
             )
 
+        logger.info(f"Using Algorand address for multisig: {algorand_address}")
+
         # Get the vault key name
         vault_key_name = os.environ.get("VAULT_KEY_NAME")
         if not vault_key_name:
