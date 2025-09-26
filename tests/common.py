@@ -1,14 +1,12 @@
 import dataclasses
 from typing import Final
 
-from algokit_utils import AlgoAmount, LogicError, SigningAccount
+from algokit_utils import AlgoAmount, SigningAccount
 
 from smart_contracts.proposal.constants import (
     BPS,
     COMMITTEE_ID_LENGTH,
 )
-
-logic_error_type: type[LogicError] = LogicError
 
 
 def relative_to_absolute_amount(amount: int, fraction_in_bps: int) -> int:

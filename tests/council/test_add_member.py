@@ -1,95 +1,86 @@
 import pytest
-from algokit_utils import TransactionParameters
-from algokit_utils.beta.account_manager import AddressAndSigner
-from algokit_utils.beta.algorand_client import AlgorandClient
-from algokit_utils.models import Account
+from algokit_utils import (
+    AlgorandClient,
+    CommonAppCallParams,
+    LogicError,
+    SigningAccount,
+)
 
-from smart_contracts.artifacts.council.council_client import CouncilClient
+from smart_contracts.artifacts.council.council_client import (
+    AddMemberArgs,
+    CouncilClient,
+)
 from smart_contracts.errors import std_errors as err
-from tests.common import logic_error_type
-from tests.council.common import members_box_name
 from tests.utils import ERROR_TO_REGEX
 
 
 def test_add_member_success(
-    deployer: Account,
+    deployer: SigningAccount,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
 ) -> None:
-    before_global_state = council_client.get_global_state()
-    sp = algorand_client.get_suggested_params()
+    before_global_state = council_client.state.global_state.get_all()
+    # sp = algorand_client.get_suggested_params()
 
-    council_client.add_member(
-        address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
+    council_client.send.add_member(
+        args=AddMemberArgs(
+            address=no_role_account.address,
+        ),
+        params=CommonAppCallParams(
             sender=deployer.address,
             signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[
-                (0, members_box_name(no_role_account.address)),
-            ],
         ),
     )
 
-    after_global_state = council_client.get_global_state()
+    after_global_state = council_client.state.global_state.get_all()
 
-    assert (before_global_state.member_count + 1) == after_global_state.member_count
+    assert (before_global_state.get("member_count") + 1) == after_global_state.get(
+        "member_count"
+    )
 
 
 def test_add_member_not_admin(
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-
-    with pytest.raises(logic_error_type, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
-        council_client.add_member(
-            address=no_role_account.address,
-            transaction_parameters=TransactionParameters(
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
+        council_client.send.add_member(
+            args=AddMemberArgs(
+                address=no_role_account.address,
+            ),
+            params=CommonAppCallParams(
                 sender=no_role_account.address,
                 signer=no_role_account.signer,
-                suggested_params=sp,
-                boxes=[
-                    (0, members_box_name(no_role_account.address)),
-                ],
             ),
         )
 
 
 def test_add_member_already_member(
-    deployer: Account,
+    deployer: SigningAccount,
     council_client: CouncilClient,
     algorand_client: AlgorandClient,
-    no_role_account: AddressAndSigner,
+    no_role_account: SigningAccount,
 ) -> None:
-    sp = algorand_client.get_suggested_params()
-
-    council_client.add_member(
-        address=no_role_account.address,
-        transaction_parameters=TransactionParameters(
+    council_client.send.add_member(
+        args=AddMemberArgs(
+            address=no_role_account.address,
+        ),
+        params=CommonAppCallParams(
             sender=deployer.address,
             signer=deployer.signer,
-            suggested_params=sp,
-            boxes=[
-                (0, members_box_name(no_role_account.address)),
-            ],
         ),
     )
 
-    with pytest.raises(
-        logic_error_type, match=ERROR_TO_REGEX[err.VOTER_ALREADY_ASSIGNED]
-    ):
-        council_client.add_member(
-            address=no_role_account.address,
-            transaction_parameters=TransactionParameters(
+    with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTER_ALREADY_ASSIGNED]):
+        council_client.send.add_member(
+            args=AddMemberArgs(
+                address=no_role_account.address,
+            ),
+            params=CommonAppCallParams(
                 sender=deployer.address,
                 signer=deployer.signer,
-                suggested_params=sp,
-                boxes=[
-                    (0, members_box_name(no_role_account.address)),
-                ],
                 note=b"meh",
             ),
         )
