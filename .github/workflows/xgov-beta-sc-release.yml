@@ -89,7 +89,7 @@ jobs:
           # Vault configuration for transaction signing
           VAULT_URL: ${{ secrets.VAULT_URL }}
           VAULT_OIDC_ROLE: ${{ secrets.VAULT_ROLE_MAINNET }}
-          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_MOUNT_PATH || 'oidc' }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_OIDC_MOUNT_PATH || 'oidc' }}
           VAULT_KEY_NAME: ${{ secrets.VAULT_KEY_NAME_MAINNET }}
           VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
           # The deployer account
