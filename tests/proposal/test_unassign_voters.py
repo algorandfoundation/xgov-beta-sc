@@ -26,7 +26,6 @@ from tests.utils import time_warp
 # TODO add tests for unassign on other statuses
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_empty_proposal(
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -44,7 +43,6 @@ def test_unassign_empty_proposal(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_unauthorized(
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -218,7 +216,6 @@ def test_unassign_all_voters(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_not_same_app(
     submitted_proposal_client: ProposalClient,
     alternative_submitted_proposal_client: ProposalClient,
@@ -286,7 +283,6 @@ def test_unassign_not_same_app(
         alternative_composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_not_same_method(
     rejected_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -306,7 +302,6 @@ def test_unassign_not_same_method(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_not_same_method_2(
     rejected_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -326,7 +321,6 @@ def test_unassign_not_same_method_2(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_unassign_one_call_not_xgov_daemon(
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
