@@ -41,15 +41,20 @@ def _create_vault_signer_from_env() -> (
     Creates a 1-of-2 multisig where:
     - One key comes from HashiCorp Vault (retrieved by VAULT_KEY_NAME)
     - Other key is an Algorand address from environment (MULTISIG_ALGORAND_ADDRESS),
-      defaulting to DEPLOYER address if not set
+      with automatic fallback to DEPLOYER address if not provided or invalid
 
     The function connects to Vault, retrieves the public key for the specified key name,
     converts it to an Algorand address, and creates a proper multisig with both addresses.
 
+    Address validation logic:
+    - If MULTISIG_ALGORAND_ADDRESS is not set or empty -> uses DEPLOYER address
+    - If MULTISIG_ALGORAND_ADDRESS is invalid (fails algosdk decoding) -> uses DEPLOYER address
+    - If MULTISIG_ALGORAND_ADDRESS is valid -> uses the provided address
+
     Environment variables needed:
     - VAULT_URL: HashiCorp Vault URL
     - VAULT_KEY_NAME: Name of the key in Vault's transit engine
-    - MULTISIG_ALGORAND_ADDRESS: Algorand address for the other multisig key
+    - MULTISIG_ALGORAND_ADDRESS: Algorand address for the other multisig key (optional)
     - VAULT_TRANSIT_MOUNT_PATH: Transit engine mount path (optional, defaults to "transit")
     - Plus all standard Vault authentication variables (VAULT_TOKEN, VAULT_ROLE_ID, etc.)
 
@@ -62,16 +67,28 @@ def _create_vault_signer_from_env() -> (
     gh_deployer = algorand_client.account.from_environment("DEPLOYER")
 
     try:
-        # Get the Algorand address for the multisig
-        algorand_address = os.environ.get(
-            "MULTISIG_ALGORAND_ADDRESS", gh_deployer.address
-        )
-        if not algorand_address:
-            raise ValueError(
-                "MULTISIG_ALGORAND_ADDRESS environment variable is required for vault multisig"
-            )
+        # Get the Algorand address for the multisig with proper validation
+        algorand_address = os.environ.get("MULTISIG_ALGORAND_ADDRESS", "").strip()
 
-        logger.info(f"Using Algorand address for multisig: {algorand_address}")
+        # Validate the address - if empty or invalid, fall back to gh_deployer.address
+        if not algorand_address:
+            algorand_address = gh_deployer.address
+            logger.info(
+                f"MULTISIG_ALGORAND_ADDRESS not provided, using deployer address: {algorand_address}"
+            )
+        else:
+            try:
+                # Validate it's a proper Algorand address by attempting to decode it
+                encoding.decode_address(algorand_address)  # type: ignore
+                logger.info(
+                    f"Using provided Algorand address for multisig: {algorand_address}"
+                )
+            except Exception as decode_error:
+                logger.warning(
+                    f"Invalid MULTISIG_ALGORAND_ADDRESS '{algorand_address}': {decode_error}"
+                )
+                algorand_address = gh_deployer.address
+                logger.info(f"Falling back to deployer address: {algorand_address}")
 
         # Get the vault key name
         vault_key_name = os.environ.get("VAULT_KEY_NAME")
