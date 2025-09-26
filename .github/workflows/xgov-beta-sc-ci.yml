@@ -10,6 +10,9 @@ on:
     # * is a special character in YAML so you have to quote this string
     - cron: "0 0 1 * *" # Run once a month at midnight on the 1st of the month
 
+permissions:
+  id-token: write
+
 jobs:
   validate-xgov-beta-sc:
     runs-on: "ubuntu-latest"
