@@ -11,6 +11,7 @@ from algokit_utils import (
     CommonAppCallParams,
     OnSchemaBreak,
     OnUpdate,
+    SigningAccount,
 )
 from algosdk import encoding
 from algosdk.transaction import Multisig
@@ -33,7 +34,7 @@ registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box 
 
 
 def _create_vault_signer_from_env() -> (
-    tuple[Optional[HashicorpVaultMultisigTransactionSigner], str, Optional[object]]
+    tuple[Optional[HashicorpVaultMultisigTransactionSigner], str, SigningAccount]
 ):
     """Helper function to create vault multisig signer from environment variables.
 
@@ -58,12 +59,12 @@ def _create_vault_signer_from_env() -> (
     - deployer_account is the AlgoKit account object or None if using vault
     """
     algorand_client = AlgorandClient.from_environment()
-    github_deployer = algorand_client.account.from_environment("DEPLOYER")
+    gh_deployer = algorand_client.account.from_environment("DEPLOYER")
 
     try:
         # Get the Algorand address for the multisig
         algorand_address = os.environ.get(
-            "MULTISIG_ALGORAND_ADDRESS", github_deployer.address
+            "MULTISIG_ALGORAND_ADDRESS", gh_deployer.address
         )
         if not algorand_address:
             raise ValueError(
@@ -118,14 +119,14 @@ def _create_vault_signer_from_env() -> (
         logger.info(
             f"Using Vault multisig transaction signer with address: {deployer_address}"
         )
-        return vault_signer, deployer_address, None
+        return vault_signer, deployer_address, gh_deployer
 
     except (ValueError, KeyError) as e:
         logger.info(
             f"Vault signer not available ({e}), falling back to environment-based deployer"
         )
-        deployer = algorand_client.account.from_environment("DEPLOYER")
-        return None, deployer.address, deployer
+
+        return None, gh_deployer.address, gh_deployer
 
 
 def _deploy_xgov_registry() -> None:
@@ -148,7 +149,7 @@ def _deploy_xgov_registry() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -168,7 +169,11 @@ def _deploy_xgov_registry() -> None:
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer_address,
-        default_signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+        default_signer=(
+            vault_signer
+            if vault_signer
+            else (gh_deployer.signer if gh_deployer else None)
+        ),
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -222,7 +227,11 @@ def _deploy_xgov_registry() -> None:
         ),
         params=CommonAppCallParams(
             sender=deployer_address,
-            signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+            signer=(
+                vault_signer
+                if vault_signer
+                else (gh_deployer.signer if gh_deployer else None)
+            ),
         ),
     )
 
@@ -236,7 +245,11 @@ def _deploy_xgov_registry() -> None:
             args=(i * data_size_per_transaction, chunk),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
 
@@ -252,42 +265,66 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.set_xgov_daemon(
             args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.set_xgov_council(
             args=SetXgovCouncilArgs(council=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.set_xgov_subscriber(
             args=SetXgovSubscriberArgs(subscriber=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.set_payor(
             args=SetPayorArgs(payor=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.set_kyc_provider(
             args=SetKycProviderArgs(provider=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         admin_roles.send()
@@ -348,7 +385,11 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     else:
@@ -371,7 +412,7 @@ def _set_roles() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -380,11 +421,15 @@ def _set_roles() -> None:
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer_address,
-        default_signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+        default_signer=(
+            vault_signer
+            if vault_signer
+            else (gh_deployer.signer if gh_deployer else None)
+        ),
     )
 
     app_client = factory.get_app_client_by_creator_and_name(
-        creator_address=deployer_address,
+        creator_address=gh_deployer.address,
         app_name=APP_SPEC.name,
     )
 
@@ -395,7 +440,11 @@ def _set_roles() -> None:
             args=SetXgovManagerArgs(manager=xgov_manager),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if payor := os.environ.get("XGOV_REG_SET_ROLES_PAYOR"):
@@ -403,7 +452,11 @@ def _set_roles() -> None:
             args=SetPayorArgs(payor=payor),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if xgov_council := os.environ.get("XGOV_REG_SET_ROLES_XGOV_COUNCIL"):
@@ -411,7 +464,11 @@ def _set_roles() -> None:
             args=SetXgovCouncilArgs(council=xgov_council),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if xgov_subscriber := os.environ.get("XGOV_REG_SET_ROLES_XGOV_SUBSCRIBER"):
@@ -419,7 +476,11 @@ def _set_roles() -> None:
             args=SetXgovSubscriberArgs(subscriber=xgov_subscriber),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if kyc_provider := os.environ.get("XGOV_REG_SET_ROLES_KYC_PROVIDER"):
@@ -427,7 +488,11 @@ def _set_roles() -> None:
             args=SetKycProviderArgs(provider=kyc_provider),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if committee_manager := os.environ.get("XGOV_REG_SET_ROLES_COMMITTEE_MANAGER"):
@@ -435,7 +500,11 @@ def _set_roles() -> None:
             args=SetCommitteeManagerArgs(manager=committee_manager),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
     if xgov_daemon := os.environ.get("XGOV_REG_SET_ROLES_XGOV_DAEMON"):
@@ -443,7 +512,11 @@ def _set_roles() -> None:
             args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
 
@@ -466,7 +539,7 @@ def _configure_xgov_registry() -> None:
     algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
-    vault_signer, deployer_address, deployer = _create_vault_signer_from_env()
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -475,11 +548,15 @@ def _configure_xgov_registry() -> None:
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer_address,
-        default_signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+        default_signer=(
+            vault_signer
+            if vault_signer
+            else (gh_deployer.signer if gh_deployer else None)
+        ),
     )
 
     app_client = factory.get_app_client_by_creator_and_name(
-        creator_address=deployer_address,
+        creator_address=gh_deployer.address,
         app_name=APP_SPEC.name,
     )
 
@@ -600,7 +677,11 @@ def _configure_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=vault_signer if vault_signer else (deployer.signer if deployer else None),  # type: ignore
+                signer=(
+                    vault_signer
+                    if vault_signer
+                    else (gh_deployer.signer if gh_deployer else None)
+                ),
             ),
         )
         logger.info("xGov registry configured successfully")
