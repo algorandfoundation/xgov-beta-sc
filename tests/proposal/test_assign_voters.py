@@ -151,7 +151,7 @@ def test_assign_voters_draft_proposal(
     assert_account_balance(
         algorand_client,
         draft_proposal_client.app_address,
-        LOCKED_AMOUNT + PROPOSAL_PARTIAL_FEE,  # type: ignore
+        LOCKED_AMOUNT.micro_algo + PROPOSAL_PARTIAL_FEE,  # type: ignore
     )
 
     assert_boxes(
