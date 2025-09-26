@@ -43,6 +43,17 @@ class CommitteeMember(arc4.Struct):
     voting_power: arc4.UInt64
 
 
+Empty = arc4.StaticArray[arc4.Byte, typing.Literal[0]]
+
+
+class CouncilVote(arc4.Struct):
+    address: arc4.Address
+    block: arc4.Bool
+
+
+CouncilVotingBox = arc4.DynamicArray[CouncilVote]
+
+
 class TypedGlobalState(arc4.Struct):
     paused_registry: arc4.Bool
     paused_proposals: arc4.Bool
