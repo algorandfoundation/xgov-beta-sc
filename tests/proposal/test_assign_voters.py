@@ -65,7 +65,6 @@ def test_assign_voters_success(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_not_xgov_daemon(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -96,7 +95,6 @@ def test_assign_voters_not_xgov_daemon(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_empty_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -127,7 +125,6 @@ def test_assign_voters_empty_proposal(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_draft_proposal(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -164,7 +161,6 @@ def test_assign_voters_draft_proposal(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_voting_open(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -210,7 +206,6 @@ def test_assign_voters_voting_open(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_not_same_app(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -246,7 +241,6 @@ def test_assign_voters_not_same_app(
         alternative_composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_not_same_method(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -266,7 +260,6 @@ def test_assign_voters_not_same_method(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_not_same_method_2(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
@@ -286,7 +279,6 @@ def test_assign_voters_not_same_method_2(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_assign_voters_one_call_not_xgov_daemon(
     algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,

@@ -327,7 +327,6 @@ def test_open_wrong_payment_2(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_open_wrong_payment_3(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
