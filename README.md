@@ -1,4 +1,4 @@
-# xGov Beta Architecture
+# xGov Beta Architecture 
 
 Documentation: [https://algorandfoundation.github.io/xgov-beta-sc](https://algorandfoundation.github.io/xgov-beta-sc/)
 
