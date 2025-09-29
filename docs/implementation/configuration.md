@@ -2,7 +2,7 @@
 
 | PARAMETER                       |   CLIENT VALUE    |      CLIENT UNIT       |           AVM VALUE           | AVM UNIT |
 |:--------------------------------|:-----------------:|:----------------------:|:-----------------------------:|:--------:|
-| xGov Fee                        |     \\( 5 \\)     |          ALGO          |     \\( 5 \times 10^6 \\)     |  𝜇ALGO  |
+| xGov Fee                        |    \\( 10 \\)     |          ALGO          |    \\( 10 \times 10^6 \\)     |  𝜇ALGO  |
 | Proposer Fee                    |    \\( 100 \\)    |          ALGO          |    \\( 100 \times 10^6 \\)    |  𝜇ALGO  |
 | Open Proposal Fee               |    \\( 100 \\)    |          ALGO          |    \\( 100 \times 10^6 \\)    |  𝜇ALGO  |
 | Daemon Operation Funding        |     \\( 5 \\)     | % of Open Proposal Fee |          \\( 500 \\)          |   bps    |
