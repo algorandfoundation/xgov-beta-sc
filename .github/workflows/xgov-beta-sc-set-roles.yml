@@ -44,6 +44,10 @@ on:
         default: ""
         type: string
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   set-roles:
     runs-on: ubuntu-latest
@@ -60,7 +64,14 @@ jobs:
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: set_roles
-          # This is the account that becomes the creator of the contract
+          # Vault configuration for transaction signing
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ${{ github.event.inputs.network == 'mainnet' && secrets.VAULT_ROLE_MAINNET || secrets.VAULT_ROLE_TESTNET }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_OIDC_MOUNT_PATH || 'oidc' }}
+          VAULT_KEY_NAME: ${{ github.event.inputs.network == 'mainnet' && secrets.VAULT_KEY_NAME_MAINNET || secrets.VAULT_KEY_NAME_TESTNET }}
+          MULTISIG_ALGORAND_ADDRESS: ${{ github.event.inputs.network == 'mainnet' && vars.MULTISIG_ADDRESS_MAINNET || '' }}
+          VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
+          # The deployer account
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account is used to ensure the deployer account is funded
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
@@ -72,4 +83,3 @@ jobs:
           XGOV_REG_SET_ROLES_KYC_PROVIDER: ${{ github.event.inputs.kyc_provider }}
           XGOV_REG_SET_ROLES_COMMITTEE_MANAGER: ${{ github.event.inputs.committee_manager }}
           XGOV_REG_SET_ROLES_XGOV_DAEMON: ${{ github.event.inputs.xgov_daemon }}
-

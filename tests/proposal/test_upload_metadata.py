@@ -19,7 +19,6 @@ from tests.proposal.common import (
 # TODO add tests for upload on other statuses
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_empty_proposal(
     proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -114,7 +113,6 @@ def test_upload_success_3(
     )
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_upload_not_proposer(
     draft_proposal_client: ProposalClient,
     no_role_account: SigningAccount,
@@ -131,7 +129,6 @@ def test_upload_not_proposer(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_empty_payload(
     draft_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -148,7 +145,6 @@ def test_empty_payload(
         composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_paused_registry_error(
     draft_proposal_client: ProposalClient,
     proposer: SigningAccount,
@@ -178,7 +174,6 @@ def test_paused_registry_error(
     composer.send()
 
 
-@pytest.mark.skip("waiting for simulate bug to be fixed")
 def test_open_with_upload_metadata(
     proposal_client: ProposalClient,
     proposer: SigningAccount,
