@@ -71,10 +71,6 @@ def test_vote_reject_success(
     min_fee_times_3: AlgoAmount,
 ) -> None:
 
-    # sp = algorand_client.get_suggested_params()
-    # # blocking a proposal transfers the proposal escrow lock up back to the proposer
-    # sp.min_fee *= 3  # type: ignore
-
     proposal_id = approved_proposal_client.app_id
     half_plus_one = (len(council_members) // 2) + 1
 
@@ -96,11 +92,6 @@ def test_vote_reject_success(
                 sender=member.account.address,
                 signer=member.account.signer,
                 static_fee=min_fee_times_3,
-                # boxes=refs[:5],
-                # foreign_apps=[
-                #     council_client.state.global_state.registry_app_id,
-                #     proposal_id,
-                # ],
             ),
         )
 
