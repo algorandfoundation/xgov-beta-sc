@@ -1,7 +1,7 @@
 name: "Relation Type Request"
 description: Request a new relation type for a xGov managed subscription process.
 title: "[Relation Type Request]: "
-labels: ["enhancement", "documentation"]
+labels: ["relation-type", "documentation"]
 body:
   - type: markdown
     attributes:
