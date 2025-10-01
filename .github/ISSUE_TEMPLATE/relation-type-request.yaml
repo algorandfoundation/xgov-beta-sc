@@ -1,0 +1,30 @@
+name: "Relation Type Request"
+description: Request a new relation type for a xGov managed subscription process.
+title: "[Relation Type Request]: "
+labels: ["enhancement", "documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out this form to request a new relation type for the xGov managed subscription process for your Application.
+  - type: textarea
+    id: relation-type-name
+    attributes:
+      label: Relation Type Name
+      description: Please provide the name of the Application (protocol or service) requesting a managed subscription.
+    validations:
+      required: true
+  - type: textarea
+    id: relation-type-trust-model
+    attributes:
+      label: Relation Type Trust Model
+      description: A clear and concise description of the trust model between the xGov App Address and the Owner Address.
+    validations:
+      required: true
+  - type: textarea
+    id: relation-type-verification
+    attributes:
+      label: Relation Type Verification
+      description: A clear and concise step-by-step process to verify the xGov App Address ownership off-chain.
+    validations:
+      required: true
