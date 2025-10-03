@@ -475,7 +475,7 @@ class XgovRegistryMock(ARC4Contract):
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
 
         """
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             Proposal.vote,
             voter,
             approvals,
@@ -529,7 +529,7 @@ class XgovRegistryMock(ARC4Contract):
             err.MISSING_CONFIG: If one of the required configuration values is missing
 
         """
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             Proposal.fund,
             app_id=proposal_app,
             fee=0,
@@ -547,7 +547,7 @@ class XgovRegistryMock(ARC4Contract):
 
     @arc4.abimethod()
     def finalize_proposal(self, proposal_app: Application) -> None:
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             Proposal.finalize,
             app_id=proposal_app,
             fee=0,
@@ -567,7 +567,7 @@ class XgovRegistryMock(ARC4Contract):
 
     @arc4.abimethod()
     def drop_proposal(self, proposal_app: Application) -> None:
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             Proposal.drop,
             app_id=proposal_app,
             fee=0,

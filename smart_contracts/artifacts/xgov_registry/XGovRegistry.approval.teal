@@ -1558,7 +1558,7 @@ init_proposal_contract:
     callsub is_xgov_manager
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:382
-    // box, exist = self.proposal_approval_program.maybe()
+    // _box, exist = self.proposal_approval_program.maybe()
     bytec 9 // 0x7061
     box_get
     bury 1
@@ -2880,7 +2880,7 @@ open_proposal:
     // smart_contracts/xgov_registry/contract.py:945-949
     // # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
     // # we only use the first element here as we assume the clear state program is small enough
-    // compiled_clear_state_1, compiled_clear_state_2 = compile_contract(
+    // compiled_clear_state_1, _compiled_clear_state_2 = compile_contract(
     //     proposal_contract.Proposal
     // ).clear_state_program
     pushbytes base64(CoEBQw==)
@@ -3165,7 +3165,7 @@ vote_proposal:
     assert // Must be voting address
     // smart_contracts/xgov_registry/contract.py:1048-1055
     // # Call the Proposal App to register the vote
-    // error, tx = arc4.abi_call(
+    // error, _tx = arc4.abi_call(
     //     proposal_contract.Proposal.vote,
     //     xgov_address,
     //     approval_votes,
@@ -3398,7 +3398,7 @@ pay_grant_proposal:
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:1116-1118
-    // error, tx = arc4.abi_call(
+    // error, _tx = arc4.abi_call(
     //     proposal_contract.Proposal.fund, app_id=proposal_id.native
     // )
     itxn_begin
@@ -3543,7 +3543,7 @@ finalize_proposal_after_if_else@3:
     callsub _is_proposal
     assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:1155-1157
-    // error, tx = arc4.abi_call(
+    // error, _tx = arc4.abi_call(
     //     proposal_contract.Proposal.finalize, app_id=proposal_id.native
     // )
     itxn_begin
@@ -3690,7 +3690,7 @@ drop_proposal:
     ==
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:1198-1200
-    // error, tx = arc4.abi_call(
+    // error, _tx = arc4.abi_call(
     //     proposal_contract.Proposal.drop, app_id=proposal_id.native
     // )
     itxn_begin

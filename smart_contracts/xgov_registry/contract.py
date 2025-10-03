@@ -379,7 +379,7 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        box, exist = self.proposal_approval_program.maybe()
+        _box, exist = self.proposal_approval_program.maybe()
         if exist:
             self.proposal_approval_program.resize(size.native)
         else:
@@ -944,7 +944,7 @@ class XGovRegistry(
 
         # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
-        compiled_clear_state_1, compiled_clear_state_2 = compile_contract(
+        compiled_clear_state_1, _compiled_clear_state_2 = compile_contract(
             proposal_contract.Proposal
         ).clear_state_program
 
@@ -1046,7 +1046,7 @@ class XGovRegistry(
         assert Txn.sender == xgov_box.voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             proposal_contract.Proposal.vote,
             xgov_address,
             approval_votes,
@@ -1113,7 +1113,7 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             proposal_contract.Proposal.fund, app_id=proposal_id.native
         )
 
@@ -1152,7 +1152,7 @@ class XGovRegistry(
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
 
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             proposal_contract.Proposal.finalize, app_id=proposal_id.native
         )
 
@@ -1195,7 +1195,7 @@ class XGovRegistry(
         proposer = self.get_proposal_proposer(proposal_id.native)
         assert Txn.sender == proposer, err.UNAUTHORIZED
 
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             proposal_contract.Proposal.drop, app_id=proposal_id.native
         )
 
