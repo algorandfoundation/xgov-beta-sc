@@ -3,7 +3,7 @@
   "sources": [
     "../../xgov_subscriber_app_mock/contract.py"
   ],
-  "mappings": ";;;;;;AAcA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;AAoBK;;AAAA;AAAA;AAAA;;AAAA;AApBL;;;AAAA;AAoBK;;;AAAA;;AAnBA;;AAAA;AAAA;AAAA;;AAAA;AADL;;;AAAA;AAAA;;;AACK;;;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAG4C;;AACxB;;;;;;;;;;AADwB;AAAA;AAKvB;;AAAA;;AAAA;AAIb;;;;;AALU;;;AAAA;;;AAKV;;;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;AAAA;;AAOR;;;AAEQ;AAIS;;AAAqB;;AAArB;AAFQ;;;;;;AAFjB;;;;;;;;;;AAAA;;;;;AAAA;",
+  "mappings": ";;;;;;AAcA;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;AAoBK;;AAAA;AAAA;AAAA;;AAAA;AApBL;;;AAAA;AAoBK;;;AAAA;;AAnBA;;AAAA;AAAA;AAAA;;AAAA;AADL;;;AAAA;AAAA;;;AACK;;;AAAA;;AADL;;AAAA;;;;;;;;;AACA;;;AAG6C;;AACzB;;;;;;;;;;AADyB;AAAA;AAKxB;;AAAA;;AAAA;AAIb;;;;;AALU;;;AAAA;;;AAKV;;;;;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;AAAA;;AAOR;;;AAEQ;AAIS;;AAAqB;;AAArB;AAFQ;;;;;;AAFjB;;;;;;;;;;AAAA;;;;;AAAA;",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -314,12 +314,12 @@
     "95": {
       "op": "app_global_get_ex",
       "defined_out": [
-        "xgov_fee#0",
-        "xgov_min_balance_exists#0"
+        "_xgov_min_balance_exists#0",
+        "xgov_fee#0"
       ],
       "stack_out": [
         "xgov_fee#0",
-        "xgov_min_balance_exists#0"
+        "_xgov_min_balance_exists#0"
       ]
     },
     "96": {
