@@ -1,12 +1,7 @@
 import logging
 import os
 
-from algokit_utils import (
-    AlgoAmount,
-    AlgorandClient,
-    OnSchemaBreak,
-    OnUpdate
-)
+from algokit_utils import AlgoAmount, AlgorandClient, OnSchemaBreak, OnUpdate
 
 from ..xgov_registry.deploy_config import _create_vault_signer_from_env
 
@@ -16,6 +11,7 @@ deployer_min_spending = AlgoAmount.from_algo(3)
 # Cover box storage costs for council members and votes
 # mbr on votes is freed after all members vote
 council_min_spending = AlgoAmount.from_algo(2)
+
 
 def deploy() -> None:
     from smart_contracts.artifacts.council.council_client import (
@@ -80,4 +76,4 @@ def deploy() -> None:
                 else (gh_deployer.signer if gh_deployer else None)
             ),
         )
-        logger.info(f"Funded council app with 0.1 ALGO")
+        logger.info("Funded council app with 0.1 ALGO")
