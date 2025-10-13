@@ -5,7 +5,7 @@ The keywords "**MUST**", "**MUST NOT**", "**REQUIRED**", "**SHALL**", "**SHALL N
 in this document, are to be interpreted as described in [RFC 2119](https://datatracker.ietf.org/doc/html/rfc2119).
 
 The data types (like `uint64`, `byte[]`, etc.) in this document are to be interpreted
-as specified in [ARC-4](https://arc.algorand.foundation/ARCs/arc-0004).
+as specified in [ARC-4](https://dev.algorand.co/arc-standards/arc-0004).
 
 {{#include ./_include/styles.md:note}}
 > Notes like this are non-normative

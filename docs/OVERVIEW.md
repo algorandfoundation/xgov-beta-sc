@@ -37,6 +37,6 @@ The _on-chain_ components are used for:
 
 The _off-chain_ components are used for:
 
-1. Selecting xGov Committees periodically and verifiably, according to [ARC-86](https://arc.algorand.foundation/ARCs/arc-0086);
+1. Selecting xGov Committees periodically and verifiably, according to [ARC-86](https://dev.algorand.co/arc-standards/arc-0086);
 1. Intermediate Proposers’ KYC;
 1. Intermediate onboarding of xGovs that cannot execute a self-onboarding.
