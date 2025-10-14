@@ -95,7 +95,7 @@ repos:
         minimum_pre_commit_version: 0.15.0
         types: [ markdown ]
         additional_dependencies: [ ]
-        files: '^(docs/.*\.md|README\.md)$'
+        files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
