@@ -1,7 +1,6 @@
 # pyright: reportMissingModuleSource=false
 
 from algopy import (
-    Application,
     ARC4Contract,
     Global,
     GlobalState,
@@ -451,7 +450,7 @@ class XgovRegistryMock(ARC4Contract):
     @arc4.abimethod()
     def vote(
         self,
-        proposal_app: Application,
+        proposal_app: arc4.UInt64,
         voter: arc4.Address,
         approvals: arc4.UInt64,
         rejections: arc4.UInt64,
@@ -480,7 +479,7 @@ class XgovRegistryMock(ARC4Contract):
             voter,
             approvals,
             rejections,
-            app_id=proposal_app,
+            app_id=proposal_app.as_uint64(),
             fee=0,
         )
 
@@ -516,7 +515,7 @@ class XgovRegistryMock(ARC4Contract):
         self.xgov_council.value = xgov_council
 
     @arc4.abimethod()
-    def fund(self, proposal_app: Application) -> None:
+    def fund(self, proposal_app: arc4.UInt64) -> None:
         """
         Fund a proposal
 
@@ -531,7 +530,7 @@ class XgovRegistryMock(ARC4Contract):
         """
         error, _tx = arc4.abi_call(
             Proposal.fund,
-            app_id=proposal_app,
+            app_id=proposal_app.as_uint64(),
             fee=0,
         )
 
@@ -546,10 +545,10 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def finalize_proposal(self, proposal_app: Application) -> None:
+    def finalize_proposal(self, proposal_app: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.finalize,
-            app_id=proposal_app,
+            app_id=proposal_app.as_uint64(),
             fee=0,
         )
 
@@ -566,10 +565,10 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def drop_proposal(self, proposal_app: Application) -> None:
+    def drop_proposal(self, proposal_app: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.drop,
-            app_id=proposal_app,
+            app_id=proposal_app.as_uint64(),
             fee=0,
         )
 
