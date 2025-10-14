@@ -109,7 +109,7 @@ def build(output_dir: Path, contract_path: Path) -> Path:
             f"--out-dir={output_dir}",
             "--output-arc56",
             "--output-source-map",
-            f"--target-avm-version={AVM_VERSION}"
+            f"--target-avm-version={AVM_VERSION}",
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
