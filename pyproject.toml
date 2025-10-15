@@ -11,7 +11,7 @@ documentation = "https://algorandfoundation.github.io/xgov-beta-sc/"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-algokit-utils = "^4.2.1"
+algokit-utils = "^4.2.2"
 python-dotenv = "^1.1.1"
 algorand-python = "==3.0.0"
 poetry-core = "^2.2.1"
