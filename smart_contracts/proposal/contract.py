@@ -607,17 +607,17 @@ class Proposal(
         self.open_check_authorization()
 
         self.open_input_validation(
-            title.native, funding_type.native, requested_amount.native
+            title.native, funding_type.as_uint64(), requested_amount.as_uint64()
         )
-        self.open_payment_validation(payment, requested_amount.native)
+        self.open_payment_validation(payment, requested_amount.as_uint64())
 
         self.title.value = title.native
-        self.set_category(requested_amount.native)
-        self.funding_type.value = funding_type.native
-        self.requested_amount.value = requested_amount.native
-        self.focus.value = focus.native
+        self.set_category(requested_amount.as_uint64())
+        self.funding_type.value = funding_type.as_uint64()
+        self.requested_amount.value = requested_amount.as_uint64()
+        self.focus.value = focus.as_uint64()
         self.locked_amount.value = self.get_expected_locked_amount(
-            requested_amount.native
+            requested_amount.as_uint64()
         )
         self.open_ts.value = Global.latest_timestamp
         self.status.value = UInt64(enm.STATUS_DRAFT)
@@ -764,7 +764,7 @@ class Proposal(
             self.assert_same_app_and_method(UInt64(0))
 
         for i in urange(voters.length):
-            self._assign_voter(voters[i].address.native, voters[i].voting_power.native)
+            self._assign_voter(voters[i].address.native, voters[i].voting_power.as_uint64())
 
         if self.voters_count == self.committee_members.value:
             assert (
@@ -800,7 +800,7 @@ class Proposal(
             return error
 
         error = self.vote_input_validation(
-            voter.native, approvals.native, rejections.native
+            voter.native, approvals.as_uint64(), rejections.as_uint64()
         )
         if error != typ.Error(""):
             return error
@@ -813,10 +813,10 @@ class Proposal(
 
         self.voted_members.value += 1
 
-        nulls = voter_box.votes.native - approvals.native - rejections.native
+        nulls = voter_box.votes.as_uint64() - approvals.as_uint64() - rejections.as_uint64()
 
-        self.approvals.value += approvals.native
-        self.rejections.value += rejections.native
+        self.approvals.value += approvals.as_uint64()
+        self.rejections.value += rejections.as_uint64()
         self.nulls.value += nulls
 
         return typ.Error("")
