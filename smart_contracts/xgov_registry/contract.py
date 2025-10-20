@@ -1243,13 +1243,13 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
+        assert amount.as_uint64() <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
-        self.outstanding_funds.value -= amount
+        self.outstanding_funds.value -= amount.as_uint64()
 
         itxn.Payment(
             receiver=self.xgov_manager.value.native,
-            amount=amount,
+            amount=amount.as_uint64(),
             fee=0,
         ).submit()
 
