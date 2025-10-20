@@ -592,7 +592,7 @@ open_bool_merge@5:
     // ), err.WRONG_PROPOSAL_STATUS
     assert // Wrong Proposal Status or finalized
     // smart_contracts/proposal/contract.py:610
-    // title.native, funding_type.native, requested_amount.native
+    // title.native, funding_type.as_uint64(), requested_amount.as_uint64()
     dig 3
     extract 2 0
     dup
@@ -770,19 +770,19 @@ open_bool_merge@11:
 
 open_after_if_else@20:
     // smart_contracts/proposal/contract.py:616
-    // self.funding_type.value = funding_type.native
+    // self.funding_type.value = funding_type.as_uint64()
     bytec 26 // 0x66756e64696e675f74797065
     dig 8
     app_global_put
     // smart_contracts/proposal/contract.py:617
-    // self.requested_amount.value = requested_amount.native
+    // self.requested_amount.value = requested_amount.as_uint64()
     bytec 27 // 0x7265717565737465645f616d6f756e74
     dig 6
     dup
     cover 2
     app_global_put
     // smart_contracts/proposal/contract.py:618
-    // self.focus.value = focus.native
+    // self.focus.value = focus.as_uint64()
     dig 1
     btoi
     bytec 25 // 0x666f637573
@@ -790,7 +790,7 @@ open_after_if_else@20:
     app_global_put
     // smart_contracts/proposal/contract.py:619-621
     // self.locked_amount.value = self.get_expected_locked_amount(
-    //     requested_amount.native
+    //     requested_amount.as_uint64()
     // )
     callsub get_expected_locked_amount
     // smart_contracts/proposal/contract.py:619
@@ -798,7 +798,7 @@ open_after_if_else@20:
     bytec 16 // 0x6c6f636b65645f616d6f756e74
     // smart_contracts/proposal/contract.py:619-621
     // self.locked_amount.value = self.get_expected_locked_amount(
-    //     requested_amount.native
+    //     requested_amount.as_uint64()
     // )
     swap
     app_global_put
@@ -1267,7 +1267,7 @@ assign_voters_for_header@9:
     <
     bz assign_voters_after_for@12
     // smart_contracts/proposal/contract.py:767
-    // self._assign_voter(voters[i].address.native, voters[i].voting_power.native)
+    // self._assign_voter(voters[i].address.native, voters[i].voting_power.as_uint64())
     dig 1
     extract 2 0
     dig 4
@@ -1464,7 +1464,7 @@ vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@6:
 
 vote_after_if_else@3:
     // smart_contracts/proposal/contract.py:803
-    // voter.native, approvals.native, rejections.native
+    // voter.native, approvals.as_uint64(), rejections.as_uint64()
     dig 1
     btoi
     bury 6
@@ -1540,7 +1540,7 @@ vote_after_if_else@5:
     // votes=voter_box.votes,
     intc_0 // 0
     // smart_contracts/proposal/contract.py:816
-    // nulls = voter_box.votes.native - approvals.native - rejections.native
+    // nulls = voter_box.votes.as_uint64() - approvals.as_uint64() - rejections.as_uint64()
     extract_uint64
     dig 6
     dup
@@ -1551,7 +1551,7 @@ vote_after_if_else@5:
     cover 3
     -
     // smart_contracts/proposal/contract.py:818
-    // self.approvals.value += approvals.native
+    // self.approvals.value += approvals.as_uint64()
     intc_0 // 0
     bytec 12 // 0x617070726f76616c73
     app_global_get_ex
@@ -1562,7 +1562,7 @@ vote_after_if_else@5:
     swap
     app_global_put
     // smart_contracts/proposal/contract.py:819
-    // self.rejections.value += rejections.native
+    // self.rejections.value += rejections.as_uint64()
     intc_0 // 0
     bytec 13 // 0x72656a656374696f6e73
     app_global_get_ex
@@ -1614,7 +1614,7 @@ vote_after_if_else@9:
     bury 8
     // smart_contracts/proposal/contract.py:802-804
     // error = self.vote_input_validation(
-    //     voter.native, approvals.native, rejections.native
+    //     voter.native, approvals.as_uint64(), rejections.as_uint64()
     // )
     b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@14
 
@@ -1635,7 +1635,7 @@ vote_after_if_else@11:
     bury 8
     // smart_contracts/proposal/contract.py:802-804
     // error = self.vote_input_validation(
-    //     voter.native, approvals.native, rejections.native
+    //     voter.native, approvals.as_uint64(), rejections.as_uint64()
     // )
     b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@14
 
@@ -1644,7 +1644,7 @@ vote_after_if_else@13:
     bury 8
     // smart_contracts/proposal/contract.py:802-804
     // error = self.vote_input_validation(
-    //     voter.native, approvals.native, rejections.native
+    //     voter.native, approvals.as_uint64(), rejections.as_uint64()
     // )
     b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@14
 
