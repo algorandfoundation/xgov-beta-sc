@@ -202,13 +202,13 @@ typing-extensions = ">=4.6.0"
 
 [[package]]
 name = "algorand-python"
-version = "3.0.0"
+version = "3.1.1"
 description = "API for writing Algorand Python Smart contracts"
 optional = false
 python-versions = "<4,>=3.12.0"
 groups = ["main"]
 files = [
-    {file = "algorand_python-3.0.0-py3-none-any.whl", hash = "sha256:e1cac052b158aa83b6d751d50055544cbdcbb6999e96968d41d62af7e5a46120"},
+    {file = "algorand_python-3.1.1-py3-none-any.whl", hash = "sha256:502fd2b1974d02a7a566537a1aea76eeb4adfd198a195a4bf30b9296d5ebeeae"},
 ]
 
 [[package]]
@@ -1847,13 +1847,13 @@ files = [
 
 [[package]]
 name = "puyapy"
-version = "5.2.0"
+version = "5.3.2"
 description = "An optimising compiler for Algorand Python"
 optional = false
 python-versions = "<4,>=3.12.0"
 groups = ["dev"]
 files = [
-    {file = "puyapy-5.2.0-py3-none-any.whl", hash = "sha256:d728a5c42610d37a119ea702dfa7a1ba93e7de3282d043488eb72304ece4e05e"},
+    {file = "puyapy-5.3.2-py3-none-any.whl", hash = "sha256:b8d05390e3beffcf01ef37e2509a5a37326a0fe9bbcb717da27662e28e8f471b"},
 ]
 
 [package.dependencies]
@@ -2610,4 +2610,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "f452b8a12faf6761fb6c7bb195757c1fc762da57c10b692f0c38887f9541b212"
+content-hash = "d628c18fadf594f1ffad2ca417990a86f6381f43e37f2e2cd0e00b3e13eafd48"
