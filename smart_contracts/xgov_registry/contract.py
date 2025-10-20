@@ -247,7 +247,8 @@ class XGovRegistry(
     def valid_kyc(self, address: Account) -> bool:
         return (
             self.proposer_box[address].kyc_status.native
-            and self.proposer_box[address].kyc_expiring.as_uint64() > Global.latest_timestamp
+            and self.proposer_box[address].kyc_expiring.as_uint64()
+            > Global.latest_timestamp
         )
 
     @subroutine
@@ -402,7 +403,9 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
         # Load the Proposal Approval Program contract
-        self.proposal_approval_program.replace(start_index=offset.as_uint64(), value=data)
+        self.proposal_approval_program.replace(
+            start_index=offset.as_uint64(), value=data
+        )
 
     @arc4.abimethod()
     def delete_proposal_contract_box(self) -> None:
@@ -598,7 +601,9 @@ class XGovRegistry(
             and config.xgov_fee.as_uint64() >= xgov_request_box_mbr
         ), err.INVALID_XGOV_FEE
 
-        assert config.proposer_fee.as_uint64() >= proposer_box_mbr, err.INVALID_PROPOSER_FEE
+        assert (
+            config.proposer_fee.as_uint64() >= proposer_box_mbr
+        ), err.INVALID_PROPOSER_FEE
 
         assert (
             config.min_requested_amount.as_uint64()
@@ -608,7 +613,8 @@ class XGovRegistry(
         ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
 
         self.set_max_committee_size(
-            config.open_proposal_fee.as_uint64(), config.daemon_ops_funding_bps.as_uint64()
+            config.open_proposal_fee.as_uint64(),
+            config.daemon_ops_funding_bps.as_uint64(),
         )
 
         self.xgov_fee.value = config.xgov_fee.as_uint64()
@@ -618,14 +624,24 @@ class XGovRegistry(
         self.proposal_commitment_bps.value = config.proposal_commitment_bps.as_uint64()
 
         self.min_requested_amount.value = config.min_requested_amount.as_uint64()
-        self.max_requested_amount_small.value = config.max_requested_amount[0].as_uint64()
-        self.max_requested_amount_medium.value = config.max_requested_amount[1].as_uint64()
-        self.max_requested_amount_large.value = config.max_requested_amount[2].as_uint64()
+        self.max_requested_amount_small.value = config.max_requested_amount[
+            0
+        ].as_uint64()
+        self.max_requested_amount_medium.value = config.max_requested_amount[
+            1
+        ].as_uint64()
+        self.max_requested_amount_large.value = config.max_requested_amount[
+            2
+        ].as_uint64()
 
         self.discussion_duration_small.value = config.discussion_duration[0].as_uint64()
-        self.discussion_duration_medium.value = config.discussion_duration[1].as_uint64()
+        self.discussion_duration_medium.value = config.discussion_duration[
+            1
+        ].as_uint64()
         self.discussion_duration_large.value = config.discussion_duration[2].as_uint64()
-        self.discussion_duration_xlarge.value = config.discussion_duration[3].as_uint64()
+        self.discussion_duration_xlarge.value = config.discussion_duration[
+            3
+        ].as_uint64()
 
         self.voting_duration_small.value = config.voting_duration[0].as_uint64()
         self.voting_duration_medium.value = config.voting_duration[1].as_uint64()
@@ -1243,7 +1259,9 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert amount.as_uint64() <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
+        assert (
+            amount.as_uint64() <= self.outstanding_funds.value
+        ), err.INSUFFICIENT_FUNDS
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
         self.outstanding_funds.value -= amount.as_uint64()
 

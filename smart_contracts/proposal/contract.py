@@ -764,7 +764,9 @@ class Proposal(
             self.assert_same_app_and_method(UInt64(0))
 
         for i in urange(voters.length):
-            self._assign_voter(voters[i].address.native, voters[i].voting_power.as_uint64())
+            self._assign_voter(
+                voters[i].address.native, voters[i].voting_power.as_uint64()
+            )
 
         if self.voters_count == self.committee_members.value:
             assert (
@@ -813,7 +815,9 @@ class Proposal(
 
         self.voted_members.value += 1
 
-        nulls = voter_box.votes.as_uint64() - approvals.as_uint64() - rejections.as_uint64()
+        nulls = (
+            voter_box.votes.as_uint64() - approvals.as_uint64() - rejections.as_uint64()
+        )
 
         self.approvals.value += approvals.as_uint64()
         self.rejections.value += rejections.as_uint64()
