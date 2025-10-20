@@ -3,7 +3,7 @@
   "sources": [
     "../../proposal_mock/contract.py"
   ],
-  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADmB;AAD3B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AA9DR;;AAAA;AAAA;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAwFK;AAAA;AAxFL;;;;;;AAAA;;;AAAA;;;;AAAA;AAmEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAAA;AAAA;AACA;AAA6B;;AAA7B;AAHH;AAAA;AAKA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAAA;AAAA;AAFH;AAAA;AAIA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;;AAAA;AAAA;AAFH;AAAA;AAIA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAIG;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;AAAA;AANH;AAAA;AAYA;;;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA",
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAoBgB;AADJ;;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;AADmB;AAD3B;AAMQ;;AADJ;AADJ;AAMQ;;AADJ;AADJ;AAMQ;;;;;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;AADJ;AADJ;AAMQ;;;;;;;;;;;;AADJ;AADJ;AA9DR;;AAAA;AAAA;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAwFK;AAAA;AAxFL;;;;;;AAAA;;;AAAA;;;;AAAA;AAmEK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAAA;AAAA;AACA;AAA6B;;AAA7B;AAHH;AAAA;AAKA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAAA;AAAA;AAFH;AAAA;AAIA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;;AAAA;AAAA;AAFH;AAAA;AAIA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAIG;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;AAAA;AANH;AAAA;AAYA;;;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -11,7 +11,7 @@
       "params": {},
       "block": "main",
       "stack_in": [],
-      "op": "intcblock 0 8 1 32"
+      "op": "intcblock 0 1 8 32"
     },
     "7": {
       "op": "bytecblock 0x70726f706f736572 0x72656769737472795f6170705f6964 0x 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573"
@@ -449,7 +449,7 @@
     "337": {
       "block": "main_release_funds_route@8",
       "stack_in": [],
-      "op": "intc_2 // 1",
+      "op": "intc_1 // 1",
       "defined_out": [
         "1"
       ],
@@ -550,8 +550,8 @@
       ]
     },
     "360": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "proposer#0"
       ]
@@ -603,7 +603,7 @@
       "stack_out": []
     },
     "368": {
-      "op": "intc_2 // 1",
+      "op": "intc_1 // 1",
       "defined_out": [
         "1"
       ],
@@ -651,7 +651,7 @@
       ]
     },
     "375": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "defined_out": [
         "8",
         "len%0#0",
@@ -675,8 +675,8 @@
       ]
     },
     "377": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "tmp%0#0"
       ]
@@ -713,7 +713,7 @@
       "stack_out": []
     },
     "382": {
-      "op": "intc_2 // 1",
+      "op": "intc_1 // 1",
       "defined_out": [
         "1"
       ],
@@ -761,7 +761,7 @@
       ]
     },
     "389": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "defined_out": [
         "8",
         "len%0#0",
@@ -785,8 +785,8 @@
       ]
     },
     "391": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "tmp%0#0"
       ]
@@ -823,7 +823,7 @@
       "stack_out": []
     },
     "397": {
-      "op": "intc_2 // 1",
+      "op": "intc_1 // 1",
       "defined_out": [
         "1"
       ],
@@ -895,8 +895,8 @@
       ]
     },
     "406": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "metadata_hash#0"
       ]
@@ -939,7 +939,7 @@
       ]
     },
     "412": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "defined_out": [
         "8",
         "len%1#0",
@@ -967,8 +967,8 @@
       ]
     },
     "414": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "metadata_hash#0",
         "tmp%1#0"
@@ -1029,7 +1029,7 @@
       ]
     },
     "421": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "stack_out": [
         "metadata_hash#0",
         "size#0",
@@ -1054,8 +1054,8 @@
       ]
     },
     "423": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "metadata_hash#0",
         "size#0",
@@ -1156,7 +1156,7 @@
       "stack_out": []
     },
     "439": {
-      "op": "intc_2 // 1",
+      "op": "intc_1 // 1",
       "defined_out": [
         "1"
       ],
@@ -1211,8 +1211,8 @@
       ]
     },
     "447": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": []
     },
     "448": {
@@ -1234,7 +1234,7 @@
       ]
     },
     "452": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "defined_out": [
         "8",
         "len%1#0"
@@ -1254,8 +1254,8 @@
       ]
     },
     "454": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": []
     },
     "455": {
@@ -1277,7 +1277,7 @@
       ]
     },
     "459": {
-      "op": "intc_1 // 8",
+      "op": "intc_2 // 8",
       "stack_out": [
         "len%2#0",
         "8"
@@ -1293,9 +1293,21 @@
       ]
     },
     "461": {
-      "error": "invalid number of bytes for uint64",
-      "op": "return // on error: invalid number of bytes for uint64",
-      "defined_out": [],
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
+      "stack_out": []
+    },
+    "462": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "463": {
+      "op": "return",
       "stack_out": []
     }
   }

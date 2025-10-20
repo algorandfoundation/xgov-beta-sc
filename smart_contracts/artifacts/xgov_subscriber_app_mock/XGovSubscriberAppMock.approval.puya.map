@@ -3,7 +3,7 @@
   "sources": [
     "../../xgov_subscriber_app_mock/contract.py"
   ],
-  "mappings": ";;;;;;;AAcA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;;;;;;;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAGwC;;AACzB;;;;;;;;;;AADyB;AAAA;AAAA;AAKxB;;AAAA;;AAAA;AAIb;;;;;;;AALU;;;AAAA;;;AAKV;;;;AAAA;;;;;;;;;;AAAA;;;AAAA;;;AAAA;AAZH;AAAA;AAmBA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAIS;;AAAqB;;AAArB;AAFQ;;;;;;AAFjB;;;;;;;;;;AAAA;;;;;AAAA;AAFH;AAAA",
+  "mappings": ";;;;;;;AAcA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;;;;;;;;;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAGwC;;AACzB;;;;;;;;;;AADyB;AAAA;AAAA;AAKxB;;AAAA;;AAAA;AAIb;;;;;;;AALU;;;AAAA;;;AAKV;;;;AAAA;;;;;;;;;;AAAA;;;AAAA;;;AAAA;AAZH;AAAA;AAmBA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAIS;;AAAqB;;AAArB;AAFQ;;;;;;AAFjB;;;;;;;;;;AAAA;;;;;AAAA;AAFH;AAAA",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -146,11 +146,23 @@
     },
     "48": {
       "error": "OnCompletion must be NoOp && can only call when creating",
-      "op": "return // on error: OnCompletion must be NoOp && can only call when creating",
-      "defined_out": [],
+      "op": "assert // OnCompletion must be NoOp && can only call when creating",
       "stack_out": []
     },
     "49": {
+      "op": "intc_0 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "50": {
+      "op": "return",
+      "stack_out": []
+    },
+    "51": {
       "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov[routing]",
       "params": {},
       "block": "subscribe_xgov",
@@ -163,7 +175,7 @@
         "tmp%0#0"
       ]
     },
-    "52": {
+    "54": {
       "op": "dup",
       "defined_out": [
         "tmp%0#0",
@@ -174,7 +186,7 @@
         "tmp%0#0 (copy)"
       ]
     },
-    "53": {
+    "55": {
       "op": "len",
       "defined_out": [
         "len%0#0",
@@ -185,7 +197,7 @@
         "len%0#0"
       ]
     },
-    "54": {
+    "56": {
       "op": "intc_1 // 8",
       "defined_out": [
         "8",
@@ -198,7 +210,7 @@
         "8"
       ]
     },
-    "55": {
+    "57": {
       "op": "==",
       "defined_out": [
         "eq%0#0",
@@ -209,14 +221,14 @@
         "eq%0#0"
       ]
     },
-    "56": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+    "58": {
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "tmp%0#0"
       ]
     },
-    "57": {
+    "59": {
       "op": "btoi",
       "defined_out": [
         "app_id#0"
@@ -225,7 +237,7 @@
         "app_id#0"
       ]
     },
-    "58": {
+    "60": {
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "app_id#0",
@@ -236,7 +248,7 @@
         "voting_address#0"
       ]
     },
-    "61": {
+    "63": {
       "op": "dup",
       "defined_out": [
         "app_id#0",
@@ -249,7 +261,7 @@
         "voting_address#0 (copy)"
       ]
     },
-    "62": {
+    "64": {
       "op": "len",
       "defined_out": [
         "app_id#0",
@@ -262,7 +274,7 @@
         "len%1#0"
       ]
     },
-    "63": {
+    "65": {
       "op": "pushint 32 // 32",
       "defined_out": [
         "32",
@@ -277,7 +289,7 @@
         "32"
       ]
     },
-    "65": {
+    "67": {
       "op": "==",
       "defined_out": [
         "app_id#0",
@@ -290,15 +302,15 @@
         "eq%1#0"
       ]
     },
-    "66": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+    "68": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "app_id#0",
         "voting_address#0"
       ]
     },
-    "67": {
+    "69": {
       "op": "dig 1",
       "defined_out": [
         "app_id#0",
@@ -311,7 +323,7 @@
         "app_id#0 (copy)"
       ]
     },
-    "69": {
+    "71": {
       "op": "pushbytes 0x78676f765f666565",
       "defined_out": [
         "0x78676f765f666565",
@@ -326,7 +338,7 @@
         "0x78676f765f666565"
       ]
     },
-    "79": {
+    "81": {
       "op": "app_global_get_ex",
       "defined_out": [
         "_xgov_min_balance_exists#0",
@@ -341,7 +353,7 @@
         "_xgov_min_balance_exists#0"
       ]
     },
-    "80": {
+    "82": {
       "op": "pop",
       "stack_out": [
         "app_id#0",
@@ -349,7 +361,7 @@
         "xgov_fee#0"
       ]
     },
-    "81": {
+    "83": {
       "op": "swap",
       "stack_out": [
         "app_id#0",
@@ -357,7 +369,7 @@
         "voting_address#0"
       ]
     },
-    "82": {
+    "84": {
       "op": "dig 2",
       "stack_out": [
         "app_id#0",
@@ -366,7 +378,7 @@
         "app_id#0 (copy)"
       ]
     },
-    "84": {
+    "86": {
       "op": "app_params_get AppAddress",
       "defined_out": [
         "app_id#0",
@@ -383,7 +395,7 @@
         "check%0#0"
       ]
     },
-    "86": {
+    "88": {
       "error": "application exists",
       "op": "assert // application exists",
       "stack_out": [
@@ -393,10 +405,10 @@
         "value%0#0"
       ]
     },
-    "87": {
+    "89": {
       "op": "itxn_begin"
     },
-    "88": {
+    "90": {
       "op": "uncover 2",
       "stack_out": [
         "app_id#0",
@@ -405,7 +417,7 @@
         "xgov_fee#0"
       ]
     },
-    "90": {
+    "92": {
       "op": "itxn_field Amount",
       "stack_out": [
         "app_id#0",
@@ -413,14 +425,14 @@
         "value%0#0"
       ]
     },
-    "92": {
+    "94": {
       "op": "itxn_field Receiver",
       "stack_out": [
         "app_id#0",
         "voting_address#0"
       ]
     },
-    "94": {
+    "96": {
       "op": "intc_0 // pay",
       "defined_out": [
         "app_id#0",
@@ -433,14 +445,14 @@
         "pay"
       ]
     },
-    "95": {
+    "97": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "app_id#0",
         "voting_address#0"
       ]
     },
-    "97": {
+    "99": {
       "op": "intc_2 // 0",
       "defined_out": [
         "0",
@@ -453,30 +465,30 @@
         "0"
       ]
     },
-    "98": {
+    "100": {
       "op": "itxn_field Fee",
       "stack_out": [
         "app_id#0",
         "voting_address#0"
       ]
     },
-    "100": {
+    "102": {
       "op": "itxn_next"
     },
-    "101": {
+    "103": {
       "op": "swap",
       "stack_out": [
         "voting_address#0",
         "app_id#0"
       ]
     },
-    "102": {
+    "104": {
       "op": "itxn_field ApplicationID",
       "stack_out": [
         "voting_address#0"
       ]
     },
-    "104": {
+    "106": {
       "op": "pushbytes 0xa082cef8 // method \"subscribe_xgov(address,pay)void\"",
       "defined_out": [
         "Method(subscribe_xgov(address,pay)void)",
@@ -487,17 +499,17 @@
         "Method(subscribe_xgov(address,pay)void)"
       ]
     },
-    "110": {
+    "112": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
         "voting_address#0"
       ]
     },
-    "112": {
+    "114": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": []
     },
-    "114": {
+    "116": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl"
@@ -506,24 +518,24 @@
         "appl"
       ]
     },
-    "115": {
+    "117": {
       "op": "itxn_field TypeEnum",
       "stack_out": []
     },
-    "117": {
+    "119": {
       "op": "intc_2 // 0",
       "stack_out": [
         "0"
       ]
     },
-    "118": {
+    "120": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "120": {
+    "122": {
       "op": "itxn_submit"
     },
-    "121": {
+    "123": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1"
@@ -532,11 +544,11 @@
         "1"
       ]
     },
-    "122": {
+    "124": {
       "op": "return",
       "stack_out": []
     },
-    "123": {
+    "125": {
       "subroutine": "smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.unsubscribe_xgov[routing]",
       "params": {},
       "block": "unsubscribe_xgov",
@@ -549,7 +561,7 @@
         "tmp%0#0"
       ]
     },
-    "126": {
+    "128": {
       "op": "dup",
       "defined_out": [
         "tmp%0#0",
@@ -560,7 +572,7 @@
         "tmp%0#0 (copy)"
       ]
     },
-    "127": {
+    "129": {
       "op": "len",
       "defined_out": [
         "len%0#0",
@@ -571,7 +583,7 @@
         "len%0#0"
       ]
     },
-    "128": {
+    "130": {
       "op": "intc_1 // 8",
       "defined_out": [
         "8",
@@ -584,7 +596,7 @@
         "8"
       ]
     },
-    "129": {
+    "131": {
       "op": "==",
       "defined_out": [
         "eq%0#0",
@@ -595,14 +607,14 @@
         "eq%0#0"
       ]
     },
-    "130": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+    "132": {
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "tmp%0#0"
       ]
     },
-    "131": {
+    "133": {
       "op": "btoi",
       "defined_out": [
         "app_id#0"
@@ -611,10 +623,10 @@
         "app_id#0"
       ]
     },
-    "132": {
+    "134": {
       "op": "itxn_begin"
     },
-    "133": {
+    "135": {
       "op": "global MinTxnFee",
       "defined_out": [
         "app_id#0",
@@ -625,7 +637,7 @@
         "tmp%0#1"
       ]
     },
-    "135": {
+    "137": {
       "op": "pushint 2 // 2",
       "defined_out": [
         "2",
@@ -638,7 +650,7 @@
         "2"
       ]
     },
-    "137": {
+    "139": {
       "op": "*",
       "defined_out": [
         "app_id#0",
@@ -649,7 +661,7 @@
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "138": {
+    "140": {
       "op": "global CurrentApplicationAddress",
       "defined_out": [
         "app_id#0",
@@ -662,7 +674,7 @@
         "reinterpret_Encoded(uint8[32])%0#0"
       ]
     },
-    "140": {
+    "142": {
       "op": "uncover 2",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
@@ -670,14 +682,14 @@
         "app_id#0"
       ]
     },
-    "142": {
+    "144": {
       "op": "itxn_field ApplicationID",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
         "reinterpret_Encoded(uint8[32])%0#0"
       ]
     },
-    "144": {
+    "146": {
       "op": "pushbytes 0x76725559 // method \"unsubscribe_xgov(address)void\"",
       "defined_out": [
         "Method(unsubscribe_xgov(address)void)",
@@ -690,20 +702,20 @@
         "Method(unsubscribe_xgov(address)void)"
       ]
     },
-    "150": {
+    "152": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
         "reinterpret_Encoded(uint8[32])%0#0"
       ]
     },
-    "152": {
+    "154": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "154": {
+    "156": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl",
@@ -714,20 +726,20 @@
         "appl"
       ]
     },
-    "155": {
+    "157": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "157": {
+    "159": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "159": {
+    "161": {
       "op": "itxn_submit"
     },
-    "160": {
+    "162": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1"
@@ -736,7 +748,7 @@
         "1"
       ]
     },
-    "161": {
+    "163": {
       "op": "return",
       "stack_out": []
     }

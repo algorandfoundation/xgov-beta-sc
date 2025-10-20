@@ -399,7 +399,7 @@ init_proposal_contract:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:380
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -446,17 +446,17 @@ load_proposal_contract:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 2
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     dig 1
     len
     ==
-    assert // invalid number of bytes for (len+uint8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     extract 2 0
     // smart_contracts/xgov_registry/contract.py:402
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -572,7 +572,7 @@ set_xgov_manager:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:469
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -597,7 +597,7 @@ set_payor:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:484
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -622,7 +622,7 @@ set_xgov_council:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:499
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -647,7 +647,7 @@ set_xgov_subscriber:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:514
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -672,7 +672,7 @@ set_kyc_provider:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:529
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -697,7 +697,7 @@ set_committee_manager:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:544
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -722,7 +722,7 @@ set_xgov_daemon:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:559
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -750,7 +750,7 @@ config_xgov_registry:
     len
     pushint 184 // 184
     ==
-    assert // invalid number of bytes for (uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3])
+    assert // invalid number of bytes for smart_contracts.common.abi_types.XGovRegistryConfig
     // smart_contracts/xgov_registry/contract.py:575
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
@@ -1146,9 +1146,11 @@ update_xgov_registry:
     // smart_contracts/xgov_registry/contract.py:652
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
     callsub is_xgov_manager
+    assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:643
     // @arc4.abimethod(allow_actions=["UpdateApplication"])
-    return // on error: Unauthorized
+    intc_1 // 1
+    return
 
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.subscribe_xgov[routing]() -> void:
@@ -1160,7 +1162,7 @@ subscribe_xgov:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txn GroupIndex
     intc_1 // 1
     -
@@ -1226,7 +1228,7 @@ unsubscribe_xgov:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:692
     // assert not self.paused_registry.value, err.PAUSED_REGISTRY
     intc_0 // 0
@@ -1310,19 +1312,19 @@ request_subscribe_xgov:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 3
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txn GroupIndex
     intc_1 // 1
     -
@@ -1416,7 +1418,7 @@ approve_subscribe_xgov:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:762
     // assert self.is_xgov_subscriber(), err.UNAUTHORIZED
     callsub is_xgov_subscriber
@@ -1476,7 +1478,7 @@ reject_subscribe_xgov:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:784
     // assert self.is_xgov_subscriber(), err.UNAUTHORIZED
     callsub is_xgov_subscriber
@@ -1506,14 +1508,14 @@ set_voting_account:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     cover 2
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:805
     // assert not self.paused_registry.value, err.PAUSED_REGISTRY
     intc_0 // 0
@@ -1668,19 +1670,19 @@ set_proposer_kyc:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
     intc_1 // 1
     ==
-    assert // invalid number of bytes for bool8
+    assert // invalid number of bytes for arc4.bool
     txna ApplicationArgs 3
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:865-866
     // # check if kyc provider
     // assert Txn.sender == self.kyc_provider.value.native, err.UNAUTHORIZED
@@ -1745,19 +1747,19 @@ declare_committee:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:197
     // return Txn.sender == self.committee_manager.value.native
     txn Sender
@@ -1982,13 +1984,13 @@ open_proposal:
     extract 4 0
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_2 // 0x151f7c75
@@ -2183,25 +2185,25 @@ vote_proposal:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 2
     dup
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 3
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 4
     dup
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1029
     // assert not self.paused_registry.value, err.PAUSED_REGISTRY
     intc_0 // 0
@@ -2299,13 +2301,13 @@ vote_proposal:
     extract 4 0
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_2 // 0x151f7c75
@@ -2408,9 +2410,11 @@ vote_proposal_else_body@14:
     dig 1
     pushbytes ""
     ==
+    assert // Unknown error
     // smart_contracts/xgov_registry/contract.py:998
     // @arc4.abimethod()
-    return // on error: Unknown error
+    intc_1 // 1
+    return
 
 vote_proposal_ternary_false@4:
     // smart_contracts/xgov_registry/contract.py:1057
@@ -2431,7 +2435,7 @@ pay_grant_proposal:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1095-1096
     // # Verify the caller is the xGov Payor
     // assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
@@ -2537,13 +2541,13 @@ pay_grant_proposal:
     extract 4 0
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_2 // 0x151f7c75
@@ -2605,9 +2609,11 @@ pay_grant_proposal_else_body@9:
     dig 1
     pushbytes ""
     ==
+    assert // Unknown error
     // smart_contracts/xgov_registry/contract.py:1077
     // @arc4.abimethod()
-    return // on error: Unknown error
+    intc_1 // 1
+    return
 
 pay_grant_proposal_ternary_false@4:
     // smart_contracts/xgov_registry/contract.py:1120
@@ -2631,7 +2637,7 @@ finalize_proposal:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1146
     // proposal_status = self.get_proposal_status(proposal_id.native)
     btoi
@@ -2699,13 +2705,13 @@ finalize_proposal_after_if_else@4:
     extract 4 0
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_2 // 0x151f7c75
@@ -2818,7 +2824,7 @@ drop_proposal:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1190
     // assert not self.paused_registry.value, err.PAUSED_REGISTRY
     intc_0 // 0
@@ -2861,13 +2867,13 @@ drop_proposal:
     extract 4 0
     dup
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_2 // 0x151f7c75
@@ -2999,7 +3005,7 @@ withdraw_funds:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry/contract.py:1245
     // assert self.is_xgov_manager(), err.UNAUTHORIZED
@@ -3587,7 +3593,7 @@ get_xgov_box:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:1352
     // return self.xgov_box[xgov_address.native].copy()
     bytec 4 // 0x78
@@ -3614,7 +3620,7 @@ get_proposer_box:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry/contract.py:1365
     // return self.proposer_box[proposer_address.native].copy()
     bytec_1 // 0x70
@@ -3641,7 +3647,7 @@ get_request_box:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1380
     // return self.request_box[request_id.native].copy()
     btoi
@@ -3670,14 +3676,16 @@ is_proposal:
     len
     intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry/contract.py:1384
     // assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
     btoi
     callsub _is_proposal
+    assert // Invalid proposal
     // smart_contracts/xgov_registry/contract.py:1382
     // @arc4.abimethod()
-    return // on error: Invalid proposal
+    intc_1 // 1
+    return
 
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.is_xgov_manager() -> uint64:

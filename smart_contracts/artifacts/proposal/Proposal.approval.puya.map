@@ -971,8 +971,8 @@
       ]
     },
     "663": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "aggregate%encoded_value%1#0",
         "error#0",
@@ -2107,7 +2107,8 @@
       ]
     },
     "887": {
-      "op": "extract_uint16",
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
         "aggregate%array_length%0#0",
         "payment#0",
@@ -2212,8 +2213,8 @@
       ]
     },
     "894": {
-      "error": "invalid number of bytes for (len+utf8[])",
-      "op": "assert // invalid number of bytes for (len+utf8[])",
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "title#1",
         "funding_type#1",
@@ -2304,8 +2305,8 @@
       ]
     },
     "903": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "title#1",
         "funding_type#1",
@@ -2397,8 +2398,8 @@
       ]
     },
     "912": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "title#1",
         "funding_type#1",
@@ -2498,8 +2499,8 @@
       ]
     },
     "920": {
-      "error": "invalid number of bytes for uint8",
-      "op": "assert // invalid number of bytes for uint8",
+      "error": "invalid number of bytes for arc4.uint8",
+      "op": "assert // invalid number of bytes for arc4.uint8",
       "stack_out": [
         "title#1",
         "funding_type#1",
@@ -5411,7 +5412,8 @@
       ]
     },
     "1248": {
-      "op": "extract_uint16",
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
         "aggregate%array_length%0#0",
         "payload#0"
@@ -5532,8 +5534,8 @@
       ]
     },
     "1260": {
-      "error": "invalid number of bytes for (len+uint8[])",
-      "op": "assert // invalid number of bytes for (len+uint8[])",
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
       "stack_out": [
         "aggregate%array_length%0#0",
         "payload#0",
@@ -5621,8 +5623,8 @@
       ]
     },
     "1268": {
-      "error": "invalid number of bytes for bool8",
-      "op": "assert // invalid number of bytes for bool8",
+      "error": "invalid number of bytes for arc4.bool",
+      "op": "assert // invalid number of bytes for arc4.bool",
       "stack_out": [
         "aggregate%array_length%0#0",
         "payload#0",
@@ -7523,7 +7525,8 @@
       ]
     },
     "1645": {
-      "op": "extract_uint16",
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
         "aggregate%array_length%0#0",
         "voters#0"
@@ -7673,8 +7676,8 @@
       ]
     },
     "1658": {
-      "error": "invalid number of bytes for (len+(uint8[32],uint64)[])",
-      "op": "assert // invalid number of bytes for (len+(uint8[32],uint64)[])",
+      "error": "invalid number of bytes for arc4.dynamic_array<smart_contracts.common.abi_types.CommitteeMember>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<smart_contracts.common.abi_types.CommitteeMember>",
       "stack_out": [
         "i#0",
         "tmp%2#0",
@@ -9492,8 +9495,8 @@
       ]
     },
     "1850": {
-      "error": "invalid number of bytes for uint8[32]",
-      "op": "assert // invalid number of bytes for uint8[32]",
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "aggregate%encoded_value%1#0",
         "aggregate%encoded_value%3#0",
@@ -9595,8 +9598,8 @@
       ]
     },
     "1859": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "aggregate%encoded_value%1#0",
         "aggregate%encoded_value%3#0",
@@ -9700,8 +9703,8 @@
       ]
     },
     "1868": {
-      "error": "invalid number of bytes for uint64",
-      "op": "assert // invalid number of bytes for uint64",
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
       "stack_out": [
         "aggregate%encoded_value%1#0",
         "aggregate%encoded_value%3#0",
@@ -15388,8 +15391,8 @@
       ]
     },
     "2573": {
-      "error": "invalid number of bytes for bool8",
-      "op": "assert // invalid number of bytes for bool8",
+      "error": "invalid number of bytes for arc4.bool",
+      "op": "assert // invalid number of bytes for arc4.bool",
       "stack_out": [
         "tmp%0#0"
       ]
@@ -16219,7 +16222,8 @@
       ]
     },
     "2708": {
-      "op": "extract_uint16",
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
       "defined_out": [
         "aggregate%array_length%0#0",
         "voters#0"
@@ -16389,8 +16393,8 @@
       ]
     },
     "2721": {
-      "error": "invalid number of bytes for (len+uint8[32][])",
-      "op": "assert // invalid number of bytes for (len+uint8[32][])",
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.static_array<arc4.uint8, 32>>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.static_array<arc4.uint8, 32>>",
       "stack_out": [
         "box_prefixed_key%0#0",
         "i#0",

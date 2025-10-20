@@ -24,7 +24,9 @@ main___algopy_default_create@9:
     txn ApplicationID
     !
     &&
-    return // on error: OnCompletion must be NoOp && can only call when creating
+    assert // OnCompletion must be NoOp && can only call when creating
+    intc_0 // 1
+    return
 
 
 // smart_contracts.xgov_subscriber_app_mock.contract.XGovSubscriberAppMock.subscribe_xgov[routing]() -> void:
@@ -36,14 +38,14 @@ subscribe_xgov:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     txna ApplicationArgs 2
     dup
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_subscriber_app_mock/contract.py:19-21
     // xgov_fee, _xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
     //     app_id, rcfg.GS_KEY_XGOV_FEE
@@ -114,7 +116,7 @@ unsubscribe_xgov:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_subscriber_app_mock/contract.py:37-42
     // arc4.abi_call(

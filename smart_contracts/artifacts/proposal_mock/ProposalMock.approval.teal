@@ -3,7 +3,7 @@
 
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 0 8 1 32
+    intcblock 0 1 8 32
     bytecblock 0x70726f706f736572 0x72656769737472795f6170705f6964 0x 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573
     txn ApplicationID
     bnz main_after_if_else@2
@@ -216,7 +216,7 @@ main_after_if_else@2:
 main_release_funds_route@8:
     // smart_contracts/proposal_mock/contract.py:105
     // @arc4.abimethod()
-    intc_2 // 1
+    intc_1 // 1
     return
 
 main_create_NoOp@11:
@@ -237,7 +237,7 @@ create:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/proposal_mock/contract.py:86
     // self.proposer.value = proposer
     bytec_0 // 0x70726f706f736572
@@ -250,7 +250,7 @@ create:
     app_global_put
     // smart_contracts/proposal_mock/contract.py:84
     // @arc4.abimethod(create="require")
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -261,9 +261,9 @@ set_status:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/proposal_mock/contract.py:91
     // self.status.value = status
@@ -272,7 +272,7 @@ set_status:
     app_global_put
     // smart_contracts/proposal_mock/contract.py:89
     // @arc4.abimethod()
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -283,9 +283,9 @@ set_requested_amount:
     txna ApplicationArgs 1
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/proposal_mock/contract.py:95
     // self.requested_amount.value = requested_amount
@@ -294,7 +294,7 @@ set_requested_amount:
     app_global_put
     // smart_contracts/proposal_mock/contract.py:93
     // @arc4.abimethod()
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -307,20 +307,20 @@ set_committee_details:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     txna ApplicationArgs 3
     dup
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/proposal_mock/contract.py:101
     // self.committee_id.value = metadata_hash.copy()
@@ -339,7 +339,7 @@ set_committee_details:
     app_global_put
     // smart_contracts/proposal_mock/contract.py:97
     // @arc4.abimethod()
-    intc_2 // 1
+    intc_1 // 1
     return
 
 
@@ -351,14 +351,16 @@ vote:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     len
-    intc_1 // 8
+    intc_2 // 8
     ==
-    return // on error: invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
+    intc_1 // 1
+    return

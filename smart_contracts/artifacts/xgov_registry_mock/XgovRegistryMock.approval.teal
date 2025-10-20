@@ -396,7 +396,9 @@ main___algopy_default_create@44:
     txn ApplicationID
     !
     &&
-    return // on error: OnCompletion must be NoOp && can only call when creating
+    assert // OnCompletion must be NoOp && can only call when creating
+    intc_0 // 1
+    return
 
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.create_empty_proposal[routing]() -> void:
@@ -408,7 +410,7 @@ create_empty_proposal:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry_mock/contract.py:174
     // mbr_before = Global.current_application_address.min_balance
     global CurrentApplicationAddress
@@ -511,7 +513,7 @@ set_proposal_commitment_bps:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:198
     // self.proposal_commitment_bps.value = commitment_bps
@@ -533,7 +535,7 @@ set_min_requested_amount:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:209
     // self.min_requested_amount.value = min_requested_amount
@@ -555,7 +557,7 @@ set_max_requested_amount_small:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:220
     // self.max_requested_amount_small.value = max_requested_amount
@@ -577,7 +579,7 @@ set_max_requested_amount_medium:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:231
     // self.max_requested_amount_medium.value = max_requested_amount
@@ -599,7 +601,7 @@ set_max_requested_amount_large:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:242
     // self.max_requested_amount_large.value = max_requested_amount
@@ -621,7 +623,7 @@ set_daemon_ops_funding_bps:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:253
     // self.daemon_ops_funding_bps.value = daemon_ops_funding_bps
@@ -643,7 +645,7 @@ set_discussion_duration_small:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:264
     // self.discussion_duration_small.value = discussion_duration
@@ -665,7 +667,7 @@ set_discussion_duration_medium:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:275
     // self.discussion_duration_medium.value = discussion_duration
@@ -687,7 +689,7 @@ set_discussion_duration_large:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:286
     // self.discussion_duration_large.value = discussion_duration
@@ -709,7 +711,7 @@ set_xgov_daemon:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry_mock/contract.py:297
     // self.xgov_daemon.value = xgov_daemon
     bytec 16 // 0x78676f765f6461656d6f6e
@@ -730,7 +732,7 @@ set_open_proposal_fee:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:308
     // self.open_proposal_fee.value = open_proposal_fee
@@ -752,7 +754,7 @@ set_committee_id:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry_mock/contract.py:319
     // self.committee_id.value = committee_id.copy()
     bytec 4 // 0x636f6d6d69747465655f6964
@@ -773,7 +775,7 @@ set_committee_members:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:338
     // self.committee_members.value = committee_members
@@ -795,7 +797,7 @@ set_committee_votes:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:349
     // self.committee_votes.value = committee_votes
@@ -817,7 +819,7 @@ set_voting_duration_small:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:360
     // self.voting_duration_small.value = voting_duration
@@ -839,7 +841,7 @@ set_voting_duration_medium:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:371
     // self.voting_duration_medium.value = voting_duration
@@ -861,7 +863,7 @@ set_voting_duration_large:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:382
     // self.voting_duration_large.value = voting_duration
@@ -883,7 +885,7 @@ set_quorum_small:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:393
     // self.quorum_small.value = quorum
@@ -905,7 +907,7 @@ set_quorum_medium:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:404
     // self.quorum_medium.value = quorum
@@ -927,7 +929,7 @@ set_quorum_large:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:415
     // self.quorum_large.value = quorum
@@ -949,7 +951,7 @@ set_weighted_quorum_small:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:426
     // self.weighted_quorum_small.value = weighted_quorum
@@ -971,7 +973,7 @@ set_weighted_quorum_medium:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:437
     // self.weighted_quorum_medium.value = weighted_quorum
@@ -993,7 +995,7 @@ set_weighted_quorum_large:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:448
     // self.weighted_quorum_large.value = weighted_quorum
@@ -1015,25 +1017,25 @@ vote:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 2
     dup
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 3
     dup
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 4
     dup
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry_mock/contract.py:477-484
     // error, _tx = arc4.abi_call(
     //     Proposal.vote,
@@ -1086,13 +1088,13 @@ vote:
     extract 4 0
     dup
     intc_2 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_0 // 0x151f7c75
@@ -1227,7 +1229,7 @@ set_xgov_council:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_registry_mock/contract.py:515
     // self.xgov_council.value = xgov_council
     bytec 29 // 0x78676f765f636f756e63696c
@@ -1248,7 +1250,7 @@ fund:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry_mock/contract.py:531-535
     // error, _tx = arc4.abi_call(
     //     Proposal.fund,
@@ -1286,13 +1288,13 @@ fund:
     extract 4 0
     dup
     intc_2 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_0 // 0x151f7c75
@@ -1383,7 +1385,7 @@ finalize_proposal:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry_mock/contract.py:549-553
     // error, _tx = arc4.abi_call(
     //     Proposal.finalize,
@@ -1421,13 +1423,13 @@ finalize_proposal:
     extract 4 0
     dup
     intc_2 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_0 // 0x151f7c75
@@ -1528,7 +1530,7 @@ drop_proposal:
     len
     intc_1 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/xgov_registry_mock/contract.py:569-573
     // error, _tx = arc4.abi_call(
     //     Proposal.drop,
@@ -1566,13 +1568,13 @@ drop_proposal:
     extract 4 0
     dup
     intc_2 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     dup
     extract 0 4
     bytec_0 // 0x151f7c75
@@ -1652,4 +1654,6 @@ is_proposal:
     len
     intc_1 // 8
     ==
-    return // on error: invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
+    intc_0 // 1
+    return

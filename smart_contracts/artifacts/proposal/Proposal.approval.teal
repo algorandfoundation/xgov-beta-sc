@@ -374,7 +374,7 @@ create:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/proposal/contract.py:564
     // Global.caller_application_id != 0
     global CallerApplicationID
@@ -539,31 +539,31 @@ open:
     txna ApplicationArgs 1
     dupn 2
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     pushint 2 // 2
     +
     swap
     len
     ==
-    assert // invalid number of bytes for (len+utf8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     txna ApplicationArgs 2
     dup
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     dup
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 4
     dup
     len
     intc_1 // 1
     ==
-    assert // invalid number of bytes for uint8
+    assert // invalid number of bytes for arc4.uint8
     // smart_contracts/proposal/contract.py:605
     // self.check_registry_not_paused()
     callsub check_registry_not_paused
@@ -855,7 +855,7 @@ upload_metadata:
     txna ApplicationArgs 1
     dupn 2
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     dup
     cover 3
     dup
@@ -864,13 +864,13 @@ upload_metadata:
     uncover 2
     len
     ==
-    assert // invalid number of bytes for (len+uint8[])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
     txna ApplicationArgs 2
     dup
     len
     intc_1 // 1
     ==
-    assert // invalid number of bytes for bool8
+    assert // invalid number of bytes for arc4.bool
     // smart_contracts/proposal/contract.py:642
     // self.check_registry_not_paused()
     callsub check_registry_not_paused
@@ -1196,7 +1196,7 @@ assign_voters:
     txna ApplicationArgs 1
     dupn 2
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     dup
     cover 2
     pushint 40 // 40
@@ -1206,7 +1206,7 @@ assign_voters:
     swap
     len
     ==
-    assert // invalid number of bytes for (len+(uint8[32],uint64)[])
+    assert // invalid number of bytes for arc4.dynamic_array<smart_contracts.common.abi_types.CommitteeMember>
     // smart_contracts/proposal/contract.py:247
     // assert self.is_xgov_daemon(), err.UNAUTHORIZED
     callsub is_xgov_daemon
@@ -1410,19 +1410,19 @@ vote:
     len
     pushint 32 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     dup
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     // smart_contracts/proposal/contract.py:202
     // assert self.is_registry_call(), err.UNAUTHORIZED
     callsub is_registry_call
@@ -2013,7 +2013,7 @@ review:
     len
     intc_1 // 1
     ==
-    assert // invalid number of bytes for bool8
+    assert // invalid number of bytes for arc4.bool
     intc_0 // 0
     getbit
     // smart_contracts/proposal/contract.py:513
@@ -2171,7 +2171,7 @@ unassign_voters:
     txna ApplicationArgs 1
     dupn 2
     intc_0 // 0
-    extract_uint16
+    extract_uint16 // on error: invalid array length header
     dup
     cover 2
     pushint 32 // 32
@@ -2181,7 +2181,7 @@ unassign_voters:
     swap
     len
     ==
-    assert // invalid number of bytes for (len+uint8[32][])
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.static_array<arc4.uint8, 32>>
     // smart_contracts/proposal/contract.py:171
     // if self.status.value == enm.STATUS_SUBMITTED:
     intc_0 // 0

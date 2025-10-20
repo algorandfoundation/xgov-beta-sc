@@ -115,13 +115,13 @@ create:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     txna ApplicationArgs 2
     dup
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/council/contract.py:82
     // assert registry_id > 0, err.INVALID_REGISTRY_ID
@@ -157,7 +157,7 @@ add_member:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/council/contract.py:101
     // assert Txn.sender == self.admin.value, err.UNAUTHORIZED
     txn Sender
@@ -207,7 +207,7 @@ remove_member:
     len
     intc_3 // 32
     ==
-    assert // invalid number of bytes for uint8[32]
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/council/contract.py:120
     // assert Txn.sender == self.admin.value, err.UNAUTHORIZED
     txn Sender
@@ -258,7 +258,7 @@ vote:
     len
     pushint 8 // 8
     ==
-    assert // invalid number of bytes for uint64
+    assert // invalid number of bytes for arc4.uint64
     btoi
     dup
     txna ApplicationArgs 2
@@ -268,7 +268,7 @@ vote:
     len
     intc_1 // 1
     ==
-    assert // invalid number of bytes for bool8
+    assert // invalid number of bytes for arc4.bool
     intc_0 // 0
     getbit
     swap
