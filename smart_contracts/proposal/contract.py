@@ -4,8 +4,8 @@ from algopy import (
     Account,
     Application,
     ARC4Contract,
+    Box,
     BoxMap,
-    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -138,8 +138,8 @@ class Proposal(
         self.voters = BoxMap(
             Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
         )
-        self.metadata = BoxRef(
-            key=prop_cfg.METADATA_BOX_KEY,
+        self.metadata = Box(
+            Bytes, key=prop_cfg.METADATA_BOX_KEY,
         )
 
     @subroutine
@@ -648,8 +648,8 @@ class Proposal(
 
         if is_first_in_group:
             # clear and write the metadata to the box
-            self.metadata.delete()
-            self.metadata.put(payload.native)
+            del self.metadata.value
+            self.metadata.value = payload.native
         else:
             # append the metadata to the box
             old_size = self.metadata.length
@@ -674,7 +674,7 @@ class Proposal(
             receiver=self.proposer.value,
         )
 
-        self.metadata.delete()
+        del self.metadata.value
         self.finalized.value = True
 
         return typ.Error("")
@@ -998,7 +998,7 @@ class Proposal(
         self.delete_check_authorization()
 
         # delete metadata box if it exists
-        self.metadata.delete()
+        del self.metadata.value
 
         reg_app = Application(self.registry_app_id.value)
         self.pay(
