@@ -139,7 +139,8 @@ class Proposal(
             Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
         )
         self.metadata = Box(
-            Bytes, key=prop_cfg.METADATA_BOX_KEY,
+            Bytes,
+            key=prop_cfg.METADATA_BOX_KEY,
         )
 
     @subroutine
