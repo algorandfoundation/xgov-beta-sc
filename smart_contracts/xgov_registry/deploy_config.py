@@ -175,23 +175,25 @@ def _deploy_xgov_registry() -> None:
 
     template_values = {"entropy": b""}
 
+    signer = (
+        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
+    )
+
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
         logger.info("Fresh deployment requested")
         template_values = {
             "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
         }
+        deployer_address = gh_deployer.address if gh_deployer else deployer_address
+        signer = gh_deployer.signer if gh_deployer else None
 
     version = os.environ.get("XGOV_REGISTRY_VERSION", None)
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer_address,
-        default_signer=(
-            vault_signer
-            if vault_signer
-            else (gh_deployer.signer if gh_deployer else None)
-        ),
+        default_signer=signer,
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -215,6 +217,14 @@ def _deploy_xgov_registry() -> None:
         ),
     )
 
+    existing_deployments = (
+        algorand_client.app_deployer.get_creator_apps_by_name(
+            creator_address=gh_deployer.address,
+        )
+        if gh_deployer
+        else None
+    )
+
     app_client, _ = factory.deploy(
         on_schema_break=OnSchemaBreak.AppendApp,
         on_update=(OnUpdate.UpdateApp if not fresh_deploy else OnUpdate.AppendApp),
@@ -225,6 +235,7 @@ def _deploy_xgov_registry() -> None:
         update_params=XGovRegistryMethodCallUpdateParams(
             method=update_params.method.name,
         ),
+        existing_deployments=existing_deployments,
     )
 
     logger.info("uploading proposal approval program to box")
@@ -245,11 +256,7 @@ def _deploy_xgov_registry() -> None:
         ),
         params=CommonAppCallParams(
             sender=deployer_address,
-            signer=(
-                vault_signer
-                if vault_signer
-                else (gh_deployer.signer if gh_deployer else None)
-            ),
+            signer=signer,
         ),
     )
 
@@ -263,11 +270,7 @@ def _deploy_xgov_registry() -> None:
             args=(i * data_size_per_transaction, chunk),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
 
@@ -283,66 +286,42 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_daemon(
             args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_council(
             args=SetXgovCouncilArgs(council=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_subscriber(
             args=SetXgovSubscriberArgs(subscriber=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_payor(
             args=SetPayorArgs(payor=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_kyc_provider(
             args=SetKycProviderArgs(provider=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.send()
@@ -403,11 +382,7 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
     else:
