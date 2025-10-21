@@ -11,9 +11,9 @@ documentation = "https://algorandfoundation.github.io/xgov-beta-sc/"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-algokit-utils = "^4.2.1"
+algokit-utils = "^4.2.2"
 python-dotenv = "^1.1.1"
-algorand-python = "==2.9.0"
+algorand-python = "==3.1.1"
 poetry-core = "^2.2.1"
 types-hvac = "^2.3.0.20250809"
 hvac = "^2.3.0"
@@ -21,14 +21,14 @@ hvac = "^2.3.0"
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^2.2.0"
 black = {extras = ["d"], version = "^25.9.0"}
-ruff = "^0.13.2"
+ruff = "^0.14.0"
 mypy = "^1.18.2"
 pytest = "^8.4.2"
 pytest-cov = "^7.0.0"
 pytest-sugar = "^1.1.1"
 pip-audit = "^2.9.0"
 pre-commit = "^4.3.0"
-puyapy = "==4.10.0"
+puyapy = "==5.3.2"
 
 [build-system]
 requires = ["poetry-core"]
@@ -37,12 +37,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 line-length = 120
 lint.select = ["E", "F", "ANN", "UP", "N", "C4", "B", "A", "YTT", "W", "FBT", "Q", "RUF", "I"]
-lint.ignore = [
-  "ANN101", # no type for self
-  "ANN102", # no type for cls
-]
 lint.unfixable = ["B", "RUF"]
-per-file-ignores = {"**/conftest.py" = ["F401", "F811"]}
+lint.per-file-ignores = {"**/conftest.py" = ["F401", "F811"]}
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true

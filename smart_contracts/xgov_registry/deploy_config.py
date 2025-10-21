@@ -1,7 +1,6 @@
 import logging
 import os
 import random
-from typing import Optional
 
 from algokit_utils import (
     AlgoAmount,
@@ -34,7 +33,7 @@ registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box 
 
 
 def _create_vault_signer_from_env() -> (
-    tuple[Optional[HashicorpVaultMultisigTransactionSigner], str, SigningAccount]
+    tuple[HashicorpVaultMultisigTransactionSigner | None, str, SigningAccount]
 ):
     """Helper function to create vault multisig signer from environment variables.
 
