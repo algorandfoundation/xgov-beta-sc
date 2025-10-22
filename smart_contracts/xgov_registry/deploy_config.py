@@ -175,9 +175,7 @@ def _deploy_xgov_registry() -> None:
 
     template_values = {"entropy": b""}
 
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
@@ -185,15 +183,15 @@ def _deploy_xgov_registry() -> None:
         template_values = {
             "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
         }
-        deployer_address = gh_deployer.address if gh_deployer else deployer_address
-        signer = gh_deployer.signer if gh_deployer else None
+        deployer_address = gh_deployer.address
+        signer = gh_deployer.signer
 
     version = os.environ.get("XGOV_REGISTRY_VERSION", None)
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
-        default_sender=deployer_address,
-        default_signer=signer,
+        default_sender=gh_deployer.address,
+        default_signer=gh_deployer.signer,
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -234,6 +232,8 @@ def _deploy_xgov_registry() -> None:
         ),
         update_params=XGovRegistryMethodCallUpdateParams(
             method=update_params.method.name,
+            sender=deployer_address,
+            signer=signer,
         ),
         existing_deployments=existing_deployments,
     )
