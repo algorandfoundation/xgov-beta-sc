@@ -694,12 +694,9 @@ class XGovRegistry(
         self.xgovs.value += 1
 
     @arc4.abimethod()
-    def unsubscribe_xgov(self, xgov_address: arc4.Address) -> None:
+    def unsubscribe_xgov(self) -> None:
         """
-        Unsubscribes the designated address from being an xGov.
-
-        Args:
-            xgov_address (arc4.Address): The address of the xGov to unsubscribe
+        Unsubscribes the sender from being an xGov.
 
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov
@@ -707,17 +704,11 @@ class XGovRegistry(
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
-        # ensure the provided address is an xGov
-        assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
-        # get the voting address
-        voting_address = self.xgov_box[xgov_address.native].voting_address.native
-        # ensure the sender is the xGov or the voting address
-        assert (
-            xgov_address.native == Txn.sender or voting_address == Txn.sender
-        ), err.UNAUTHORIZED
+        # ensure the sender is an xGov
+        assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
-        del self.xgov_box[xgov_address.native]
+        del self.xgov_box[Txn.sender]
         self.xgovs.value -= 1
 
     @arc4.abimethod()
