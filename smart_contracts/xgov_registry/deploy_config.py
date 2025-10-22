@@ -175,9 +175,7 @@ def _deploy_xgov_registry() -> None:
 
     template_values = {"entropy": b""}
 
-    signer = (
-        vault_signer if vault_signer else gh_deployer.signer
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
