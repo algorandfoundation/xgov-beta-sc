@@ -247,7 +247,8 @@ class XGovRegistry(
     def valid_kyc(self, address: Account) -> bool:
         return (
             self.proposer_box[address].kyc_status.native
-            and self.proposer_box[address].kyc_expiring.native > Global.latest_timestamp
+            and self.proposer_box[address].kyc_expiring.as_uint64()
+            > Global.latest_timestamp
         )
 
     @subroutine
@@ -379,12 +380,12 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        box, exist = self.proposal_approval_program.maybe()
+        _box, exist = self.proposal_approval_program.maybe()
         if exist:
-            self.proposal_approval_program.resize(size.native)
+            self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
-            self.proposal_approval_program.create(size=size.native)
+            self.proposal_approval_program.create(size=size.as_uint64())
 
     @arc4.abimethod()
     def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
@@ -402,7 +403,9 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
         # Load the Proposal Approval Program contract
-        self.proposal_approval_program.replace(start_index=offset.native, value=data)
+        self.proposal_approval_program.replace(
+            start_index=offset.as_uint64(), value=data
+        )
 
     @arc4.abimethod()
     def delete_proposal_contract_box(self) -> None:
@@ -594,51 +597,64 @@ class XGovRegistry(
         )
 
         assert (
-            config.xgov_fee.native >= xgov_box_mbr
-            and config.xgov_fee.native >= xgov_request_box_mbr
+            config.xgov_fee.as_uint64() >= xgov_box_mbr
+            and config.xgov_fee.as_uint64() >= xgov_request_box_mbr
         ), err.INVALID_XGOV_FEE
 
-        assert config.proposer_fee.native >= proposer_box_mbr, err.INVALID_PROPOSER_FEE
+        assert (
+            config.proposer_fee.as_uint64() >= proposer_box_mbr
+        ), err.INVALID_PROPOSER_FEE
 
         assert (
-            config.min_requested_amount.native
-            < config.max_requested_amount[0].native
-            < config.max_requested_amount[1].native
-            < config.max_requested_amount[2].native
+            config.min_requested_amount.as_uint64()
+            < config.max_requested_amount[0].as_uint64()
+            < config.max_requested_amount[1].as_uint64()
+            < config.max_requested_amount[2].as_uint64()
         ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
 
         self.set_max_committee_size(
-            config.open_proposal_fee.native, config.daemon_ops_funding_bps.native
+            config.open_proposal_fee.as_uint64(),
+            config.daemon_ops_funding_bps.as_uint64(),
         )
 
-        self.xgov_fee.value = config.xgov_fee.native
-        self.proposer_fee.value = config.proposer_fee.native
-        self.open_proposal_fee.value = config.open_proposal_fee.native
-        self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.native
-        self.proposal_commitment_bps.value = config.proposal_commitment_bps.native
+        self.xgov_fee.value = config.xgov_fee.as_uint64()
+        self.proposer_fee.value = config.proposer_fee.as_uint64()
+        self.open_proposal_fee.value = config.open_proposal_fee.as_uint64()
+        self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.as_uint64()
+        self.proposal_commitment_bps.value = config.proposal_commitment_bps.as_uint64()
 
-        self.min_requested_amount.value = config.min_requested_amount.native
-        self.max_requested_amount_small.value = config.max_requested_amount[0].native
-        self.max_requested_amount_medium.value = config.max_requested_amount[1].native
-        self.max_requested_amount_large.value = config.max_requested_amount[2].native
+        self.min_requested_amount.value = config.min_requested_amount.as_uint64()
+        self.max_requested_amount_small.value = config.max_requested_amount[
+            0
+        ].as_uint64()
+        self.max_requested_amount_medium.value = config.max_requested_amount[
+            1
+        ].as_uint64()
+        self.max_requested_amount_large.value = config.max_requested_amount[
+            2
+        ].as_uint64()
 
-        self.discussion_duration_small.value = config.discussion_duration[0].native
-        self.discussion_duration_medium.value = config.discussion_duration[1].native
-        self.discussion_duration_large.value = config.discussion_duration[2].native
-        self.discussion_duration_xlarge.value = config.discussion_duration[3].native
+        self.discussion_duration_small.value = config.discussion_duration[0].as_uint64()
+        self.discussion_duration_medium.value = config.discussion_duration[
+            1
+        ].as_uint64()
+        self.discussion_duration_large.value = config.discussion_duration[2].as_uint64()
+        self.discussion_duration_xlarge.value = config.discussion_duration[
+            3
+        ].as_uint64()
 
-        self.voting_duration_small.value = config.voting_duration[0].native
-        self.voting_duration_medium.value = config.voting_duration[1].native
-        self.voting_duration_large.value = config.voting_duration[2].native
-        self.voting_duration_xlarge.value = config.voting_duration[3].native
+        self.voting_duration_small.value = config.voting_duration[0].as_uint64()
+        self.voting_duration_medium.value = config.voting_duration[1].as_uint64()
+        self.voting_duration_large.value = config.voting_duration[2].as_uint64()
+        self.voting_duration_xlarge.value = config.voting_duration[3].as_uint64()
 
-        self.quorum_small.value = config.quorum[0].native
-        self.quorum_medium.value = config.quorum[1].native
-        self.quorum_large.value = config.quorum[2].native
+        self.quorum_small.value = config.quorum[0].as_uint64()
+        self.quorum_medium.value = config.quorum[1].as_uint64()
+        self.quorum_large.value = config.quorum[2].as_uint64()
 
-        self.weighted_quorum_small.value = config.weighted_quorum[0].native
-        self.weighted_quorum_medium.value = config.weighted_quorum[1].native
-        self.weighted_quorum_large.value = config.weighted_quorum[2].native
+        self.weighted_quorum_small.value = config.weighted_quorum[0].as_uint64()
+        self.weighted_quorum_medium.value = config.weighted_quorum[1].as_uint64()
+        self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
@@ -762,12 +778,12 @@ class XGovRegistry(
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # get the request
-        request = self.request_box[request_id.native].copy()
+        request = self.request_box[request_id.as_uint64()].copy()
         # create the xGov
         self.xgov_box[request.xgov_addr.native] = self.make_xgov_box(request.owner_addr)
         self.xgovs.value += 1
         # delete the request
-        del self.request_box[request_id.native]
+        del self.request_box[request_id.as_uint64()]
 
     @arc4.abimethod()
     def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
@@ -784,7 +800,7 @@ class XGovRegistry(
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # delete the request
-        del self.request_box[request_id.native]
+        del self.request_box[request_id.as_uint64()]
 
     @arc4.abimethod()
     def set_voting_account(
@@ -893,12 +909,12 @@ class XGovRegistry(
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
         assert (
-            size.native <= self.max_committee_size.value
+            size.as_uint64() <= self.max_committee_size.value
         ), err.COMMITTEE_SIZE_TOO_LARGE
 
         self.committee_id.value = committee_id.copy()
-        self.committee_members.value = size.native
-        self.committee_votes.value = votes.native
+        self.committee_members.value = size.as_uint64()
+        self.committee_votes.value = votes.as_uint64()
 
     @arc4.abimethod
     def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
@@ -944,7 +960,7 @@ class XGovRegistry(
 
         # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
-        compiled_clear_state_1, compiled_clear_state_2 = compile_contract(
+        compiled_clear_state_1, _compiled_clear_state_2 = compile_contract(
             proposal_contract.Proposal
         ).clear_state_program
 
@@ -1029,14 +1045,14 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # verify proposal id is genuine proposal
-        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
 
         # make sure they're voting on behalf of an xGov
         exists = xgov_address.native in self.xgov_box
         assert exists, err.UNAUTHORIZED
         xgov_box = self.xgov_box[xgov_address.native].copy()
         self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
-            xgov_box.voted_proposals.native + UInt64(1)
+            xgov_box.voted_proposals.as_uint64() + UInt64(1)
         )
         self.xgov_box[xgov_address.native].last_vote_timestamp = arc4.UInt64(
             Global.latest_timestamp
@@ -1046,12 +1062,12 @@ class XGovRegistry(
         assert Txn.sender == xgov_box.voting_address.native, err.MUST_BE_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
-        error, tx = arc4.abi_call(
+        error, _tx = arc4.abi_call(
             proposal_contract.Proposal.vote,
             xgov_address,
             approval_votes,
             rejection_votes,
-            app_id=proposal_id.native,
+            app_id=proposal_id.as_uint64(),
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
@@ -1096,11 +1112,11 @@ class XGovRegistry(
         assert arc4.Address(Txn.sender) == self.xgov_payor.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
 
         # Read proposal state directly from the Proposal App's global state
-        proposer = self.get_proposal_proposer(proposal_id.native)
-        requested_amount = self.get_proposal_requested_amount(proposal_id.native)
+        proposer = self.get_proposal_proposer(proposal_id.as_uint64())
+        requested_amount = self.get_proposal_requested_amount(proposal_id.as_uint64())
 
         assert proposer in self.proposer_box, err.WRONG_PROPOSER
 
@@ -1113,8 +1129,8 @@ class XGovRegistry(
 
         self.disburse_funds(proposer, requested_amount)
 
-        error, tx = arc4.abi_call(
-            proposal_contract.Proposal.fund, app_id=proposal_id.native
+        error, _tx = arc4.abi_call(
+            proposal_contract.Proposal.fund, app_id=proposal_id.as_uint64()
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
@@ -1143,17 +1159,17 @@ class XGovRegistry(
             err.VOTERS_ASSIGNED: If there are still assigned voters
         """
 
-        proposal_status = self.get_proposal_status(proposal_id.native)
+        proposal_status = self.get_proposal_status(proposal_id.as_uint64())
         if proposal_status == UInt64(penm.STATUS_EMPTY) or proposal_status == UInt64(
             penm.STATUS_DRAFT
         ):
             assert arc4.Address(Txn.sender) == self.xgov_daemon.value, err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
 
-        error, tx = arc4.abi_call(
-            proposal_contract.Proposal.finalize, app_id=proposal_id.native
+        error, _tx = arc4.abi_call(
+            proposal_contract.Proposal.finalize, app_id=proposal_id.as_uint64()
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
@@ -1170,7 +1186,7 @@ class XGovRegistry(
         else:
             assert error.native == "", "Unknown error"
 
-        self.decrement_pending_proposals(proposal_id.native)
+        self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
     def drop_proposal(self, proposal_id: arc4.UInt64) -> None:
@@ -1190,13 +1206,13 @@ class XGovRegistry(
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
         # Verify proposal_id is a genuine proposal created by this registry
-        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
 
-        proposer = self.get_proposal_proposer(proposal_id.native)
+        proposer = self.get_proposal_proposer(proposal_id.as_uint64())
         assert Txn.sender == proposer, err.UNAUTHORIZED
 
-        error, tx = arc4.abi_call(
-            proposal_contract.Proposal.drop, app_id=proposal_id.native
+        error, _tx = arc4.abi_call(
+            proposal_contract.Proposal.drop, app_id=proposal_id.as_uint64()
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
@@ -1209,7 +1225,7 @@ class XGovRegistry(
         else:
             assert error.native == "", "Unknown error"
 
-        self.decrement_pending_proposals(proposal_id.native)
+        self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
     def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
@@ -1229,7 +1245,7 @@ class XGovRegistry(
         self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()
-    def withdraw_funds(self, amount: UInt64) -> None:
+    def withdraw_funds(self, amount: arc4.UInt64) -> None:
         """
         Remove xGov program funds from the xGov Treasury (xGov Registry Account).
 
@@ -1243,13 +1259,15 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert amount <= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
+        assert (
+            amount.as_uint64() <= self.outstanding_funds.value
+        ), err.INSUFFICIENT_FUNDS
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
-        self.outstanding_funds.value -= amount
+        self.outstanding_funds.value -= amount.as_uint64()
 
         itxn.Payment(
             receiver=self.xgov_manager.value.native,
-            amount=amount,
+            amount=amount.as_uint64(),
             fee=0,
         ).submit()
 
@@ -1377,8 +1395,8 @@ class XGovRegistry(
         Returns:
             typ.XGovSubscribeRequestBoxValue: The subscribe request box value
         """
-        return self.request_box[request_id.native].copy()
+        return self.request_box[request_id.as_uint64()].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
-        assert self._is_proposal(proposal_id.native), err.INVALID_PROPOSAL
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL

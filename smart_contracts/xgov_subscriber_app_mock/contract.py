@@ -16,7 +16,7 @@ class XGovSubscriberAppMock(ARC4Contract):
     @arc4.abimethod()
     def subscribe_xgov(self, app_id: UInt64, voting_address: arc4.Address) -> None:
 
-        xgov_fee, xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
+        xgov_fee, _xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
             app_id, rcfg.GS_KEY_XGOV_FEE
         )
 

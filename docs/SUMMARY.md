@@ -13,6 +13,7 @@
   - [Roles](specs/xgov-rbac.md)
   - [Treasury](./specs/xgov-treasury.md)
 - [xGovs](./specs/xgovs.md)
+  - [Relation Types](./specs/xgov-relation-types.md)
 - [xGov Committee](./specs/xgov-committee.md)
 - [Proposers](./specs/proposers.md)
 - [Proposal](./specs/proposal.md)
