@@ -149,6 +149,9 @@ class XGovRegistry(
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
         self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
+        self.request_unsubscribe_id = GlobalState(
+            UInt64(), key=cfg.GS_KEY_REQUEST_UNSUBSCRIBE_ID
+        )
 
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
@@ -166,6 +169,11 @@ class XGovRegistry(
             UInt64,
             typ.XGovSubscribeRequestBoxValue,
             key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
+        )
+        self.request_unsubscribe_box = BoxMap(
+            UInt64,
+            typ.XGovSubscribeRequestBoxValue,
+            key_prefix=cfg.REQUEST_UNSUBSCRIBE_BOX_MAP_PREFIX,
         )
 
         self.proposer_box = BoxMap(
@@ -792,6 +800,93 @@ class XGovRegistry(
 
         # delete the request
         del self.request_box[request_id.as_uint64()]
+
+    @arc4.abimethod()
+    def request_unsubscribe_xgov(
+        self,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        """
+        Requests to unsubscribe from the xGov.
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov
+            owner_address (arc4.Address): The address of the xGov Address owner/controller
+            relation_type (arc4.UInt64): The type of relationship enum
+            payment (gtxn.PaymentTransaction): The payment transaction covering the xGov (unsubscribe) fee
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the declared Application owner address
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the requested xGov address is not an xGov
+            err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
+        """
+
+        assert Txn.sender == owner_address.native, err.UNAUTHORIZED
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+
+        # ensure the xgov_address is already an xGov
+        assert xgov_address.native in self.xgov_box, err.NOT_XGOV
+
+        # check payment
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
+
+        # create unsubscribe request box
+        ruid = self.request_unsubscribe_id.value
+        self.request_unsubscribe_box[ruid] = typ.XGovSubscribeRequestBoxValue(
+            xgov_addr=xgov_address,
+            owner_addr=owner_address,
+            relation_type=relation_type,
+        )
+
+        # increment request unsubscribe id
+        self.request_unsubscribe_id.value += 1
+
+    @arc4.abimethod()
+    def approve_unsubscribe_xgov(self, request_unsubscribe_id: arc4.UInt64) -> None:
+        """
+        Approves a request to unsubscribe from xGov.
+
+        Args:
+            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request to approve
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # get the request
+        request = self.request_unsubscribe_box[
+            request_unsubscribe_id.as_uint64()
+        ].copy()
+
+        # del the xGov
+        del self.xgov_box[request.xgov_addr.native]
+        self.xgovs.value -= 1
+
+        # delete the request
+        del self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()]
+
+    @arc4.abimethod()
+    def reject_unsubscribe_xgov(self, request_unsubscribe_id: arc4.UInt64) -> None:
+        """
+        Rejects a request to unsubscribe from xGov.
+
+        Args:
+            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request to reject
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # delete the request
+        del self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()]
 
     @arc4.abimethod()
     def set_voting_account(
