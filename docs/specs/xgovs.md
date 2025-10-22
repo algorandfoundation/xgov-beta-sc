@@ -10,6 +10,8 @@ and less accessible).
 
 The xGov Address and the current Voting Address **MAY** update the Voting Address.
 
+The xGov Address **MAY** unsubscribe itself from being an xGov.
+
 {{#include ../_include/styles.md:note}}
 > xGov Address can be associated with any Account type. This ensures the compatibility
 > and inclusivity of xGov participation (direct or delegated).
