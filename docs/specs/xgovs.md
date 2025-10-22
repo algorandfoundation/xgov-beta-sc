@@ -18,15 +18,15 @@ The xGov Address **MAY** unsubscribe itself from being an xGov.
 
 ## Subscription
 
-The xGov Registry provides two xGov subscription procedures:
+The xGov Registry provides two xGov (un)subscription procedures:
 
 - **Self-Subscription**: the xGov Address **MUST** call the xGov Registry.
 
 - **Managed-Subscription**: the ownership of the xGov _App_ Address is verified off-chain,
-by the Algorand Foundation, according to a pre-defined trust model. The Managed-Onboarding
+by the Algorand Foundation, according to a pre-defined trust model. The Managed-Onboarding/Offboarding
 is executed in two steps:
 
-  1. Users issue a [Subscription Request](#xgov-managed-subscription), declaring
+  1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe, declaring
   the xGov App Address, the Application Owner Address, and a [Relation Type](./xgov-relation-types.md)
   (enumerative that identifies a pre-defined trust model).
 
@@ -39,7 +39,7 @@ is executed in two steps:
 > Types section](./xgov-relation-types.md).
 
 An xGov Fee **MUST** be paid to the xGov Treasury for the subscription or subscription
-request.
+request or unsubscription request.
 
 {{#include ../_include/styles.md:note}}
 > The xGov Manager **MAY** update the xGov Fee.
@@ -80,10 +80,10 @@ The Voting Address declared on subscription **MUST BE** assigned to the xGov Box
 
 ### xGov Managed-Subscription
 
-An xGov Subscription Request is associated with a Box on the xGov Registry, called
-_xGov Subscription Request Box_.
+An xGov (Un)Subscription Request is associated with a Box on the xGov Registry, called
+_xGov (Un)Subscription Request Box_.
 
-The xGov Fee **MUST** be paid to the xGov Treasury upon xGov Subscription Request
+The xGov Fee **MUST** be paid to the xGov Treasury upon xGov (Un)Subscription Request
 Box creation.
 
 The xGov Fee **MAY NOT** be paid by the xGov Address.
@@ -92,7 +92,11 @@ xGov Subscription Request Box ID is equal to: `[R||<counter>]`, where `R` is a d
 separation prefix, `<counter>` is a global counter for pending requests, and `||`
 denotes concatenation.
 
-An xGov Subscription Request Box has the following ABI schema:
+xGov Unsubscription Request Box ID is equal to: `[RU||<counter>]`, where `RU` is a domain
+separation prefix, `<counter>` is a global counter for pending unsubscription requests, and `||`
+denotes concatenation.
+
+An xGov (Un)Subscription Request Box has the following ABI schema:
 
 ```json
 {
@@ -102,9 +106,9 @@ An xGov Subscription Request Box has the following ABI schema:
 }
 ```
 
-The xGov Subscription Request **MUST** be performed by the Owner Address.
+The xGov (Un)Subscription Request **MUST** be performed by the Owner Address.
 
-The xGov Fee **MUST NOT** be lower than the xGov Subscribe Request Box MBR.
+The xGov Fee **MUST NOT** be lower than the xGov (Un)Subscribe Request Box MBR.
 
 If the Algorand Foundation approves the subscription request:
 
@@ -115,3 +119,9 @@ request.
 
 1. The Owner Address declared on the subscription request **MUST** be assigned to
 the Voting Address in the created xGov Box.
+
+If the Algorand Foundation approves the unsubscription request:
+
+1. The xGov Unsubscription Request Box **MUST** be destroyed;
+
+1. The xGov Box of the xGov address **MUST** be destroyed.
