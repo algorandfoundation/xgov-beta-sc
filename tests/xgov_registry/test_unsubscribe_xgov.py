@@ -75,6 +75,25 @@ def test_unsubscribe_xgov_not_an_xgov(
         )
 
 
+def test_unsubscribe_xgov_voting_address(
+    no_role_account: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
+    xgov: SigningAccount,
+) -> None:
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
+            xgov_address=xgov.address,
+            voting_address=no_role_account.address,
+        ),
+        params=CommonAppCallParams(sender=xgov.address),
+    )
+
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        xgov_registry_client.send.unsubscribe_xgov(
+            params=CommonAppCallParams(sender=no_role_account.address),
+        )
+
+
 def test_unsubscribe_xgov_paused_registry_error(
     xgov: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
