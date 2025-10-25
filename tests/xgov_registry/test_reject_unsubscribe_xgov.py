@@ -36,7 +36,7 @@ def test_reject_unsubscribe_xgov_not_subscriber(
     app_xgov_unsubscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
-        xgov_registry_client.send.reject_subscribe_xgov(
+        xgov_registry_client.send.reject_unsubscribe_xgov(
             args=RejectUnsubscribeXgovArgs(
                 request_unsubscribe_id=xgov_registry_client.state.global_state.request_unsubscribe_id
                 - 1
