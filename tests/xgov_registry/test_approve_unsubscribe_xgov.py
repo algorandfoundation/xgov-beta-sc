@@ -40,14 +40,14 @@ def test_approve_unsubscribe_xgov_success(
         )
 
 
-def test_approve_subscribe_xgov_not_subscriber(
+def test_approve_unsubscribe_xgov_not_subscriber(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     app_xgov_unsubscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
-        xgov_registry_client.send.approve_subscribe_xgov(
+        xgov_registry_client.send.approve_unsubscribe_xgov(
             args=ApproveUnsubscribeXgovArgs(
                 request_unsubscribe_id=xgov_registry_client.state.global_state.request_unsubscribe_id
                 - 1
