@@ -1483,6 +1483,21 @@ class XGovRegistry(
         """
         return self.request_box[request_id.as_uint64()].copy()
 
+    @arc4.abimethod(readonly=True)
+    def get_request_unsubscribe_box(
+        self, request_unsubscribe_id: arc4.UInt64
+    ) -> typ.XGovSubscribeRequestBoxValue:
+        """
+        Returns the xGov unsubscribe request box for the given unsubscribe request ID.
+
+        Args:
+            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request
+
+        Returns:
+            typ.XGovSubscribeRequestBoxValue: The unsubscribe request box value
+        """
+        return self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()].copy()
+
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
         assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
