@@ -9,6 +9,7 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    GetRequestUnsubscribeBoxArgs,
     GetXgovBoxArgs,
     RequestUnsubscribeXgovArgs,
     SetVotingAccountArgs,
@@ -30,14 +31,17 @@ def test_request_unsubscribe_xgov_success(
     initial_request_unsubscribe_id = (
         xgov_registry_client.state.global_state.request_unsubscribe_id
     )
+    xgov_address = app_xgov_managed_subscription.app_address
+    owner_address = deployer.address
+    relation_type = 0
     xgov_registry_client.send.request_unsubscribe_xgov(
         args=RequestUnsubscribeXgovArgs(
-            xgov_address=app_xgov_managed_subscription.app_address,
-            owner_address=deployer.address,
-            relation_type=0,
+            xgov_address=xgov_address,
+            owner_address=owner_address,
+            relation_type=relation_type,
             payment=algorand_client.create_transaction.payment(
                 PaymentParams(
-                    sender=deployer.address,
+                    sender=owner_address,
                     receiver=xgov_registry_client.app_address,
                     amount=get_xgov_fee(xgov_registry_client),
                 )
@@ -48,6 +52,16 @@ def test_request_unsubscribe_xgov_success(
         xgov_registry_client.state.global_state.request_unsubscribe_id
     )
     assert final_request_unsubscribe_id == initial_request_unsubscribe_id + 1
+
+    request_unsubscribe_box = xgov_registry_client.send.get_request_unsubscribe_box(
+        args=GetRequestUnsubscribeBoxArgs(
+            request_unsubscribe_id=initial_request_unsubscribe_id
+        )
+    ).abi_return
+
+    assert request_unsubscribe_box.owner_addr == owner_address
+    assert request_unsubscribe_box.xgov_addr == xgov_address
+    assert request_unsubscribe_box.relation_type == relation_type
 
 
 def test_request_unsubscribe_unauthorized(
