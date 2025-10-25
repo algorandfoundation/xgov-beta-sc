@@ -205,7 +205,7 @@ def test_request_unsubscribe_xgov_locked(
         params=CommonAppCallParams(sender=xgov_box.voting_address),
     )
 
-    # Request managed unsbuscription via owner
+    # Request managed unsubscription via owner
     initial_request_unsubscribe_id = (
         xgov_registry_client.state.global_state.request_unsubscribe_id
     )
