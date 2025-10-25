@@ -25,6 +25,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     OpenProposalArgs,
     PayGrantProposalArgs,
     RequestSubscribeXgovArgs,
+    RequestUnsubscribeXgovArgs,
     SetCommitteeManagerArgs,
     SetKycProviderArgs,
     SetPayorArgs,
@@ -761,7 +762,7 @@ def app_xgov_unsubscribe_requested(
     no_role_account: SigningAccount,
 ) -> XGovSubscriberAppMockClient:
     xgov_registry_client.send.request_unsubscribe_xgov(
-        args=RequestSubscribeXgovArgs(
+        args=RequestUnsubscribeXgovArgs(
             xgov_address=app_xgov_managed_subscription.app_address,
             owner_address=no_role_account.address,
             relation_type=0,
