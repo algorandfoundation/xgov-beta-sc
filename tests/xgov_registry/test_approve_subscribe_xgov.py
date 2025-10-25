@@ -8,6 +8,7 @@ from algokit_utils import (
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     ApproveSubscribeXgovArgs,
+    GetRequestBoxArgs,
     GetXgovBoxArgs,
     XGovRegistryClient,
 )
@@ -24,10 +25,9 @@ def test_approve_subscribe_xgov_success(
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
+    request_id = xgov_registry_client.state.global_state.request_id - 1
     xgov_registry_client.send.approve_subscribe_xgov(
-        args=ApproveSubscribeXgovArgs(
-            request_id=xgov_registry_client.state.global_state.request_id - 1
-        ),
+        args=ApproveSubscribeXgovArgs(request_id=request_id),
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
@@ -41,6 +41,11 @@ def test_approve_subscribe_xgov_success(
     ).abi_return
 
     assert no_role_account.address == xgov_box.voting_address  # type: ignore
+
+    with pytest.raises(LogicError, match="exists"):
+        xgov_registry_client.send.get_request_box(
+            args=GetRequestBoxArgs(request_id=request_id)
+        )
 
 
 def test_approve_subscribe_xgov_not_subscriber(
