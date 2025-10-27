@@ -30,8 +30,7 @@ def test_request_resubscribe_xgov_success(
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     xgov_registry_client.send.approve_unsubscribe_xgov(
         args=ApproveUnsubscribeXgovArgs(
-            request_unsubscribe_id=xgov_registry_client.state.global_state.request_unsubscribe_id
-            - 1
+            request_id=xgov_registry_client.state.global_state.request_id - 1
         ),
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )

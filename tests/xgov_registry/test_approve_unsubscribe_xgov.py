@@ -24,11 +24,9 @@ def test_approve_unsubscribe_xgov_success(
     app_xgov_unsubscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
-    request_unsubscribe_id = (
-        xgov_registry_client.state.global_state.request_unsubscribe_id - 1
-    )
+    request_id = xgov_registry_client.state.global_state.request_id - 1
     xgov_registry_client.send.approve_unsubscribe_xgov(
-        args=ApproveUnsubscribeXgovArgs(request_unsubscribe_id=request_unsubscribe_id),
+        args=ApproveUnsubscribeXgovArgs(request_id=request_id),
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
@@ -42,9 +40,7 @@ def test_approve_unsubscribe_xgov_success(
 
     with pytest.raises(LogicError, match="exists"):
         xgov_registry_client.send.get_request_unsubscribe_box(
-            args=GetRequestUnsubscribeBoxArgs(
-                request_unsubscribe_id=request_unsubscribe_id
-            )
+            args=GetRequestUnsubscribeBoxArgs(request_id=request_id)
         )
 
 
@@ -57,8 +53,7 @@ def test_approve_unsubscribe_xgov_not_subscriber(
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.approve_unsubscribe_xgov(
             args=ApproveUnsubscribeXgovArgs(
-                request_unsubscribe_id=xgov_registry_client.state.global_state.request_unsubscribe_id
-                - 1
+                request_id=xgov_registry_client.state.global_state.request_id - 1
             ),
             params=CommonAppCallParams(sender=no_role_account.address),
         )

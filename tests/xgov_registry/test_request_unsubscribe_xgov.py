@@ -28,9 +28,7 @@ def test_request_unsubscribe_xgov_success(
     xgov_registry_client: XGovRegistryClient,
     app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
-    initial_request_unsubscribe_id = (
-        xgov_registry_client.state.global_state.request_unsubscribe_id
-    )
+    initial_request_id = xgov_registry_client.state.global_state.request_id
     xgov_address = app_xgov_managed_subscription.app_address
     owner_address = deployer.address
     relation_type = 0
@@ -48,15 +46,11 @@ def test_request_unsubscribe_xgov_success(
             ),
         )
     )
-    final_request_unsubscribe_id = (
-        xgov_registry_client.state.global_state.request_unsubscribe_id
-    )
-    assert final_request_unsubscribe_id == initial_request_unsubscribe_id + 1
+    final_request_id = xgov_registry_client.state.global_state.request_id
+    assert final_request_id == initial_request_id + 1
 
     request_unsubscribe_box = xgov_registry_client.send.get_request_unsubscribe_box(
-        args=GetRequestUnsubscribeBoxArgs(
-            request_unsubscribe_id=initial_request_unsubscribe_id
-        )
+        args=GetRequestUnsubscribeBoxArgs(request_id=initial_request_id)
     ).abi_return
 
     assert request_unsubscribe_box.owner_addr == owner_address
@@ -220,9 +214,7 @@ def test_request_unsubscribe_xgov_locked(
     )
 
     # Request managed unsubscription via owner
-    initial_request_unsubscribe_id = (
-        xgov_registry_client.state.global_state.request_unsubscribe_id
-    )
+    initial_request_id = xgov_registry_client.state.global_state.request_id
     xgov_registry_client.send.request_unsubscribe_xgov(
         args=RequestUnsubscribeXgovArgs(
             xgov_address=app_xgov_managed_subscription.app_address,
@@ -237,7 +229,5 @@ def test_request_unsubscribe_xgov_locked(
             ),
         )
     )
-    final_request_unsubscribe_id = (
-        xgov_registry_client.state.global_state.request_unsubscribe_id
-    )
-    assert final_request_unsubscribe_id == initial_request_unsubscribe_id + 1
+    final_request_id = xgov_registry_client.state.global_state.request_id
+    assert final_request_id == initial_request_id + 1
