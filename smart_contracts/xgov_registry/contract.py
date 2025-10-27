@@ -149,9 +149,6 @@ class XGovRegistry(
         self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
 
         self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
-        self.request_unsubscribe_id = GlobalState(
-            UInt64(), key=cfg.GS_KEY_REQUEST_UNSUBSCRIBE_ID
-        )
 
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
@@ -835,23 +832,23 @@ class XGovRegistry(
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create unsubscribe request box
-        ruid = self.request_unsubscribe_id.value
+        ruid = self.request_id.value
         self.request_unsubscribe_box[ruid] = typ.XGovSubscribeRequestBoxValue(
             xgov_addr=xgov_address,
             owner_addr=owner_address,
             relation_type=relation_type,
         )
 
-        # increment request unsubscribe id
-        self.request_unsubscribe_id.value += 1
+        # increment request id
+        self.request_id.value += 1
 
     @arc4.abimethod()
-    def approve_unsubscribe_xgov(self, request_unsubscribe_id: arc4.UInt64) -> None:
+    def approve_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
         """
         Approves a request to unsubscribe from xGov.
 
         Args:
-            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request to approve
+            request_id (arc4.UInt64): The ID of the unsubscribe request to approve
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Subscriber
@@ -860,24 +857,22 @@ class XGovRegistry(
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # get the request
-        request = self.request_unsubscribe_box[
-            request_unsubscribe_id.as_uint64()
-        ].copy()
+        request = self.request_unsubscribe_box[request_id.as_uint64()].copy()
 
         # del the xGov
         del self.xgov_box[request.xgov_addr.native]
         self.xgovs.value -= 1
 
         # delete the request
-        del self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()]
+        del self.request_unsubscribe_box[request_id.as_uint64()]
 
     @arc4.abimethod()
-    def reject_unsubscribe_xgov(self, request_unsubscribe_id: arc4.UInt64) -> None:
+    def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
         """
         Rejects a request to unsubscribe from xGov.
 
         Args:
-            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request to reject
+            request_id (arc4.UInt64): The ID of the unsubscribe request to reject
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Subscriber
@@ -886,7 +881,7 @@ class XGovRegistry(
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         # delete the request
-        del self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()]
+        del self.request_unsubscribe_box[request_id.as_uint64()]
 
     @arc4.abimethod()
     def set_voting_account(
@@ -1485,18 +1480,18 @@ class XGovRegistry(
 
     @arc4.abimethod(readonly=True)
     def get_request_unsubscribe_box(
-        self, request_unsubscribe_id: arc4.UInt64
+        self, request_id: arc4.UInt64
     ) -> typ.XGovSubscribeRequestBoxValue:
         """
         Returns the xGov unsubscribe request box for the given unsubscribe request ID.
 
         Args:
-            request_unsubscribe_id (arc4.UInt64): The ID of the unsubscribe request
+            request_id (arc4.UInt64): The ID of the unsubscribe request
 
         Returns:
             typ.XGovSubscribeRequestBoxValue: The unsubscribe request box value
         """
-        return self.request_unsubscribe_box[request_unsubscribe_id.as_uint64()].copy()
+        return self.request_unsubscribe_box[request_id.as_uint64()].copy()
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
