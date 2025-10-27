@@ -88,13 +88,9 @@ Box creation.
 
 The xGov Fee **MAY NOT** be paid by the xGov Address.
 
-xGov Subscription Request Box ID is equal to: `[R||<counter>]`, where `R` is a domain
-separation prefix, `<counter>` is a global counter for pending requests, and `||`
-denotes concatenation.
-
-xGov Unsubscription Request Box ID is equal to: `[RU||<counter>]`, where `RU` is a domain
-separation prefix, `<counter>` is a global counter for pending unsubscription requests, and `||`
-denotes concatenation.
+xGov (Un)Subscription Request Box ID is equal to: `[<d>||<counter>]`, where `<d>` is a domain
+separation prefix which is either `r` for subscription requests or `ru` for unsubscription request,
+`<counter>` is a global counter for pending requests, and `||` denotes concatenation.
 
 An xGov (Un)Subscription Request Box has the following ABI schema:
 
