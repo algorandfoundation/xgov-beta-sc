@@ -48,7 +48,7 @@ jobs:
         run: algokit project deploy ${{ github.event.inputs.network }}
         env:
           # Deploy command to run
-          XGOV_REG_DEPLOY_COMMAND: pause_resume
+          XGOV_REG_DEPLOY_COMMAND: pause_or_resume
           # Vault configuration for transaction signing
           VAULT_URL: ${{ secrets.VAULT_URL }}
           VAULT_OIDC_ROLE: ${{ github.event.inputs.network == 'mainnet' && secrets.VAULT_ROLE_MAINNET || secrets.VAULT_ROLE_TESTNET }}
