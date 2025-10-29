@@ -37,7 +37,7 @@ repos:
 
   # Security and Infrastructure as Code scanning
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.457
+    rev: 3.2.488
     hooks:
       - id: checkov
         name: checkov
@@ -98,7 +98,7 @@ repos:
         files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         name: trim trailing whitespace
@@ -111,12 +111,12 @@ repos:
         files: '^(docs)/'
 
   - repo: https://github.com/lycheeverse/lychee
-    rev: lychee-v0.19.1
+    rev: lychee-v0.21.0
     hooks:
     - id: lychee-docker
       name: lychee
       description: "Run 'lychee' docker image for fast, async, stream-based link checking"
-      entry: lycheeverse/lychee:0.14
+      entry: lycheeverse/lychee:sha-1aa89fe-alpine
       language: docker_image
       args: ["--no-progress"]
       types: [text]

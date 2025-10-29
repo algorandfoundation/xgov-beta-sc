@@ -7,6 +7,8 @@ Issues can be submitted on the [GitHub issues page](https://github.com/algorandf
 External contributions to _tests_ and _documentation_ are welcome. If you would like
 to contribute, please read these guidelines and consider submitting a [Pull Request](https://github.com/algorandfoundation/xgov-beta-sc/pulls).
 
+> ⚠️ Commits must be signed!
+
 ## Docs Guidelines
 
 By clicking on the _“Suggest an edit”_ icon in the top-right corner, while reading
