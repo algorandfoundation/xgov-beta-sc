@@ -1,7 +1,6 @@
 import logging
 import os
 import random
-from typing import Optional
 
 from algokit_utils import (
     AlgoAmount,
@@ -34,7 +33,7 @@ registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box 
 
 
 def _create_vault_signer_from_env() -> (
-    tuple[Optional[HashicorpVaultMultisigTransactionSigner], str, SigningAccount]
+    tuple[HashicorpVaultMultisigTransactionSigner | None, str, SigningAccount]
 ):
     """Helper function to create vault multisig signer from environment variables.
 
@@ -176,23 +175,23 @@ def _deploy_xgov_registry() -> None:
 
     template_values = {"entropy": b""}
 
+    signer = vault_signer if vault_signer else gh_deployer.signer
+
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
         logger.info("Fresh deployment requested")
         template_values = {
             "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
         }
+        deployer_address = gh_deployer.address
+        signer = gh_deployer.signer
 
     version = os.environ.get("XGOV_REGISTRY_VERSION", None)
 
     factory = algorand_client.client.get_typed_app_factory(
         typed_factory=XGovRegistryFactory,
-        default_sender=deployer_address,
-        default_signer=(
-            vault_signer
-            if vault_signer
-            else (gh_deployer.signer if gh_deployer else None)
-        ),
+        default_sender=gh_deployer.address,
+        default_signer=gh_deployer.signer,
         compilation_params=AppClientCompilationParams(
             deploy_time_params=template_values
         ),
@@ -216,6 +215,14 @@ def _deploy_xgov_registry() -> None:
         ),
     )
 
+    existing_deployments = (
+        algorand_client.app_deployer.get_creator_apps_by_name(
+            creator_address=gh_deployer.address,
+        )
+        if gh_deployer
+        else None
+    )
+
     app_client, _ = factory.deploy(
         on_schema_break=OnSchemaBreak.AppendApp,
         on_update=(OnUpdate.UpdateApp if not fresh_deploy else OnUpdate.AppendApp),
@@ -225,7 +232,10 @@ def _deploy_xgov_registry() -> None:
         ),
         update_params=XGovRegistryMethodCallUpdateParams(
             method=update_params.method.name,
+            sender=deployer_address,
+            signer=signer,
         ),
+        existing_deployments=existing_deployments,
     )
 
     logger.info("uploading proposal approval program to box")
@@ -246,11 +256,7 @@ def _deploy_xgov_registry() -> None:
         ),
         params=CommonAppCallParams(
             sender=deployer_address,
-            signer=(
-                vault_signer
-                if vault_signer
-                else (gh_deployer.signer if gh_deployer else None)
-            ),
+            signer=signer,
         ),
     )
 
@@ -264,11 +270,7 @@ def _deploy_xgov_registry() -> None:
             args=(i * data_size_per_transaction, chunk),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
 
@@ -284,66 +286,42 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_daemon(
             args=SetXgovDaemonArgs(xgov_daemon=test_xgov_daemon),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_council(
             args=SetXgovCouncilArgs(council=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_xgov_subscriber(
             args=SetXgovSubscriberArgs(subscriber=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_payor(
             args=SetPayorArgs(payor=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.set_kyc_provider(
             args=SetKycProviderArgs(provider=test_admin),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
         admin_roles.send()
@@ -404,11 +382,7 @@ def _deploy_xgov_registry() -> None:
             ),
             params=CommonAppCallParams(
                 sender=deployer_address,
-                signer=(
-                    vault_signer
-                    if vault_signer
-                    else (gh_deployer.signer if gh_deployer else None)
-                ),
+                signer=signer,
             ),
         )
     else:
@@ -709,6 +683,105 @@ def _configure_xgov_registry() -> None:
         raise
 
 
+def pause_or_resume() -> None:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        APP_SPEC,
+        XGovRegistryFactory,
+    )
+
+    algorand_client = AlgorandClient.from_environment()
+
+    # Try to create Vault signer first, fallback to environment if not available
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
+    )
+
+    factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=XGovRegistryFactory,
+        default_sender=deployer_address,
+        default_signer=(
+            vault_signer
+            if vault_signer
+            else (gh_deployer.signer if gh_deployer else None)
+        ),
+    )
+
+    app_client = factory.get_app_client_by_creator_and_name(
+        creator_address=gh_deployer.address,
+        app_name=APP_SPEC.name,
+    )
+
+    pause_proposals = (
+        os.environ.get("XGOV_REG_PAUSE_PROPOSALS", "false").lower() == "true"
+    )
+    resume_proposals = (
+        os.environ.get("XGOV_REG_RESUME_PROPOSALS", "false").lower() == "true"
+    )
+    pause_registry = (
+        os.environ.get("XGOV_REG_PAUSE_REGISTRY", "false").lower() == "true"
+    )
+    resume_registry = (
+        os.environ.get("XGOV_REG_RESUME_REGISTRY", "false").lower() == "true"
+    )
+    try:
+        group = app_client.new_group()
+        if pause_proposals:
+            logger.info("Pausing proposals")
+            group.pause_proposals(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if resume_proposals:
+            logger.info("Resuming proposals")
+            group.resume_proposals(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if pause_registry:
+            logger.info("Pausing registry")
+            group.pause_registry(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if resume_registry:
+            logger.info("Resuming registry")
+            group.resume_registry(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        group.send()
+        logger.info("Pause/Resume operations completed successfully")
+    except Exception as e:
+        logger.error(f"Failed to pause/resume: {e}")
+        raise
+
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
@@ -718,7 +791,10 @@ def deploy() -> None:
         _set_roles()
     elif command == "configure_xgov_registry":
         _configure_xgov_registry()
+    elif command == "pause_or_resume":
+        pause_or_resume()
     else:
         raise ValueError(
-            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry"
+            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
+            f"pause_or_resume"
         )

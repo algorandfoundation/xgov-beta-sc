@@ -128,7 +128,7 @@ jobs:
   deploy-testnet:
     runs-on: "ubuntu-latest"
     needs: [validate, create-canary-release]
-    if: needs.create-canary-release.outputs.should-deploy == 'true'
+    if: always() && needs.validate.result == 'success' && (needs.create-canary-release.outputs.should-deploy == 'true' || github.event_name == 'workflow_dispatch')
     environment: contract-testnet
     steps:
       - name: Checkout source code

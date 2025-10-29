@@ -1,60 +1,61 @@
 #pragma version 10
 #pragma typetrack false
 
-// smart_contracts.council.contract.Council.__algopy_entrypoint_with_init() -> uint64:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 0 1 33 2
-    bytecblock 0x6d656d6265725f636f756e74 0x00 0x72656769737472795f6170705f6964 0x4d
+    intcblock 0 1 2 32
+    bytecblock 0x6d656d6265725f636f756e74 0x72656769737472795f6170705f6964 0x61646d696e 0x4d 0x00
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/council/contract.py:40
+    // smart_contracts/council/contract.py:38
     // Txn.global_num_byte_slice == council_cfg.GLOBAL_BYTES
     txn GlobalNumByteSlice
-    !
-    // smart_contracts/council/contract.py:39-41
+    intc_1 // 1
+    ==
+    // smart_contracts/council/contract.py:37-39
     // assert (
     //     Txn.global_num_byte_slice == council_cfg.GLOBAL_BYTES
     // ), err.WRONG_GLOBAL_BYTES
     assert // Wrong Global Bytes allocation
-    // smart_contracts/council/contract.py:42
+    // smart_contracts/council/contract.py:40
     // assert Txn.global_num_uint == council_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    intc_3 // 2
+    intc_2 // 2
     ==
     assert // Wrong Global UInts allocation
-    // smart_contracts/council/contract.py:44
+    // smart_contracts/council/contract.py:42
     // Txn.local_num_byte_slice == council_cfg.LOCAL_BYTES
     txn LocalNumByteSlice
     !
-    // smart_contracts/council/contract.py:43-45
+    // smart_contracts/council/contract.py:41-43
     // assert (
     //     Txn.local_num_byte_slice == council_cfg.LOCAL_BYTES
     // ), err.WRONG_LOCAL_BYTES
     assert // Wrong Local Bytes allocation
-    // smart_contracts/council/contract.py:46
+    // smart_contracts/council/contract.py:44
     // assert Txn.local_num_uint == council_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
     txn LocalNumUint
     !
     assert // Wrong Local UInts allocation
-    // smart_contracts/council/contract.py:50
+    // smart_contracts/council/contract.py:53
     // key=council_cfg.GS_KEY_REGISTRY_APP_ID,
-    bytec_2 // 0x72656769737472795f6170705f6964
-    // smart_contracts/council/contract.py:49
+    bytec_1 // 0x72656769737472795f6170705f6964
+    // smart_contracts/council/contract.py:52
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/council/contract.py:48-51
+    // smart_contracts/council/contract.py:51-54
     // self.registry_app_id = GlobalState(
     //     UInt64(),
     //     key=council_cfg.GS_KEY_REGISTRY_APP_ID,
     // )
     app_global_put
-    // smart_contracts/council/contract.py:55
+    // smart_contracts/council/contract.py:58
     // key=council_cfg.GS_KEY_MEMBER_COUNT,
     bytec_0 // 0x6d656d6265725f636f756e74
-    // smart_contracts/council/contract.py:54
+    // smart_contracts/council/contract.py:57
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/council/contract.py:53-56
+    // smart_contracts/council/contract.py:56-59
     // self.member_count = GlobalState(
     //     UInt64(),
     //     key=council_cfg.GS_KEY_MEMBER_COUNT,
@@ -62,7 +63,7 @@ main:
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/council/contract.py:29-37
+    // smart_contracts/council/contract.py:27-35
     // class Council(
     //     ARC4Contract,
     //     state_totals=StateTotals(
@@ -72,14 +73,24 @@ main_after_if_else@2:
     //         local_uints=council_cfg.LOCAL_UINTS,
     //     ),
     // ):
-    txn NumAppArgs
-    bz main_after_if_else@11
-    pushbytess 0x240d2f67 0x078ef295 0x19d702fa 0x92ebf6de 0xf7f4481f 0xdbd83dd9 // method "create(uint64)void", method "update_council()void", method "add_member(address)void", method "remove_member(address)void", method "vote(uint64,bool)void", method "op_up()void"
+    txn OnCompletion
+    !
+    assert // OnCompletion must be NoOp
+    txn ApplicationID
+    bz main_create_NoOp@10
+    pushbytess 0x19d702fa 0x92ebf6de 0xf7f4481f 0xdbd83dd9 // method "add_member(address)void", method "remove_member(address)void", method "vote(uint64,bool)void", method "op_up()void"
     txna ApplicationArgs 0
-    match main_create_route@5 main_update_council_route@6 main_add_member_route@7 main_remove_member_route@8 main_vote_route@9 main_op_up_route@10
+    match add_member remove_member vote main_op_up_route@8
+    err
 
-main_after_if_else@11:
-    // smart_contracts/council/contract.py:29-37
+main_op_up_route@8:
+    // smart_contracts/council/contract.py:199
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+main_create_NoOp@10:
+    // smart_contracts/council/contract.py:27-35
     // class Council(
     //     ARC4Contract,
     //     state_totals=StateTotals(
@@ -89,232 +100,88 @@ main_after_if_else@11:
     //         local_uints=council_cfg.LOCAL_UINTS,
     //     ),
     // ):
-    intc_0 // 0
-    return
-
-main_op_up_route@10:
-    // smart_contracts/council/contract.py:219
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    intc_1 // 1
-    return
-
-main_vote_route@9:
-    // smart_contracts/council/contract.py:146
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/council/contract.py:29-37
-    // class Council(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=council_cfg.GLOBAL_BYTES,
-    //         global_uints=council_cfg.GLOBAL_UINTS,
-    //         local_bytes=council_cfg.LOCAL_BYTES,
-    //         local_uints=council_cfg.LOCAL_UINTS,
-    //     ),
-    // ):
-    txna ApplicationArgs 1
-    btoi
-    txna ApplicationArgs 2
-    intc_0 // 0
-    getbit
-    // smart_contracts/council/contract.py:146
-    // @arc4.abimethod()
-    callsub vote
-    intc_1 // 1
-    return
-
-main_remove_member_route@8:
-    // smart_contracts/council/contract.py:127
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/council/contract.py:29-37
-    // class Council(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=council_cfg.GLOBAL_BYTES,
-    //         global_uints=council_cfg.GLOBAL_UINTS,
-    //         local_bytes=council_cfg.LOCAL_BYTES,
-    //         local_uints=council_cfg.LOCAL_UINTS,
-    //     ),
-    // ):
-    txna ApplicationArgs 1
-    // smart_contracts/council/contract.py:127
-    // @arc4.abimethod()
-    callsub remove_member
-    intc_1 // 1
-    return
-
-main_add_member_route@7:
-    // smart_contracts/council/contract.py:108
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/council/contract.py:29-37
-    // class Council(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=council_cfg.GLOBAL_BYTES,
-    //         global_uints=council_cfg.GLOBAL_UINTS,
-    //         local_bytes=council_cfg.LOCAL_BYTES,
-    //         local_uints=council_cfg.LOCAL_UINTS,
-    //     ),
-    // ):
-    txna ApplicationArgs 1
-    // smart_contracts/council/contract.py:108
-    // @arc4.abimethod()
-    callsub add_member
-    intc_1 // 1
-    return
-
-main_update_council_route@6:
-    // smart_contracts/council/contract.py:97
-    // @arc4.abimethod(allow_actions=["UpdateApplication"])
-    txn OnCompletion
-    pushint 4 // UpdateApplication
-    ==
-    assert // OnCompletion is not UpdateApplication
-    txn ApplicationID
-    assert // can only call when not creating
-    callsub update_council
-    intc_1 // 1
-    return
-
-main_create_route@5:
-    // smart_contracts/council/contract.py:80
-    // @arc4.abimethod(create="require")
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    // smart_contracts/council/contract.py:29-37
-    // class Council(
-    //     ARC4Contract,
-    //     state_totals=StateTotals(
-    //         global_bytes=council_cfg.GLOBAL_BYTES,
-    //         global_uints=council_cfg.GLOBAL_UINTS,
-    //         local_bytes=council_cfg.LOCAL_BYTES,
-    //         local_uints=council_cfg.LOCAL_UINTS,
-    //     ),
-    // ):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/council/contract.py:80
-    // @arc4.abimethod(create="require")
-    callsub create
-    intc_1 // 1
-    return
+    pushbytes 0xc0b64352 // method "create(address,uint64)void"
+    txna ApplicationArgs 0
+    match create
+    err
 
 
-// smart_contracts.council.contract.Council.is_manager() -> uint64:
-is_manager:
-    // smart_contracts/council/contract.py:76
-    // return Txn.sender == Account(
-    txn Sender
+// smart_contracts.council.contract.Council.create[routing]() -> void:
+create:
     // smart_contracts/council/contract.py:69
-    // self.registry_app_id.value, global_state_key
-    intc_0 // 0
-    bytec_2 // 0x72656769737472795f6170705f6964
-    app_global_get_ex
-    assert // check self.registry_app_id exists
-    // smart_contracts/council/contract.py:77
-    // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_MANAGER))
-    pushbytes 0x78676f765f6d616e61676572
-    // smart_contracts/council/contract.py:68-70
-    // value, exists = AppGlobal.get_ex_bytes(
-    //     self.registry_app_id.value, global_state_key
-    // )
-    app_global_get_ex
-    // smart_contracts/council/contract.py:71
-    // assert exists, err.MISSING_CONFIG
-    assert // Missing Config
-    // smart_contracts/council/contract.py:76-78
-    // return Txn.sender == Account(
-    //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_MANAGER))
-    // )
+    // @arc4.abimethod(create="require")
+    txna ApplicationArgs 1
     dup
     len
-    pushint 32 // 32
+    intc_3 // 32
     ==
-    assert // Address length is 32 bytes
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 8 // 8
     ==
-    retsub
-
-
-// smart_contracts.council.contract.Council.create(registry_id: uint64) -> void:
-create:
-    // smart_contracts/council/contract.py:80-81
-    // @arc4.abimethod(create="require")
-    // def create(self, registry_id: UInt64) -> None:
-    proto 1 0
-    // smart_contracts/council/contract.py:92
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // smart_contracts/council/contract.py:82
     // assert registry_id > 0, err.INVALID_REGISTRY_ID
-    frame_dig -1
+    dup
     assert // Invalid registry ID
-    // smart_contracts/council/contract.py:94
-    // self.registry_app_id.value = registry_id
-    bytec_2 // 0x72656769737472795f6170705f6964
-    frame_dig -1
+    // smart_contracts/council/contract.py:84
+    // self.admin.value = admin
+    bytec_2 // 0x61646d696e
+    uncover 2
     app_global_put
-    // smart_contracts/council/contract.py:95
+    // smart_contracts/council/contract.py:85
+    // self.registry_app_id.value = registry_id
+    bytec_1 // 0x72656769737472795f6170705f6964
+    swap
+    app_global_put
+    // smart_contracts/council/contract.py:86
     // self.member_count.value = UInt64(0)
     bytec_0 // 0x6d656d6265725f636f756e74
     intc_0 // 0
     app_global_put
-    retsub
+    // smart_contracts/council/contract.py:69
+    // @arc4.abimethod(create="require")
+    intc_1 // 1
+    return
 
 
-// smart_contracts.council.contract.Council.update_council() -> void:
-update_council:
-    // smart_contracts/council/contract.py:106
-    // assert self.is_manager(), err.UNAUTHORIZED
-    callsub is_manager
-    assert // Unauthorized
-    retsub
-
-
-// smart_contracts.council.contract.Council.add_member(address: bytes) -> void:
+// smart_contracts.council.contract.Council.add_member[routing]() -> void:
 add_member:
-    // smart_contracts/council/contract.py:108-109
+    // smart_contracts/council/contract.py:88
     // @arc4.abimethod()
-    // def add_member(self, address: arc4.Address) -> None:
-    proto 1 0
-    // smart_contracts/council/contract.py:121
-    // assert self.is_manager(), err.UNAUTHORIZED
-    callsub is_manager
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/council/contract.py:101
+    // assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+    txn Sender
+    intc_0 // 0
+    bytec_2 // 0x61646d696e
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
     assert // Unauthorized
-    // smart_contracts/council/contract.py:122
+    // smart_contracts/council/contract.py:102
     // assert address.native not in self.members, err.VOTER_ALREADY_ASSIGNED
     bytec_3 // 0x4d
-    frame_dig -1
+    swap
     concat
     dup
     box_len
     bury 1
     !
     assert // Voter Already Assigned
-    // smart_contracts/council/contract.py:124
+    // smart_contracts/council/contract.py:104
     // self.members[address.native] = typ.Empty()
     pushbytes 0x
     box_put
-    // smart_contracts/council/contract.py:125
+    // smart_contracts/council/contract.py:105
     // self.member_count.value += 1
     intc_0 // 0
     bytec_0 // 0x6d656d6265725f636f756e74
@@ -325,33 +192,45 @@ add_member:
     bytec_0 // 0x6d656d6265725f636f756e74
     swap
     app_global_put
-    retsub
-
-
-// smart_contracts.council.contract.Council.remove_member(address: bytes) -> void:
-remove_member:
-    // smart_contracts/council/contract.py:127-128
+    // smart_contracts/council/contract.py:88
     // @arc4.abimethod()
-    // def remove_member(self, address: arc4.Address) -> None:
-    proto 1 0
-    // smart_contracts/council/contract.py:140
-    // assert self.is_manager(), err.UNAUTHORIZED
-    callsub is_manager
+    intc_1 // 1
+    return
+
+
+// smart_contracts.council.contract.Council.remove_member[routing]() -> void:
+remove_member:
+    // smart_contracts/council/contract.py:107
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/council/contract.py:120
+    // assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+    txn Sender
+    intc_0 // 0
+    bytec_2 // 0x61646d696e
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
     assert // Unauthorized
-    // smart_contracts/council/contract.py:141
+    // smart_contracts/council/contract.py:121
     // assert address.native in self.members, err.VOTER_NOT_FOUND
     bytec_3 // 0x4d
-    frame_dig -1
+    swap
     concat
     dup
     box_len
     bury 1
     assert // Voter not found
-    // smart_contracts/council/contract.py:143
+    // smart_contracts/council/contract.py:123
     // del self.members[address.native]
     box_del
     pop
-    // smart_contracts/council/contract.py:144
+    // smart_contracts/council/contract.py:124
     // self.member_count.value -= 1
     intc_0 // 0
     bytec_0 // 0x6d656d6265725f636f756e74
@@ -362,18 +241,38 @@ remove_member:
     bytec_0 // 0x6d656d6265725f636f756e74
     swap
     app_global_put
-    retsub
-
-
-// smart_contracts.council.contract.Council.vote(proposal_id: uint64, block: uint64) -> void:
-vote:
-    // smart_contracts/council/contract.py:146-147
+    // smart_contracts/council/contract.py:107
     // @arc4.abimethod()
-    // def vote(self, proposal_id: UInt64, block: bool) -> None:  # noqa: FBT001
-    proto 2 0
+    intc_1 // 1
+    return
+
+
+// smart_contracts.council.contract.Council.vote[routing]() -> void:
+vote:
     pushbytes ""
     dupn 4
-    // smart_contracts/council/contract.py:162
+    // smart_contracts/council/contract.py:126
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    pushint 8 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    txna ApplicationArgs 2
+    dup
+    cover 2
+    dup
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for arc4.bool
+    intc_0 // 0
+    getbit
+    swap
+    // smart_contracts/council/contract.py:142
     // assert Txn.sender in self.members, err.VOTER_NOT_FOUND
     bytec_3 // 0x4d
     txn Sender
@@ -381,19 +280,17 @@ vote:
     box_len
     bury 1
     assert // Voter not found
-    // smart_contracts/council/contract.py:164
+    // smart_contracts/council/contract.py:144
     // if proposal_id not in self.votes:
-    frame_dig -2
     itob
-    dup
     pushbytes 0x56
     swap
     concat
     dup
     box_len
     bury 1
-    bnz vote_else_body@3
-    // smart_contracts/council/contract.py:165-171
+    bnz vote_else_body@4
+    // smart_contracts/council/contract.py:145-151
     // # we dont need any error handling here
     // # if its invalid the transaction will fail
     // arc4.abi_call(
@@ -402,14 +299,14 @@ vote:
     //     app_id=self.registry_app_id.value,
     // )
     itxn_begin
-    // smart_contracts/council/contract.py:170
+    // smart_contracts/council/contract.py:150
     // app_id=self.registry_app_id.value,
     intc_0 // 0
-    bytec_2 // 0x72656769737472795f6170705f6964
+    bytec_1 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
     itxn_field ApplicationID
-    // smart_contracts/council/contract.py:165-171
+    // smart_contracts/council/contract.py:145-151
     // # we dont need any error handling here
     // # if its invalid the transaction will fail
     // arc4.abi_call(
@@ -419,50 +316,45 @@ vote:
     // )
     pushbytes 0x26983200 // method "is_proposal(uint64)void"
     itxn_field ApplicationArgs
-    frame_dig 5
+    dig 4
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/council/contract.py:173-175
+    // smart_contracts/council/contract.py:153-155
     // status, exists = AppGlobal.get_ex_uint64(
     //     proposal_id, Bytes(proposal_cfg.GS_KEY_STATUS)
     // )
-    frame_dig -2
-    // smart_contracts/council/contract.py:174
+    dig 3
+    // smart_contracts/council/contract.py:154
     // proposal_id, Bytes(proposal_cfg.GS_KEY_STATUS)
     pushbytes 0x737461747573
-    // smart_contracts/council/contract.py:173-175
+    // smart_contracts/council/contract.py:153-155
     // status, exists = AppGlobal.get_ex_uint64(
     //     proposal_id, Bytes(proposal_cfg.GS_KEY_STATUS)
     // )
     app_global_get_ex
-    // smart_contracts/council/contract.py:177
+    // smart_contracts/council/contract.py:157
     // assert exists, err.INVALID_PROPOSAL
     assert // Invalid proposal
-    // smart_contracts/council/contract.py:178
+    // smart_contracts/council/contract.py:158
     // assert status == proposal_enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
     pushint 30 // 30
     ==
     assert // Wrong Proposal Status or finalized
-    // smart_contracts/council/contract.py:182
+    // smart_contracts/council/contract.py:162
     // address=arc4.Address(Txn.sender),
     txn Sender
-    // smart_contracts/council/contract.py:183
-    // block=arc4.Bool(block),
-    bytec_1 // 0x00
-    intc_0 // 0
-    frame_dig -1
-    setbit
-    // smart_contracts/council/contract.py:181-184
+    // smart_contracts/council/contract.py:161-164
     // typ.CouncilVote(
     //     address=arc4.Address(Txn.sender),
     //     block=arc4.Bool(block),
     // )
+    dig 3
     concat
-    // smart_contracts/council/contract.py:180-185
+    // smart_contracts/council/contract.py:160-165
     // self.votes[proposal_id] = arc4.DynamicArray(
     //     typ.CouncilVote(
     //         address=arc4.Address(Txn.sender),
@@ -472,195 +364,185 @@ vote:
     pushbytes 0x0001
     swap
     concat
-    frame_dig 6
+    dig 1
     dup
     box_del
     pop
     swap
     box_put
 
-vote_after_if_else@15:
-    retsub
+vote_after_if_else@16:
+    // smart_contracts/council/contract.py:126
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
 
-vote_else_body@3:
-    // smart_contracts/council/contract.py:188
+vote_else_body@4:
+    // smart_contracts/council/contract.py:168
     // half_plus_one = (self.member_count.value // 2) + 1
     intc_0 // 0
     bytec_0 // 0x6d656d6265725f636f756e74
     app_global_get_ex
     assert // check self.member_count exists
-    intc_3 // 2
+    intc_2 // 2
     /
     intc_1 // 1
     +
-    frame_bury 1
-    // smart_contracts/council/contract.py:189
+    bury 8
+    // smart_contracts/council/contract.py:169
     // approvals = UInt64(0) if block else UInt64(1)
-    frame_dig -1
+    dig 1
     !
     dup
-    frame_bury 0
-    // smart_contracts/council/contract.py:190
+    bury 11
+    // smart_contracts/council/contract.py:170
     // rejections = UInt64(0) if not block else UInt64(1)
     !
-    frame_bury 3
-    // smart_contracts/council/contract.py:192
+    bury 6
+    // smart_contracts/council/contract.py:172
     // for i in urange(self.votes[proposal_id].length):
-    frame_dig 6
-    box_get
-    assert // check self.votes entry exists
-    intc_0 // 0
-    extract_uint16
-    frame_bury 4
-    intc_0 // 0
-    frame_bury 2
-
-vote_for_header@4:
-    // smart_contracts/council/contract.py:192
-    // for i in urange(self.votes[proposal_id].length):
-    frame_dig 2
-    frame_dig 4
-    <
-    bz vote_after_for@10
-    // smart_contracts/council/contract.py:194
-    // Txn.sender != self.votes[proposal_id][i].address
-    frame_dig 6
-    box_get
-    assert // check self.votes entry exists
-    extract 2 0
-    frame_dig 2
-    intc_2 // 33
-    *
-    intc_2 // 33
-    extract3 // on error: Index access is out of bounds
     dup
-    extract 0 32 // on error: Index access is out of bounds
+    intc_0 // 0
+    intc_2 // 2
+    box_extract
+    btoi
+    bury 9
+    intc_0 // 0
+    bury 7
+
+vote_for_header@5:
+    // smart_contracts/council/contract.py:172
+    // for i in urange(self.votes[proposal_id].length):
+    dig 6
+    dig 9
+    <
+    bz vote_after_for@11
+    // smart_contracts/council/contract.py:174
+    // Txn.sender != self.votes[proposal_id][i].address
+    dig 6
+    pushint 33 // 33
+    *
+    intc_2 // 2
+    +
+    dig 1
+    swap
+    pushint 33 // 33
+    box_extract
+    dup
+    extract 0 32
     txn Sender
     !=
-    // smart_contracts/council/contract.py:193-195
+    // smart_contracts/council/contract.py:173-175
     // assert (
     //     Txn.sender != self.votes[proposal_id][i].address
     // ), err.VOTER_ALREADY_VOTED
     assert // Voter already voted
-    // smart_contracts/council/contract.py:197
+    // smart_contracts/council/contract.py:177
     // if self.votes[proposal_id][i].block:
     pushint 256 // 256
     getbit
-    bytec_1 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    bytec_1 // 0x00
+    bytec 4 // 0x00
     !=
-    bz vote_else_body@7
-    // smart_contracts/council/contract.py:198
+    bz vote_else_body@8
+    // smart_contracts/council/contract.py:178
     // rejections += 1
-    frame_dig 3
+    dig 5
     intc_1 // 1
     +
-    frame_bury 3
+    bury 6
 
-vote_after_if_else@8:
-    // smart_contracts/council/contract.py:192
+vote_after_if_else@9:
+    // smart_contracts/council/contract.py:172
     // for i in urange(self.votes[proposal_id].length):
-    frame_dig 2
+    dig 6
     intc_1 // 1
     +
-    frame_bury 2
-    b vote_for_header@4
+    bury 7
+    b vote_for_header@5
 
-vote_else_body@7:
-    // smart_contracts/council/contract.py:200
+vote_else_body@8:
+    // smart_contracts/council/contract.py:180
     // approvals += 1
-    frame_dig 0
+    dig 9
     intc_1 // 1
     +
-    frame_bury 0
-    b vote_after_if_else@8
+    bury 10
+    b vote_after_if_else@9
 
-vote_after_for@10:
-    // smart_contracts/council/contract.py:202
+vote_after_for@11:
+    // smart_contracts/council/contract.py:182
     // self.votes[proposal_id].append(
-    frame_dig 6
-    dup
+    dupn 2
     box_get
     assert // check self.votes entry exists
-    // smart_contracts/council/contract.py:202-207
-    // self.votes[proposal_id].append(
-    //     typ.CouncilVote(
-    //         address=arc4.Address(Txn.sender),
-    //         block=arc4.Bool(block),
-    //     )
-    // )
-    extract 2 0
-    // smart_contracts/council/contract.py:204
+    // smart_contracts/council/contract.py:184
     // address=arc4.Address(Txn.sender),
     txn Sender
-    // smart_contracts/council/contract.py:205
-    // block=arc4.Bool(block),
-    bytec_1 // 0x00
-    intc_0 // 0
-    frame_dig -1
-    setbit
-    // smart_contracts/council/contract.py:203-206
+    // smart_contracts/council/contract.py:183-186
     // typ.CouncilVote(
     //     address=arc4.Address(Txn.sender),
     //     block=arc4.Bool(block),
     // )
+    dig 5
     concat
-    // smart_contracts/council/contract.py:202-207
+    // smart_contracts/council/contract.py:182-187
     // self.votes[proposal_id].append(
     //     typ.CouncilVote(
     //         address=arc4.Address(Txn.sender),
     //         block=arc4.Bool(block),
     //     )
     // )
-    concat
-    dup
-    len
-    intc_2 // 33
-    /
+    dig 1
+    swap
+    concat // on error: max array length exceeded
+    swap
+    intc_0 // 0
+    extract_uint16
+    intc_1 // 1
+    +
     itob
     extract 6 2
-    swap
-    concat
+    replace2 0
     dig 1
     box_del
     pop
     box_put
-    // smart_contracts/council/contract.py:209
+    // smart_contracts/council/contract.py:189
     // if approvals >= half_plus_one or rejections >= half_plus_one:
-    frame_dig 0
-    frame_dig 1
+    dig 9
+    dig 8
     >=
-    bnz vote_if_body@12
-    frame_dig 3
-    frame_dig 1
+    bnz vote_if_body@13
+    dig 5
+    dig 8
     >=
-    bz vote_after_if_else@15
+    bz vote_after_if_else@16
 
-vote_if_body@12:
-    // smart_contracts/council/contract.py:210-211
+vote_if_body@13:
+    // smart_contracts/council/contract.py:190-191
     // # this will allow the proposal to be reviewed
     // block = rejections >= half_plus_one
-    frame_dig 3
-    frame_dig 1
+    dig 5
+    dig 8
     >=
-    frame_bury -1
-    // smart_contracts/council/contract.py:213-215
+    // smart_contracts/council/contract.py:193-195
     // arc4.abi_call(
     //     proposal_contract.Proposal.review, block, app_id=proposal_id
     // )
     itxn_begin
-    // smart_contracts/council/contract.py:214
+    // smart_contracts/council/contract.py:194
     // proposal_contract.Proposal.review, block, app_id=proposal_id
-    bytec_1 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
-    frame_dig -1
+    uncover 2
     setbit
-    frame_dig -2
+    dig 4
     itxn_field ApplicationID
-    // smart_contracts/council/contract.py:213-215
+    // smart_contracts/council/contract.py:193-195
     // arc4.abi_call(
     //     proposal_contract.Proposal.review, block, app_id=proposal_id
     // )
@@ -672,9 +554,9 @@ vote_if_body@12:
     intc_0 // 0
     itxn_field Fee
     itxn_submit
-    // smart_contracts/council/contract.py:217
+    // smart_contracts/council/contract.py:197
     // del self.votes[proposal_id]
-    frame_dig 6
+    dup
     box_del
     pop
-    retsub
+    b vote_after_if_else@16

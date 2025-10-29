@@ -1,7 +1,6 @@
 import re
 import uuid
 from re import Pattern
-from typing import Optional
 
 from algokit_utils import AlgoAmount, AlgorandClient, PaymentParams
 from algosdk.v2client.algod import AlgodClient
@@ -17,7 +16,7 @@ def get_latest_timestamp(algod_client: AlgodClient) -> int:
     return algod_client.block_info(get_last_round(algod_client))["block"]["ts"]  # type: ignore
 
 
-def round_warp(to_round: Optional[int] = None) -> None:
+def round_warp(to_round: int | None = None) -> None:
     """
     Fastforward directly `to_round` or advance by 1 round.
 

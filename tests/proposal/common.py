@@ -1,5 +1,4 @@
 import dataclasses
-from typing import Optional
 
 from algokit_utils import (
     AlgoAmount,
@@ -94,7 +93,7 @@ LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 def get_proposal_values_from_registry(
     proposal_client: ProposalClient,
-) -> Optional[ProposalRegistryValues]:
+) -> ProposalRegistryValues | None:
     global_state = proposal_client.state.global_state
     funding_category = global_state.funding_category
     committee_members = global_state.committee_members

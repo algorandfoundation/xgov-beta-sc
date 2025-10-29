@@ -1,9 +1,9 @@
 #pragma version 10
 #pragma typetrack false
 
-// smart_contracts.proposal_mock.contract.ProposalMock.__algopy_entrypoint_with_init() -> uint64:
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
-    intcblock 0 1
+    intcblock 0 1 8 32
     bytecblock 0x70726f706f736572 0x72656769737472795f6170705f6964 0x 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573
     txn ApplicationID
     bnz main_after_if_else@2
@@ -203,184 +203,164 @@ main:
 main_after_if_else@2:
     // smart_contracts/proposal_mock/contract.py:17
     // class ProposalMock(ARC4Contract):
-    txn NumAppArgs
-    bz main_after_if_else@11
-    pushbytess 0xcc694eaa 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method "create(address)void", method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64)void"
-    txna ApplicationArgs 0
-    match main_create_route@5 main_set_status_route@6 main_set_requested_amount_route@7 main_set_committee_details_route@8 main_release_funds_route@9 main_vote_route@10
-
-main_after_if_else@11:
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    intc_0 // 0
-    return
-
-main_vote_route@10:
-    // smart_contracts/proposal_mock/contract.py:109
-    // @arc4.abimethod()
     txn OnCompletion
     !
-    assert // OnCompletion is not NoOp
+    assert // OnCompletion must be NoOp
     txn ApplicationID
-    assert // can only call when not creating
-    intc_1 // 1
-    return
+    bz main_create_NoOp@11
+    pushbytess 0x1394cc3c 0xd3791253 0x025a9804 0xe94a444d 0xbb8e1d68 // method "set_status(uint64)void", method "set_requested_amount(uint64)void", method "set_committee_details(byte[32],uint64,uint64)void", method "release_funds()void", method "vote(address,uint64,uint64)void"
+    txna ApplicationArgs 0
+    match set_status set_requested_amount set_committee_details main_release_funds_route@8 vote
+    err
 
-main_release_funds_route@9:
+main_release_funds_route@8:
     // smart_contracts/proposal_mock/contract.py:105
     // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
     intc_1 // 1
     return
 
-main_set_committee_details_route@8:
-    // smart_contracts/proposal_mock/contract.py:97
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
+main_create_NoOp@11:
     // smart_contracts/proposal_mock/contract.py:17
     // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    txna ApplicationArgs 2
-    btoi
-    txna ApplicationArgs 3
-    btoi
-    // smart_contracts/proposal_mock/contract.py:97
-    // @arc4.abimethod()
-    callsub set_committee_details
-    intc_1 // 1
-    return
-
-main_set_requested_amount_route@7:
-    // smart_contracts/proposal_mock/contract.py:93
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/proposal_mock/contract.py:93
-    // @arc4.abimethod()
-    callsub set_requested_amount
-    intc_1 // 1
-    return
-
-main_set_status_route@6:
-    // smart_contracts/proposal_mock/contract.py:89
-    // @arc4.abimethod()
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    assert // can only call when not creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    btoi
-    // smart_contracts/proposal_mock/contract.py:89
-    // @arc4.abimethod()
-    callsub set_status
-    intc_1 // 1
-    return
-
-main_create_route@5:
-    // smart_contracts/proposal_mock/contract.py:84
-    // @arc4.abimethod(create="require")
-    txn OnCompletion
-    !
-    assert // OnCompletion is not NoOp
-    txn ApplicationID
-    !
-    assert // can only call when creating
-    // smart_contracts/proposal_mock/contract.py:17
-    // class ProposalMock(ARC4Contract):
-    txna ApplicationArgs 1
-    // smart_contracts/proposal_mock/contract.py:84
-    // @arc4.abimethod(create="require")
-    callsub create
-    intc_1 // 1
-    return
+    pushbytes 0xcc694eaa // method "create(address)void"
+    txna ApplicationArgs 0
+    match create
+    err
 
 
-// smart_contracts.proposal_mock.contract.ProposalMock.create(proposer: bytes) -> void:
+// smart_contracts.proposal_mock.contract.ProposalMock.create[routing]() -> void:
 create:
-    // smart_contracts/proposal_mock/contract.py:84-85
+    // smart_contracts/proposal_mock/contract.py:84
     // @arc4.abimethod(create="require")
-    // def create(self, proposer: arc4.Address) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/proposal_mock/contract.py:86
     // self.proposer.value = proposer
     bytec_0 // 0x70726f706f736572
-    frame_dig -1
+    swap
     app_global_put
     // smart_contracts/proposal_mock/contract.py:87
     // self.registry_app_id.value = Global.caller_application_id
     bytec_1 // 0x72656769737472795f6170705f6964
     global CallerApplicationID
     app_global_put
-    retsub
+    // smart_contracts/proposal_mock/contract.py:84
+    // @arc4.abimethod(create="require")
+    intc_1 // 1
+    return
 
 
-// smart_contracts.proposal_mock.contract.ProposalMock.set_status(status: uint64) -> void:
+// smart_contracts.proposal_mock.contract.ProposalMock.set_status[routing]() -> void:
 set_status:
-    // smart_contracts/proposal_mock/contract.py:89-90
+    // smart_contracts/proposal_mock/contract.py:89
     // @arc4.abimethod()
-    // def set_status(self, status: UInt64) -> None:
-    proto 1 0
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
     // smart_contracts/proposal_mock/contract.py:91
     // self.status.value = status
     bytec_3 // 0x737461747573
-    frame_dig -1
+    swap
     app_global_put
-    retsub
-
-
-// smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount(requested_amount: uint64) -> void:
-set_requested_amount:
-    // smart_contracts/proposal_mock/contract.py:93-94
+    // smart_contracts/proposal_mock/contract.py:89
     // @arc4.abimethod()
-    // def set_requested_amount(self, requested_amount: UInt64) -> None:
-    proto 1 0
+    intc_1 // 1
+    return
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount[routing]() -> void:
+set_requested_amount:
+    // smart_contracts/proposal_mock/contract.py:93
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
     // smart_contracts/proposal_mock/contract.py:95
     // self.requested_amount.value = requested_amount
     bytec 4 // 0x7265717565737465645f616d6f756e74
-    frame_dig -1
+    swap
     app_global_put
-    retsub
-
-
-// smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details(metadata_hash: bytes, size: uint64, votes: uint64) -> void:
-set_committee_details:
-    // smart_contracts/proposal_mock/contract.py:97-100
+    // smart_contracts/proposal_mock/contract.py:93
     // @arc4.abimethod()
-    // def set_committee_details(
-    //     self, metadata_hash: typ.Bytes32, size: UInt64, votes: UInt64
-    // ) -> None:
-    proto 3 0
+    intc_1 // 1
+    return
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details[routing]() -> void:
+set_committee_details:
+    // smart_contracts/proposal_mock/contract.py:97
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
     // smart_contracts/proposal_mock/contract.py:101
     // self.committee_id.value = metadata_hash.copy()
     bytec 5 // 0x636f6d6d69747465655f6964
-    frame_dig -3
+    uncover 3
     app_global_put
     // smart_contracts/proposal_mock/contract.py:102
     // self.committee_members.value = size
     bytec 6 // 0x636f6d6d69747465655f6d656d62657273
-    frame_dig -2
+    uncover 2
     app_global_put
     // smart_contracts/proposal_mock/contract.py:103
     // self.committee_votes.value = votes
     bytec 7 // 0x636f6d6d69747465655f766f746573
-    frame_dig -1
+    swap
     app_global_put
-    retsub
+    // smart_contracts/proposal_mock/contract.py:97
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.proposal_mock.contract.ProposalMock.vote[routing]() -> void:
+vote:
+    // smart_contracts/proposal_mock/contract.py:109
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    txna ApplicationArgs 3
+    len
+    intc_2 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    intc_1 // 1
+    return

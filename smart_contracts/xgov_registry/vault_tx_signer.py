@@ -457,8 +457,8 @@ class HashicorpVaultMultisigTransactionSigner(TransactionSigner):
             pk_to_signed_txs[pk] = signed_txns  # type: ignore
 
         stxns: list[GenericSignedTransaction] = []
-        for i in indexes:
-            mtxn = MultisigTransaction(txn_group[i], self.msig)
+        for i, ii in enumerate(indexes):
+            mtxn = MultisigTransaction(txn_group[ii], self.msig)
             for subsig in mtxn.multisig.subsigs:
                 pk = subsig.public_key
                 if pk in pk_to_signed_txs:  # type: ignore
