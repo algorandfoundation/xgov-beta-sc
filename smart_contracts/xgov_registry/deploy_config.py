@@ -682,11 +682,10 @@ def _configure_xgov_registry() -> None:
         logger.error(f"Failed to configure xGov registry: {e}")
         raise
 
+
 def pause_or_resume() -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
-        ConfigXgovRegistryArgs,
-        XGovRegistryConfig,
         XGovRegistryFactory,
     )
 
@@ -714,12 +713,18 @@ def pause_or_resume() -> None:
         app_name=APP_SPEC.name,
     )
 
-    
-
-    pause_proposals = os.environ.get("XGOV_REG_PAUSE_PROPOSALS", "false").lower() == "true"
-    resume_proposals = os.environ.get("XGOV_REG_RESUME_PROPOSALS", "false").lower() == "true"
-    pause_registry = os.environ.get("XGOV_REG_PAUSE_REGISTRY", "false").lower() == "true"
-    resume_registry = os.environ.get("XGOV_REG_RESUME_REGISTRY", "false").lower() == "true"
+    pause_proposals = (
+        os.environ.get("XGOV_REG_PAUSE_PROPOSALS", "false").lower() == "true"
+    )
+    resume_proposals = (
+        os.environ.get("XGOV_REG_RESUME_PROPOSALS", "false").lower() == "true"
+    )
+    pause_registry = (
+        os.environ.get("XGOV_REG_PAUSE_REGISTRY", "false").lower() == "true"
+    )
+    resume_registry = (
+        os.environ.get("XGOV_REG_RESUME_REGISTRY", "false").lower() == "true"
+    )
     try:
         group = app_client.new_group()
         if pause_proposals:
@@ -776,6 +781,7 @@ def pause_or_resume() -> None:
         logger.error(f"Failed to pause/resume: {e}")
         raise
 
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
@@ -789,5 +795,6 @@ def deploy() -> None:
         pause_or_resume()
     else:
         raise ValueError(
-            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry ,pause_or_resume"
+            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
+            f"pause_or_resume"
         )
