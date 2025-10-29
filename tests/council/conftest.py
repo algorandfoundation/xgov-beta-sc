@@ -60,7 +60,6 @@ def council_client(
 
     client, _ = factory.send.create.create(
         args=CreateArgs(
-            admin=deployer.address,
             registry_id=xgov_registry_client.app_id,
         )
     )

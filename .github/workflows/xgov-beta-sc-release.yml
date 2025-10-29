@@ -81,7 +81,7 @@ jobs:
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Deploy to mainnet
+      - name: Deploy registry to mainnet
         run: algokit project deploy mainnet
         env:
           # Deploy command to run
