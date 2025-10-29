@@ -36,7 +36,6 @@ class XGovSubscriberAppMock(ARC4Contract):
     def unsubscribe_xgov(self, app_id: UInt64) -> None:
         arc4.abi_call(
             registry_contract.XGovRegistry.unsubscribe_xgov,
-            arc4.Address(Global.current_application_address),
             app_id=app_id,
             fee=(Global.min_txn_fee * 2),
         )

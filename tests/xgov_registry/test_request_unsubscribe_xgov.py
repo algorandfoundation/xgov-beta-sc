@@ -9,9 +9,10 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    ApproveSubscribeXgovArgs,
-    GetRequestBoxArgs,
-    RequestSubscribeXgovArgs,
+    GetRequestUnsubscribeBoxArgs,
+    GetXgovBoxArgs,
+    RequestUnsubscribeXgovArgs,
+    SetVotingAccountArgs,
     XGovRegistryClient,
 )
 from smart_contracts.artifacts.xgov_subscriber_app_mock.x_gov_subscriber_app_mock_client import (
@@ -21,18 +22,18 @@ from smart_contracts.errors import std_errors as err
 from tests.xgov_registry.common import get_xgov_fee
 
 
-def test_request_subscribe_xgov_success(
+def test_request_unsubscribe_xgov_success(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
     initial_request_id = xgov_registry_client.state.global_state.request_id
-    xgov_address = xgov_subscriber_app.app_address
+    xgov_address = app_xgov_managed_subscription.app_address
     owner_address = deployer.address
     relation_type = 0
-    xgov_registry_client.send.request_subscribe_xgov(
-        args=RequestSubscribeXgovArgs(
+    xgov_registry_client.send.request_unsubscribe_xgov(
+        args=RequestUnsubscribeXgovArgs(
             xgov_address=xgov_address,
             owner_address=owner_address,
             relation_type=relation_type,
@@ -48,26 +49,26 @@ def test_request_subscribe_xgov_success(
     final_request_id = xgov_registry_client.state.global_state.request_id
     assert final_request_id == initial_request_id + 1
 
-    request_box = xgov_registry_client.send.get_request_box(
-        args=GetRequestBoxArgs(request_id=initial_request_id)
+    request_unsubscribe_box = xgov_registry_client.send.get_request_unsubscribe_box(
+        args=GetRequestUnsubscribeBoxArgs(request_id=initial_request_id)
     ).abi_return
 
-    assert request_box.owner_addr == owner_address
-    assert request_box.xgov_addr == xgov_address
-    assert request_box.relation_type == relation_type
+    assert request_unsubscribe_box.owner_addr == owner_address
+    assert request_unsubscribe_box.xgov_addr == xgov_address
+    assert request_unsubscribe_box.relation_type == relation_type
 
 
-def test_request_subscribe_unauthorized(
+def test_request_unsubscribe_unauthorized(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
-        xgov_registry_client.send.request_subscribe_xgov(
-            args=RequestSubscribeXgovArgs(
-                xgov_address=xgov_subscriber_app.app_address,
+        xgov_registry_client.send.request_unsubscribe_xgov(
+            args=RequestUnsubscribeXgovArgs(
+                xgov_address=app_xgov_managed_subscription.app_address,
                 owner_address=no_role_account.address,
                 relation_type=0,
                 payment=algorand_client.create_transaction.payment(
@@ -81,24 +82,16 @@ def test_request_subscribe_unauthorized(
         )
 
 
-def test_request_subscribe_xgov_already_xgov(
+def test_request_unsubscribe_xgov_not_xgov(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
-    xgov_subscriber: SigningAccount,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
-    xgov_registry_client.send.approve_subscribe_xgov(
-        args=ApproveSubscribeXgovArgs(
-            request_id=xgov_registry_client.state.global_state.request_id - 1
-        ),
-        params=CommonAppCallParams(sender=xgov_subscriber.address),
-    )
-
-    with pytest.raises(LogicError, match=err.ALREADY_XGOV):
-        xgov_registry_client.send.request_subscribe_xgov(
-            args=RequestSubscribeXgovArgs(
-                xgov_address=app_xgov_subscribe_requested.app_address,
+    with pytest.raises(LogicError, match=err.NOT_XGOV):
+        xgov_registry_client.send.request_unsubscribe_xgov(
+            args=RequestUnsubscribeXgovArgs(
+                xgov_address=no_role_account.address,
                 owner_address=deployer.address,
                 relation_type=0,
                 payment=algorand_client.create_transaction.payment(
@@ -112,16 +105,16 @@ def test_request_subscribe_xgov_already_xgov(
         )
 
 
-def test_request_subscribe_xgov_wrong_recipient(
+def test_request_unsubscribe_xgov_wrong_recipient(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
-        xgov_registry_client.send.request_subscribe_xgov(
-            args=RequestSubscribeXgovArgs(
-                xgov_address=xgov_subscriber_app.app_address,
+        xgov_registry_client.send.request_unsubscribe_xgov(
+            args=RequestUnsubscribeXgovArgs(
+                xgov_address=app_xgov_managed_subscription.app_address,
                 owner_address=deployer.address,
                 relation_type=0,
                 payment=algorand_client.create_transaction.payment(
@@ -135,16 +128,16 @@ def test_request_subscribe_xgov_wrong_recipient(
         )
 
 
-def test_request_subscribe_xgov_wrong_amount(
+def test_request_unsubscribe_xgov_wrong_amount(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.INVALID_PAYMENT):
-        xgov_registry_client.send.request_subscribe_xgov(
-            args=RequestSubscribeXgovArgs(
-                xgov_address=xgov_subscriber_app.app_address,
+        xgov_registry_client.send.request_unsubscribe_xgov(
+            args=RequestUnsubscribeXgovArgs(
+                xgov_address=app_xgov_managed_subscription.app_address,
                 owner_address=deployer.address,
                 relation_type=0,
                 payment=algorand_client.create_transaction.payment(
@@ -160,18 +153,18 @@ def test_request_subscribe_xgov_wrong_amount(
         )
 
 
-def test_request_subscribe_xgov_paused_registry_error(
+def test_request_unsubscribe_xgov_paused_registry_error(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
-        xgov_registry_client.send.request_subscribe_xgov(
-            args=RequestSubscribeXgovArgs(
-                xgov_address=xgov_subscriber_app.app_address,
+        xgov_registry_client.send.request_unsubscribe_xgov(
+            args=RequestUnsubscribeXgovArgs(
+                xgov_address=app_xgov_managed_subscription.app_address,
                 owner_address=deployer.address,
                 relation_type=0,
                 payment=algorand_client.create_transaction.payment(
@@ -185,9 +178,9 @@ def test_request_subscribe_xgov_paused_registry_error(
         )
 
     xgov_registry_client.send.resume_registry()
-    xgov_registry_client.send.request_subscribe_xgov(
-        args=RequestSubscribeXgovArgs(
-            xgov_address=xgov_subscriber_app.app_address,
+    xgov_registry_client.send.request_unsubscribe_xgov(
+        args=RequestUnsubscribeXgovArgs(
+            xgov_address=app_xgov_managed_subscription.app_address,
             owner_address=deployer.address,
             relation_type=0,
             payment=algorand_client.create_transaction.payment(
@@ -199,3 +192,42 @@ def test_request_subscribe_xgov_paused_registry_error(
             ),
         )
     )
+
+
+def test_request_unsubscribe_xgov_locked(
+    algorand_client: AlgorandClient,
+    deployer: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
+) -> None:
+
+    # Lock voting address
+    xgov_box = xgov_registry_client.send.get_xgov_box(
+        args=GetXgovBoxArgs(xgov_address=app_xgov_managed_subscription.app_address)
+    ).abi_return
+    xgov_registry_client.send.set_voting_account(
+        args=SetVotingAccountArgs(
+            xgov_address=app_xgov_managed_subscription.app_address,
+            voting_address=app_xgov_managed_subscription.app_address,
+        ),
+        params=CommonAppCallParams(sender=xgov_box.voting_address),
+    )
+
+    # Request managed unsubscription via owner
+    initial_request_id = xgov_registry_client.state.global_state.request_id
+    xgov_registry_client.send.request_unsubscribe_xgov(
+        args=RequestUnsubscribeXgovArgs(
+            xgov_address=app_xgov_managed_subscription.app_address,
+            owner_address=deployer.address,
+            relation_type=0,
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=deployer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=get_xgov_fee(xgov_registry_client),
+                )
+            ),
+        )
+    )
+    final_request_id = xgov_registry_client.state.global_state.request_id
+    assert final_request_id == initial_request_id + 1
