@@ -2,7 +2,6 @@ import pytest
 from algokit_utils import CommonAppCallParams, LogicError, SigningAccount
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetProposerBoxArgs,
     SetProposerKycArgs,
     XGovRegistryClient,
 )
@@ -24,9 +23,9 @@ def test_set_proposer_kyc_success(
         params=CommonAppCallParams(sender=kyc_provider.address),
     )
 
-    proposer_box = xgov_registry_client.send.get_proposer_box(
-        args=GetProposerBoxArgs(proposer_address=proposer_no_kyc.address)
-    ).abi_return
+    proposer_box = xgov_registry_client.state.box.proposer_box.get_value(
+        proposer_no_kyc.address
+    )
     assert proposer_box.kyc_status  # type: ignore
     assert proposer_box.kyc_expiring == UNLIMITED_KYC_EXPIRATION  # type: ignore
 

@@ -1038,6 +1038,26 @@ class Proposal(
             nulls=arc4.UInt64(self.nulls.value),
         )
 
+    @arc4.abimethod(readonly=True)
+    def get_voter_box(self, voter_address: arc4.Address) -> tuple[typ.VoterBox, bool]:
+        """
+        Returns the Voter box for the given address.
+
+        Args:
+            voter_address (arc4.Address): The address of the Voter
+
+        Returns:
+            typ.VoterBox: The voter's box value
+            bool: `True` if voter's box exists, else `False`
+        """
+        exists = voter_address.native in self.voters
+        if exists:
+            val = self.voters[voter_address.native].copy()
+        else:
+            val = typ.VoterBox(votes=arc4.UInt64(0), voted=arc4.Bool())
+
+        return val.copy(), exists
+
     @arc4.abimethod()
     def op_up(self) -> None:
         return

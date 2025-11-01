@@ -9,7 +9,6 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetProposerBoxArgs,
     SubscribeProposerArgs,
     XGovRegistryClient,
 )
@@ -46,9 +45,9 @@ def test_subscribe_proposer_success(
 
     assert final_amount == initial_amount + proposer_fee.micro_algo
 
-    proposer_box = xgov_registry_client.send.get_proposer_box(
-        args=GetProposerBoxArgs(proposer_address=no_role_account.address)
-    ).abi_return
+    proposer_box = xgov_registry_client.state.box.proposer_box.get_value(
+        no_role_account.address
+    )
 
     assert not proposer_box.active_proposal  # type: ignore
     assert not proposer_box.kyc_status  # type: ignore

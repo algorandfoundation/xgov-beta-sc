@@ -1,8 +1,8 @@
 import pytest
 from algokit_utils import AlgoAmount, CommonAppCallParams, LogicError, SigningAccount
+from algosdk.error import AlgodHTTPError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetXgovBoxArgs,
     UnsubscribeXgovArgs,
     XGovRegistryClient,
 )
@@ -31,10 +31,8 @@ def test_unsubscribe_xgov_success(
 
     assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(LogicError, match="entry exists"):
-        xgov_registry_client.send.get_xgov_box(
-            args=GetXgovBoxArgs(xgov_address=xgov.address)
-        )
+    with pytest.raises(AlgodHTTPError, match="box not found"):
+        xgov_registry_client.state.box.xgov_box.get_value(xgov.address)
 
 
 def test_app_unsubscribe_xgov_success(
@@ -99,7 +97,5 @@ def test_unsubscribe_xgov_paused_registry_error(
 
     assert final_xgovs == initial_xgovs - 1
 
-    with pytest.raises(LogicError, match="entry exists"):
-        xgov_registry_client.send.get_xgov_box(
-            args=GetXgovBoxArgs(xgov_address=xgov.address)
-        )
+    with pytest.raises(AlgodHTTPError, match="box not found"):
+        xgov_registry_client.state.box.xgov_box.get_value(xgov.address)
