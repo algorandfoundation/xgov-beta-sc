@@ -55,3 +55,7 @@ In case of a Blocked Proposal:
 
 - The Commitment Lock **MUST** be transferred (slashed) from the Proposal Escrow
 to the xGov Treasury.
+
+In case of a Reviewed Proposal:
+
+- The Commitment Lock **MUST** be returned from the Proposal Escrow to the Proposer.
