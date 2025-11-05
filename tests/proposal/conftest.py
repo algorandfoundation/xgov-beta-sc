@@ -94,8 +94,8 @@ def xgov_registry_mock_client(
 def proposal_client(
     algorand_client: AlgorandClient,
     min_fee_times_3: AlgoAmount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     config.configure(
         debug=False,
@@ -117,9 +117,9 @@ def proposal_client(
 
 @pytest.fixture(scope="function")
 def draft_proposal_client(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
+    proposal_client: ProposalClient,
 ) -> ProposalClient:
     open_proposal(proposal_client, algorand_client, proposer)
     return proposal_client
@@ -127,9 +127,9 @@ def draft_proposal_client(
 
 @pytest.fixture(scope="function")
 def submitted_proposal_client(
-    draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> ProposalClient:
     submit_proposal(
         draft_proposal_client,
@@ -141,9 +141,9 @@ def submitted_proposal_client(
 
 @pytest.fixture(scope="function")
 def voting_proposal_client(
-    submitted_proposal_client: ProposalClient,
     committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
+    submitted_proposal_client: ProposalClient,
 ) -> ProposalClient:
     composer = submitted_proposal_client.new_group()
 
@@ -160,8 +160,8 @@ def voting_proposal_client(
 @pytest.fixture(scope="function")
 def rejected_proposal_client(
     no_role_account: SigningAccount,
-    voting_proposal_client: ProposalClient,
     min_fee_times_2: AlgoAmount,
+    voting_proposal_client: ProposalClient,
 ) -> ProposalClient:
     voting_duration = get_proposal_values_from_registry(
         voting_proposal_client
@@ -181,10 +181,10 @@ def rejected_proposal_client(
 @pytest.fixture(scope="function")
 def approved_proposal_client(
     no_role_account: SigningAccount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
+    voting_proposal_client: ProposalClient,
+    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     voted_members, total_votes, member_idx = 0, 0, 0
     while not quorums_reached(voting_proposal_client, voted_members, total_votes):
@@ -216,9 +216,9 @@ def approved_proposal_client(
 
 @pytest.fixture(scope="function")
 def reviewed_proposal_client(
-    approved_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
     min_fee_times_2: AlgoAmount,
+    approved_proposal_client: ProposalClient,
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
@@ -231,9 +231,9 @@ def reviewed_proposal_client(
 
 @pytest.fixture(scope="function")
 def blocked_proposal_client(
-    approved_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
     min_fee_times_2: AlgoAmount,
+    approved_proposal_client: ProposalClient,
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=True),
@@ -246,9 +246,9 @@ def blocked_proposal_client(
 
 @pytest.fixture(scope="function")
 def funded_proposal_client(
+    min_fee_times_3: AlgoAmount,
     reviewed_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
@@ -285,9 +285,9 @@ def alternative_proposal_client(
 
 @pytest.fixture(scope="function")
 def alternative_draft_proposal_client(
-    alternative_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
+    alternative_proposal_client: ProposalClient,
 ) -> ProposalClient:
     open_proposal(
         alternative_proposal_client,
@@ -300,9 +300,9 @@ def alternative_draft_proposal_client(
 
 @pytest.fixture(scope="function")
 def alternative_submitted_proposal_client(
-    alternative_draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    alternative_draft_proposal_client: ProposalClient,
 ) -> ProposalClient:
     submit_proposal(
         alternative_draft_proposal_client,

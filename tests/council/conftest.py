@@ -39,9 +39,9 @@ from tests.xgov_registry.conftest import (
 
 @pytest.fixture(scope="function")
 def council_client(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
 ) -> CouncilClient:
     config.configure(
         debug=False,
@@ -83,8 +83,8 @@ def council_client(
 @pytest.fixture(scope="function")
 def council_members(
     deployer: SigningAccount,
-    council_client: CouncilClient,
     committee: list[CommitteeMember],
+    council_client: CouncilClient,
 ) -> list[CommitteeMember]:
     for member in committee:
         council_client.send.add_member(
