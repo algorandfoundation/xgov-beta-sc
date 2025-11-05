@@ -67,7 +67,7 @@ jobs:
           echo "min_requested_amount=$(echo "$CONFIG" | jq -r '.min_requested_amount // ""')" >> $GITHUB_OUTPUT
 
       - name: Configure xgov-beta-sc registry
-        run: algokit project deploy ${{ github.event.inputs.network }}
+        run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: configure_xgov_registry

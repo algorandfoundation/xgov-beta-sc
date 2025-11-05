@@ -8,9 +8,10 @@ on:
         required: true
         type: choice
         options:
+          - localnet
           - testnet
           - mainnet
-        default: testnet
+        default: localnet
       create_release:
         description: 'Create a GitHub release for this deployment'
         required: true
@@ -23,7 +24,7 @@ on:
 
 permissions:
   id-token: write
-  contents: write
+  contents: read
 
 jobs:
   create-council-release:
@@ -57,7 +58,7 @@ jobs:
           VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "Extracted version from pyproject.toml: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=council-v$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create council release tag
         run: |
@@ -87,9 +88,8 @@ jobs:
           prerelease: ${{ inputs.environment == 'testnet' }}
 
   deploy-council:
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
     needs: [create-council-release]
-    if: always() && (needs.create-council-release.result == 'success' || needs.create-council-release.result == 'skipped')
     environment: contract-${{ inputs.environment }}
     steps:
       - name: Checkout source code
@@ -99,14 +99,12 @@ jobs:
         uses: ./.github/actions/algokit-setup
 
       - name: Deploy council to ${{ inputs.environment }}
-        run: |
-          # Deploy council contract using the council deploy config
-          python -m smart_contracts.council.deploy_config
+        run: algokit project deploy ${{ inputs.environment }} council
         env:
           # Council-specific deployment configuration
           COUNCIL_DEPLOY_COMMAND: deploy
           # Registry app ID - use input if provided, otherwise fall back to environment variable
-          XGOV_REGISTRY_APP_ID: ${{ inputs.registry_app_id || (inputs.environment == 'mainnet' && vars.XGOV_REGISTRY_APP_ID_MAINNET) || (inputs.environment == 'testnet' && vars.XGOV_REGISTRY_APP_ID_TESTNET) || '' }}
+          XGOV_REGISTRY_APP_ID: ${{ inputs.registry_app_id || (inputs.environment == 'mainnet' && vars.XGOV_REGISTRY_APP_ID_MAINNET) || (inputs.environment == 'testnet' && vars.XGOV_REGISTRY_APP_ID_TESTNET) || (inputs.environment == 'localnet' && vars.XGOV_REGISTRY_APP_ID_LOCALNET) || '' }}
           # The deployer account
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           # The dispenser account
@@ -115,7 +113,7 @@ jobs:
   notify-deployment:
     runs-on: ubuntu-latest
     needs: [create-council-release, deploy-council]
-    if: always()
+    if: always() && needs.create-council-release.result == 'success'
     steps:
       - name: Notify successful deployment
         if: needs.deploy-council.result == 'success'
@@ -126,6 +124,5 @@ jobs:
       - name: Notify failed deployment
         if: needs.deploy-council.result == 'failure'
         run: |
-          VERSION="${{ needs.create-council-release.outputs.version || 'latest' }}"
           echo "❌ Failed to deploy Council contract ${VERSION} to ${{ inputs.environment }}"
           exit 1
