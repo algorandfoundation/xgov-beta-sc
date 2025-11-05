@@ -24,8 +24,7 @@ from tests.proposal.common import (
 
 
 def test_block_empty_proposal(
-    xgov_council: SigningAccount,
-    proposal_client: ProposalClient
+    xgov_council: SigningAccount, proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.send.review(
@@ -35,8 +34,7 @@ def test_block_empty_proposal(
 
 
 def test_block_draft_proposal(
-    xgov_council: SigningAccount,
-    draft_proposal_client: ProposalClient
+    xgov_council: SigningAccount, draft_proposal_client: ProposalClient
 ) -> None:
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
@@ -47,8 +45,7 @@ def test_block_draft_proposal(
 
 
 def test_block_final_proposal(
-    xgov_council: SigningAccount,
-    submitted_proposal_client: ProposalClient
+    xgov_council: SigningAccount, submitted_proposal_client: ProposalClient
 ) -> None:
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
@@ -59,8 +56,7 @@ def test_block_final_proposal(
 
 
 def test_block_voting_proposal(
-    xgov_council: SigningAccount,
-    voting_proposal_client: ProposalClient
+    xgov_council: SigningAccount, voting_proposal_client: ProposalClient
 ) -> None:
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
@@ -71,8 +67,7 @@ def test_block_voting_proposal(
 
 
 def test_block_rejected_proposal(
-    xgov_council: SigningAccount,
-    rejected_proposal_client: ProposalClient
+    xgov_council: SigningAccount, rejected_proposal_client: ProposalClient
 ) -> None:
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
@@ -83,8 +78,7 @@ def test_block_rejected_proposal(
 
 
 def test_block_reviewed_proposal(
-    xgov_council: SigningAccount,
-    reviewed_proposal_client: ProposalClient
+    xgov_council: SigningAccount, reviewed_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         reviewed_proposal_client.send.review(
@@ -98,7 +92,7 @@ def test_block_success(
     committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    blocked_proposal_client: ProposalClient
+    blocked_proposal_client: ProposalClient,
 ) -> None:
 
     xgov_treasury_balance_before = algorand_client.account.get_information(
@@ -131,7 +125,7 @@ def test_block_twice(
     proposer: SigningAccount,
     xgov_council: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    blocked_proposal_client: ProposalClient
+    blocked_proposal_client: ProposalClient,
 ) -> None:
 
     xgov_treasury_balance_before = algorand_client.account.get_information(
@@ -167,7 +161,7 @@ def test_block_twice(
 def test_block_not_council(
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient
+    approved_proposal_client: ProposalClient,
 ) -> None:
 
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):

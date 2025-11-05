@@ -34,7 +34,7 @@ def test_finalize_empty_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.finalize_proposal(
         args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
@@ -70,7 +70,7 @@ def test_finalize_draft_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     locked_amount = draft_proposal_client.state.global_state.locked_amount
     proposer_balance = algorand_client.account.get_information(
@@ -117,7 +117,7 @@ def test_finalize_submitted_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient
+    submitted_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -134,7 +134,7 @@ def test_finalize_voting_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -151,7 +151,7 @@ def test_finalize_approved_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient
+    approved_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -168,7 +168,7 @@ def test_finalize_reviewed_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    reviewed_proposal_client: ProposalClient
+    reviewed_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -185,7 +185,7 @@ def test_finalize_success_rejected_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
@@ -230,7 +230,7 @@ def test_finalize_success_blocked_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    blocked_proposal_client: ProposalClient
+    blocked_proposal_client: ProposalClient,
 ) -> None:
     composer = blocked_proposal_client.new_group()
     unassign_voters(
@@ -280,7 +280,7 @@ def test_finalize_success_funded_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    funded_proposal_client: ProposalClient
+    funded_proposal_client: ProposalClient,
 ) -> None:
     composer = funded_proposal_client.new_group()
     unassign_voters(
@@ -330,7 +330,7 @@ def test_finalize_not_registry(
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
@@ -353,7 +353,7 @@ def test_finalize_wrong_box_ref(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(

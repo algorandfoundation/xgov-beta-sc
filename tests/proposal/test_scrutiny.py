@@ -1,7 +1,6 @@
 import pytest
 from algokit_utils import (
     AlgoAmount,
-    AlgorandClient,
     CommonAppCallParams,
     LogicError,
     SigningAccount,
@@ -74,7 +73,7 @@ def test_scrutiny_voting_ongoing_2(
     committee: list[CommitteeMember],
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Proposal is in voting status, and not all committee members have voted yet.
@@ -100,7 +99,7 @@ def test_scrutiny_voting_ongoing_3(
     committee: list[CommitteeMember],
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Proposal is in voting status, and there is 1 vote missing.
@@ -128,7 +127,7 @@ def test_scrutiny_twice(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     for cm in committee:
         xgov_registry_mock_client.send.vote(
@@ -165,7 +164,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -229,7 +228,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -293,7 +292,7 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is approved
@@ -357,7 +356,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -423,7 +422,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -489,7 +488,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -555,7 +554,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -621,7 +620,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called when voting is completed ahead of time and the proposal is rejected
@@ -664,7 +663,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -685,7 +686,7 @@ def test_scrutiny_after_time_approve_small_1(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -734,7 +735,7 @@ def test_scrutiny_after_time_approve_small_2(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -794,7 +795,7 @@ def test_scrutiny_after_time_approve_small_3(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -867,7 +868,7 @@ def test_scrutiny_after_time_approve_small_4(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -941,7 +942,7 @@ def test_scrutiny_after_time_approve_small_5(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is approved
@@ -1003,7 +1004,7 @@ def test_scrutiny_after_time_reject_small_1(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1017,7 +1018,9 @@ def test_scrutiny_after_time_reject_small_1(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1033,7 +1036,7 @@ def test_scrutiny_after_time_reject_small_2(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1058,7 +1061,9 @@ def test_scrutiny_after_time_reject_small_2(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1076,7 +1081,7 @@ def test_scrutiny_after_time_reject_small_3(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1102,7 +1107,9 @@ def test_scrutiny_after_time_reject_small_3(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1120,7 +1127,7 @@ def test_scrutiny_after_time_reject_small_4(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1157,7 +1164,9 @@ def test_scrutiny_after_time_reject_small_4(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1176,7 +1185,7 @@ def test_scrutiny_after_time_reject_small_5(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1214,7 +1223,9 @@ def test_scrutiny_after_time_reject_small_5(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1233,7 +1244,7 @@ def test_scrutiny_after_time_reject_small_6(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1259,7 +1270,9 @@ def test_scrutiny_after_time_reject_small_6(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1277,7 +1290,7 @@ def test_scrutiny_after_time_reject_small_7(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """ "
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1304,7 +1317,9 @@ def test_scrutiny_after_time_reject_small_7(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1322,7 +1337,7 @@ def test_scrutiny_after_time_reject_small_8(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1349,7 +1364,9 @@ def test_scrutiny_after_time_reject_small_8(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1367,7 +1384,7 @@ def test_scrutiny_after_time_reject_small_9(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1405,7 +1422,9 @@ def test_scrutiny_after_time_reject_small_9(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1424,7 +1443,7 @@ def test_scrutiny_after_time_reject_small_10(
     no_role_account: SigningAccount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    voting_proposal_client: ProposalClient
+    voting_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1462,7 +1481,9 @@ def test_scrutiny_after_time_reject_small_10(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1482,7 +1503,7 @@ def test_scrutiny_after_time_reject_small_11(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient
+    submitted_proposal_client: ProposalClient,
 ) -> None:
     """
     Test that scrutiny can be called after the time has passed and the proposal is rejected
@@ -1523,7 +1544,9 @@ def test_scrutiny_after_time_reject_small_11(
     time_warp(vote_open_ts + voting_duration + 1)
 
     submitted_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -1538,7 +1561,7 @@ def test_scrutiny_after_time_reject_small_11(
 def test_scrutiny_paused_registry_error(
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):

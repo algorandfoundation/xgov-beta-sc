@@ -18,7 +18,7 @@ def test_add_member_success(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     no_role_account: SigningAccount,
-    council_client: CouncilClient
+    council_client: CouncilClient,
 ) -> None:
     before_global_state = council_client.state.global_state.get_all()
     # sp = algorand_client.get_suggested_params()
@@ -43,7 +43,7 @@ def test_add_member_success(
 def test_add_member_not_admin(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
-    council_client: CouncilClient
+    council_client: CouncilClient,
 ) -> None:
     with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         council_client.send.add_member(
@@ -61,7 +61,7 @@ def test_add_member_already_member(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
     no_role_account: SigningAccount,
-    council_client: CouncilClient
+    council_client: CouncilClient,
 ) -> None:
     council_client.send.add_member(
         args=AddMemberArgs(

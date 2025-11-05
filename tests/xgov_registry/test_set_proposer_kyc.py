@@ -49,7 +49,7 @@ def test_set_proposer_kyc_not_kyc_provider(
 def test_set_proposer_kyc_not_a_proposer(
     kyc_provider: SigningAccount,
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.PROPOSER_DOES_NOT_EXIST):
         xgov_registry_client.send.set_proposer_kyc(

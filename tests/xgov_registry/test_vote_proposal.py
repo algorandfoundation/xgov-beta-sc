@@ -27,7 +27,7 @@ def test_vote_proposal_success(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     voting_proposal_client: ProposalClient,
-    xgov_registry_client: XGovRegistryClient
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
@@ -60,7 +60,7 @@ def test_vote_proposal_not_in_voting_phase(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     draft_proposal_client: ProposalClient,
-    xgov_registry_client: XGovRegistryClient
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     submit_proposal(
@@ -131,7 +131,7 @@ def test_vote_proposal_not_a_proposal_app(
 def test_vote_proposal_not_an_xgov(
     no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
-    xgov_registry_client: XGovRegistryClient
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.vote_proposal(
@@ -167,7 +167,7 @@ def test_vote_proposal_paused_registry_error(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     voting_proposal_client: ProposalClient,
-    xgov_registry_client: XGovRegistryClient
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):

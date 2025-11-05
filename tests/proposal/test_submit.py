@@ -28,7 +28,7 @@ def test_submit_success(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -64,7 +64,7 @@ def test_submit_not_proposer(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         submit_proposal(
@@ -91,7 +91,7 @@ def test_submit_empty_proposal(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(
         LogicError,
@@ -113,7 +113,7 @@ def test_submit_twice(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     submit_proposal(
         proposal_client=draft_proposal_client,
@@ -143,7 +143,7 @@ def test_submit_too_early(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.TOO_EARLY):
         submit_proposal(
@@ -171,7 +171,7 @@ def test_submit_no_metadata(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
 
     open_proposal(
@@ -193,7 +193,7 @@ def test_submit_paused_registry_error(
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 

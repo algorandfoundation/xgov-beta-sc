@@ -22,7 +22,7 @@ from tests.proposal.common import (
 def test_empty_proposal(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
@@ -39,7 +39,7 @@ def test_upload_success_1(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     payload = json.dumps({"o": "a" * 500}).encode()  # type: ignore
@@ -65,7 +65,7 @@ def test_upload_success_2(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     payload = json.dumps({"o": "a" * 1500}).encode()  # type: ignore
@@ -91,7 +91,7 @@ def test_upload_success_3(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     payload = json.dumps({"o": "a" * 2500}).encode()  # type: ignore
@@ -116,7 +116,7 @@ def test_upload_success_3(
 def test_upload_not_proposer(
     no_role_account: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
@@ -132,7 +132,7 @@ def test_upload_not_proposer(
 def test_empty_payload(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     with pytest.raises(LogicError, match=err.EMPTY_PAYLOAD):
@@ -148,7 +148,7 @@ def test_empty_payload(
 def test_paused_registry_error(
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
 
     xgov_registry_mock_client.send.pause_registry()
@@ -178,7 +178,7 @@ def test_open_with_upload_metadata(
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
     payload = json.dumps({"o": "a" * 500}).encode()  # type: ignore
 

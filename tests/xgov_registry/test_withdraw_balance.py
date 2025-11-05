@@ -91,7 +91,7 @@ def test_withdraw_balance_success(
 def test_withdraw_balance_not_manager(
     min_fee_times_2: AlgoAmount,
     no_role_account: SigningAccount,
-    funded_xgov_registry_client: XGovRegistryClient
+    funded_xgov_registry_client: XGovRegistryClient,
 ) -> None:
     """
     Test that only the xGov Manager can withdraw the balance.

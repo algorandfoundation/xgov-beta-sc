@@ -447,7 +447,8 @@ def voting_proposal_client_requested_too_much(
     if outstanding_funds >= min_requested_amount:
         # Treasury has enough to cover minimum, so request more than available
         requested_amount = AlgoAmount(
-            micro_algo=outstanding_funds + min_requested_amount)
+            micro_algo=outstanding_funds + min_requested_amount
+        )
     else:
         # Treasury is below minimum, use minimum + a buffer
         requested_amount = AlgoAmount(micro_algo=min_requested_amount * 2)
@@ -473,8 +474,7 @@ def voting_proposal_client_requested_too_much(
             requested_amount=requested_amount.micro_algo,
             focus=DEFAULT_FOCUS,
         ),
-        params=CommonAppCallParams(sender=proposer.address,
-                                   static_fee=min_fee_times_3),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
     composer = proposal_client.new_group()

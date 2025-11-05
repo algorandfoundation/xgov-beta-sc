@@ -39,7 +39,7 @@ def test_drop_success(
     min_fee_times_3: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
@@ -80,7 +80,7 @@ def test_drop_twice(
     min_fee_times_3: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient
+    draft_proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
@@ -124,7 +124,7 @@ def test_drop_empty_proposal(
     min_fee_times_2: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient
+    proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address

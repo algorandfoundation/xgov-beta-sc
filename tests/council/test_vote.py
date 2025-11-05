@@ -202,7 +202,7 @@ def test_vote_not_member(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
     approved_proposal_client: ProposalClient,
-    council_client: CouncilClient
+    council_client: CouncilClient,
 ) -> None:
 
     proposal_id = approved_proposal_client.app_id
@@ -229,7 +229,7 @@ def test_vote_not_a_proposal(
     algorand_client: AlgorandClient,
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
-    council_client: CouncilClient
+    council_client: CouncilClient,
 ) -> None:
 
     # should fail because this uses the mock registry app id
