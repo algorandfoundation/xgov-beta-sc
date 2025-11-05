@@ -13,7 +13,6 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetXgovBoxArgs,
     SubscribeXgovArgs,
     VoteProposalArgs,
     XGovRegistryClient,
@@ -46,9 +45,9 @@ def test_vote_proposal_success(
         ),
     )
 
-    xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=committee[0].account.address)
-    ).abi_return
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        committee[0].account.address
+    )
 
     assert xgov_box.voted_proposals == 1  # type: ignore
     assert xgov_box.last_vote_timestamp > 0  # type: ignore

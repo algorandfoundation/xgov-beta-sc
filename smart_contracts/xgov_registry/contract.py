@@ -1357,7 +1357,7 @@ class XGovRegistry(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, xgov_address: arc4.Address) -> typ.XGovBoxValue:
+    def get_xgov_box(self, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
         """
         Returns the xGov box for the given address.
 
@@ -1366,11 +1366,26 @@ class XGovRegistry(
 
         Returns:
             typ.XGovBoxValue: The xGov box value
+            bool: `True` if xGov box exists, else `False`
         """
-        return self.xgov_box[xgov_address.native].copy()
+        exists = xgov_address.native in self.xgov_box
+        if exists:
+            val = self.xgov_box[xgov_address.native].copy()
+        else:
+            val = typ.XGovBoxValue(
+                voting_address=arc4.Address(),
+                voted_proposals=arc4.UInt64(0),
+                last_vote_timestamp=arc4.UInt64(0),
+                subscription_round=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod(readonly=True)
-    def get_proposer_box(self, proposer_address: arc4.Address) -> typ.ProposerBoxValue:
+    def get_proposer_box(
+        self,
+        proposer_address: arc4.Address,
+    ) -> tuple[typ.ProposerBoxValue, bool]:
         """
         Returns the Proposer box for the given address.
 
@@ -1379,13 +1394,25 @@ class XGovRegistry(
 
         Returns:
             typ.ProposerBoxValue: The Proposer box value
+            bool: `True` if Proposer box exists, else `False`
         """
-        return self.proposer_box[proposer_address.native].copy()
+        exists = proposer_address.native in self.proposer_box
+        if exists:
+            val = self.proposer_box[proposer_address.native].copy()
+        else:
+            val = typ.ProposerBoxValue(
+                active_proposal=arc4.Bool(),
+                kyc_status=arc4.Bool(),
+                kyc_expiring=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod(readonly=True)
     def get_request_box(
-        self, request_id: arc4.UInt64
-    ) -> typ.XGovSubscribeRequestBoxValue:
+        self,
+        request_id: arc4.UInt64,
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         """
         Returns the xGov subscribe request box for the given request ID.
 
@@ -1394,8 +1421,19 @@ class XGovRegistry(
 
         Returns:
             typ.XGovSubscribeRequestBoxValue: The subscribe request box value
+            bool: `True` if xGov subscribe request box exists, else `False`
         """
-        return self.request_box[request_id.as_uint64()].copy()
+        exists = request_id.as_uint64() in self.request_box
+        if exists:
+            val = self.request_box[request_id.as_uint64()].copy()
+        else:
+            val = typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod()
     def is_proposal(self, proposal_id: arc4.UInt64) -> None:
