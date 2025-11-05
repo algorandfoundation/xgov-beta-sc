@@ -84,7 +84,6 @@ def council_client(
 def council_members(
     deployer: SigningAccount,
     council_client: CouncilClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
 ) -> list[CommitteeMember]:
     for member in committee:

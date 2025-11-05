@@ -120,7 +120,6 @@ def draft_proposal_client(
     proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     open_proposal(proposal_client, algorand_client, proposer)
     return proposal_client
@@ -131,7 +130,6 @@ def submitted_proposal_client(
     draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
-    xgov_daemon: SigningAccount,
 ) -> ProposalClient:
     submit_proposal(
         draft_proposal_client,
@@ -146,7 +144,6 @@ def voting_proposal_client(
     submitted_proposal_client: ProposalClient,
     committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     composer = submitted_proposal_client.new_group()
 
@@ -164,8 +161,6 @@ def voting_proposal_client(
 def rejected_proposal_client(
     no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     voting_duration = get_proposal_values_from_registry(
@@ -187,7 +182,6 @@ def rejected_proposal_client(
 def approved_proposal_client(
     no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
-    proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -224,7 +218,6 @@ def approved_proposal_client(
 def reviewed_proposal_client(
     approved_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     approved_proposal_client.send.review(
@@ -240,7 +233,6 @@ def reviewed_proposal_client(
 def blocked_proposal_client(
     approved_proposal_client: ProposalClient,
     xgov_council: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     approved_proposal_client.send.review(
@@ -296,7 +288,6 @@ def alternative_draft_proposal_client(
     alternative_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     open_proposal(
         alternative_proposal_client,
@@ -312,7 +303,6 @@ def alternative_submitted_proposal_client(
     alternative_draft_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
-    xgov_daemon: SigningAccount,
 ) -> ProposalClient:
     submit_proposal(
         alternative_draft_proposal_client,
