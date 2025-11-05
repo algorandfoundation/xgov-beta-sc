@@ -3,7 +3,7 @@ from algokit_utils import (
     AlgorandClient,
     CommonAppCallParams,
     LogicError,
-    SigningAccount,
+    SigningAccount, AlgoAmount,
 )
 
 from smart_contracts.artifacts.proposal.proposal_client import (
@@ -17,7 +17,8 @@ from smart_contracts.errors import std_errors as err
 
 # TODO add tests for review on other statuses
 from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
-from tests.proposal.common import assert_reviewed_proposal_global_state
+from tests.conftest import algorand_client
+from tests.proposal.common import assert_reviewed_proposal_global_state, assert_account_balance
 
 
 def test_review_empty_proposal(
@@ -103,11 +104,19 @@ def test_review_success(
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     xgov_council: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
+    algorand_client = approved_proposal_client.algorand
+    proposer_balance_before = algorand_client.account.get_information(
+        proposer.address
+    ).amount.micro_algo
+    locked_amount = approved_proposal_client.state.global_state.locked_amount
 
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address),
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
 
     assert_reviewed_proposal_global_state(
@@ -121,6 +130,12 @@ def test_review_success(
         * len(committee),  # by default, the xGov Committee approves by plebiscite
     )
 
+    assert_account_balance(
+        algorand_client,
+        proposer.address,
+        proposer_balance_before + locked_amount,
+    )
+
 
 def test_review_twice(
     approved_proposal_client: ProposalClient,
@@ -128,11 +143,14 @@ def test_review_twice(
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     xgov_council: SigningAccount,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
 
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address),
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
 
     with pytest.raises(
