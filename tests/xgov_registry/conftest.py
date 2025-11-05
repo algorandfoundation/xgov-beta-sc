@@ -574,10 +574,13 @@ def approved_proposal_client(
 def reviewed_proposal_client(
     xgov_council: SigningAccount,
     approved_proposal_client: ProposalClient,
+    min_fee_times_2: AlgoAmount,
 ) -> ProposalClient:
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address),
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
     return approved_proposal_client
 
