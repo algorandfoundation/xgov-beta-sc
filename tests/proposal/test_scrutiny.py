@@ -27,54 +27,52 @@ from tests.utils import time_warp
 
 
 def test_scrutiny_empty_proposal(
+    no_role_account: SigningAccount,
     proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.send.scrutiny()
+        proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_draft_proposal(
+    no_role_account: SigningAccount,
     draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
 ) -> None:
-
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        draft_proposal_client.send.scrutiny()
+        draft_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_final_proposal(
+    no_role_account: SigningAccount,
     submitted_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: SigningAccount,
 ) -> None:
-
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        submitted_proposal_client.send.scrutiny()
+        submitted_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_voting_ongoing_1(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: SigningAccount,
 ) -> None:
     """
     Proposal is in voting status, and no votes have been cast yet.
     """
-
     with pytest.raises(LogicError, match=err.VOTING_ONGOING):
-        voting_proposal_client.send.scrutiny()
+        voting_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_voting_ongoing_2(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
@@ -92,14 +90,15 @@ def test_scrutiny_voting_ongoing_2(
     )
 
     with pytest.raises(LogicError, match=err.VOTING_ONGOING):
-        voting_proposal_client.send.scrutiny()
+        voting_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_voting_ongoing_3(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
-    proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
 ) -> None:
@@ -118,13 +117,15 @@ def test_scrutiny_voting_ongoing_3(
         )
 
     with pytest.raises(LogicError, match=err.VOTING_ONGOING):
-        voting_proposal_client.send.scrutiny()
+        voting_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
 
 def test_scrutiny_twice(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -140,10 +141,14 @@ def test_scrutiny_twice(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        voting_proposal_client.send.scrutiny()
+        voting_proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -155,9 +160,9 @@ def test_scrutiny_twice(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_1(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -202,7 +207,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -217,9 +224,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_2(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -264,7 +271,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -279,9 +288,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_approve_3(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -326,7 +335,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -341,9 +352,9 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_1(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -389,7 +400,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -405,9 +418,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_2(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -453,7 +466,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -469,9 +484,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_3(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -517,7 +532,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -533,9 +550,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_4(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -581,7 +598,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     assert_rejected_proposal_global_state(
@@ -597,9 +616,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
 
 
 def test_scrutiny_voting_completed_ahead_of_time_reject_5(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -645,7 +664,7 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         )
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -661,9 +680,9 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
 
 
 def test_scrutiny_after_time_approve_small_1(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -695,7 +714,9 @@ def test_scrutiny_after_time_approve_small_1(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     members_quorum = members_for_both_quorums(voting_proposal_client, committee)
     assert_approved_proposal_global_state(
@@ -708,9 +729,9 @@ def test_scrutiny_after_time_approve_small_1(
 
 
 def test_scrutiny_after_time_approve_small_2(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -753,7 +774,9 @@ def test_scrutiny_after_time_approve_small_2(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -766,9 +789,9 @@ def test_scrutiny_after_time_approve_small_2(
 
 
 def test_scrutiny_after_time_approve_small_3(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -822,7 +845,9 @@ def test_scrutiny_after_time_approve_small_3(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -837,9 +862,9 @@ def test_scrutiny_after_time_approve_small_3(
 
 
 def test_scrutiny_after_time_approve_small_4(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -894,7 +919,9 @@ def test_scrutiny_after_time_approve_small_4(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -909,9 +936,9 @@ def test_scrutiny_after_time_approve_small_4(
 
 
 def test_scrutiny_after_time_approve_small_5(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -957,7 +984,9 @@ def test_scrutiny_after_time_approve_small_5(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -970,9 +999,9 @@ def test_scrutiny_after_time_approve_small_5(
 
 
 def test_scrutiny_after_time_reject_small_1(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     min_fee_times_2: AlgoAmount,
 ) -> None:
@@ -988,7 +1017,7 @@ def test_scrutiny_after_time_reject_small_1(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -999,9 +1028,9 @@ def test_scrutiny_after_time_reject_small_1(
 
 
 def test_scrutiny_after_time_reject_small_2(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1029,7 +1058,7 @@ def test_scrutiny_after_time_reject_small_2(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1042,9 +1071,9 @@ def test_scrutiny_after_time_reject_small_2(
 
 
 def test_scrutiny_after_time_reject_small_3(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1073,7 +1102,7 @@ def test_scrutiny_after_time_reject_small_3(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1086,9 +1115,9 @@ def test_scrutiny_after_time_reject_small_3(
 
 
 def test_scrutiny_after_time_reject_small_4(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1128,7 +1157,7 @@ def test_scrutiny_after_time_reject_small_4(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1142,9 +1171,9 @@ def test_scrutiny_after_time_reject_small_4(
 
 
 def test_scrutiny_after_time_reject_small_5(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1185,7 +1214,7 @@ def test_scrutiny_after_time_reject_small_5(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1199,9 +1228,9 @@ def test_scrutiny_after_time_reject_small_5(
 
 
 def test_scrutiny_after_time_reject_small_6(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1230,7 +1259,7 @@ def test_scrutiny_after_time_reject_small_6(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1243,9 +1272,9 @@ def test_scrutiny_after_time_reject_small_6(
 
 
 def test_scrutiny_after_time_reject_small_7(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1275,7 +1304,7 @@ def test_scrutiny_after_time_reject_small_7(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1288,9 +1317,9 @@ def test_scrutiny_after_time_reject_small_7(
 
 
 def test_scrutiny_after_time_reject_small_8(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1320,7 +1349,7 @@ def test_scrutiny_after_time_reject_small_8(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1333,9 +1362,9 @@ def test_scrutiny_after_time_reject_small_8(
 
 
 def test_scrutiny_after_time_reject_small_9(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1376,7 +1405,7 @@ def test_scrutiny_after_time_reject_small_9(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1390,9 +1419,9 @@ def test_scrutiny_after_time_reject_small_9(
 
 
 def test_scrutiny_after_time_reject_small_10(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
@@ -1433,7 +1462,7 @@ def test_scrutiny_after_time_reject_small_10(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1447,9 +1476,9 @@ def test_scrutiny_after_time_reject_small_10(
 
 
 def test_scrutiny_after_time_reject_small_11(
+    no_role_account: SigningAccount,
     submitted_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
@@ -1494,7 +1523,7 @@ def test_scrutiny_after_time_reject_small_11(
     time_warp(vote_open_ts + voting_duration + 1)
 
     submitted_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(sender=no_role_account.address, static_fee=min_fee_times_2)
     )
 
     assert_rejected_proposal_global_state(
@@ -1507,16 +1536,20 @@ def test_scrutiny_after_time_reject_small_11(
 
 
 def test_scrutiny_paused_registry_error(
+    no_role_account: SigningAccount,
     proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
 ) -> None:
     xgov_registry_mock_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
-        proposal_client.send.scrutiny()
+        proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
 
     xgov_registry_mock_client.send.resume_registry()
     # Should fail for non-paused_registry related reasons
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.send.scrutiny()
+        proposal_client.send.scrutiny(
+            params=CommonAppCallParams(sender=no_role_account.address)
+        )
