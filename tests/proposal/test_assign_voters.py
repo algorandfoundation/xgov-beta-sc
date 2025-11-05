@@ -32,11 +32,11 @@ from tests.proposal.common import (
 
 def test_assign_voters_success(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -68,11 +68,11 @@ def test_assign_voters_success(
 
 def test_assign_voters_not_xgov_daemon(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee_member: CommitteeMember,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         composer = submitted_proposal_client.new_group()
@@ -98,11 +98,11 @@ def test_assign_voters_not_xgov_daemon(
 
 def test_assign_voters_empty_proposal(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee_member: CommitteeMember,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         composer = proposal_client.new_group()
@@ -128,11 +128,11 @@ def test_assign_voters_empty_proposal(
 
 def test_assign_voters_draft_proposal(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee_member: CommitteeMember,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    draft_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         composer = draft_proposal_client.new_group()
@@ -164,11 +164,11 @@ def test_assign_voters_draft_proposal(
 
 def test_assign_voters_voting_open(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -208,10 +208,10 @@ def test_assign_voters_voting_open(
 
 
 def test_assign_voters_not_same_app(
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    alternative_submitted_proposal_client: ProposalClient,
+    xgov_daemon: SigningAccount,
     submitted_proposal_client: ProposalClient,
+    alternative_submitted_proposal_client: ProposalClient,
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -241,9 +241,9 @@ def test_assign_voters_not_same_app(
 
 
 def test_assign_voters_not_same_method(
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    submitted_proposal_client: ProposalClient,
+    xgov_daemon: SigningAccount,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     composer.get_state(
@@ -260,9 +260,9 @@ def test_assign_voters_not_same_method(
 
 
 def test_assign_voters_not_same_method_2(
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    submitted_proposal_client: ProposalClient,
+    xgov_daemon: SigningAccount,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -279,10 +279,10 @@ def test_assign_voters_not_same_method_2(
 
 
 def test_assign_voters_one_call_not_xgov_daemon(
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -301,12 +301,12 @@ def test_assign_voters_one_call_not_xgov_daemon(
 
 def test_assign_voters_more_than_allowed(
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
     committee_member: CommitteeMember,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(

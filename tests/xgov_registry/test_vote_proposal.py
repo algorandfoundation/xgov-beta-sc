@@ -26,8 +26,8 @@ from tests.xgov_registry.common import get_xgov_fee
 def test_vote_proposal_success(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
@@ -54,13 +54,13 @@ def test_vote_proposal_success(
 
 
 def test_vote_proposal_not_in_voting_phase(
-    committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    min_fee_times_2: AlgoAmount,
+    draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     submit_proposal(
@@ -130,8 +130,8 @@ def test_vote_proposal_not_a_proposal_app(
 
 def test_vote_proposal_not_an_xgov(
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.vote_proposal(
@@ -147,9 +147,9 @@ def test_vote_proposal_not_an_xgov(
 
 def test_vote_proposal_wrong_voting_address(
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.MUST_BE_VOTING_ADDRESS):
         xgov_registry_client.send.vote_proposal(
@@ -166,8 +166,8 @@ def test_vote_proposal_wrong_voting_address(
 def test_vote_proposal_paused_registry_error(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):

@@ -23,10 +23,10 @@ from tests.proposal.common import (
 
 
 def test_fund_empty_proposal(
-    proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -38,10 +38,10 @@ def test_fund_empty_proposal(
 
 
 def test_fund_draft_proposal(
-    draft_proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    draft_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -53,10 +53,10 @@ def test_fund_draft_proposal(
 
 
 def test_fund_submitted_proposal(
-    submitted_proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    submitted_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -68,10 +68,10 @@ def test_fund_submitted_proposal(
 
 
 def test_fund_voting_proposal(
-    voting_proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    voting_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -83,10 +83,10 @@ def test_fund_voting_proposal(
 
 
 def test_fund_approved_proposal(
-    approved_proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    approved_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -98,10 +98,10 @@ def test_fund_approved_proposal(
 
 
 def test_fund_rejected_proposal(
-    rejected_proposal_client: ProposalClient,
+    min_fee_times_3: AlgoAmount,
     xgov_payor: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    rejected_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -113,10 +113,10 @@ def test_fund_rejected_proposal(
 
 
 def test_fund_blocked_proposal(
-    blocked_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_payor: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    xgov_payor: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    blocked_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.fund(
@@ -128,13 +128,13 @@ def test_fund_blocked_proposal(
 
 
 def test_fund_success(
-    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    xgov_payor: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    committee: list[CommitteeMember],
     min_fee_times_3: AlgoAmount,
+    committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_payor: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    reviewed_proposal_client: ProposalClient
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(
         proposer.address
@@ -164,13 +164,13 @@ def test_fund_success(
 
 
 def test_fund_twice(
-    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    xgov_payor: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    committee: list[CommitteeMember],
     min_fee_times_3: AlgoAmount,
+    committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_payor: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    reviewed_proposal_client: ProposalClient
 ) -> None:
     proposer_balance_before = algorand_client.account.get_information(
         proposer.address
@@ -208,9 +208,9 @@ def test_fund_twice(
 
 
 def test_fund_not_registry(
-    reviewed_proposal_client: ProposalClient,
-    xgov_payor: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    xgov_payor: SigningAccount,
+    reviewed_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         reviewed_proposal_client.send.fund(

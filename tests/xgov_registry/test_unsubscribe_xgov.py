@@ -17,8 +17,8 @@ from smart_contracts.errors import std_errors as err
 
 
 def test_unsubscribe_xgov_success(
-    xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
 

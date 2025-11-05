@@ -18,8 +18,8 @@ from tests.xgov_registry.common import assert_registry_config
 
 
 def test_config_xgov_registry_success(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.config_xgov_registry(
         args=ConfigXgovRegistryArgs(config=xgov_registry_config)
@@ -53,9 +53,9 @@ def test_config_xgov_registry_success(
 
 
 def test_config_xgov_registry_not_manager(
-    xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     no_role_account: SigningAccount,
+    xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.config_xgov_registry(
@@ -65,9 +65,9 @@ def test_config_xgov_registry_not_manager(
 
 
 def test_config_xgov_registry_pending_proposals(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.NO_PENDING_PROPOSALS):
         xgov_registry_client.send.config_xgov_registry(
@@ -76,9 +76,9 @@ def test_config_xgov_registry_pending_proposals(
 
 
 def test_config_xgov_registry_open_proposal_fee_too_low(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config_dict: dict,  # type: ignore
     xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
 
     daemon_ops_funding_bps = xgov_registry_config.daemon_ops_funding_bps

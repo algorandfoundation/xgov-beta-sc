@@ -102,11 +102,11 @@ def test_review_rejected_proposal(
 
 def test_review_success(
     min_fee_times_2: AlgoAmount,
-    xgov_council: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_council: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    approved_proposal_client: ProposalClient
 ) -> None:
     algorand_client = approved_proposal_client.algorand
     proposer_balance_before = algorand_client.account.get_information(
@@ -141,11 +141,11 @@ def test_review_success(
 
 def test_review_twice(
     min_fee_times_2: AlgoAmount,
-    xgov_council: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_council: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    approved_proposal_client: ProposalClient
 ) -> None:
 
     approved_proposal_client.send.review(

@@ -13,9 +13,9 @@ from tests.proposal.common import REQUESTED_AMOUNT, assert_draft_proposal_global
 
 def test_drop_proposal_success(
     min_fee_times_3: AlgoAmount,
-    xgov_registry_client: XGovRegistryClient,
     proposer: SigningAccount,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
 
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
@@ -47,8 +47,8 @@ def test_drop_proposal_success(
 def test_drop_proposal_not_proposer(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.drop_proposal(
@@ -61,9 +61,9 @@ def test_drop_proposal_not_proposer(
 
 def test_drop_invalid_proposal(
     min_fee_times_3: AlgoAmount,
-    xgov_registry_client: XGovRegistryClient,
     proposer: SigningAccount,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     with pytest.raises(LogicError, match=err.INVALID_PROPOSAL):
         xgov_registry_client.send.drop_proposal(
@@ -76,9 +76,9 @@ def test_drop_invalid_proposal(
 
 def test_drop_paused_registry(
     min_fee_times_3: AlgoAmount,
-    xgov_registry_client: XGovRegistryClient,
     proposer: SigningAccount,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient
 ) -> None:
     xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):

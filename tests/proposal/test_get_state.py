@@ -4,8 +4,8 @@ from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 
 
 def test_funded_proposal(
-    funded_proposal_client: ProposalClient,
     proposer: SigningAccount,
+    funded_proposal_client: ProposalClient
 ) -> None:
 
     get_state_result = funded_proposal_client.send.get_state(
