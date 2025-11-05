@@ -200,6 +200,11 @@ def test_request_unsubscribe_xgov_locked(
     xgov_registry_client: XGovRegistryClient,
     app_xgov_managed_subscription: XGovSubscriberAppMockClient,
 ) -> None:
+    """
+    Even for an account that is managed via a subscription and that locks its voting address,
+    e.g. by setting the `voting_address` to `xgov_address`, the `owner_address` can issue
+    a managed unsubscription, enabling it to later re-subscribe again and thus unlock the account.
+    """
 
     # Lock voting address
     xgov_box = xgov_registry_client.send.get_xgov_box(
