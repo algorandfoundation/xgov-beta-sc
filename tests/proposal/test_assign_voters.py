@@ -3,6 +3,7 @@ from algokit_utils import (
     AlgorandClient,
     LogicError,
     SigningAccount,
+    CommonAppCallParams,
 )
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
@@ -207,12 +208,10 @@ def test_assign_voters_voting_open(
 
 
 def test_assign_voters_not_same_app(
-    algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
     alternative_submitted_proposal_client: ProposalClient,
     submitted_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> None:
     composer = submitted_proposal_client.new_group()
     assign_voters(
@@ -242,14 +241,14 @@ def test_assign_voters_not_same_app(
 
 
 def test_assign_voters_not_same_method(
-    algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
 ) -> None:
     composer = submitted_proposal_client.new_group()
-    composer.get_state()
+    composer.get_state(
+        params=CommonAppCallParams(sender=xgov_daemon.address)
+    )
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
@@ -261,10 +260,8 @@ def test_assign_voters_not_same_method(
 
 
 def test_assign_voters_not_same_method_2(
-    algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
 ) -> None:
     composer = submitted_proposal_client.new_group()
@@ -273,17 +270,17 @@ def test_assign_voters_not_same_method_2(
         xgov_daemon=xgov_daemon,
         committee=committee,
     )
-    composer.get_state()
+    composer.get_state(
+        params=CommonAppCallParams(sender=xgov_daemon.address)
+    )
 
     with pytest.raises(LogicError, match=err.WRONG_METHOD_CALL):
         composer.send()
 
 
 def test_assign_voters_one_call_not_xgov_daemon(
-    algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
-    xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     proposer: SigningAccount,
 ) -> None:
