@@ -2085,6 +2085,18 @@ review_else_body@3:
     bytec_1 // 0x737461747573
     pushint 45 // 45
     app_global_put
+    // smart_contracts/proposal/contract.py:902
+    // receiver=self.proposer.value,
+    intc_0 // 0
+    bytec 4 // 0x70726f706f736572
+    app_global_get_ex
+    assert // check self.proposer exists
+    // smart_contracts/proposal/contract.py:900-903
+    // # refund the locked amount to the proposer
+    // self.transfer_locked_amount(
+    //     receiver=self.proposer.value,
+    // )
+    callsub transfer_locked_amount
     b review_after_if_else@4
 
 
@@ -2111,7 +2123,7 @@ fund:
     bury 1
 
 fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8:
-    // smart_contracts/proposal/contract.py:910
+    // smart_contracts/proposal/contract.py:915
     // if error != typ.Error(""):
     bytec_0 // 0x0000
     bury 2
@@ -2122,7 +2134,7 @@ fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authori
     dup
 
 fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4:
-    // smart_contracts/proposal/contract.py:900
+    // smart_contracts/proposal/contract.py:905
     // @arc4.abimethod()
     bytec 10 // 0x151f7c75
     swap
@@ -2132,25 +2144,13 @@ fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4:
     return
 
 fund_after_if_else@3:
-    // smart_contracts/proposal/contract.py:913
+    // smart_contracts/proposal/contract.py:918
     // self.status.value = UInt64(enm.STATUS_FUNDED)
     bytec_1 // 0x737461747573
     pushint 50 // 50
     app_global_put
-    // smart_contracts/proposal/contract.py:917
-    // receiver=self.proposer.value,
-    intc_0 // 0
-    bytec 4 // 0x70726f706f736572
-    app_global_get_ex
-    assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:915-918
-    // # refund the locked amount to the proposer
-    // self.transfer_locked_amount(
-    //     receiver=self.proposer.value,
-    // )
-    callsub transfer_locked_amount
     dig 1
-    // smart_contracts/proposal/contract.py:900
+    // smart_contracts/proposal/contract.py:905
     // @arc4.abimethod()
     b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4
 
@@ -2159,7 +2159,7 @@ fund_after_if_else@7:
     // return typ.Error("")
     bytec_0 // 0x0000
     bury 1
-    // smart_contracts/proposal/contract.py:909
+    // smart_contracts/proposal/contract.py:914
     // error = self.fund_check_authorization()
     b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8
 
