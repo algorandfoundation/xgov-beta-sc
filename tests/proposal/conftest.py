@@ -41,7 +41,7 @@ from tests.proposal.common import (
 from tests.utils import time_warp
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def proposer(algorand_client: AlgorandClient) -> SigningAccount:
     account = algorand_client.account.random()
     algorand_client.account.ensure_funded_from_environment(
@@ -110,7 +110,6 @@ def proposal_client(
     client = ProposalClient(
         algorand=algorand_client,
         app_id=proposal_app_id.abi_return,  # type: ignore
-        default_sender=proposer.address,
     )
 
     return client
@@ -163,6 +162,7 @@ def voting_proposal_client(
 
 @pytest.fixture(scope="function")
 def rejected_proposal_client(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -175,7 +175,9 @@ def rejected_proposal_client(
     time_warp(vote_open_ts + voting_duration + 1)
 
     voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(static_fee=min_fee_times_2)
+        params=CommonAppCallParams(
+            sender=no_role_account.address, static_fee=min_fee_times_2
+        )
     )
 
     return voting_proposal_client
@@ -183,6 +185,7 @@ def rejected_proposal_client(
 
 @pytest.fixture(scope="function")
 def approved_proposal_client(
+    no_role_account: SigningAccount,
     voting_proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
@@ -210,7 +213,9 @@ def approved_proposal_client(
     vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     time_warp(vote_open_ts + voting_duration + 1)
 
-    voting_proposal_client.send.scrutiny()
+    voting_proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=no_role_account.address)
+    )
 
     return voting_proposal_client
 
