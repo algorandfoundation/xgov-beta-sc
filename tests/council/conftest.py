@@ -6,7 +6,7 @@ from algokit_utils import (
     EnsureBalanceParameters,
     SigningAccount,
     TransactionParameters,
-    ensure_funded,
+    ensure_funded, AlgoAmount,
 )
 from algokit_utils.config import config
 
@@ -99,33 +99,3 @@ def council_members(
         )
 
     return committee
-
-
-@pytest.fixture(scope="function")
-def proposal_client_for_council(
-    proposer: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
-    council_client: CouncilClient,  # Ensure council is set up first
-    algorand_client: AlgorandClient,
-) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    proposal_app_id = xgov_registry_client.create_empty_proposal(
-        proposer=proposer.address,
-        transaction_parameters=TransactionParameters(
-            suggested_params=sp,
-        ),
-    )
-
-    client = ProposalClient(
-        algorand_client.client.algod,
-        app_id=proposal_app_id.return_value,
-    )
-
-    return client
