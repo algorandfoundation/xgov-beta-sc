@@ -897,6 +897,11 @@ class Proposal(
         else:
             self.status.value = UInt64(enm.STATUS_REVIEWED)
 
+            # refund the locked amount to the proposer
+            self.transfer_locked_amount(
+                receiver=self.proposer.value,
+            )
+
     @arc4.abimethod()
     def fund(self) -> typ.Error:
         """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
@@ -911,11 +916,6 @@ class Proposal(
             return error
 
         self.status.value = UInt64(enm.STATUS_FUNDED)
-
-        # refund the locked amount to the proposer
-        self.transfer_locked_amount(
-            receiver=self.proposer.value,
-        )
 
         return typ.Error("")
 
