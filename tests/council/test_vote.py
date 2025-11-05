@@ -22,7 +22,7 @@ def test_vote_approve_success(
     council_client: CouncilClient,
     council_members: list[CommitteeMember],
     algorand_client: AlgorandClient,
-    min_fee_times_2: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
 
     proposal_id = approved_proposal_client.app_id
@@ -45,7 +45,7 @@ def test_vote_approve_success(
             params=CommonAppCallParams(
                 sender=member.account.address,
                 signer=member.account.signer,
-                static_fee=min_fee_times_2,
+                static_fee=min_fee_times_3,
             ),
         )
 
@@ -114,7 +114,7 @@ def test_vote_mix_success(
     council_client: CouncilClient,
     council_members: list[CommitteeMember],
     algorand_client: AlgorandClient,
-    min_fee_times_2: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
 
     proposal_id = approved_proposal_client.app_id
@@ -151,7 +151,7 @@ def test_vote_mix_success(
             params=CommonAppCallParams(
                 sender=member.account.address,
                 signer=member.account.signer,
-                static_fee=min_fee_times_2,
+                static_fee=min_fee_times_3,
             ),
         )
 
@@ -174,7 +174,7 @@ def test_vote_proposal_invalid_state(
     council_client: CouncilClient,
     council_members: list[CommitteeMember],
     algorand_client: AlgorandClient,
-    min_fee_times_2: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
 
     proposal_id = voting_proposal_client.app_id
@@ -189,7 +189,7 @@ def test_vote_proposal_invalid_state(
         params=CommonAppCallParams(
             sender=member.account.address,
             signer=member.account.signer,
-            static_fee=min_fee_times_2,
+            static_fee=min_fee_times_3,
         ),
     )
 
@@ -202,7 +202,7 @@ def test_vote_not_member(
     council_client: CouncilClient,
     no_role_account: SigningAccount,
     algorand_client: AlgorandClient,
-    min_fee_times_2: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
 
     proposal_id = approved_proposal_client.app_id
@@ -217,7 +217,7 @@ def test_vote_not_member(
         params=CommonAppCallParams(
             sender=no_role_account.address,
             signer=no_role_account.signer,
-            static_fee=min_fee_times_2,
+            static_fee=min_fee_times_3,
         ),
     )
 
@@ -229,7 +229,7 @@ def test_vote_not_a_proposal(
     council_client: CouncilClient,
     no_role_account: SigningAccount,
     algorand_client: AlgorandClient,
-    min_fee_times_2: AlgoAmount,
+    min_fee_times_3: AlgoAmount,
 ) -> None:
 
     # should fail because this uses the mock registry app id
@@ -245,7 +245,7 @@ def test_vote_not_a_proposal(
         params=CommonAppCallParams(
             sender=no_role_account.address,
             signer=no_role_account.signer,
-            static_fee=min_fee_times_2,
+            static_fee=min_fee_times_3,
         ),
     )
 

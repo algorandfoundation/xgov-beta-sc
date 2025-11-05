@@ -160,10 +160,13 @@ def test_pay_grant_proposal_insufficient_funds(
     xgov_payor: SigningAccount,
     funded_xgov_registry_client: XGovRegistryClient,
     approved_proposal_client_requested_too_much: ProposalClient,
+    min_fee_times_2: AlgoAmount,
 ) -> None:
     approved_proposal_client_requested_too_much.send.review(
         args=ReviewArgs(block=False),
-        params=CommonAppCallParams(sender=xgov_council.address),
+        params=CommonAppCallParams(
+            sender=xgov_council.address, static_fee=min_fee_times_2
+        ),
     )
     with pytest.raises(LogicError, match=err.INSUFFICIENT_TREASURY_FUNDS):
         funded_xgov_registry_client.send.pay_grant_proposal(
