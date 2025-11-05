@@ -1,15 +1,16 @@
-from algokit_utils import AlgorandClient, SigningAccount
+from algokit_utils import AlgorandClient, SigningAccount, CommonAppCallParams
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 
 
 def test_funded_proposal(
     funded_proposal_client: ProposalClient,
-    algorand_client: AlgorandClient,
     proposer: SigningAccount,
 ) -> None:
 
-    get_state_result = funded_proposal_client.send.get_state().abi_return
+    get_state_result = funded_proposal_client.send.get_state(
+        params=CommonAppCallParams(sender=proposer.address)
+    ).abi_return
 
     global_state = funded_proposal_client.state.global_state
 
