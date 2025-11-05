@@ -438,8 +438,20 @@ def voting_proposal_client_requested_too_much(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> ProposalClient:
-    outstanding_funds = xgov_registry_client.state.global_state.outstanding_funds
-    requested_amount = AlgoAmount(micro_algo=outstanding_funds + 1)
+    reg_gs = xgov_registry_client.state.global_state
+    outstanding_funds = reg_gs.outstanding_funds
+    min_requested_amount = reg_gs.min_requested_amount
+
+    # Ensure requested amount exceeds treasury by a meaningful margin
+    # AND is at least the minimum required amount
+    if outstanding_funds >= min_requested_amount:
+        # Treasury has enough to cover minimum, so request more than available
+        requested_amount = AlgoAmount(
+            micro_algo=outstanding_funds + min_requested_amount)
+    else:
+        # Treasury is below minimum, use minimum + a buffer
+        requested_amount = AlgoAmount(micro_algo=min_requested_amount * 2)
+
     locked_amount = get_locked_amount(requested_amount)
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=proposer,
@@ -454,14 +466,15 @@ def voting_proposal_client_requested_too_much(
                     sender=proposer.address,
                     receiver=proposal_client.app_address,
                     amount=locked_amount,
-                )
+                ),
             ),
             title=PROPOSAL_TITLE,
             funding_type=enm.FUNDING_RETROACTIVE,
             requested_amount=requested_amount.micro_algo,
             focus=DEFAULT_FOCUS,
         ),
-        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
+        params=CommonAppCallParams(sender=proposer.address,
+                                   static_fee=min_fee_times_3),
     )
 
     composer = proposal_client.new_group()
