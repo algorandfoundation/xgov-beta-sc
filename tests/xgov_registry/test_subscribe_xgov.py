@@ -9,7 +9,6 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetXgovBoxArgs,
     SubscribeXgovArgs,
     XGovRegistryClient,
 )
@@ -56,19 +55,19 @@ def test_subscribe_xgov_success(
     assert final_amount == initial_amount + xgov_fee.micro_algo
     assert final_xgovs == initial_xgovs + 1
 
-    xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=no_role_account.address),
-    ).abi_return
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        no_role_account.address
+    )
 
     assert no_role_account.address == xgov_box.voting_address  # type: ignore
 
 
 def test_app_subscribe_xgov_success(
     algorand_client: AlgorandClient,
-    no_role_account: SigningAccount,
     min_fee_times_3: AlgoAmount,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     initial_amount = algorand_client.account.get_information(
@@ -96,9 +95,9 @@ def test_app_subscribe_xgov_success(
     )
     assert final_xgovs == initial_xgovs + 1
 
-    xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=xgov_subscriber_app.app_address),
-    ).abi_return
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        xgov_subscriber_app.app_address
+    )
 
     assert no_role_account.address == xgov_box.voting_address  # type: ignore
 

@@ -115,7 +115,8 @@ The Proposal Escrow is an Address controlled by the Proposal Application.
 
 - Operation Funds to xGov Daemon on Proposal submission
 
-- Proposal Commitment Lock to xGov Treasury if the Proposal is blocked with a veto
+- Proposal Commitment Lock to the Proposer if the Proposal is not blocked with a
+veto or to the xGov Treasury otherwise
 
 - Decommissioned MBRs to xGov Treasury
 

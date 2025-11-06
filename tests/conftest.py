@@ -30,6 +30,14 @@ def algorand_client() -> AlgorandClient:
     return client
 
 
+@pytest.fixture(autouse=True, scope="function")
+def reset_blockchain_timestamp(algorand_client: AlgorandClient):
+    """Reset blockchain timestamp after each test to prevent time leakage"""
+    yield  # Run the test first
+    # Reset after test completes
+    algorand_client.client.algod.set_timestamp_offset(0)
+
+
 @pytest.fixture(scope="session")
 def min_fee() -> AlgoAmount:
     return AlgoAmount(micro_algo=MIN_TXN_FEE)

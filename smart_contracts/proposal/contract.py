@@ -897,6 +897,11 @@ class Proposal(
         else:
             self.status.value = UInt64(enm.STATUS_REVIEWED)
 
+            # refund the locked amount to the proposer
+            self.transfer_locked_amount(
+                receiver=self.proposer.value,
+            )
+
     @arc4.abimethod()
     def fund(self) -> typ.Error:
         """Fund the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
@@ -911,11 +916,6 @@ class Proposal(
             return error
 
         self.status.value = UInt64(enm.STATUS_FUNDED)
-
-        # refund the locked amount to the proposer
-        self.transfer_locked_amount(
-            receiver=self.proposer.value,
-        )
 
         return typ.Error("")
 
@@ -1037,6 +1037,26 @@ class Proposal(
             rejections=arc4.UInt64(self.rejections.value),
             nulls=arc4.UInt64(self.nulls.value),
         )
+
+    @arc4.abimethod(readonly=True)
+    def get_voter_box(self, voter_address: arc4.Address) -> tuple[typ.VoterBox, bool]:
+        """
+        Returns the Voter box for the given address.
+
+        Args:
+            voter_address (arc4.Address): The address of the Voter
+
+        Returns:
+            typ.VoterBox: The voter's box value
+            bool: `True` if voter's box exists, else `False`
+        """
+        exists = voter_address.native in self.voters
+        if exists:
+            val = self.voters[voter_address.native].copy()
+        else:
+            val = typ.VoterBox(votes=arc4.UInt64(0), voted=arc4.Bool())
+
+        return val.copy(), exists
 
     @arc4.abimethod()
     def op_up(self) -> None:

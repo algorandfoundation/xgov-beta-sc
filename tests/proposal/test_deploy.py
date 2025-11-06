@@ -8,9 +8,9 @@ from tests.proposal.common import assert_empty_proposal_global_state
 
 
 def test_empty_proposal(
-    proposal_client: ProposalClient,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
     assert_empty_proposal_global_state(
         proposal_client, proposer.address, xgov_registry_mock_client.app_id

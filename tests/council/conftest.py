@@ -1,5 +1,6 @@
 import pytest
 from algokit_utils import (
+    AlgoAmount,
     AlgorandClient,
     CommonAppCallParams,
     CreateTransactionParameters,
@@ -39,9 +40,9 @@ from tests.xgov_registry.conftest import (
 
 @pytest.fixture(scope="function")
 def council_client(
-    xgov_registry_client: XGovRegistryClient,
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
 ) -> CouncilClient:
     config.configure(
         debug=False,
@@ -60,7 +61,6 @@ def council_client(
 
     client, _ = factory.send.create.create(
         args=CreateArgs(
-            admin=deployer.address,
             registry_id=xgov_registry_client.app_id,
         )
     )
@@ -83,9 +83,8 @@ def council_client(
 @pytest.fixture(scope="function")
 def council_members(
     deployer: SigningAccount,
-    council_client: CouncilClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
+    council_client: CouncilClient,
 ) -> list[CommitteeMember]:
     for member in committee:
         council_client.send.add_member(
@@ -99,33 +98,3 @@ def council_members(
         )
 
     return committee
-
-
-@pytest.fixture(scope="function")
-def proposal_client_for_council(
-    proposer: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
-    council_client: CouncilClient,  # Ensure council is set up first
-    algorand_client: AlgorandClient,
-) -> ProposalClient:
-    config.configure(
-        debug=True,
-        # trace_all=True,
-    )
-
-    sp = algorand_client.get_suggested_params()
-    sp.min_fee *= 3  # type: ignore
-
-    proposal_app_id = xgov_registry_client.create_empty_proposal(
-        proposer=proposer.address,
-        transaction_parameters=TransactionParameters(
-            suggested_params=sp,
-        ),
-    )
-
-    client = ProposalClient(
-        algorand_client.client.algod,
-        app_id=proposal_app_id.return_value,
-    )
-
-    return client

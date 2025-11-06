@@ -9,8 +9,6 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetRequestUnsubscribeBoxArgs,
-    GetXgovBoxArgs,
     RequestUnsubscribeXgovArgs,
     SetVotingAccountArgs,
     XGovRegistryClient,
@@ -49,9 +47,11 @@ def test_request_unsubscribe_xgov_success(
     final_request_id = xgov_registry_client.state.global_state.request_id
     assert final_request_id == initial_request_id + 1
 
-    request_unsubscribe_box = xgov_registry_client.send.get_request_unsubscribe_box(
-        args=GetRequestUnsubscribeBoxArgs(request_id=initial_request_id)
-    ).abi_return
+    request_unsubscribe_box = (
+        xgov_registry_client.state.box.request_unsubscribe_box.get_value(
+            initial_request_id
+        )
+    )
 
     assert request_unsubscribe_box.owner_addr == owner_address
     assert request_unsubscribe_box.xgov_addr == xgov_address
@@ -207,9 +207,9 @@ def test_request_unsubscribe_xgov_locked(
     """
 
     # Lock voting address
-    xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=app_xgov_managed_subscription.app_address)
-    ).abi_return
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        app_xgov_managed_subscription.app_address
+    )
     xgov_registry_client.send.set_voting_account(
         args=SetVotingAccountArgs(
             xgov_address=app_xgov_managed_subscription.app_address,

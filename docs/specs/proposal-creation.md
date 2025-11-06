@@ -68,7 +68,7 @@ The locked amount **SHALL** be either:
 
 - Returned to the Proposer when the Proposal is:
 
-  - Funded or Rejected;
+  - Reviewed and not blocked by veto by the xGov Council or Rejected by voting;
   - Dropped by the Proposer before submission.
 
 - Slashed if the Proposal is blocked with a veto by the xGov Council.

@@ -35,11 +35,11 @@ NO_COMMITTEE = {
 
 
 def test_drop_success(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
+    min_fee_times_3: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
@@ -76,11 +76,11 @@ def test_drop_success(
 
 
 def test_drop_twice(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
+    min_fee_times_3: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_3: AlgoAmount,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address
@@ -120,11 +120,11 @@ def test_drop_twice(
 
 
 def test_drop_empty_proposal(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
     proposer: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    min_fee_times_2: AlgoAmount,
+    proposal_client: ProposalClient,
 ) -> None:
     proposer_balance_before_drop = algorand_client.account.get_information(
         proposer.address

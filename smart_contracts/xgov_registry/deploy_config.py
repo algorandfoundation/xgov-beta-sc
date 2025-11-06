@@ -147,7 +147,7 @@ def _create_vault_signer_from_env() -> (
         return None, gh_deployer.address, gh_deployer
 
 
-def _deploy_xgov_registry() -> None:
+def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         ConfigXgovRegistryArgs,
         InitProposalContractArgs,
@@ -163,8 +163,6 @@ def _deploy_xgov_registry() -> None:
         XGovRegistryMethodCallCreateParams,
         XGovRegistryMethodCallUpdateParams,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -389,7 +387,7 @@ def _deploy_xgov_registry() -> None:
         logger.info("Skipping xGov registry configuration as requested")
 
 
-def _set_roles() -> None:
+def _set_roles(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         SetCommitteeManagerArgs,
@@ -401,8 +399,6 @@ def _set_roles() -> None:
         SetXgovSubscriberArgs,
         XGovRegistryFactory,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -521,15 +517,13 @@ def _set_roles() -> None:
         raise
 
 
-def _configure_xgov_registry() -> None:
+def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         ConfigXgovRegistryArgs,
         XGovRegistryConfig,
         XGovRegistryFactory,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -683,16 +677,118 @@ def _configure_xgov_registry() -> None:
         raise
 
 
+def _pause_or_resume(algorand_client: AlgorandClient) -> None:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        APP_SPEC,
+        XGovRegistryFactory,
+    )
+
+    # Try to create Vault signer first, fallback to environment if not available
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
+    )
+
+    factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=XGovRegistryFactory,
+        default_sender=deployer_address,
+        default_signer=(
+            vault_signer
+            if vault_signer
+            else (gh_deployer.signer if gh_deployer else None)
+        ),
+    )
+
+    app_client = factory.get_app_client_by_creator_and_name(
+        creator_address=gh_deployer.address,
+        app_name=APP_SPEC.name,
+    )
+
+    pause_proposals = (
+        os.environ.get("XGOV_REG_PAUSE_PROPOSALS", "false").lower() == "true"
+    )
+    resume_proposals = (
+        os.environ.get("XGOV_REG_RESUME_PROPOSALS", "false").lower() == "true"
+    )
+    pause_registry = (
+        os.environ.get("XGOV_REG_PAUSE_REGISTRY", "false").lower() == "true"
+    )
+    resume_registry = (
+        os.environ.get("XGOV_REG_RESUME_REGISTRY", "false").lower() == "true"
+    )
+    try:
+        group = app_client.new_group()
+        if pause_proposals:
+            logger.info("Pausing proposals")
+            group.pause_proposals(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if resume_proposals:
+            logger.info("Resuming proposals")
+            group.resume_proposals(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if pause_registry:
+            logger.info("Pausing registry")
+            group.pause_registry(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        if resume_registry:
+            logger.info("Resuming registry")
+            group.resume_registry(
+                params=CommonAppCallParams(
+                    sender=deployer_address,
+                    signer=(
+                        vault_signer
+                        if vault_signer
+                        else (gh_deployer.signer if gh_deployer else None)
+                    ),
+                ),
+            )
+        group.send()
+        logger.info("Pause/Resume operations completed successfully")
+    except Exception as e:
+        logger.error(f"Failed to pause/resume: {e}")
+        raise
+
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
+    algorand_client = AlgorandClient.from_environment()
+    algorand_client.set_default_validity_window(100)
     if command == "deploy":
-        _deploy_xgov_registry()
+        _deploy_xgov_registry(algorand_client)
     elif command == "set_roles":
-        _set_roles()
+        _set_roles(algorand_client)
     elif command == "configure_xgov_registry":
-        _configure_xgov_registry()
+        _configure_xgov_registry(algorand_client)
+    elif command == "pause_or_resume":
+        _pause_or_resume(algorand_client)
     else:
         raise ValueError(
-            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry"
+            f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
+            f"pause_or_resume"
         )

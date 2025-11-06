@@ -283,6 +283,7 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
             "status": STATUS_REVIEWED,
             **committee_defaults,
             **voter_defaults,
+            "locked_amount": 0,
         },
         STATUS_BLOCKED: {
             "status": STATUS_BLOCKED,

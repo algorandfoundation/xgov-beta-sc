@@ -10,7 +10,6 @@ from algokit_utils import (
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     ApproveSubscribeXgovArgs,
-    GetRequestBoxArgs,
     RequestSubscribeXgovArgs,
     XGovRegistryClient,
 )
@@ -48,9 +47,9 @@ def test_request_subscribe_xgov_success(
     final_request_id = xgov_registry_client.state.global_state.request_id
     assert final_request_id == initial_request_id + 1
 
-    request_box = xgov_registry_client.send.get_request_box(
-        args=GetRequestBoxArgs(request_id=initial_request_id)
-    ).abi_return
+    request_box = xgov_registry_client.state.box.request_box.get_value(
+        initial_request_id
+    )
 
     assert request_box.owner_addr == owner_address
     assert request_box.xgov_addr == xgov_address
