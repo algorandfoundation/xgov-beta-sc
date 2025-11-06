@@ -147,7 +147,7 @@ def _create_vault_signer_from_env() -> (
         return None, gh_deployer.address, gh_deployer
 
 
-def _deploy_xgov_registry() -> None:
+def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         ConfigXgovRegistryArgs,
         InitProposalContractArgs,
@@ -163,8 +163,6 @@ def _deploy_xgov_registry() -> None:
         XGovRegistryMethodCallCreateParams,
         XGovRegistryMethodCallUpdateParams,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -389,7 +387,7 @@ def _deploy_xgov_registry() -> None:
         logger.info("Skipping xGov registry configuration as requested")
 
 
-def _set_roles() -> None:
+def _set_roles(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         SetCommitteeManagerArgs,
@@ -401,8 +399,6 @@ def _set_roles() -> None:
         SetXgovSubscriberArgs,
         XGovRegistryFactory,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -521,15 +517,13 @@ def _set_roles() -> None:
         raise
 
 
-def _configure_xgov_registry() -> None:
+def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         ConfigXgovRegistryArgs,
         XGovRegistryConfig,
         XGovRegistryFactory,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -683,13 +677,11 @@ def _configure_xgov_registry() -> None:
         raise
 
 
-def pause_or_resume() -> None:
+def _pause_or_resume(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         XGovRegistryFactory,
     )
-
-    algorand_client = AlgorandClient.from_environment()
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
@@ -785,14 +777,16 @@ def pause_or_resume() -> None:
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
+    algorand_client = AlgorandClient.from_environment()
+    algorand_client.set_default_validity_window(100)
     if command == "deploy":
-        _deploy_xgov_registry()
+        _deploy_xgov_registry(algorand_client)
     elif command == "set_roles":
-        _set_roles()
+        _set_roles(algorand_client)
     elif command == "configure_xgov_registry":
-        _configure_xgov_registry()
+        _configure_xgov_registry(algorand_client)
     elif command == "pause_or_resume":
-        pause_or_resume()
+        _pause_or_resume(algorand_client)
     else:
         raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
