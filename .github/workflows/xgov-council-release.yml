@@ -58,7 +58,7 @@ jobs:
           VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
           echo "Extracted version from pyproject.toml: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=council-v$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create council release tag
         run: |
