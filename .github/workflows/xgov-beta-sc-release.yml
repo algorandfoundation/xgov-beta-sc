@@ -81,8 +81,8 @@ jobs:
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Deploy to mainnet
-        run: algokit project deploy mainnet
+      - name: Deploy registry to mainnet
+        run: algokit project deploy mainnet xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy
