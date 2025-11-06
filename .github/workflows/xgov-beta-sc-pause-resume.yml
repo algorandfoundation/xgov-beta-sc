@@ -45,7 +45,7 @@ jobs:
         uses: ./.github/actions/algokit-setup
 
       - name: Pause or Resume xgov Registry Smart Contract
-        run: algokit project deploy ${{ github.event.inputs.network }}
+        run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: pause_or_resume
