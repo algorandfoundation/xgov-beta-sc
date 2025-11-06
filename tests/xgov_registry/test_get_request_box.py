@@ -13,8 +13,8 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 
 
 def test_get_request_box_exists_success(
-    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
     xgov_registry_client: XGovRegistryClient,
+    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
 ) -> None:
     request_id = xgov_registry_client.state.global_state.request_id - 1
     result = xgov_registry_client.send.get_request_box(

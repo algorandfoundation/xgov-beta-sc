@@ -29,12 +29,12 @@ from tests.proposal.common import (
 
 
 def test_finalize_empty_proposal(
-    proposal_client: ProposalClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.finalize_proposal(
         args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
@@ -65,12 +65,12 @@ def test_finalize_empty_proposal(
 
 
 def test_finalize_draft_proposal(
-    draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
-    proposer: SigningAccount,
     min_fee_times_4: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     locked_amount = draft_proposal_client.state.global_state.locked_amount
     proposer_balance = algorand_client.account.get_information(
@@ -112,12 +112,12 @@ def test_finalize_draft_proposal(
 
 
 def test_finalize_submitted_proposal(
-    submitted_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
-    proposer: SigningAccount,
     min_fee_times_2: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -129,12 +129,12 @@ def test_finalize_submitted_proposal(
 
 
 def test_finalize_voting_proposal(
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    min_fee_times_2: AlgoAmount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -146,12 +146,12 @@ def test_finalize_voting_proposal(
 
 
 def test_finalize_approved_proposal(
-    approved_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    approved_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -163,12 +163,12 @@ def test_finalize_approved_proposal(
 
 
 def test_finalize_reviewed_proposal(
-    reviewed_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    reviewed_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
@@ -180,12 +180,12 @@ def test_finalize_reviewed_proposal(
 
 
 def test_finalize_success_rejected_proposal(
-    rejected_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
@@ -225,12 +225,12 @@ def test_finalize_success_rejected_proposal(
 
 
 def test_finalize_success_blocked_proposal(
-    blocked_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    blocked_proposal_client: ProposalClient,
 ) -> None:
     composer = blocked_proposal_client.new_group()
     unassign_voters(
@@ -275,12 +275,12 @@ def test_finalize_success_blocked_proposal(
 
 
 def test_finalize_success_funded_proposal(
-    funded_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    xgov_daemon: SigningAccount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    funded_proposal_client: ProposalClient,
 ) -> None:
     composer = funded_proposal_client.new_group()
     unassign_voters(
@@ -325,12 +325,12 @@ def test_finalize_success_funded_proposal(
 
 
 def test_finalize_not_registry(
-    rejected_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    committee: list[CommitteeMember],
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
@@ -347,13 +347,13 @@ def test_finalize_not_registry(
 
 
 def test_finalize_wrong_box_ref(
-    rejected_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
-    min_fee_times_2: AlgoAmount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(

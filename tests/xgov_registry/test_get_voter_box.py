@@ -7,8 +7,7 @@ from tests.common import CommitteeMember
 
 
 def test_get_voter_box_exists_success(
-    voting_proposal_client: ProposalClient,
-    committee: list[CommitteeMember],
+    committee: list[CommitteeMember], voting_proposal_client: ProposalClient
 ) -> None:
     result = voting_proposal_client.send.get_voter_box(
         args=GetVoterBoxArgs(voter_address=committee[0].account.address)
@@ -30,8 +29,7 @@ def test_get_voter_box_exists_success(
 
 
 def test_get_voter_box_not_exists_success(
-    voting_proposal_client: ProposalClient,
-    committee: list[CommitteeMember],
+    committee: list[CommitteeMember], voting_proposal_client: ProposalClient
 ) -> None:
     result = voting_proposal_client.send.get_voter_box(
         args=GetVoterBoxArgs(voter_address=ZERO_ADDRESS),

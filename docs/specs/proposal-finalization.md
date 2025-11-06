@@ -8,8 +8,6 @@ If the Proposal is Funded:
 
 - The requested amount **MUST BE** transferred from the xGov Treasury to its Proposer.
 
-- The Commitment Lock **MUST** be returned to the Proposer.
-
 ## Finalize
 
 The xGov Daemon **SHOULD** finalize:

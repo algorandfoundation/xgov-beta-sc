@@ -64,10 +64,10 @@ def test_subscribe_xgov_success(
 
 def test_app_subscribe_xgov_success(
     algorand_client: AlgorandClient,
-    no_role_account: SigningAccount,
     min_fee_times_3: AlgoAmount,
-    xgov_subscriber_app: XGovSubscriberAppMockClient,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
+    xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
     initial_xgovs = xgov_registry_client.state.global_state.xgovs
     initial_amount = algorand_client.account.get_information(

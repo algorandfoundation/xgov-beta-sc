@@ -25,10 +25,10 @@ from tests.utils import time_warp
 def test_vote_success(
     algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -64,9 +64,9 @@ def test_vote_success(
 
 def test_vote_not_committee_member(
     min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.VOTER_NOT_FOUND):
         xgov_registry_mock_client.send.vote(
@@ -81,12 +81,12 @@ def test_vote_not_committee_member(
 
 
 def test_vote_already_voted(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -133,9 +133,9 @@ def test_vote_already_voted(
 
 def test_vote_empty_proposal(
     min_fee_times_2: AlgoAmount,
-    proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.vote(
@@ -151,10 +151,9 @@ def test_vote_empty_proposal(
 
 def test_vote_draft_proposal(
     min_fee_times_2: AlgoAmount,
-    draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.vote(
@@ -170,10 +169,9 @@ def test_vote_draft_proposal(
 
 def test_vote_submitted_proposal(
     min_fee_times_2: AlgoAmount,
-    submitted_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.vote(
@@ -188,12 +186,12 @@ def test_vote_submitted_proposal(
 
 
 def test_vote_voting_expired(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -233,12 +231,12 @@ def test_vote_voting_expired(
 
 
 def test_vote_reject(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -278,12 +276,12 @@ def test_vote_reject(
 
 
 def test_vote_null(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -323,12 +321,12 @@ def test_vote_null(
 
 
 def test_vote_mixed(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -391,12 +389,12 @@ def test_vote_mixed(
 
 
 def test_vote_mixed_same_vote_call(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -430,12 +428,12 @@ def test_vote_mixed_same_vote_call(
 
 
 def test_vote_exceeded(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.VOTES_EXCEEDED):
         xgov_registry_mock_client.send.vote(

@@ -25,10 +25,10 @@ from tests.proposal.common import (
 
 def test_submit_success(
     algorand_client: AlgorandClient,
+    proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
     draft_proposal_client: ProposalClient,
-    proposer: SigningAccount,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -59,12 +59,12 @@ def test_submit_success(
 
 
 def test_submit_not_proposer(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     no_role_account: SigningAccount,
+    proposer: SigningAccount,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         submit_proposal(
@@ -87,11 +87,11 @@ def test_submit_not_proposer(
 
 
 def test_submit_empty_proposal(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(
         LogicError,
@@ -109,11 +109,11 @@ def test_submit_empty_proposal(
 
 
 def test_submit_twice(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     submit_proposal(
         proposal_client=draft_proposal_client,
@@ -139,11 +139,11 @@ def test_submit_twice(
 
 
 def test_submit_too_early(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.TOO_EARLY):
         submit_proposal(
@@ -167,11 +167,11 @@ def test_submit_too_early(
 
 
 def test_submit_no_metadata(
-    proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
 
     open_proposal(
@@ -189,11 +189,11 @@ def test_submit_no_metadata(
 
 
 def test_submit_paused_registry_error(
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
     proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 

@@ -36,8 +36,8 @@ from tests.proposal.common import (
 
 def test_open_success(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
 
@@ -59,8 +59,8 @@ def test_open_success(
 def test_open_not_proposer(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
@@ -84,8 +84,8 @@ def test_open_not_proposer(
 
 def test_open_twice(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
 
@@ -113,8 +113,8 @@ def test_open_twice(
 
 def test_open_wrong_title_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_TITLE_LENGTH):
@@ -139,8 +139,8 @@ def test_open_wrong_title_1(
 
 def test_open_wrong_title_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_TITLE_LENGTH):
@@ -165,8 +165,8 @@ def test_open_wrong_title_2(
 
 def test_open_wrong_funding_type_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_FUNDING_TYPE):
@@ -191,8 +191,8 @@ def test_open_wrong_funding_type_1(
 
 def test_open_wrong_funding_type_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_FUNDING_TYPE):
@@ -217,8 +217,8 @@ def test_open_wrong_funding_type_2(
 
 def test_open_wrong_requested_amount_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = REQUESTED_AMOUNT - AlgoAmount(micro_algo=1)
@@ -246,8 +246,8 @@ def test_open_wrong_requested_amount_1(
 
 def test_open_wrong_requested_amount_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE + 1)
@@ -275,8 +275,8 @@ def test_open_wrong_requested_amount_2(
 
 def test_open_wrong_payment_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     locked_amount = AlgoAmount(micro_algo=LOCKED_AMOUNT.micro_algo - 1)
@@ -302,8 +302,8 @@ def test_open_wrong_payment_1(
 
 def test_open_wrong_payment_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     locked_amount = LOCKED_AMOUNT + AlgoAmount(micro_algo=1)
@@ -331,8 +331,8 @@ def test_open_wrong_payment_2(
 def test_open_wrong_payment_3(
     algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_SENDER):
@@ -357,8 +357,8 @@ def test_open_wrong_payment_3(
 
 def test_open_wrong_payment_4(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_RECEIVER):
@@ -383,8 +383,8 @@ def test_open_wrong_payment_4(
 
 def test_open_funding_category_small_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
 
@@ -405,8 +405,8 @@ def test_open_funding_category_small_1(
 
 def test_open_funding_category_small_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT + 1)
@@ -438,8 +438,8 @@ def test_open_funding_category_small_2(
 
 def test_open_funding_category_small_3(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL - 1)
@@ -471,8 +471,8 @@ def test_open_funding_category_small_3(
 
 def test_open_funding_category_small_4(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL)
@@ -504,8 +504,8 @@ def test_open_funding_category_small_4(
 
 def test_open_funding_category_medium_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_SMALL + 1)
@@ -538,8 +538,8 @@ def test_open_funding_category_medium_1(
 
 def test_open_funding_category_medium_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM - 1)
@@ -572,8 +572,8 @@ def test_open_funding_category_medium_2(
 
 def test_open_funding_category_medium_3(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM)
@@ -606,8 +606,8 @@ def test_open_funding_category_medium_3(
 
 def test_open_funding_category_large_1(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_MEDIUM + 1)
@@ -640,8 +640,8 @@ def test_open_funding_category_large_1(
 
 def test_open_funding_category_large_2(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE - 1)
@@ -674,8 +674,8 @@ def test_open_funding_category_large_2(
 
 def test_open_funding_category_large_3(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE)
@@ -708,8 +708,8 @@ def test_open_funding_category_large_3(
 
 def test_open_paused_registry_error(
     algorand_client: AlgorandClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     proposal_client: ProposalClient,
 ) -> None:
     requested_amount = AlgoAmount(micro_algo=MAX_REQUESTED_AMOUNT_LARGE)

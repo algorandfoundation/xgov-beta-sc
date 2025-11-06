@@ -89,8 +89,8 @@ def test_withdraw_balance_success(
 
 
 def test_withdraw_balance_not_manager(
-    no_role_account: SigningAccount,
     min_fee_times_2: AlgoAmount,
+    no_role_account: SigningAccount,
     funded_xgov_registry_client: XGovRegistryClient,
 ) -> None:
     """

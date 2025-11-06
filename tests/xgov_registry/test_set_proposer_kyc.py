@@ -11,8 +11,8 @@ from tests.xgov_registry.common import UNLIMITED_KYC_EXPIRATION
 
 def test_set_proposer_kyc_success(
     kyc_provider: SigningAccount,
-    proposer_no_kyc: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
+    proposer_no_kyc: SigningAccount,
 ) -> None:
     xgov_registry_client.send.set_proposer_kyc(
         args=SetProposerKycArgs(
@@ -32,8 +32,8 @@ def test_set_proposer_kyc_success(
 
 def test_set_proposer_kyc_not_kyc_provider(
     no_role_account: SigningAccount,
-    proposer_no_kyc: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
+    proposer_no_kyc: SigningAccount,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.set_proposer_kyc(
@@ -47,8 +47,8 @@ def test_set_proposer_kyc_not_kyc_provider(
 
 
 def test_set_proposer_kyc_not_a_proposer(
-    no_role_account: SigningAccount,
     kyc_provider: SigningAccount,
+    no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.PROPOSER_DOES_NOT_EXIST):
