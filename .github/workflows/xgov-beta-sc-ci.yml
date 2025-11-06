@@ -45,7 +45,7 @@ jobs:
 
       - if: ${{ github.actor != 'dependabot[bot]' }}
         name: Run deployer against LocalNet
-        run: algokit project deploy localnet
+        run: algokit project deploy localnet xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy

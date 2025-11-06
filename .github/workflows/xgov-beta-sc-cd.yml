@@ -138,7 +138,7 @@ jobs:
         uses: ./.github/actions/algokit-setup
 
       - name: Deploy to testnet
-        run: algokit project deploy testnet
+        run: algokit project deploy testnet xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy
