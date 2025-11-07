@@ -247,8 +247,8 @@ def blocked_proposal_client(
 @pytest.fixture(scope="function")
 def funded_proposal_client(
     min_fee_times_3: AlgoAmount,
-    reviewed_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    reviewed_proposal_client: ProposalClient,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
