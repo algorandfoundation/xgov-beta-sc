@@ -16,7 +16,7 @@ from tests.utils import ERROR_TO_REGEX
 
 def test_add_member_success(
     algorand_client: AlgorandClient,
-    deployer: SigningAccount,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
     council_client: CouncilClient,
 ) -> None:
@@ -28,8 +28,8 @@ def test_add_member_success(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -59,7 +59,7 @@ def test_add_member_not_admin(
 
 def test_add_member_already_member(
     algorand_client: AlgorandClient,
-    deployer: SigningAccount,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
     council_client: CouncilClient,
 ) -> None:
@@ -68,8 +68,8 @@ def test_add_member_already_member(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -79,8 +79,8 @@ def test_add_member_already_member(
                 address=no_role_account.address,
             ),
             params=CommonAppCallParams(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=committee_manager.address,
+                signer=committee_manager.signer,
                 note=b"meh",
             ),
         )

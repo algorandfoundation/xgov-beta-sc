@@ -77,6 +77,12 @@ class Council(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_MANAGER))
         )
 
+    @subroutine
+    def is_committee_manager(self) -> bool:
+        return Txn.sender == Account(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_MANAGER))
+        )
+
     @arc4.abimethod(create="require")
     def create(self, registry_id: UInt64) -> None:
         """
@@ -114,11 +120,11 @@ class Council(
             address: The address of the member to add.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the admin.
+            err.UNAUTHORIZED: If the sender is not the xGov committee manager.
             err.VOTER_ALREADY_ASSIGNED: If the address is already a member.
         """
 
-        assert self.is_manager(), err.UNAUTHORIZED
+        assert self.is_committee_manager(), err.UNAUTHORIZED
         assert address.native not in self.members, err.VOTER_ALREADY_ASSIGNED
 
         self.members[address.native] = typ.Empty()
@@ -133,11 +139,11 @@ class Council(
             address: The address of the member to remove.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the admin.
+            err.UNAUTHORIZED: If the sender is not the xGov committee manager.
             err.VOTER_NOT_FOUND: If the address is not a member.
         """
 
-        assert self.is_manager(), err.UNAUTHORIZED
+        assert self.is_committee_manager(), err.UNAUTHORIZED
         assert address.native in self.members, err.VOTER_NOT_FOUND
 
         del self.members[address.native]
