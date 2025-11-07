@@ -1,18 +1,13 @@
 import typing
 import typing as t
 
-from algopy import arc4
+from algopy import UInt64, arc4
 
 # corresponds to COMMITTEE_ID_LENGTH in ./constants.py. We cannot use a variable here because as it causes type errors
 # which fails compilation.
 Bytes32 = arc4.StaticArray[arc4.Byte, typing.Literal[32]]
 
 Error = arc4.String
-
-
-class VoterBox(arc4.Struct, kw_only=True):
-    votes: arc4.UInt64  # Outstanding votes to be used as Approval or Rejection
-    voted: arc4.Bool  # Whether the voter has voted
 
 
 class ProposalTypedGlobalState(arc4.Struct):
