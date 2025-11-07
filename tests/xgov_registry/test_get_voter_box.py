@@ -1,8 +1,11 @@
 import pytest
 from algosdk.constants import ZERO_ADDRESS
 from algosdk.error import AlgodHTTPError
-from smart_contracts.artifacts.proposal.proposal_client import GetVoterBoxArgs, ProposalClient
 
+from smart_contracts.artifacts.proposal.proposal_client import (
+    GetVoterBoxArgs,
+    ProposalClient,
+)
 from tests.common import CommitteeMember
 
 

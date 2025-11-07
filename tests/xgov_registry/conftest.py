@@ -72,7 +72,7 @@ from tests.xgov_registry.common import (
 )
 
 
-@pytest.fixture(scope="session")  # type: ignore
+@pytest.fixture(scope="function")  # type: ignore
 def xgov_registry_config_dict() -> dict:  # type: ignore
     return {  # type: ignore
         "xgov_fee": regcfg.XGOV_FEE,
@@ -111,7 +111,7 @@ def xgov_registry_config_dict() -> dict:  # type: ignore
     }
 
 
-@pytest.fixture(scope="session")  # type: ignore
+@pytest.fixture(scope="function")  # type: ignore
 def xgov_registry_config(xgov_registry_config_dict: dict) -> XGovRegistryConfig:  # type: ignore
     return XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
 

@@ -159,7 +159,9 @@ def test_unassign_funded_not_daemon(
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
         voters_count=0 if not voters_count else voters_count - 1,
-        assigned_votes=0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES,
+        assigned_votes=(
+            0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES
+        ),
     )
 
 
@@ -191,7 +193,9 @@ def test_unassign_blocked_not_daemon(
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
         voters_count=0 if not voters_count else voters_count - 1,
-        assigned_votes=0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES,
+        assigned_votes=(
+            0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES
+        ),
     )
 
 

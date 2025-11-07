@@ -138,7 +138,7 @@ class Proposal(
         self.voters = BoxMap(
             Account,
             UInt64,  # The specs define votes as UInt32 for box-size efficiency
-            key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
+            key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX,
         )
         self.metadata = Box(
             Bytes,
@@ -814,9 +814,7 @@ class Proposal(
 
         self.voted_members.value += 1
 
-        nulls = (
-            votes - approvals.as_uint64() - rejections.as_uint64()
-        )
+        nulls = votes - approvals.as_uint64() - rejections.as_uint64()
 
         self.approvals.value += approvals.as_uint64()
         self.rejections.value += rejections.as_uint64()

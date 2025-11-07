@@ -1,7 +1,7 @@
 import typing
 import typing as t
 
-from algopy import UInt64, arc4
+from algopy import arc4
 
 # corresponds to COMMITTEE_ID_LENGTH in ./constants.py. We cannot use a variable here because as it causes type errors
 # which fails compilation.

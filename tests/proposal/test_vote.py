@@ -7,7 +7,10 @@ from algokit_utils import (
     SigningAccount,
 )
 
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient, GetVoterBoxArgs
+from smart_contracts.artifacts.proposal.proposal_client import (
+    GetVoterBoxArgs,
+    ProposalClient,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     VoteArgs,
     XgovRegistryMockClient,
@@ -262,7 +265,7 @@ def test_vote_reject(
                 "AAAAAAAAAAo=",
             )
             for cm in committee[1:]
-        ]
+        ],
     )
 
     _, exists = voting_proposal_client.send.get_voter_box(
@@ -311,7 +314,7 @@ def test_vote_null(
                 "AAAAAAAAAAo=",
             )
             for cm in committee[1:]
-        ]
+        ],
     )
 
     _, exists = voting_proposal_client.send.get_voter_box(
@@ -370,7 +373,10 @@ def test_vote_mixed(
         rejections=committee[0].votes,
         nulls=committee[0].votes,
         voters_count=voters_count - 3,
-        assigned_votes=assigned_votes - committee[0].votes - committee[1].votes - committee[2].votes,
+        assigned_votes=assigned_votes
+        - committee[0].votes
+        - committee[1].votes
+        - committee[2].votes,
     )
 
     assert_boxes(
@@ -382,7 +388,7 @@ def test_vote_mixed(
                 "AAAAAAAAAAo=",
             )
             for cm in committee[3:]
-        ]
+        ],
     )
 
     for cm in committee[:3]:
@@ -421,7 +427,7 @@ def test_vote_mixed_same_vote_call(
         approvals=6,
         rejections=4,
         voters_count=voters_count - 1,
-        assigned_votes=assigned_votes - committee[0].votes
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
     _, exists = voting_proposal_client.send.get_voter_box(

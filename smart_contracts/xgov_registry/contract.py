@@ -278,7 +278,10 @@ class XGovRegistry(
 
     @subroutine
     def set_max_committee_size(
-        self, open_proposal_fee: UInt64, daemon_ops_funding_bps: UInt64
+        self,
+        open_proposal_fee: UInt64,
+        daemon_ops_funding_bps: UInt64,
+        voter_mbr: UInt64,
     ) -> None:
         """
         Sets the maximum committee size based on the open proposal fee.
@@ -286,6 +289,7 @@ class XGovRegistry(
         Args:
             open_proposal_fee (UInt64): The open proposal fee to calculate the maximum committee size
             daemon_ops_funding_bps (UInt64): The basis points for daemon operations funding
+            voter_mbr (UInt64): Voter Box MBR
         """
 
         daemon_ops_funding = self.relative_to_absolute_amount(
@@ -300,11 +304,7 @@ class XGovRegistry(
 
         mbr_available_for_committee = open_proposal_fee - to_substract
 
-        per_voter_mbr = self.calc_box_map_mbr(
-            self.voters.key_prefix.length, size_of(Account), size_of(UInt64)
-        )
-
-        self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
+        self.max_committee_size.value = mbr_available_for_committee // voter_mbr
 
     @subroutine
     def decrement_pending_proposals(self, proposal_id: UInt64) -> None:
@@ -578,6 +578,8 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
         assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
+        # ⚠️ WARNING: Any update that modifies Box MBRs must be followed by a
+        # reconfiguration of the Registry to ensure consistency
         xgov_box_mbr = self.calc_box_map_mbr(
             self.xgov_box.key_prefix.length,
             size_of(Account),
@@ -594,6 +596,12 @@ class XGovRegistry(
             self.proposer_box.key_prefix.length,
             size_of(Account),
             size_of(typ.ProposerBoxValue),
+        )
+
+        voter_mbr = self.calc_box_map_mbr(
+            self.voters.key_prefix.length,
+            size_of(Account),
+            size_of(UInt64),
         )
 
         assert (
@@ -615,7 +623,34 @@ class XGovRegistry(
         self.set_max_committee_size(
             config.open_proposal_fee.as_uint64(),
             config.daemon_ops_funding_bps.as_uint64(),
+            voter_mbr,
         )
+
+        assert (
+            config.discussion_duration[0].as_uint64()
+            <= config.discussion_duration[1].as_uint64()
+            <= config.discussion_duration[2].as_uint64()
+            <= config.discussion_duration[3].as_uint64()
+        ), err.INCOSISTENT_DISCUSSION_DURATION_CONFIG
+
+        assert (
+            config.voting_duration[0].as_uint64()
+            <= config.voting_duration[1].as_uint64()
+            <= config.voting_duration[2].as_uint64()
+            <= config.voting_duration[3].as_uint64()
+        ), err.INCOSISTENT_VOTING_DURATION_CONFIG
+
+        assert (
+            config.quorum[0].as_uint64()
+            < config.quorum[1].as_uint64()
+            < config.quorum[2].as_uint64()
+        ), err.INCOSISTENT_QUORUM_CONFIG
+
+        assert (
+            config.weighted_quorum[0].as_uint64()
+            < config.weighted_quorum[1].as_uint64()
+            < config.weighted_quorum[2].as_uint64()
+        ), err.INCOSISTENT_WEIGHTED_QUORUM_CONFIG
 
         self.xgov_fee.value = config.xgov_fee.as_uint64()
         self.proposer_fee.value = config.proposer_fee.as_uint64()

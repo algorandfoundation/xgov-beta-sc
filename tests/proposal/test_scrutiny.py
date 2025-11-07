@@ -991,7 +991,9 @@ def test_scrutiny_after_time_approve_small_5(
 
     members_for_quorums = members_for_both_quorums(voting_proposal_client, committee)
     assert voters >= members_for_quorums
-    assert voters <= len(committee)  # We need at least 10 voting members to approve and 9 to abstain
+    assert voters <= len(
+        committee
+    )  # We need at least 10 voting members to approve and 9 to abstain
     for cm in committee[:num_of_approvals]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
@@ -1003,7 +1005,7 @@ def test_scrutiny_after_time_approve_small_5(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    for cm in committee[num_of_approvals : voters]:
+    for cm in committee[num_of_approvals:voters]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
