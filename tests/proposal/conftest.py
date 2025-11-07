@@ -37,6 +37,7 @@ from tests.proposal.common import (
     open_proposal,
     quorums_reached,
     submit_proposal,
+    unassign_voters,
 )
 from tests.utils import time_warp
 
@@ -187,7 +188,7 @@ def approved_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     voted_members, total_votes, member_idx = 0, 0, 0
-    while not quorums_reached(voting_proposal_client, voted_members, total_votes):
+    while not quorums_reached(voting_proposal_client, voted_members, total_votes, plebiscite=False):
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
@@ -210,6 +211,16 @@ def approved_proposal_client(
     voting_proposal_client.send.scrutiny(
         params=CommonAppCallParams(sender=no_role_account.address)
     )
+
+    # Unassign absentees (if any)
+    if voted_members < len(committee):
+        composer = voting_proposal_client.new_group()
+        unassign_voters(
+            composer,
+            committee,
+            no_role_account,
+        )
+        composer.send()
 
     return voting_proposal_client
 
