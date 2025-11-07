@@ -413,8 +413,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -481,8 +479,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -549,8 +545,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -617,8 +611,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -685,8 +677,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
