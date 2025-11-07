@@ -147,6 +147,8 @@ def test_fund_success(
         ),
     )
 
+    voters_count = reviewed_proposal_client.state.global_state.voters_count
+    assigned_votes = reviewed_proposal_client.state.global_state.assigned_votes
     assert_funded_proposal_global_state(
         reviewed_proposal_client,
         proposer.address,
@@ -156,6 +158,8 @@ def test_fund_success(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voters_count=voters_count,
+        assigned_votes=assigned_votes,
     )
 
     assert_account_balance(
@@ -185,6 +189,8 @@ def test_fund_twice(
         ),
     )
 
+    voters_count = reviewed_proposal_client.state.global_state.voters_count
+    assigned_votes = reviewed_proposal_client.state.global_state.assigned_votes
     assert_funded_proposal_global_state(
         reviewed_proposal_client,
         proposer.address,
@@ -194,6 +200,8 @@ def test_fund_twice(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voters_count=voters_count,
+        assigned_votes=assigned_votes,
     )
 
     assert_account_balance(

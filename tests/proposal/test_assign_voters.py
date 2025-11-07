@@ -59,7 +59,7 @@ def test_assign_voters_success(
         + [
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee
         ],
@@ -200,7 +200,7 @@ def test_assign_voters_voting_open(
         + [
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee
         ],
@@ -328,7 +328,7 @@ def test_assign_voters_more_than_allowed(
         + [
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in [*committee, committee_member]
         ],

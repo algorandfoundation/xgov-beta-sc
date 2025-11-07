@@ -139,6 +139,8 @@ def test_unassign_funded_not_daemon(
     xgov_registry_mock_client: XgovRegistryMockClient,
     funded_proposal_client: ProposalClient,
 ) -> None:
+    voters_count = funded_proposal_client.state.global_state.voters_count
+    assigned_votes = funded_proposal_client.state.global_state.assigned_votes
     composer = funded_proposal_client.new_group()
     unassign_voters(
         composer,
@@ -156,8 +158,8 @@ def test_unassign_funded_not_daemon(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1),
-        voters_count=len(committee) - 1,
+        voters_count=0 if not voters_count else voters_count - 1,
+        assigned_votes=0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES,
     )
 
 
@@ -169,6 +171,8 @@ def test_unassign_blocked_not_daemon(
     xgov_registry_mock_client: XgovRegistryMockClient,
     blocked_proposal_client: ProposalClient,
 ) -> None:
+    voters_count = blocked_proposal_client.state.global_state.voters_count
+    assigned_votes = blocked_proposal_client.state.global_state.assigned_votes
     composer = blocked_proposal_client.new_group()
     unassign_voters(
         composer,
@@ -186,8 +190,8 @@ def test_unassign_blocked_not_daemon(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1),
-        voters_count=len(committee) - 1,
+        voters_count=0 if not voters_count else voters_count - 1,
+        assigned_votes=0 if not assigned_votes else assigned_votes - DEFAULT_MEMBER_VOTES,
     )
 
 

@@ -122,6 +122,8 @@ def test_review_success(
         proposer.address
     ).amount.micro_algo
     locked_amount = approved_proposal_client.state.global_state.locked_amount
+    voters_count = approved_proposal_client.state.global_state.voters_count
+    assigned_votes = approved_proposal_client.state.global_state.assigned_votes
 
     approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
@@ -139,6 +141,8 @@ def test_review_success(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voters_count=voters_count,
+        assigned_votes=assigned_votes,
     )
 
     assert_account_balance(
@@ -175,6 +179,8 @@ def test_review_twice(
             ),
         )
 
+    voters_count = approved_proposal_client.state.global_state.voters_count
+    assigned_votes = approved_proposal_client.state.global_state.assigned_votes
     assert_reviewed_proposal_global_state(
         approved_proposal_client,
         proposer_address=proposer.address,
@@ -184,6 +190,8 @@ def test_review_twice(
         ),  # by default, the xGov Committee approves by plebiscite
         approvals=DEFAULT_MEMBER_VOTES
         * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voters_count=voters_count,
+        assigned_votes=assigned_votes,
     )
 
 
