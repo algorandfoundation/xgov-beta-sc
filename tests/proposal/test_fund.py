@@ -153,7 +153,7 @@ def test_fund_success(
         proposer.address,
         xgov_registry_mock_client.app_id,
         voted_members=voted_members,
-        approvals=DEFAULT_MEMBER_VOTES* voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     assert_account_balance(

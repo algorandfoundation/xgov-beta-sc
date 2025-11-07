@@ -15,9 +15,7 @@ from smart_contracts.errors import std_errors as err
 from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_approved_proposal_global_state,
-    assert_blocked_proposal_global_state,
     assert_final_proposal_global_state,
-    assert_funded_proposal_global_state,
     assert_rejected_proposal_global_state,
     assign_voters,
     unassign_voters,

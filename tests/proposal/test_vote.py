@@ -16,7 +16,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import CommitteeMember, DEFAULT_MEMBER_VOTES
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_boxes,
     assert_voting_proposal_global_state,
