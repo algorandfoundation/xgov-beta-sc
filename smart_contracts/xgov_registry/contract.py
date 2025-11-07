@@ -176,7 +176,7 @@ class XGovRegistry(
         # declared here just for MBR calculation purposes, not to be used
         self.voters = BoxMap(
             Account,
-            typ.VoterBox,
+            UInt64,
             key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
@@ -301,7 +301,7 @@ class XGovRegistry(
         mbr_available_for_committee = open_proposal_fee - to_substract
 
         per_voter_mbr = self.calc_box_map_mbr(
-            self.voters.key_prefix.length, size_of(Account), size_of(typ.VoterBox)
+            self.voters.key_prefix.length, size_of(Account), size_of(UInt64)
         )
 
         self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
@@ -1079,8 +1079,6 @@ class XGovRegistry(
                     assert False, err.MISSING_CONFIG  # noqa
                 case err.VOTER_NOT_FOUND:
                     assert False, err.VOTER_NOT_FOUND  # noqa
-                case err.VOTER_ALREADY_VOTED:
-                    assert False, err.VOTER_ALREADY_VOTED  # noqa
                 case err.VOTES_EXCEEDED:
                     assert False, err.VOTES_EXCEEDED  # noqa
                 case err.VOTING_PERIOD_EXPIRED:
