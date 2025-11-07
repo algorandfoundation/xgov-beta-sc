@@ -175,8 +175,7 @@ class Proposal(
             assert self.is_xgov_daemon(), err.UNAUTHORIZED
         else:
             assert (
-                self.status.value == enm.STATUS_FUNDED
-                or self.status.value == enm.STATUS_BLOCKED
+                self.status.value == enm.STATUS_APPROVED
                 or self.status.value == enm.STATUS_REJECTED
             ) and not self.finalized.value, err.WRONG_PROPOSAL_STATUS
 
@@ -878,9 +877,13 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the xgov council
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
             err.MISSING_CONFIG: If one of the required configuration values is missing
+            err.VOTERS_ASSIGNED: If there are still assigned voters
 
         """
         self.review_check_authorization()
+
+        # check no assigned voters
+        assert not self.voters_count, err.VOTERS_ASSIGNED
 
         if block:
             self.status.value = UInt64(enm.STATUS_BLOCKED)
