@@ -136,7 +136,9 @@ class Proposal(
 
         # Boxes
         self.voters = BoxMap(
-            Account, typ.VoterBox, key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
+            Account,
+            UInt64,  # The specs define votes as UInt32 for box-size efficiency
+            key_prefix=prop_cfg.VOTER_BOX_KEY_PREFIX
         )
         self.metadata = Box(
             Bytes,
@@ -221,11 +223,9 @@ class Proposal(
         if voter not in self.voters:
             return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
 
-        voter_box = self.voters[voter].copy()
-        if voter_box.voted:
-            return typ.Error(err.ARC_65_PREFIX + err.VOTER_ALREADY_VOTED)
+        votes = self.voters[voter]
 
-        if approvals + rejections > voter_box.votes:
+        if approvals + rejections > votes:
             return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
 
         return typ.Error("")
@@ -724,13 +724,15 @@ class Proposal(
     def _assign_voter(self, voter: Account, voting_power: UInt64) -> None:
         self.assign_voter_input_validation(voter, voting_power)
 
-        self.voters[voter] = typ.VoterBox(
-            votes=arc4.UInt64(voting_power),
-            voted=arc4.Bool(False),  # noqa: FBT003
-        )
-
+        self.voters[voter] = voting_power
         self.voters_count += 1
         self.assigned_votes += voting_power
+
+    @subroutine
+    def _unassign_voter(self, voter: Account, voting_power: UInt64) -> None:
+        self.voters_count -= 1
+        self.assigned_votes -= voting_power
+        del self.voters[voter]
 
     @arc4.abimethod()
     def assign_voters(
@@ -808,22 +810,19 @@ class Proposal(
         if error != typ.Error(""):
             return error
 
-        voter_box = self.voters[voter.native].copy()
-        self.voters[voter.native] = typ.VoterBox(
-            votes=voter_box.votes,
-            voted=arc4.Bool(True),  # noqa: FBT003
-        )
+        votes = self.voters[voter.native]
 
         self.voted_members.value += 1
 
         nulls = (
-            voter_box.votes.as_uint64() - approvals.as_uint64() - rejections.as_uint64()
+            votes - approvals.as_uint64() - rejections.as_uint64()
         )
 
         self.approvals.value += approvals.as_uint64()
         self.rejections.value += rejections.as_uint64()
         self.nulls.value += nulls
 
+        self._unassign_voter(Account(voter.bytes), votes)
         return typ.Error("")
 
     @arc4.abimethod()
@@ -946,9 +945,8 @@ class Proposal(
         # remove voters
         for voter in voters:
             if voter.native in self.voters:
-                self.voters_count -= 1
-                self.assigned_votes -= self.voters[voter.native].votes.native
-                del self.voters[voter.native]
+                votes = self.voters[voter.native]
+                self._unassign_voter(Account(voter.bytes), votes)
 
     @arc4.abimethod()
     def finalize(self) -> typ.Error:
@@ -1039,7 +1037,7 @@ class Proposal(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_voter_box(self, voter_address: arc4.Address) -> tuple[typ.VoterBox, bool]:
+    def get_voter_box(self, voter_address: arc4.Address) -> tuple[arc4.UInt64, bool]:
         """
         Returns the Voter box for the given address.
 
@@ -1047,16 +1045,16 @@ class Proposal(
             voter_address (arc4.Address): The address of the Voter
 
         Returns:
-            typ.VoterBox: The voter's box value
+            votes: The voter's votes
             bool: `True` if voter's box exists, else `False`
         """
         exists = voter_address.native in self.voters
         if exists:
-            val = self.voters[voter_address.native].copy()
+            votes = self.voters[voter_address.native]
         else:
-            val = typ.VoterBox(votes=arc4.UInt64(0), voted=arc4.Bool())
+            votes = UInt64(0)
 
-        return val.copy(), exists
+        return arc4.UInt64(votes), exists
 
     @arc4.abimethod()
     def op_up(self) -> None:
