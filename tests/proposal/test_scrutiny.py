@@ -155,8 +155,6 @@ def test_scrutiny_twice(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(committee),
         approvals=DEFAULT_MEMBER_VOTES * len(committee),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -221,8 +219,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -287,8 +283,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 
@@ -353,8 +347,6 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         rejections=DEFAULT_MEMBER_VOTES * num_of_rejections,
         nulls=DEFAULT_MEMBER_VOTES
         * (len(committee) - num_of_approvals - num_of_rejections),
-        voters_count=0,
-        assigned_votes=0,
     )
 
 

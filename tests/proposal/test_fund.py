@@ -147,19 +147,13 @@ def test_fund_success(
         ),
     )
 
-    voters_count = reviewed_proposal_client.state.global_state.voters_count
-    assigned_votes = reviewed_proposal_client.state.global_state.assigned_votes
+    voted_members = reviewed_proposal_client.state.global_state.voted_members
     assert_funded_proposal_global_state(
         reviewed_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        voted_members=len(
-            committee
-        ),  # by default, the xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by plebiscite
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES* voted_members,
     )
 
     assert_account_balance(
@@ -189,19 +183,13 @@ def test_fund_twice(
         ),
     )
 
-    voters_count = reviewed_proposal_client.state.global_state.voters_count
-    assigned_votes = reviewed_proposal_client.state.global_state.assigned_votes
+    voted_members = reviewed_proposal_client.state.global_state.voted_members
     assert_funded_proposal_global_state(
         reviewed_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
-        voted_members=len(
-            committee
-        ),  # by default, the xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by plebiscite
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     assert_account_balance(

@@ -50,6 +50,8 @@ def test_assign_voters_success(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        voters_count=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(
@@ -191,6 +193,8 @@ def test_assign_voters_voting_open(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        voters_count=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(

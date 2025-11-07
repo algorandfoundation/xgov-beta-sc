@@ -100,20 +100,14 @@ def test_block_success(
     ).amount.micro_algo
 
     locked_amount = blocked_proposal_client.state.global_state.locked_amount
-    voters_count = blocked_proposal_client.state.global_state.voters_count
-    assigned_votes = blocked_proposal_client.state.global_state.assigned_votes
+    voted_members = blocked_proposal_client.state.global_state.voted_members
 
     assert_blocked_proposal_global_state(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(
-            committee
-        ),  # by default, xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, xGov Committee approves by plebiscite
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     assert_account_balance(
@@ -137,8 +131,7 @@ def test_block_twice(
     ).amount.micro_algo
 
     locked_amount = blocked_proposal_client.state.global_state.locked_amount
-    voters_count = blocked_proposal_client.state.global_state.voters_count
-    assigned_votes = blocked_proposal_client.state.global_state.assigned_votes
+    voted_members = blocked_proposal_client.state.global_state.voted_members
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         blocked_proposal_client.send.review(
@@ -150,13 +143,8 @@ def test_block_twice(
         blocked_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voted_members=len(
-            committee
-        ),  #  by default, the xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  #  by default, the xGov Committee approves by plebiscite
-        voters_count=voters_count,
-        assigned_votes=assigned_votes,
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     assert_account_balance(

@@ -16,7 +16,7 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import CommitteeMember
+from tests.common import CommitteeMember, DEFAULT_MEMBER_VOTES
 from tests.proposal.common import (
     assert_boxes,
     assert_voting_proposal_global_state,
@@ -211,6 +211,8 @@ def test_vote_voting_expired(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        voters_count=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(
@@ -460,6 +462,8 @@ def test_vote_exceeded(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        voters_count=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(
