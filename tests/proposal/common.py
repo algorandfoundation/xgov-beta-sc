@@ -249,12 +249,6 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         "committee_votes": DEFAULT_COMMITTEE_VOTES,
     }
 
-    # Define common voter-related defaults used in multiple statuses
-    voter_defaults = {
-        "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
-        "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
-    }
-
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
         STATUS_DRAFT: {
@@ -266,35 +260,33 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         STATUS_VOTING: {
             "status": STATUS_VOTING,
             **committee_defaults,
-            **voter_defaults,
+            "voters_count": DEFAULT_COMMITTEE_MEMBERS,
+            "assigned_votes": DEFAULT_COMMITTEE_MEMBERS,
         },
         STATUS_APPROVED: {
             "status": STATUS_APPROVED,
             **committee_defaults,
-            **voter_defaults,
         },
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
             **committee_defaults,
-            **voter_defaults,
+            "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
+            "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
             "locked_amount": 0,
         },
         STATUS_REVIEWED: {
             "status": STATUS_REVIEWED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
         STATUS_BLOCKED: {
             "status": STATUS_BLOCKED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
         STATUS_FUNDED: {
             "status": STATUS_FUNDED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
     }.get(status, {})
