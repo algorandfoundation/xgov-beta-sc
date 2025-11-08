@@ -82,7 +82,7 @@ def council_client(
 
 @pytest.fixture(scope="function")
 def council_members(
-    deployer: SigningAccount,
+    committee_manager: SigningAccount,
     committee: list[CommitteeMember],
     council_client: CouncilClient,
 ) -> list[CommitteeMember]:
@@ -92,8 +92,8 @@ def council_members(
                 address=member.account.address,
             ),
             params=CommonAppCallParams(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=committee_manager.address,
+                signer=committee_manager.signer,
             ),
         )
 
