@@ -907,7 +907,7 @@ config_xgov_registry_bool_merge@10:
     //     < config.max_requested_amount[0].as_uint64()
     //     < config.max_requested_amount[1].as_uint64()
     //     < config.max_requested_amount[2].as_uint64()
-    // ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
+    // ), err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG
     assert // Inconsistent requested amount config
     // smart_contracts/xgov_registry/contract.py:629
     // config.open_proposal_fee.as_uint64(),
@@ -1027,7 +1027,7 @@ config_xgov_registry_bool_merge@15:
     //     <= config.discussion_duration[1].as_uint64()
     //     <= config.discussion_duration[2].as_uint64()
     //     <= config.discussion_duration[3].as_uint64()
-    // ), err.INCOSISTENT_DISCUSSION_DURATION_CONFIG
+    // ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
     assert // Inconsistent discussion duration config
     // smart_contracts/xgov_registry/contract.py:642
     // config.voting_duration[0].as_uint64()
@@ -1100,7 +1100,7 @@ config_xgov_registry_bool_merge@20:
     //     <= config.voting_duration[1].as_uint64()
     //     <= config.voting_duration[2].as_uint64()
     //     <= config.voting_duration[3].as_uint64()
-    // ), err.INCOSISTENT_VOTING_DURATION_CONFIG
+    // ), err.INCONSISTENT_VOTING_DURATION_CONFIG
     assert // Inconsistent voting duration config
     // smart_contracts/xgov_registry/contract.py:649
     // config.quorum[0].as_uint64()
@@ -1155,7 +1155,7 @@ config_xgov_registry_bool_merge@24:
     //     config.quorum[0].as_uint64()
     //     < config.quorum[1].as_uint64()
     //     < config.quorum[2].as_uint64()
-    // ), err.INCOSISTENT_QUORUM_CONFIG
+    // ), err.INCONSISTENT_QUORUM_CONFIG
     assert // Inconsistent quorum config
     // smart_contracts/xgov_registry/contract.py:655
     // config.weighted_quorum[0].as_uint64()
@@ -1210,7 +1210,7 @@ config_xgov_registry_bool_merge@28:
     //     config.weighted_quorum[0].as_uint64()
     //     < config.weighted_quorum[1].as_uint64()
     //     < config.weighted_quorum[2].as_uint64()
-    // ), err.INCOSISTENT_WEIGHTED_QUORUM_CONFIG
+    // ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
     assert // Inconsistent weighted quorum config
     // smart_contracts/xgov_registry/contract.py:660
     // self.xgov_fee.value = config.xgov_fee.as_uint64()
