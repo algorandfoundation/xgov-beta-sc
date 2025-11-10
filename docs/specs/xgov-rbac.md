@@ -55,11 +55,10 @@ on the xGov Registry.
 
 The xGov Daemon is an Algorand Address controlled by the Algorand Foundation (back-end).
 
-The xGov Daemon **SHALL** assign the xGov Committee currently in charge (and their
-voting power) to open Proposals.
+The xGov Daemon **SHALL** assign the xGov Committee currently in charge (voters and
+their voting power) to open Proposals.
 
-The xGov Daemon **SHALL** delete the xGov Committee assigned to a Proposal once the
-voting is over (see [Proposal Finalization section](./proposal-finalization.md)).
+The xGov Daemon **SHOULD** delete absentees (voters) after Proposals scrutiny.
 
 ## xGov Council
 
@@ -86,5 +85,5 @@ if there are enough funds in the xGov Treasury.
 
 The xGov Subscriber is an Algorand Address controlled by the Algorand Foundation.
 
-The xGov Subscriber **MAY** onboard or offboard xGovs who cannot execute a self-subscription or self-unsubscription
-(e.g., due to contract immutability or other restrictions).
+The xGov Subscriber **MAY** onboard or offboard xGovs who cannot execute a self-subscription
+or self-unsubscription (e.g., due to contract immutability or other restrictions).
