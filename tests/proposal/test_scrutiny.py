@@ -21,8 +21,8 @@ from tests.proposal.common import (
     assert_rejected_proposal_global_state,
     members_for_both_quorums,
     quorums_reached,
+    scrutinize_proposal,
 )
-from tests.utils import time_warp
 
 
 def test_scrutiny_empty_proposal(
@@ -678,15 +678,7 @@ def test_scrutiny_after_time_approve_small_1(
         total_votes += committee[member_idx].votes
         member_idx += 1
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     members_quorum = members_for_both_quorums(voting_proposal_client, committee)
     assert_approved_proposal_global_state(
@@ -742,15 +734,7 @@ def test_scrutiny_after_time_approve_small_2(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -817,15 +801,7 @@ def test_scrutiny_after_time_approve_small_3(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -895,15 +871,7 @@ def test_scrutiny_after_time_approve_small_4(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -965,15 +933,7 @@ def test_scrutiny_after_time_approve_small_5(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_approved_proposal_global_state(
         voting_proposal_client,
@@ -999,20 +959,10 @@ def test_scrutiny_after_time_reject_small_1(
     no committee members vote
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
-    reg_gs = xgov_registry_mock_client.state.global_state
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
     voters_count = voting_proposal_client.state.global_state.voters_count
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
-
     assert_rejected_proposal_global_state(
         voting_proposal_client,
         proposer_address=proposer.address,
@@ -1048,17 +998,7 @@ def test_scrutiny_after_time_reject_small_2(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1098,17 +1038,7 @@ def test_scrutiny_after_time_reject_small_3(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1159,17 +1089,7 @@ def test_scrutiny_after_time_reject_small_4(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1222,17 +1142,7 @@ def test_scrutiny_after_time_reject_small_5(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1273,17 +1183,7 @@ def test_scrutiny_after_time_reject_small_6(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1324,17 +1224,7 @@ def test_scrutiny_after_time_reject_small_7(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1375,17 +1265,7 @@ def test_scrutiny_after_time_reject_small_8(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1437,17 +1317,7 @@ def test_scrutiny_after_time_reject_small_9(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1500,17 +1370,7 @@ def test_scrutiny_after_time_reject_small_10(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -1567,17 +1427,7 @@ def test_scrutiny_after_time_reject_small_11(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = submitted_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    submitted_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
+    scrutinize_proposal(no_role_account, submitted_proposal_client, min_fee_times_2)
 
     assert_rejected_proposal_global_state(
         submitted_proposal_client,
