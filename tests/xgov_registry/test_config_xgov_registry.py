@@ -107,7 +107,7 @@ def test_config_xgov_registry_inconsistent_requested_amount(
         1_000_000,
     ]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)
@@ -128,7 +128,7 @@ def test_config_xgov_registry_min_requested_amount_not_less_than_small(
         10_000_000,
     ]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)
@@ -144,7 +144,7 @@ def test_config_xgov_registry_inconsistent_discussion_duration(
     # Test case where discussion_duration values are not in ascending order
     xgov_registry_config_dict["discussion_duration"] = [400, 300, 200, 100]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_DISCUSSION_DURATION_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_DISCUSSION_DURATION_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
@@ -159,7 +159,7 @@ def test_config_xgov_registry_inconsistent_voting_duration(
     # Test case where voting_duration values are not in ascending order
     xgov_registry_config_dict["voting_duration"] = [400, 300, 200, 100]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_VOTING_DURATION_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_VOTING_DURATION_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
@@ -174,7 +174,7 @@ def test_config_xgov_registry_inconsistent_quorum(
     # Test case where quorum values are not in ascending order
     xgov_registry_config_dict["quorum"] = [300, 200, 100]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_QUORUM_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_QUORUM_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)
@@ -190,7 +190,7 @@ def test_config_xgov_registry_inconsistent_weighted_quorum(
     # Test case where weighted_quorum values are not in ascending order
     xgov_registry_config_dict["weighted_quorum"] = [3000, 2000, 1000]  # type: ignore
 
-    with pytest.raises(LogicError, match=err.INCOSISTENT_WEIGHTED_QUORUM_CONFIG):
+    with pytest.raises(LogicError, match=err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG):
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)

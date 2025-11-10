@@ -623,7 +623,7 @@ class XGovRegistry(
             < config.max_requested_amount[0].as_uint64()
             < config.max_requested_amount[1].as_uint64()
             < config.max_requested_amount[2].as_uint64()
-        ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
+        ), err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG
 
         self.set_max_committee_size(
             config.open_proposal_fee.as_uint64(),
@@ -636,26 +636,26 @@ class XGovRegistry(
             <= config.discussion_duration[1].as_uint64()
             <= config.discussion_duration[2].as_uint64()
             <= config.discussion_duration[3].as_uint64()
-        ), err.INCOSISTENT_DISCUSSION_DURATION_CONFIG
+        ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
 
         assert (
             config.voting_duration[0].as_uint64()
             <= config.voting_duration[1].as_uint64()
             <= config.voting_duration[2].as_uint64()
             <= config.voting_duration[3].as_uint64()
-        ), err.INCOSISTENT_VOTING_DURATION_CONFIG
+        ), err.INCONSISTENT_VOTING_DURATION_CONFIG
 
         assert (
             config.quorum[0].as_uint64()
             < config.quorum[1].as_uint64()
             < config.quorum[2].as_uint64()
-        ), err.INCOSISTENT_QUORUM_CONFIG
+        ), err.INCONSISTENT_QUORUM_CONFIG
 
         assert (
             config.weighted_quorum[0].as_uint64()
             < config.weighted_quorum[1].as_uint64()
             < config.weighted_quorum[2].as_uint64()
-        ), err.INCOSISTENT_WEIGHTED_QUORUM_CONFIG
+        ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
 
         self.xgov_fee.value = config.xgov_fee.as_uint64()
         self.proposer_fee.value = config.proposer_fee.as_uint64()
