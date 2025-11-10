@@ -81,18 +81,18 @@ The Proposal Metadata Box body has no ABI schema (raw bytes).
 
 A Proposal **SHALL** be in one of the following enumerated statuses:
 
-| Status      |  Enum  | Description                                                                                                                                                            |
-|:------------|:------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `EMPTY`     |  `0`   | The xGov Registry creates an empty proposal, the Proposer **SHOULD** open a draft (or it **SHOULD** be finalized for staleness)                                        |
-| `DRAFT`     |  `10`  | The Proposer **MAY** submit (with updated metadata) or drop the draft (or it **SHOULD** be finalized for staleness)                                                    |
-| `SUBMITTED` |  `20`  | The xGov Daemon **SHALL** assign the xGov Committee to the submitted proposal, which is then opened to vote                                                            |
-| `VOTING`    |  `25`  | The xGov Committee **MAY** vote the proposal until the voting session expires                                                                                          |
-| `APPROVED`  |  `30`  | The outcome of the vote scrutiny (quorum and majority) approved the proposal, the xGov Council **SHALL** review it                                                     |
-| `REJECTED`  |  `40`  | The outcome of the vote scrutiny (quorum and majority) rejected the proposal, it **SHOULD** be finalized                                                               |
-| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the xGov Payor **MAY** disburse the requested amount                                           |
-| `BLOCKED`   |  `60`  | The xGov Council blocked the approved proposal with veto, it **SHOULD** be finalized, the requested amount **MUST NOT** be paid, the locked amount **MUST** be slashed |
-| `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                   |
-| `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                           |
+| Status      |  Enum  | Description                                                                                                                                                                          |
+|:------------|:------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `EMPTY`     |  `0`   | The xGov Registry creates an empty proposal, the Proposer **SHOULD** open a draft (or it **SHOULD** be finalized for staleness)                                                      |
+| `DRAFT`     |  `10`  | The Proposer **MAY** submit (with updated metadata) or drop the draft (or it **SHOULD** be finalized for staleness)                                                                  |
+| `SUBMITTED` |  `20`  | The xGov Daemon **SHALL** assign the xGov Committee to the submitted proposal, which is then opened to vote                                                                          |
+| `VOTING`    |  `25`  | The xGov Committee **MAY** vote the proposal until the voting session expires                                                                                                        |
+| `APPROVED`  |  `30`  | The outcome of the vote scrutiny (quorum and majority) approved the proposal, the absentees **SHALL** be deleted, the xGov Council **SHALL** review it                               |
+| `REJECTED`  |  `40`  | The outcome of the vote scrutiny (quorum and majority) rejected the proposal, the absentees **SHALL** be deleted, it **SHOULD** be finalized                                         |
+| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the locked amount **MUST** be returned to the Proposer, the xGov Payor **MAY** disburse the requested amount |
+| `BLOCKED`   |  `60`  | The xGov Council blocked the approved proposal with veto, it **SHOULD** be finalized, the locked amount **MUST** be slashed, the requested amount **MUST NOT** be paid               |
+| `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                                 |
+| `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                                         |
 
 {{#include ../_include/styles.md:note}}
 > The `FINALIZED` boolean flag is not an enumerated state, since it can be superposed
