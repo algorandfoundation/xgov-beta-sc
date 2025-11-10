@@ -167,6 +167,11 @@ class XGovRegistry(
             typ.XGovSubscribeRequestBoxValue,
             key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
         )
+        self.request_unsubscribe_box = BoxMap(
+            UInt64,
+            typ.XGovSubscribeRequestBoxValue,
+            key_prefix=cfg.REQUEST_UNSUBSCRIBE_BOX_MAP_PREFIX,
+        )
 
         self.proposer_box = BoxMap(
             Account,
@@ -729,12 +734,9 @@ class XGovRegistry(
         self.xgovs.value += 1
 
     @arc4.abimethod()
-    def unsubscribe_xgov(self, xgov_address: arc4.Address) -> None:
+    def unsubscribe_xgov(self) -> None:
         """
-        Unsubscribes the designated address from being an xGov.
-
-        Args:
-            xgov_address (arc4.Address): The address of the xGov to unsubscribe
+        Unsubscribes the sender from being an xGov.
 
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov
@@ -742,17 +744,11 @@ class XGovRegistry(
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
-        # ensure the provided address is an xGov
-        assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
-        # get the voting address
-        voting_address = self.xgov_box[xgov_address.native].voting_address.native
-        # ensure the sender is the xGov or the voting address
-        assert (
-            xgov_address.native == Txn.sender or voting_address == Txn.sender
-        ), err.UNAUTHORIZED
+        # ensure the sender is an xGov
+        assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
-        del self.xgov_box[xgov_address.native]
+        del self.xgov_box[Txn.sender]
         self.xgovs.value -= 1
 
     @arc4.abimethod()
@@ -836,6 +832,91 @@ class XGovRegistry(
 
         # delete the request
         del self.request_box[request_id.as_uint64()]
+
+    @arc4.abimethod()
+    def request_unsubscribe_xgov(
+        self,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        """
+        Requests to unsubscribe from the xGov.
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov
+            owner_address (arc4.Address): The address of the xGov Address owner/controller
+            relation_type (arc4.UInt64): The type of relationship enum
+            payment (gtxn.PaymentTransaction): The payment transaction covering the xGov (unsubscribe) fee
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the declared Application owner address
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the requested xGov address is not an xGov
+            err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
+        """
+
+        assert Txn.sender == owner_address.native, err.UNAUTHORIZED
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+
+        # ensure the xgov_address is already an xGov
+        assert xgov_address.native in self.xgov_box, err.NOT_XGOV
+
+        # check payment
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
+
+        # create unsubscribe request box
+        ruid = self.request_id.value
+        self.request_unsubscribe_box[ruid] = typ.XGovSubscribeRequestBoxValue(
+            xgov_addr=xgov_address,
+            owner_addr=owner_address,
+            relation_type=relation_type,
+        )
+
+        # increment request id
+        self.request_id.value += 1
+
+    @arc4.abimethod()
+    def approve_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+        """
+        Approves a request to unsubscribe from xGov.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request to approve
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # get the request
+        request = self.request_unsubscribe_box[request_id.as_uint64()].copy()
+
+        # del the xGov
+        del self.xgov_box[request.xgov_addr.native]
+        self.xgovs.value -= 1
+
+        # delete the request
+        del self.request_unsubscribe_box[request_id.as_uint64()]
+
+    @arc4.abimethod()
+    def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+        """
+        Rejects a request to unsubscribe from xGov.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request to reject
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # delete the request
+        del self.request_unsubscribe_box[request_id.as_uint64()]
 
     @arc4.abimethod()
     def set_voting_account(
@@ -1459,6 +1540,32 @@ class XGovRegistry(
         exists = request_id.as_uint64() in self.request_box
         if exists:
             val = self.request_box[request_id.as_uint64()].copy()
+        else:
+            val = typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
+
+    @arc4.abimethod(readonly=True)
+    def get_request_unsubscribe_box(
+        self, request_id: arc4.UInt64
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
+        """
+        Returns the xGov unsubscribe request box for the given unsubscribe request ID.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request
+
+        Returns:
+            typ.XGovSubscribeRequestBoxValue: The unsubscribe request box value
+            bool: `True` if xGov unsubscribe request box exists, else `False`
+        """
+        exists = request_id.as_uint64() in self.request_unsubscribe_box
+        if exists:
+            val = self.request_unsubscribe_box[request_id.as_uint64()].copy()
         else:
             val = typ.XGovSubscribeRequestBoxValue(
                 xgov_addr=arc4.Address(),

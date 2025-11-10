@@ -4,7 +4,7 @@ The xGov Registry is the orchestrator of the xGov process. It is used to:
 
 - Manage the [role-based access control](./xgov-rbac.md) of the process;
 
-- Onboard [xGovs](./xgovs.md);
+- Onboard and offboard [xGovs](./xgovs.md);
 
 - Onboard and enable [Proposers](./proposers.md) (KYC required);
 
