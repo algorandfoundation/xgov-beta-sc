@@ -141,7 +141,7 @@ def quorums_reached(
     voted_members: int,
     total_votes: int,
     *,
-    plebiscite: bool = True,
+    plebiscite: bool = False,
 ) -> bool:
     proposal_values = proposal_client.state.global_state
     proposal_registry_values = get_proposal_values_from_registry(proposal_client)
