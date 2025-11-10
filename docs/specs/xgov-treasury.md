@@ -4,7 +4,7 @@ The xGov Treasury is an Algorand Address controlled by the xGov Registry.
 
 ## Treasury Inflows
 
-- Governance funds from the Algorand Foundation;
+- Governance funds;
 
 - xGov Fee deposits from xGovs on subscription/request;
 
