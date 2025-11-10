@@ -95,7 +95,7 @@ The CD makes use of the following deployment environments:
 
 ## Implementation
 
-The CI/CD pipeline is implemented with the following automated workflows:
+The CI/CD pipeline is implemented with the following _automated_ workflows:
 
 - Smart Contracts CI (tests, lint, output stability, mock deployment)
 - Smart Contracts CD (to TestNet)
@@ -106,7 +106,9 @@ The CI/CD pipeline is implemented with the following automated workflows:
 - Release CI (validate release tag, version, etc.)
 - Release (to MainNet)
 
-And two manually dispatchable workflows:
+And the following _manually dispatchable_ workflows:
 
 - xGov Registry parameters configuration
 - xGov Registry RBAC management
+- Pause and Resume Proposals
+- Release and Update xGov Council
