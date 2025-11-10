@@ -109,22 +109,40 @@ def test_review_rejected_proposal(
         )
 
 
+def test_review_with_pending_absentees(
+    min_fee_times_2: AlgoAmount,
+    xgov_council: SigningAccount,
+    approved_proposal_client: ProposalClient,
+) -> None:
+
+    with pytest.raises(
+        LogicError,
+        match=err.VOTERS_ASSIGNED,
+    ):
+        approved_proposal_client.send.review(
+            args=ReviewArgs(block=False),
+            params=CommonAppCallParams(
+                sender=xgov_council.address, static_fee=min_fee_times_2
+            ),
+        )
+
+
 def test_review_success(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_council: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient,
+    cleaned_approved_proposal_client: ProposalClient,
 ) -> None:
-    algorand_client = approved_proposal_client.algorand
+    algorand_client = cleaned_approved_proposal_client.algorand
     proposer_balance_before = algorand_client.account.get_information(
         proposer.address
     ).amount.micro_algo
-    locked_amount = approved_proposal_client.state.global_state.locked_amount
-    voted_members = approved_proposal_client.state.global_state.voted_members
+    locked_amount = cleaned_approved_proposal_client.state.global_state.locked_amount
+    voted_members = cleaned_approved_proposal_client.state.global_state.voted_members
 
-    approved_proposal_client.send.review(
+    cleaned_approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
         params=CommonAppCallParams(
             sender=xgov_council.address, static_fee=min_fee_times_2
@@ -132,7 +150,7 @@ def test_review_success(
     )
 
     assert_reviewed_proposal_global_state(
-        approved_proposal_client,
+        cleaned_approved_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=voted_members,
@@ -152,10 +170,10 @@ def test_review_twice(
     proposer: SigningAccount,
     xgov_council: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient,
+    cleaned_approved_proposal_client: ProposalClient,
 ) -> None:
 
-    approved_proposal_client.send.review(
+    cleaned_approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
         params=CommonAppCallParams(
             sender=xgov_council.address, static_fee=min_fee_times_2
@@ -166,16 +184,16 @@ def test_review_twice(
         LogicError,
         match=err.WRONG_PROPOSAL_STATUS,
     ):
-        approved_proposal_client.send.review(
+        cleaned_approved_proposal_client.send.review(
             args=ReviewArgs(block=False),
             params=CommonAppCallParams(
                 sender=xgov_council.address, static_fee=min_fee_times_2
             ),
         )
 
-    voted_members = approved_proposal_client.state.global_state.voted_members
+    voted_members = cleaned_approved_proposal_client.state.global_state.voted_members
     assert_reviewed_proposal_global_state(
-        approved_proposal_client,
+        cleaned_approved_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=voted_members,
@@ -186,10 +204,10 @@ def test_review_twice(
 def test_review_not_council(
     min_fee_times_2: AlgoAmount,
     no_role_account: SigningAccount,
-    approved_proposal_client: ProposalClient,
+    cleaned_approved_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
-        approved_proposal_client.send.review(
+        cleaned_approved_proposal_client.send.review(
             args=ReviewArgs(block=False),
             params=CommonAppCallParams(
                 sender=no_role_account.address, static_fee=min_fee_times_2

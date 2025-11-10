@@ -365,28 +365,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     num_of_approvals = 0
     num_of_rejections = 0
 
-    for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=cm.account.address,
-                approvals=cm.votes,
-                rejections=0,
-            ),
-            params=CommonAppCallParams(static_fee=min_fee_times_2),
-        )
-
-    for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=cm.account.address,
-                approvals=0,
-                rejections=cm.votes,
-            ),
-            params=CommonAppCallParams(static_fee=min_fee_times_2),
-        )
-
     for cm in committee[num_of_approvals + num_of_rejections :]:
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
@@ -430,17 +408,6 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     """
     num_of_approvals = 0
     num_of_rejections = 1
-
-    for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=cm.account.address,
-                approvals=cm.votes,
-                rejections=0,
-            ),
-            params=CommonAppCallParams(static_fee=min_fee_times_2),
-        )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
         xgov_registry_mock_client.send.vote(

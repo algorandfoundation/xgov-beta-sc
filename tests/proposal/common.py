@@ -230,6 +230,9 @@ def assert_proposal_global_state(
     else:
         assert global_state.vote_open_ts == 0
 
+    if status > STATUS_REJECTED or global_state.finalized:
+        assert not global_state.voters_count
+        assert not global_state.assigned_votes
 
 def get_default_params_for_status(status: int, overrides: dict, *, finalized: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
@@ -270,8 +273,6 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
             **committee_defaults,
-            "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
-            "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
             "locked_amount": 0,
         },
         STATUS_REVIEWED: {
@@ -619,5 +620,24 @@ def submit_proposal(
     proposal_client.send.submit(
         params=CommonAppCallParams(
             sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
+        )
+    )
+
+
+def end_voting_session_time(proposal_client: ProposalClient) -> None:
+    voting_duration = get_proposal_values_from_registry(proposal_client).voting_duration
+    vote_open_ts = proposal_client.state.global_state.vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
+
+
+def scrutinize_proposal(
+    scrutinizer: SigningAccount,
+    proposal_client: ProposalClient,
+    scrutiny_fee: AlgoAmount = AlgoAmount(micro_algo=MIN_TXN_FEE * 2),
+) -> None:
+    end_voting_session_time(proposal_client)
+    proposal_client.send.scrutiny(
+        params=CommonAppCallParams(
+            sender=scrutinizer.address, static_fee=scrutiny_fee
         )
     )
