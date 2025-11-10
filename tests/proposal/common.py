@@ -234,6 +234,7 @@ def assert_proposal_global_state(
         assert not global_state.voters_count
         assert not global_state.assigned_votes
 
+
 def get_default_params_for_status(status: int, overrides: dict, *, finalized: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
     common_defaults = {
@@ -633,11 +634,9 @@ def end_voting_session_time(proposal_client: ProposalClient) -> None:
 def scrutinize_proposal(
     scrutinizer: SigningAccount,
     proposal_client: ProposalClient,
-    scrutiny_fee: AlgoAmount = AlgoAmount(micro_algo=MIN_TXN_FEE * 2),
+    scrutiny_fee: AlgoAmount,
 ) -> None:
     end_voting_session_time(proposal_client)
     proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=scrutinizer.address, static_fee=scrutiny_fee
-        )
+        params=CommonAppCallParams(sender=scrutinizer.address, static_fee=scrutiny_fee)
     )

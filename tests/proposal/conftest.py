@@ -35,9 +35,9 @@ from tests.proposal.common import (
     assign_voters,
     open_proposal,
     quorums_reached,
+    scrutinize_proposal,
     submit_proposal,
     unassign_voters,
-    scrutinize_proposal,
 )
 
 

@@ -59,9 +59,9 @@ from tests.proposal.common import (
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
     get_locked_amount,
+    scrutinize_proposal,
     submit_proposal,
     upload_metadata,
-    scrutinize_proposal,
 )
 from tests.xgov_registry.common import (
     TREASURY_AMOUNT,
@@ -630,7 +630,9 @@ def approved_proposal_client_requested_too_much(
             ),
         )
 
-    scrutinize_proposal(no_role_account, voting_proposal_client_requested_too_much, min_fee_times_2)
+    scrutinize_proposal(
+        no_role_account, voting_proposal_client_requested_too_much, min_fee_times_2
+    )
     return voting_proposal_client_requested_too_much
 
 

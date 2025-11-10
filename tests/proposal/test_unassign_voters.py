@@ -74,14 +74,17 @@ def test_unassign_no_voters(
     )
     old_voters_count = rejected_proposal_client.state.global_state.voters_count
     composer.send()
-    unassigned_voters = old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    unassigned_voters = (
+        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    )
 
     voted_members = rejected_proposal_client.state.global_state.voted_members
     assert_rejected_proposal_global_state(
         rejected_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - voted_members - unassigned_voters),
+        assigned_votes=DEFAULT_MEMBER_VOTES
+        * (len(committee) - voted_members - unassigned_voters),
         voters_count=len(committee) - voted_members - unassigned_voters,
     )
 
@@ -102,7 +105,9 @@ def test_unassign_one_voter(
     )
     old_voters_count = rejected_proposal_client.state.global_state.voters_count
     composer.send()
-    unassigned_voters = old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    unassigned_voters = (
+        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    )
     assert unassigned_voters == 1
 
     voted_members = rejected_proposal_client.state.global_state.voted_members
@@ -110,7 +115,8 @@ def test_unassign_one_voter(
         rejected_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - voted_members - unassigned_voters),
+        assigned_votes=DEFAULT_MEMBER_VOTES
+        * (len(committee) - voted_members - unassigned_voters),
         voters_count=len(committee) - voted_members - unassigned_voters,
     )
 
@@ -131,7 +137,9 @@ def test_unassign_approved_not_daemon(
     )
     old_voters_count = approved_proposal_client.state.global_state.voters_count
     composer.send()
-    unassigned_voters = old_voters_count - approved_proposal_client.state.global_state.voters_count
+    unassigned_voters = (
+        old_voters_count - approved_proposal_client.state.global_state.voters_count
+    )
 
     voted_members = approved_proposal_client.state.global_state.voted_members
     assert_approved_proposal_global_state(
@@ -141,7 +149,8 @@ def test_unassign_approved_not_daemon(
         voted_members=voted_members,
         approvals=DEFAULT_MEMBER_VOTES * voted_members,
         voters_count=len(committee) - voted_members - unassigned_voters,
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - voted_members - unassigned_voters),
+        assigned_votes=DEFAULT_MEMBER_VOTES
+        * (len(committee) - voted_members - unassigned_voters),
     )
 
 
@@ -161,14 +170,17 @@ def test_unassign_rejected_not_daemon(
     )
     old_voters_count = rejected_proposal_client.state.global_state.voters_count
     composer.send()
-    unassigned_voters = old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    unassigned_voters = (
+        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+    )
 
     voted_members = rejected_proposal_client.state.global_state.voted_members
     assert_rejected_proposal_global_state(
         rejected_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - voted_members - unassigned_voters),
+        assigned_votes=DEFAULT_MEMBER_VOTES
+        * (len(committee) - voted_members - unassigned_voters),
         voters_count=len(committee) - voted_members - unassigned_voters,
     )
 
