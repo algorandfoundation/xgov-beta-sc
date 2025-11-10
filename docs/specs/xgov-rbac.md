@@ -86,5 +86,5 @@ if there are enough funds in the xGov Treasury.
 
 The xGov Subscriber is an Algorand Address controlled by the Algorand Foundation.
 
-The xGov Subscriber **MAY** onboard xGovs who cannot execute a self-subscription
+The xGov Subscriber **MAY** onboard or offboard xGovs who cannot execute a self-subscription or self-unsubscription
 (e.g., due to contract immutability or other restrictions).

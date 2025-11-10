@@ -18,12 +18,14 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     UnassignVotersArgs,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    ApproveSubscribeXgovArgs,
     ConfigXgovRegistryArgs,
     DeclareCommitteeArgs,
     DepositFundsArgs,
     OpenProposalArgs,
     PayGrantProposalArgs,
     RequestSubscribeXgovArgs,
+    RequestUnsubscribeXgovArgs,
     SetCommitteeManagerArgs,
     SetKycProviderArgs,
     SetPayorArgs,
@@ -749,3 +751,46 @@ def app_xgov_subscribe_requested(
     )
 
     return xgov_subscriber_app
+
+
+@pytest.fixture(scope="function")
+def app_xgov_managed_subscription(
+    algorand_client: AlgorandClient,
+    xgov_registry_client: XGovRegistryClient,
+    app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
+    xgov_subscriber: SigningAccount,
+) -> XGovSubscriberAppMockClient:
+    xgov_registry_client.send.approve_subscribe_xgov(
+        args=ApproveSubscribeXgovArgs(
+            request_id=xgov_registry_client.state.global_state.request_id - 1
+        ),
+        params=CommonAppCallParams(sender=xgov_subscriber.address),
+    )
+
+    return app_xgov_subscribe_requested
+
+
+@pytest.fixture(scope="function")
+def app_xgov_unsubscribe_requested(
+    algorand_client: AlgorandClient,
+    xgov_registry_client: XGovRegistryClient,
+    app_xgov_managed_subscription: XGovSubscriberAppMockClient,
+    no_role_account: SigningAccount,
+) -> XGovSubscriberAppMockClient:
+    xgov_registry_client.send.request_unsubscribe_xgov(
+        args=RequestUnsubscribeXgovArgs(
+            xgov_address=app_xgov_managed_subscription.app_address,
+            owner_address=no_role_account.address,
+            relation_type=0,
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=no_role_account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=get_xgov_fee(xgov_registry_client),
+                )
+            ),
+        ),
+        params=CommonAppCallParams(sender=no_role_account.address),
+    )
+
+    return app_xgov_managed_subscription
