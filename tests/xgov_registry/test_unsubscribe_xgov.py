@@ -48,19 +48,11 @@ def test_app_unsubscribe_xgov_success(
         ),
         params=CommonAppCallParams(
             static_fee=min_fee_times_3,
-            app_references=[
-                xgov_registry_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )
 
     xgov_subscriber_app.send.unsubscribe_xgov(
         args=AppUnsubscribeXgovArgs(app_id=xgov_registry_client.app_id),
-        params=CommonAppCallParams(
-            app_references=[
-                xgov_registry_client.app_id
-            ]  # FIXME: This should have been autopopulated
-        ),
     )
 
 

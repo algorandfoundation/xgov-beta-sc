@@ -25,9 +25,6 @@ def test_drop_proposal_success(
         params=CommonAppCallParams(
             sender=proposer.address,
             static_fee=min_fee_times_3,
-            app_references=[
-                draft_proposal_client.app_id
-            ],  # FIXME: This should be autopopulated but is not
         ),
     )
 

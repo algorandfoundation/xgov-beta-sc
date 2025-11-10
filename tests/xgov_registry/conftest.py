@@ -564,9 +564,6 @@ def approved_proposal_client(
             params=CommonAppCallParams(
                 sender=cm.account.address,
                 static_fee=min_fee_times_2,
-                app_references=[
-                    voting_proposal_client.app_id
-                ],  # FIXME: This should have been autopopulated
             ),
         )
 
@@ -624,9 +621,6 @@ def approved_proposal_client_requested_too_much(
             params=CommonAppCallParams(
                 sender=cm.account.address,
                 static_fee=min_fee_times_2,
-                app_references=[
-                    voting_proposal_client_requested_too_much.app_id
-                ],  # FIXME: This should have been autopopulated
             ),
         )
 
