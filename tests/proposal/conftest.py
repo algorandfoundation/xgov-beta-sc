@@ -175,9 +175,7 @@ def approved_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
 ) -> ProposalClient:
     voted_members, total_votes, member_idx = 0, 0, 0
-    while not quorums_reached(
-        voting_proposal_client, voted_members, total_votes, plebiscite=False
-    ):
+    while not quorums_reached(voting_proposal_client, voted_members, total_votes):
         xgov_registry_mock_client.send.vote(
             args=VoteArgs(
                 proposal_app=voting_proposal_client.app_id,
