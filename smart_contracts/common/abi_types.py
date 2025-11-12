@@ -110,6 +110,21 @@ class XGovBoxValue(arc4.Struct):
     subscription_round: arc4.UInt64
 
 
+class VotingState(arc4.Struct, kw_only=True):
+    """The voting state of the Proposal"""
+
+    quorum_voters: arc4.UInt32
+    weighted_quorum_votes: arc4.UInt32
+    total_voters: arc4.UInt32
+    total_approvals: arc4.UInt32
+    total_rejections: arc4.UInt32
+    total_nulls: arc4.UInt32
+    quorum_reached: arc4.Bool
+    weighted_quorum_reached: arc4.Bool
+    majority_approved: arc4.Bool
+    plebiscite: arc4.Bool
+
+
 # ARC-28 xGov Registry Events
 
 
@@ -170,7 +185,7 @@ class Submitted(arc4.Struct, kw_only=True):
 
     vote_opening: arc4.UInt64
     vote_closing: arc4.UInt64
-    quorum_votes: arc4.UInt32
+    quorum_voters: arc4.UInt32
     weighted_quorum_votes: arc4.UInt32
 
 
