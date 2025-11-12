@@ -80,12 +80,12 @@ The Proposal has been opened.
 
 The Proposal has been submitted for voting.
 
-| ARGUMENT              |   TYPE   | DESCRIPTION                                |
-|:----------------------|:--------:|:-------------------------------------------|
-| Vote Opening          | `uint64` | Vote Opening UNIX timestamp                |
-| Vote Closing          | `uint64` | Vote Closing UNIX timestamp                |
-| Quorum Votes          | `uint32` | Democratic Quorum (votes) required to pass |
-| Weighted Quorum Votes | `uint32` | Weighted Quorum (votes) required to pass   |
+| ARGUMENT              |   TYPE   | DESCRIPTION                                 |
+|:----------------------|:--------:|:--------------------------------------------|
+| Vote Opening          | `uint64` | Vote Opening UNIX timestamp                 |
+| Vote Closing          | `uint64` | Vote Closing UNIX timestamp                 |
+| Quorum Voters         | `uint32` | Democratic Quorum (voters) required to pass |
+| Weighted Quorum Votes | `uint32` | Weighted Quorum (votes) required to pass    |
 
 ### `Vote`
 
