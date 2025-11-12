@@ -551,8 +551,6 @@ class Proposal(
 
     @subroutine
     def quorum_voters_threshold(self) -> UInt64:
-        # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
-        # Null votes affect this quorum.
         quorum_bps = self.get_quorum(self.funding_category.value)
         return self.relative_to_absolute_amount(
             self.committee_members.value, quorum_bps
@@ -560,24 +558,36 @@ class Proposal(
 
     @subroutine
     def weighted_quorum_votes_threshold(self) -> UInt64:
-        # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
-        # Null votes affect this quorum.
         weighted_quorum_bps = self.get_weighted_quorum(self.funding_category.value)
         return self.relative_to_absolute_amount(
             self.committee_votes.value, weighted_quorum_bps
         )
 
     @subroutine
-    def is_proposal_approved(self) -> bool:
-        minimum_voters_required = self.quorum_voters_threshold()
-        minimum_votes_required = self.weighted_quorum_votes_threshold()
+    def is_quorum_voters_reached(self) -> bool:
+        # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
+        # Null votes affect this quorum.
+        return self.voted_members.value >= self.quorum_voters_threshold()
+
+    @subroutine
+    def is_weighted_quorum_votes_reached(self) -> bool:
+        # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
+        # Null votes affect this quorum.
         total_votes = self.approvals.value + self.rejections.value + self.nulls.value
+        return total_votes >= self.weighted_quorum_votes_threshold()
+
+    @subroutine
+    def has_majority_approved(self) -> bool:
+        # The relative majority of Approved over Rejected votes is reached.
+        # Null votes do not affect the relative majority.
+        return self.approvals.value > self.rejections.value
+
+    @subroutine
+    def is_proposal_approved(self) -> bool:
         return (
-            self.voted_members.value >= minimum_voters_required
-            and total_votes >= minimum_votes_required
-            # The relative majority of Approved over Rejected votes is reached.
-            # Null votes do not affect the relative majority.
-            and self.approvals.value > self.rejections.value
+            self.is_quorum_voters_reached()
+            and self.is_weighted_quorum_votes_reached()
+            and self.has_majority_approved()
         )
 
     @arc4.abimethod(create="require")
@@ -829,7 +839,7 @@ class Proposal(
                     vote_closing=arc4.UInt64(
                         self.vote_open_ts.value + maximum_voting_duration
                     ),
-                    quorum_votes=arc4.UInt32(self.quorum_voters_threshold()),
+                    quorum_voters=arc4.UInt32(self.quorum_voters_threshold()),
                     weighted_quorum_votes=arc4.UInt32(
                         self.weighted_quorum_votes_threshold()
                     ),
@@ -907,7 +917,9 @@ class Proposal(
 
         self.scrutiny_check_authorization()
 
-        if self.is_proposal_approved():
+        is_approved = self.is_proposal_approved()
+
+        if is_approved:
             self.status.value = UInt64(enm.STATUS_APPROVED)
         else:
             self.status.value = UInt64(enm.STATUS_REJECTED)
@@ -917,7 +929,7 @@ class Proposal(
 
         arc4.emit(
             typ.Scrutiny(
-                approved=arc4.Bool(self.is_proposal_approved()),
+                approved=arc4.Bool(is_approved),
                 plebiscite=arc4.Bool(self.is_plebiscite()),
             )
         )
@@ -1114,6 +1126,37 @@ class Proposal(
             votes = UInt64(0)
 
         return arc4.UInt64(votes), exists
+
+    @arc4.abimethod(readonly=True)
+    def get_voting_state(self) -> typ.VotingState:
+        """
+        Returns the voting state of the Proposal.
+
+        Returns:
+            quorum_voters (UInt32): The number of voters to reach the quorum
+            weighted_quorum_votes (UInt32): The number of voters to reach the weighted quorum
+            total_voters (UInt32): The total number of voters so far
+            total_approvals (UInt32): The total number of approval votes so far
+            total_rejections (UInt32): The total number of rejection votes so far
+            total_nulls (UInt32): The total number of null votes so far
+            quorum_reached (Bool): Whether the voters quorum has been reached or not
+            weighted_quorum_reached (Bool): Whether the votes weighted quorum has been reached or not
+            majority_approved (Bool): Whether the majority approved the proposal or not
+            plebiscite (Bool): Whether all the Committee members voted or not
+        """
+
+        return typ.VotingState(
+            quorum_voters=arc4.UInt32(self.quorum_voters_threshold()),
+            weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_votes_threshold()),
+            total_voters=arc4.UInt32(self.voted_members.value),
+            total_approvals=arc4.UInt32(self.approvals.value),
+            total_rejections=arc4.UInt32(self.rejections.value),
+            total_nulls=arc4.UInt32(self.nulls.value),
+            quorum_reached=arc4.Bool(self.is_quorum_voters_reached()),
+            weighted_quorum_reached=arc4.Bool(self.is_weighted_quorum_votes_reached()),
+            majority_approved=arc4.Bool(self.has_majority_approved()),
+            plebiscite=arc4.Bool(self.is_plebiscite()),
+        )
 
     @arc4.abimethod()
     def op_up(self) -> None:
