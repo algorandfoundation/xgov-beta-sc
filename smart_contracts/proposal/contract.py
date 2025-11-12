@@ -230,6 +230,10 @@ class Proposal(
         return typ.Error("")
 
     @subroutine
+    def is_plebiscite(self) -> bool:
+        return self.voted_members.value == self.committee_members.value
+
+    @subroutine
     def scrutiny_check_authorization(self) -> None:
         assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
 
@@ -238,8 +242,7 @@ class Proposal(
 
         assert (
             not is_voting_open  # voting period has ended
-            or self.voted_members.value
-            == self.committee_members.value  # all committee members have voted
+            or self.is_plebiscite()  # all committee members already voted
         ), err.VOTING_ONGOING
 
     @subroutine
@@ -546,6 +549,37 @@ class Proposal(
             0
         ), err.WRONG_METHOD_CALL
 
+    @subroutine
+    def quorum_voters_threshold(self) -> UInt64:
+        # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
+        # Null votes affect this quorum.
+        quorum_bps = self.get_quorum(self.funding_category.value)
+        return self.relative_to_absolute_amount(
+            self.committee_members.value, quorum_bps
+        )
+
+    @subroutine
+    def weighted_quorum_votes_threshold(self) -> UInt64:
+        # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
+        # Null votes affect this quorum.
+        weighted_quorum_bps = self.get_weighted_quorum(self.funding_category.value)
+        return self.relative_to_absolute_amount(
+            self.committee_votes.value, weighted_quorum_bps
+        )
+
+    @subroutine
+    def is_proposal_approved(self) -> bool:
+        minimum_voters_required = self.quorum_voters_threshold()
+        minimum_votes_required = self.weighted_quorum_votes_threshold()
+        total_votes = self.approvals.value + self.rejections.value + self.nulls.value
+        return (
+            self.voted_members.value >= minimum_voters_required
+            and total_votes >= minimum_votes_required
+            # The relative majority of Approved over Rejected votes is reached.
+            # Null votes do not affect the relative majority.
+            and self.approvals.value > self.rejections.value
+        )
+
     @arc4.abimethod(create="require")
     def create(self, proposer: arc4.Address) -> typ.Error:
         """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
@@ -621,6 +655,14 @@ class Proposal(
         )
         self.open_ts.value = Global.latest_timestamp
         self.status.value = UInt64(enm.STATUS_DRAFT)
+
+        arc4.emit(
+            typ.Opened(
+                funding_type=arc4.UInt8(self.funding_type.value),
+                requested_amount=arc4.UInt64(self.requested_amount.value),
+                category=arc4.UInt8(self.funding_category.value),
+            )
+        )
 
     @arc4.abimethod()
     def upload_metadata(
@@ -777,6 +819,23 @@ class Proposal(
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
 
+            maximum_voting_duration, _error = self.get_voting_duration(
+                self.funding_category.value
+            )
+
+            arc4.emit(
+                typ.Submitted(
+                    vote_opening=arc4.UInt64(self.vote_open_ts.value),
+                    vote_closing=arc4.UInt64(
+                        self.vote_open_ts.value + maximum_voting_duration
+                    ),
+                    quorum_votes=arc4.UInt32(self.quorum_voters_threshold()),
+                    weighted_quorum_votes=arc4.UInt32(
+                        self.weighted_quorum_votes_threshold()
+                    ),
+                )
+            )
+
     @arc4.abimethod()
     def vote(
         self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
@@ -819,7 +878,18 @@ class Proposal(
         self.rejections.value += rejections.as_uint64()
         self.nulls.value += nulls
 
-        self._unassign_voter(Account(voter.bytes), votes)
+        self._unassign_voter(voter.native, votes)
+
+        arc4.emit(
+            typ.Vote(
+                xgov=arc4.Address(self.voters.box(voter.native).key[1:]),
+                total_voters=arc4.UInt32(self.voted_members.value),
+                total_approvals=arc4.UInt32(self.approvals.value),
+                total_rejections=arc4.UInt32(self.rejections.value),
+                total_nulls=arc4.UInt32(self.nulls.value),
+            )
+        )
+
         return typ.Error("")
 
     @arc4.abimethod()
@@ -837,34 +907,20 @@ class Proposal(
 
         self.scrutiny_check_authorization()
 
-        # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
-        # Null votes affect this quorum.
-        quorum_bps = self.get_quorum(self.funding_category.value)
-        minimum_voters_required = self.relative_to_absolute_amount(
-            self.committee_members.value, quorum_bps
-        )
-
-        # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
-        # Null votes affect this quorum.
-        weighted_quorum_bps = self.get_weighted_quorum(self.funding_category.value)
-        total_votes = self.approvals.value + self.rejections.value + self.nulls.value
-        minimum_votes_required = self.relative_to_absolute_amount(
-            self.committee_votes.value, weighted_quorum_bps
-        )
-
-        if (
-            self.voted_members.value >= minimum_voters_required
-            and total_votes >= minimum_votes_required
-            # The relative majority of Approved over Rejected votes is reached.
-            # Null votes do not affect the relative majority.
-            and self.approvals.value > self.rejections.value
-        ):
+        if self.is_proposal_approved():
             self.status.value = UInt64(enm.STATUS_APPROVED)
         else:
             self.status.value = UInt64(enm.STATUS_REJECTED)
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
             )
+
+        arc4.emit(
+            typ.Scrutiny(
+                approved=arc4.Bool(self.is_proposal_approved()),
+                plebiscite=arc4.Bool(self.is_plebiscite()),
+            )
+        )
 
     @arc4.abimethod()
     def review(self, block: bool) -> None:  # noqa: FBT001
@@ -901,6 +957,8 @@ class Proposal(
             self.transfer_locked_amount(
                 receiver=self.proposer.value,
             )
+
+        arc4.emit(typ.Review(veto=arc4.Bool(block)))
 
     @arc4.abimethod()
     def fund(self) -> typ.Error:
@@ -947,7 +1005,7 @@ class Proposal(
         for voter in voters:
             if voter.native in self.voters:
                 votes = self.voters[voter.native]
-                self._unassign_voter(Account(voter.bytes), votes)
+                self._unassign_voter(voter.native, votes)
 
     @arc4.abimethod()
     def finalize(self) -> typ.Error:

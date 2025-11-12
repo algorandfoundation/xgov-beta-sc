@@ -733,6 +733,13 @@ class XGovRegistry(
         self.xgov_box[Txn.sender] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
 
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=arc4.Address(Txn.sender),
+                delegate=voting_address,
+            )
+        )
+
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
         """
@@ -750,6 +757,8 @@ class XGovRegistry(
         # delete box
         del self.xgov_box[Txn.sender]
         self.xgovs.value -= 1
+
+        arc4.emit(typ.XGovUnsubscribed(xgov=arc4.Address(Txn.sender)))
 
     @arc4.abimethod()
     def request_subscribe_xgov(
@@ -815,6 +824,13 @@ class XGovRegistry(
         self.xgovs.value += 1
         # delete the request
         del self.request_box[request_id.as_uint64()]
+
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=request.xgov_addr,
+                delegate=request.owner_addr,
+            )
+        )
 
     @arc4.abimethod()
     def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
@@ -901,6 +917,8 @@ class XGovRegistry(
         # delete the request
         del self.request_unsubscribe_box[request_id.as_uint64()]
 
+        arc4.emit(typ.XGovUnsubscribed(xgov=request.xgov_addr))
+
     @arc4.abimethod()
     def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
         """
@@ -977,6 +995,8 @@ class XGovRegistry(
             arc4.Bool(False), arc4.Bool(False), arc4.UInt64(0)  # noqa: FBT003
         )
 
+        arc4.emit(typ.ProposerSubscribed(proposer=arc4.Address(Txn.sender)))
+
     @arc4.abimethod()
     def set_proposer_kyc(
         self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
@@ -1002,6 +1022,13 @@ class XGovRegistry(
 
         self.proposer_box[proposer.native] = self.make_proposer_box(
             active_proposal, kyc_status, kyc_expiring
+        )
+
+        arc4.emit(
+            typ.ProposerKYC(
+                proposer=proposer,
+                valid_kyc=arc4.Bool(self.valid_kyc(proposer.native)),
+            )
         )
 
     @arc4.abimethod()
@@ -1031,6 +1058,14 @@ class XGovRegistry(
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
+
+        arc4.emit(
+            typ.NewCommittee(
+                committee_id=committee_id,
+                size=arc4.UInt32(size.as_uint64()),
+                votes=arc4.UInt32(votes.as_uint64()),
+            )
+        )
 
     @arc4.abimethod
     def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
@@ -1124,6 +1159,13 @@ class XGovRegistry(
 
         # Increment pending proposals
         self.pending_proposals.value += 1
+
+        arc4.emit(
+            typ.NewProposal(
+                proposal_id=arc4.UInt64(tx.created_app.id),
+                proposer=arc4.Address(Txn.sender),
+            )
+        )
 
         return tx.created_app.id
 
