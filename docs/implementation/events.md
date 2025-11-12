@@ -70,11 +70,11 @@ A new Proposal has been opened.
 
 The Proposal has been opened.
 
-| ARGUMENT         |   TYPE   | DESCRIPTION                               |
-|:-----------------|:--------:|:------------------------------------------|
-| Funding Type     | `uint8`  | Enum: Retroactive (`0`), Proactive (`1`)  |
-| Requested Amount | `uint64` | Requested Amount (microALGO)              |
-| Category         | `uint8`  | Small (`10`), Medium (`20`), Large (`30`) |
+| ARGUMENT         |   TYPE   | DESCRIPTION                                |
+|:-----------------|:--------:|:-------------------------------------------|
+| Funding Type     | `uint8`  | Enum: Retroactive (`10`), Proactive (`20`) |
+| Requested Amount | `uint64` | Requested Amount (microALGO)               |
+| Category         | `uint8`  | Small (`10`), Medium (`20`), Large (`30`)  |
 
 ### `Submitted`
 
