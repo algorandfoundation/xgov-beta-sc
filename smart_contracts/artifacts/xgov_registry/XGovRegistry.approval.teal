@@ -821,7 +821,7 @@ config_xgov_registry_bool_merge@5:
     intc_2 // 8
     extract_uint64
     dup
-    bury 10
+    bury 5
     // smart_contracts/xgov_registry/contract.py:280-282
     // return (
     //     key_prefix_length + key_type_size + value_type_size
@@ -836,31 +836,31 @@ config_xgov_registry_bool_merge@5:
     // ), err.INVALID_PROPOSER_FEE
     assert // Invalid proposer fee
     // smart_contracts/xgov_registry/contract.py:622
-    // config.min_requested_amount.as_uint64()
-    dup
+    // 0 < config.min_requested_amount.as_uint64()
     pushint 40 // 40
     extract_uint64
     dup
-    cover 2
-    bury 9
+    bury 19
+    // smart_contracts/xgov_registry/contract.py:622-623
+    // 0 < config.min_requested_amount.as_uint64()
+    // < config.max_requested_amount[0].as_uint64()
+    bz config_xgov_registry_bool_false@10
     // smart_contracts/xgov_registry/contract.py:623
     // < config.max_requested_amount[0].as_uint64()
+    dig 1
     extract 48 24
     dup
-    bury 22
+    bury 21
     intc_0 // 0
     extract_uint64
     dup
-    bury 20
+    bury 18
     // smart_contracts/xgov_registry/contract.py:622-623
-    // config.min_requested_amount.as_uint64()
+    // 0 < config.min_requested_amount.as_uint64()
     // < config.max_requested_amount[0].as_uint64()
-    <
-    // smart_contracts/xgov_registry/contract.py:622-624
-    // config.min_requested_amount.as_uint64()
-    // < config.max_requested_amount[0].as_uint64()
-    // < config.max_requested_amount[1].as_uint64()
-    bz config_xgov_registry_bool_false@9
+    dig 18
+    >
+    bz config_xgov_registry_bool_false@10
     // smart_contracts/xgov_registry/contract.py:624
     // < config.max_requested_amount[1].as_uint64()
     dig 19
@@ -872,17 +872,17 @@ config_xgov_registry_bool_merge@5:
     // < config.max_requested_amount[1].as_uint64()
     extract_uint64
     dup
-    bury 18
+    bury 14
     // smart_contracts/xgov_registry/contract.py:623-624
     // < config.max_requested_amount[0].as_uint64()
     // < config.max_requested_amount[1].as_uint64()
-    dig 18
+    dig 17
     >
     // smart_contracts/xgov_registry/contract.py:622-624
-    // config.min_requested_amount.as_uint64()
+    // 0 < config.min_requested_amount.as_uint64()
     // < config.max_requested_amount[0].as_uint64()
     // < config.max_requested_amount[1].as_uint64()
-    bz config_xgov_registry_bool_false@9
+    bz config_xgov_registry_bool_false@10
     // smart_contracts/xgov_registry/contract.py:625
     // < config.max_requested_amount[2].as_uint64()
     dig 19
@@ -891,19 +891,19 @@ config_xgov_registry_bool_merge@5:
     // smart_contracts/xgov_registry/contract.py:624-625
     // < config.max_requested_amount[1].as_uint64()
     // < config.max_requested_amount[2].as_uint64()
-    dig 17
+    dig 13
     >
     // smart_contracts/xgov_registry/contract.py:623-625
     // < config.max_requested_amount[0].as_uint64()
     // < config.max_requested_amount[1].as_uint64()
     // < config.max_requested_amount[2].as_uint64()
-    bz config_xgov_registry_bool_false@9
+    bz config_xgov_registry_bool_false@10
     intc_1 // 1
 
-config_xgov_registry_bool_merge@10:
+config_xgov_registry_bool_merge@11:
     // smart_contracts/xgov_registry/contract.py:621-626
     // assert (
-    //     config.min_requested_amount.as_uint64()
+    //     0 < config.min_requested_amount.as_uint64()
     //     < config.max_requested_amount[0].as_uint64()
     //     < config.max_requested_amount[1].as_uint64()
     //     < config.max_requested_amount[2].as_uint64()
@@ -917,14 +917,14 @@ config_xgov_registry_bool_merge@10:
     extract_uint64
     dup
     cover 2
-    bury 11
+    bury 6
     // smart_contracts/xgov_registry/contract.py:630
     // config.daemon_ops_funding_bps.as_uint64(),
     dup
     pushint 24 // 24
     extract_uint64
     dup
-    bury 13
+    bury 8
     // smart_contracts/xgov_registry/contract.py:263
     // return amount * fraction_in_bps // BPS
     dig 2
@@ -958,51 +958,53 @@ config_xgov_registry_bool_merge@10:
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:635
-    // config.discussion_duration[0].as_uint64()
+    // 0 < config.discussion_duration[0].as_uint64()
     extract 72 32
     dup
     bury 20
-    dup
     intc_0 // 0
     extract_uint64
     dup
-    cover 2
-    bury 8
+    bury 13
     // smart_contracts/xgov_registry/contract.py:635-636
-    // config.discussion_duration[0].as_uint64()
+    // 0 < config.discussion_duration[0].as_uint64()
+    // <= config.discussion_duration[1].as_uint64()
+    bz config_xgov_registry_bool_false@16
+    // smart_contracts/xgov_registry/contract.py:636
+    // <= config.discussion_duration[1].as_uint64()
+    dig 18
+    // smart_contracts/xgov_registry/contract.py:635-636
+    // 0 < config.discussion_duration[0].as_uint64()
     // <= config.discussion_duration[1].as_uint64()
     intc_2 // 8
     // smart_contracts/xgov_registry/contract.py:636
     // <= config.discussion_duration[1].as_uint64()
     extract_uint64
     dup
-    bury 18
+    bury 12
     // smart_contracts/xgov_registry/contract.py:635-636
-    // config.discussion_duration[0].as_uint64()
+    // 0 < config.discussion_duration[0].as_uint64()
     // <= config.discussion_duration[1].as_uint64()
-    <=
-    // smart_contracts/xgov_registry/contract.py:635-637
-    // config.discussion_duration[0].as_uint64()
-    // <= config.discussion_duration[1].as_uint64()
-    // <= config.discussion_duration[2].as_uint64()
-    bz config_xgov_registry_bool_false@14
+    dig 12
+    >=
+    bz config_xgov_registry_bool_false@16
     // smart_contracts/xgov_registry/contract.py:637
     // <= config.discussion_duration[2].as_uint64()
     dig 18
     pushint 16 // 16
     extract_uint64
     dup
-    bury 16
+    bury 11
     // smart_contracts/xgov_registry/contract.py:636-637
     // <= config.discussion_duration[1].as_uint64()
     // <= config.discussion_duration[2].as_uint64()
-    dig 16
+    dig 11
     >=
     // smart_contracts/xgov_registry/contract.py:635-637
-    // config.discussion_duration[0].as_uint64()
+    // 0 < config.discussion_duration[0].as_uint64()
     // <= config.discussion_duration[1].as_uint64()
     // <= config.discussion_duration[2].as_uint64()
-    bz config_xgov_registry_bool_false@14
+    bz config_xgov_registry_bool_false@16
     // smart_contracts/xgov_registry/contract.py:638
     // <= config.discussion_duration[3].as_uint64()
     dig 18
@@ -1011,71 +1013,73 @@ config_xgov_registry_bool_merge@10:
     // smart_contracts/xgov_registry/contract.py:637-638
     // <= config.discussion_duration[2].as_uint64()
     // <= config.discussion_duration[3].as_uint64()
-    dig 15
+    dig 10
     >=
     // smart_contracts/xgov_registry/contract.py:636-638
     // <= config.discussion_duration[1].as_uint64()
     // <= config.discussion_duration[2].as_uint64()
     // <= config.discussion_duration[3].as_uint64()
-    bz config_xgov_registry_bool_false@14
+    bz config_xgov_registry_bool_false@16
     intc_1 // 1
 
-config_xgov_registry_bool_merge@15:
+config_xgov_registry_bool_merge@17:
     // smart_contracts/xgov_registry/contract.py:634-639
     // assert (
-    //     config.discussion_duration[0].as_uint64()
+    //     0 < config.discussion_duration[0].as_uint64()
     //     <= config.discussion_duration[1].as_uint64()
     //     <= config.discussion_duration[2].as_uint64()
     //     <= config.discussion_duration[3].as_uint64()
     // ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
     assert // Inconsistent discussion duration config
     // smart_contracts/xgov_registry/contract.py:642
-    // config.voting_duration[0].as_uint64()
+    // 0 < config.voting_duration[0].as_uint64()
     dig 1
     extract 104 32
     dup
     bury 24
-    dup
     intc_0 // 0
     extract_uint64
     dup
-    cover 2
-    bury 7
+    bury 10
     // smart_contracts/xgov_registry/contract.py:642-643
-    // config.voting_duration[0].as_uint64()
+    // 0 < config.voting_duration[0].as_uint64()
+    // <= config.voting_duration[1].as_uint64()
+    bz config_xgov_registry_bool_false@22
+    // smart_contracts/xgov_registry/contract.py:643
+    // <= config.voting_duration[1].as_uint64()
+    dig 22
+    // smart_contracts/xgov_registry/contract.py:642-643
+    // 0 < config.voting_duration[0].as_uint64()
     // <= config.voting_duration[1].as_uint64()
     intc_2 // 8
     // smart_contracts/xgov_registry/contract.py:643
     // <= config.voting_duration[1].as_uint64()
     extract_uint64
     dup
-    bury 16
+    bury 9
     // smart_contracts/xgov_registry/contract.py:642-643
-    // config.voting_duration[0].as_uint64()
+    // 0 < config.voting_duration[0].as_uint64()
     // <= config.voting_duration[1].as_uint64()
-    <=
-    // smart_contracts/xgov_registry/contract.py:642-644
-    // config.voting_duration[0].as_uint64()
-    // <= config.voting_duration[1].as_uint64()
-    // <= config.voting_duration[2].as_uint64()
-    bz config_xgov_registry_bool_false@19
+    dig 9
+    >=
+    bz config_xgov_registry_bool_false@22
     // smart_contracts/xgov_registry/contract.py:644
     // <= config.voting_duration[2].as_uint64()
     dig 22
     pushint 16 // 16
     extract_uint64
     dup
-    bury 14
+    bury 8
     // smart_contracts/xgov_registry/contract.py:643-644
     // <= config.voting_duration[1].as_uint64()
     // <= config.voting_duration[2].as_uint64()
-    dig 14
+    dig 8
     >=
     // smart_contracts/xgov_registry/contract.py:642-644
-    // config.voting_duration[0].as_uint64()
+    // 0 < config.voting_duration[0].as_uint64()
     // <= config.voting_duration[1].as_uint64()
     // <= config.voting_duration[2].as_uint64()
-    bz config_xgov_registry_bool_false@19
+    bz config_xgov_registry_bool_false@22
     // smart_contracts/xgov_registry/contract.py:645
     // <= config.voting_duration[3].as_uint64()
     dig 22
@@ -1084,54 +1088,56 @@ config_xgov_registry_bool_merge@15:
     // smart_contracts/xgov_registry/contract.py:644-645
     // <= config.voting_duration[2].as_uint64()
     // <= config.voting_duration[3].as_uint64()
-    dig 13
+    dig 7
     >=
     // smart_contracts/xgov_registry/contract.py:643-645
     // <= config.voting_duration[1].as_uint64()
     // <= config.voting_duration[2].as_uint64()
     // <= config.voting_duration[3].as_uint64()
-    bz config_xgov_registry_bool_false@19
+    bz config_xgov_registry_bool_false@22
     intc_1 // 1
 
-config_xgov_registry_bool_merge@20:
+config_xgov_registry_bool_merge@23:
     // smart_contracts/xgov_registry/contract.py:641-646
     // assert (
-    //     config.voting_duration[0].as_uint64()
+    //     0 < config.voting_duration[0].as_uint64()
     //     <= config.voting_duration[1].as_uint64()
     //     <= config.voting_duration[2].as_uint64()
     //     <= config.voting_duration[3].as_uint64()
     // ), err.INCONSISTENT_VOTING_DURATION_CONFIG
     assert // Inconsistent voting duration config
     // smart_contracts/xgov_registry/contract.py:649
-    // config.quorum[0].as_uint64()
+    // 0 < config.quorum[0].as_uint64()
     dig 1
     extract 136 24
     dup
     bury 23
-    dup
     intc_0 // 0
     extract_uint64
     dup
-    cover 2
-    bury 6
+    bury 7
     // smart_contracts/xgov_registry/contract.py:649-650
-    // config.quorum[0].as_uint64()
+    // 0 < config.quorum[0].as_uint64()
+    // < config.quorum[1].as_uint64()
+    bz config_xgov_registry_bool_false@27
+    // smart_contracts/xgov_registry/contract.py:650
+    // < config.quorum[1].as_uint64()
+    dig 21
+    // smart_contracts/xgov_registry/contract.py:649-650
+    // 0 < config.quorum[0].as_uint64()
     // < config.quorum[1].as_uint64()
     intc_2 // 8
     // smart_contracts/xgov_registry/contract.py:650
     // < config.quorum[1].as_uint64()
     extract_uint64
     dup
-    bury 14
+    bury 17
     // smart_contracts/xgov_registry/contract.py:649-650
-    // config.quorum[0].as_uint64()
+    // 0 < config.quorum[0].as_uint64()
     // < config.quorum[1].as_uint64()
-    <
-    // smart_contracts/xgov_registry/contract.py:649-651
-    // config.quorum[0].as_uint64()
-    // < config.quorum[1].as_uint64()
-    // < config.quorum[2].as_uint64()
-    bz config_xgov_registry_bool_false@23
+    dig 6
+    >
+    bz config_xgov_registry_bool_false@27
     // smart_contracts/xgov_registry/contract.py:651
     // < config.quorum[2].as_uint64()
     dig 21
@@ -1140,53 +1146,55 @@ config_xgov_registry_bool_merge@20:
     // smart_contracts/xgov_registry/contract.py:650-651
     // < config.quorum[1].as_uint64()
     // < config.quorum[2].as_uint64()
-    dig 12
+    dig 16
     >
     // smart_contracts/xgov_registry/contract.py:649-651
-    // config.quorum[0].as_uint64()
+    // 0 < config.quorum[0].as_uint64()
     // < config.quorum[1].as_uint64()
     // < config.quorum[2].as_uint64()
-    bz config_xgov_registry_bool_false@23
+    bz config_xgov_registry_bool_false@27
     intc_1 // 1
 
-config_xgov_registry_bool_merge@24:
+config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:648-652
     // assert (
-    //     config.quorum[0].as_uint64()
+    //     0 < config.quorum[0].as_uint64()
     //     < config.quorum[1].as_uint64()
     //     < config.quorum[2].as_uint64()
     // ), err.INCONSISTENT_QUORUM_CONFIG
     assert // Inconsistent quorum config
     // smart_contracts/xgov_registry/contract.py:655
-    // config.weighted_quorum[0].as_uint64()
+    // 0 < config.weighted_quorum[0].as_uint64()
     dig 1
     extract 160 24
     dup
     bury 22
-    dup
     intc_0 // 0
     extract_uint64
     dup
-    cover 2
-    bury 5
+    bury 16
     // smart_contracts/xgov_registry/contract.py:655-656
-    // config.weighted_quorum[0].as_uint64()
+    // 0 < config.weighted_quorum[0].as_uint64()
+    // < config.weighted_quorum[1].as_uint64()
+    bz config_xgov_registry_bool_false@32
+    // smart_contracts/xgov_registry/contract.py:656
+    // < config.weighted_quorum[1].as_uint64()
+    dig 20
+    // smart_contracts/xgov_registry/contract.py:655-656
+    // 0 < config.weighted_quorum[0].as_uint64()
     // < config.weighted_quorum[1].as_uint64()
     intc_2 // 8
     // smart_contracts/xgov_registry/contract.py:656
     // < config.weighted_quorum[1].as_uint64()
     extract_uint64
     dup
-    bury 13
+    bury 15
     // smart_contracts/xgov_registry/contract.py:655-656
-    // config.weighted_quorum[0].as_uint64()
+    // 0 < config.weighted_quorum[0].as_uint64()
     // < config.weighted_quorum[1].as_uint64()
-    <
-    // smart_contracts/xgov_registry/contract.py:655-657
-    // config.weighted_quorum[0].as_uint64()
-    // < config.weighted_quorum[1].as_uint64()
-    // < config.weighted_quorum[2].as_uint64()
-    bz config_xgov_registry_bool_false@27
+    dig 15
+    >
+    bz config_xgov_registry_bool_false@32
     // smart_contracts/xgov_registry/contract.py:657
     // < config.weighted_quorum[2].as_uint64()
     dig 20
@@ -1195,19 +1203,19 @@ config_xgov_registry_bool_merge@24:
     // smart_contracts/xgov_registry/contract.py:656-657
     // < config.weighted_quorum[1].as_uint64()
     // < config.weighted_quorum[2].as_uint64()
-    dig 11
+    dig 14
     >
     // smart_contracts/xgov_registry/contract.py:655-657
-    // config.weighted_quorum[0].as_uint64()
+    // 0 < config.weighted_quorum[0].as_uint64()
     // < config.weighted_quorum[1].as_uint64()
     // < config.weighted_quorum[2].as_uint64()
-    bz config_xgov_registry_bool_false@27
+    bz config_xgov_registry_bool_false@32
     intc_1 // 1
 
-config_xgov_registry_bool_merge@28:
+config_xgov_registry_bool_merge@33:
     // smart_contracts/xgov_registry/contract.py:654-658
     // assert (
-    //     config.weighted_quorum[0].as_uint64()
+    //     0 < config.weighted_quorum[0].as_uint64()
     //     < config.weighted_quorum[1].as_uint64()
     //     < config.weighted_quorum[2].as_uint64()
     // ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
@@ -1220,21 +1228,22 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:661
     // self.proposer_fee.value = config.proposer_fee.as_uint64()
     bytec 20 // 0x70726f706f7365725f666565
-    dig 8
+    dig 3
     app_global_put
     // smart_contracts/xgov_registry/contract.py:662
     // self.open_proposal_fee.value = config.open_proposal_fee.as_uint64()
     bytec 11 // 0x6f70656e5f70726f706f73616c5f666565
-    dig 9
+    dig 4
     app_global_put
     // smart_contracts/xgov_registry/contract.py:663
     // self.daemon_ops_funding_bps.value = config.daemon_ops_funding_bps.as_uint64()
     bytec 25 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
-    dig 10
+    dig 5
     app_global_put
     // smart_contracts/xgov_registry/contract.py:664
     // self.proposal_commitment_bps.value = config.proposal_commitment_bps.as_uint64()
     dig 1
+    dup
     intc_3 // 32
     extract_uint64
     bytec 26 // 0x70726f706f73616c5f636f6d6d69746d656e745f627073
@@ -1243,8 +1252,16 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:666
     // self.min_requested_amount.value = config.min_requested_amount.as_uint64()
     bytec 27 // 0x6d696e5f7265717565737465645f616d6f756e74
-    dig 7
+    dig 19
     app_global_put
+    // smart_contracts/xgov_registry/contract.py:667-669
+    // self.max_requested_amount_small.value = config.max_requested_amount[
+    //     0
+    // ].as_uint64()
+    extract 48 24
+    dup
+    intc_0 // 0
+    extract_uint64
     // smart_contracts/xgov_registry/contract.py:667
     // self.max_requested_amount_small.value = config.max_requested_amount[
     bytec 28 // 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
@@ -1252,13 +1269,12 @@ config_xgov_registry_bool_merge@28:
     // self.max_requested_amount_small.value = config.max_requested_amount[
     //     0
     // ].as_uint64()
-    dig 18
+    swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:670-672
     // self.max_requested_amount_medium.value = config.max_requested_amount[
     //     1
     // ].as_uint64()
-    dig 19
     dup
     intc_2 // 8
     extract_uint64
@@ -1289,8 +1305,16 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:677
     // self.discussion_duration_small.value = config.discussion_duration[0].as_uint64()
     bytec 31 // 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
-    dig 6
+    dig 12
     app_global_put
+    // smart_contracts/xgov_registry/contract.py:678-680
+    // self.discussion_duration_medium.value = config.discussion_duration[
+    //     1
+    // ].as_uint64()
+    dig 18
+    dup
+    intc_2 // 8
+    extract_uint64
     // smart_contracts/xgov_registry/contract.py:678
     // self.discussion_duration_medium.value = config.discussion_duration[
     bytec 32 // 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
@@ -1298,11 +1322,10 @@ config_xgov_registry_bool_merge@28:
     // self.discussion_duration_medium.value = config.discussion_duration[
     //     1
     // ].as_uint64()
-    dig 16
+    swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:681
     // self.discussion_duration_large.value = config.discussion_duration[2].as_uint64()
-    dig 18
     dup
     pushint 16 // 16
     extract_uint64
@@ -1327,16 +1350,19 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:686
     // self.voting_duration_small.value = config.voting_duration[0].as_uint64()
     bytec 35 // 0x766f74696e675f6475726174696f6e5f736d616c6c
-    dig 5
+    dig 9
     app_global_put
     // smart_contracts/xgov_registry/contract.py:687
     // self.voting_duration_medium.value = config.voting_duration[1].as_uint64()
+    dig 22
+    dup
+    intc_2 // 8
+    extract_uint64
     bytec 36 // 0x766f74696e675f6475726174696f6e5f6d656469756d
-    dig 14
+    swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:688
     // self.voting_duration_large.value = config.voting_duration[2].as_uint64()
-    dig 22
     dup
     pushint 16 // 16
     extract_uint64
@@ -1353,16 +1379,19 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:691
     // self.quorum_small.value = config.quorum[0].as_uint64()
     bytec 39 // 0x71756f72756d5f736d616c6c
-    dig 4
+    dig 6
     app_global_put
     // smart_contracts/xgov_registry/contract.py:692
     // self.quorum_medium.value = config.quorum[1].as_uint64()
+    dig 21
+    dup
+    intc_2 // 8
+    extract_uint64
     bytec 40 // 0x71756f72756d5f6d656469756d
-    dig 12
+    swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:693
     // self.quorum_large.value = config.quorum[2].as_uint64()
-    dig 21
     pushint 16 // 16
     extract_uint64
     bytec 41 // 0x71756f72756d5f6c61726765
@@ -1371,16 +1400,19 @@ config_xgov_registry_bool_merge@28:
     // smart_contracts/xgov_registry/contract.py:695
     // self.weighted_quorum_small.value = config.weighted_quorum[0].as_uint64()
     bytec 42 // 0x77656967687465645f71756f72756d5f736d616c6c
-    dig 3
+    dig 15
     app_global_put
     // smart_contracts/xgov_registry/contract.py:696
     // self.weighted_quorum_medium.value = config.weighted_quorum[1].as_uint64()
+    dig 20
+    dup
+    intc_2 // 8
+    extract_uint64
     bytec 43 // 0x77656967687465645f71756f72756d5f6d656469756d
-    dig 11
+    swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:697
     // self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
-    dig 20
     pushint 16 // 16
     extract_uint64
     bytec 44 // 0x77656967687465645f71756f72756d5f6c61726765
@@ -1391,25 +1423,25 @@ config_xgov_registry_bool_merge@28:
     intc_1 // 1
     return
 
+config_xgov_registry_bool_false@32:
+    intc_0 // 0
+    b config_xgov_registry_bool_merge@33
+
 config_xgov_registry_bool_false@27:
     intc_0 // 0
     b config_xgov_registry_bool_merge@28
 
-config_xgov_registry_bool_false@23:
+config_xgov_registry_bool_false@22:
     intc_0 // 0
-    b config_xgov_registry_bool_merge@24
+    b config_xgov_registry_bool_merge@23
 
-config_xgov_registry_bool_false@19:
+config_xgov_registry_bool_false@16:
     intc_0 // 0
-    b config_xgov_registry_bool_merge@20
+    b config_xgov_registry_bool_merge@17
 
-config_xgov_registry_bool_false@14:
+config_xgov_registry_bool_false@10:
     intc_0 // 0
-    b config_xgov_registry_bool_merge@15
-
-config_xgov_registry_bool_false@9:
-    intc_0 // 0
-    b config_xgov_registry_bool_merge@10
+    b config_xgov_registry_bool_merge@11
 
 config_xgov_registry_bool_false@4:
     intc_0 // 0
