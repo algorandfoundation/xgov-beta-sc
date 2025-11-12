@@ -619,7 +619,7 @@ class XGovRegistry(
         ), err.INVALID_PROPOSER_FEE
 
         assert (
-            config.min_requested_amount.as_uint64()
+            0 < config.min_requested_amount.as_uint64()
             < config.max_requested_amount[0].as_uint64()
             < config.max_requested_amount[1].as_uint64()
             < config.max_requested_amount[2].as_uint64()
@@ -632,27 +632,27 @@ class XGovRegistry(
         )
 
         assert (
-            config.discussion_duration[0].as_uint64()
+            0 < config.discussion_duration[0].as_uint64()
             <= config.discussion_duration[1].as_uint64()
             <= config.discussion_duration[2].as_uint64()
             <= config.discussion_duration[3].as_uint64()
         ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
 
         assert (
-            config.voting_duration[0].as_uint64()
+            0 < config.voting_duration[0].as_uint64()
             <= config.voting_duration[1].as_uint64()
             <= config.voting_duration[2].as_uint64()
             <= config.voting_duration[3].as_uint64()
         ), err.INCONSISTENT_VOTING_DURATION_CONFIG
 
         assert (
-            config.quorum[0].as_uint64()
+            0 < config.quorum[0].as_uint64()
             < config.quorum[1].as_uint64()
             < config.quorum[2].as_uint64()
         ), err.INCONSISTENT_QUORUM_CONFIG
 
         assert (
-            config.weighted_quorum[0].as_uint64()
+            0 < config.weighted_quorum[0].as_uint64()
             < config.weighted_quorum[1].as_uint64()
             < config.weighted_quorum[2].as_uint64()
         ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
