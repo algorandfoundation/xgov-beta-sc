@@ -291,7 +291,10 @@ class Proposal(
 
     @subroutine
     def get_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.FUNDING_CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_NULL:
+            value = UInt64(0)
+            error = typ.Error("")
+        elif category == enm.FUNDING_CATEGORY_SMALL:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
             )
@@ -308,7 +311,10 @@ class Proposal(
 
     @subroutine
     def get_weighted_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.FUNDING_CATEGORY_SMALL:
+        if category == enm.FUNDING_CATEGORY_NULL:
+            value = UInt64(0)
+            error = typ.Error("")
+        elif category == enm.FUNDING_CATEGORY_SMALL:
             value, error = self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
             )
@@ -567,14 +573,16 @@ class Proposal(
     def is_quorum_voters_reached(self) -> bool:
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
         # Null votes affect this quorum.
-        return self.voted_members.value >= self.quorum_voters_threshold()
+        quorum_defined = self.quorum_voters_threshold() > 0
+        return self.voted_members.value >= self.quorum_voters_threshold() and quorum_defined
 
     @subroutine
     def is_weighted_quorum_votes_reached(self) -> bool:
         # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
         # Null votes affect this quorum.
+        weighted_quorum_defined = self.weighted_quorum_votes_threshold() > 0
         total_votes = self.approvals.value + self.rejections.value + self.nulls.value
-        return total_votes >= self.weighted_quorum_votes_threshold()
+        return total_votes >= self.weighted_quorum_votes_threshold() and weighted_quorum_defined
 
     @subroutine
     def has_majority_approved(self) -> bool:
