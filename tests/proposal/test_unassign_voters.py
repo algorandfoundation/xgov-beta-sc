@@ -72,10 +72,10 @@ def test_unassign_no_voters(
         [],
         xgov_daemon,
     )
-    old_voters_count = rejected_proposal_client.state.global_state.voters_count
+    old_voters_count = rejected_proposal_client.state.global_state.assigned_members
     composer.send()
     unassigned_voters = (
-        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+        old_voters_count - rejected_proposal_client.state.global_state.assigned_members
     )
 
     voted_members = rejected_proposal_client.state.global_state.voted_members
@@ -103,10 +103,10 @@ def test_unassign_one_voter(
         committee[:1],
         xgov_daemon,
     )
-    old_voters_count = rejected_proposal_client.state.global_state.voters_count
+    old_voters_count = rejected_proposal_client.state.global_state.assigned_members
     composer.send()
     unassigned_voters = (
-        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+        old_voters_count - rejected_proposal_client.state.global_state.assigned_members
     )
     assert unassigned_voters == 1
 
@@ -135,10 +135,10 @@ def test_unassign_approved_not_daemon(
         committee[:1],
         no_role_account,
     )
-    old_voters_count = approved_proposal_client.state.global_state.voters_count
+    old_voters_count = approved_proposal_client.state.global_state.assigned_members
     composer.send()
     unassigned_voters = (
-        old_voters_count - approved_proposal_client.state.global_state.voters_count
+        old_voters_count - approved_proposal_client.state.global_state.assigned_members
     )
 
     voted_members = approved_proposal_client.state.global_state.voted_members
@@ -168,10 +168,10 @@ def test_unassign_rejected_not_daemon(
         committee[:1],
         no_role_account,
     )
-    old_voters_count = rejected_proposal_client.state.global_state.voters_count
+    old_voters_count = rejected_proposal_client.state.global_state.assigned_members
     composer.send()
     unassigned_voters = (
-        old_voters_count - rejected_proposal_client.state.global_state.voters_count
+        old_voters_count - rejected_proposal_client.state.global_state.assigned_members
     )
 
     voted_members = rejected_proposal_client.state.global_state.voted_members
