@@ -47,6 +47,7 @@ from smart_contracts.proposal.enums import (
     STATUS_VOTING,
 )
 from smart_contracts.xgov_registry import config as reg_cfg
+from smart_contracts.xgov_registry.constants import PROPOSAL_APPROVAL_PAGES
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -59,7 +60,17 @@ from tests.utils import time_warp
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
-PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
+MBR_PER_APP_PAGE = 100_000
+MBR_PER_SCHEMA_ENTRY = 25_000
+MBR_PER_UINT_ENTRY = MBR_PER_SCHEMA_ENTRY + 3_500
+MBR_PER_BYTES_ENTRY = MBR_PER_SCHEMA_ENTRY + 25_000
+
+PROPOSAL_PAGES = PROPOSAL_APPROVAL_PAGES + 1
+PROPOSAL_MBR = (
+    PROPOSAL_PAGES * MBR_PER_APP_PAGE
+    + (MBR_PER_UINT_ENTRY * GLOBAL_UINTS)
+    + (MBR_PER_BYTES_ENTRY * GLOBAL_BYTES)
+)
 PROPOSAL_PARTIAL_FEE = reg_cfg.OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 PROPOSAL_TITLE = "Test Proposal"
@@ -213,7 +224,7 @@ def assert_proposal_global_state(
     assert global_state.nulls == nulls
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
-    assert global_state.voters_count == voters_count
+    assert global_state.assigned_members == voters_count
 
     if status == STATUS_EMPTY:
         assert global_state.open_ts == 0
@@ -231,7 +242,7 @@ def assert_proposal_global_state(
         assert global_state.vote_open_ts == 0
 
     if status > STATUS_REJECTED or global_state.finalized:
-        assert not global_state.voters_count
+        assert not global_state.assigned_members
         assert not global_state.assigned_votes
 
 
@@ -433,6 +444,7 @@ def assert_funded_proposal_global_state(  # type: ignore
 def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
+    print(algorand_client.account.get_information(address).amount, expected_balance)
     assert algorand_client.account.get_information(address).amount == AlgoAmount(
         micro_algo=expected_balance
     )
