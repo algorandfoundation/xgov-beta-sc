@@ -38,7 +38,7 @@ A Proposer subscribed.
 
 ### `ProposerKYC`
 
-A Proposer unsubscribed.
+A Proposer KYC status update.
 
 | ARGUMENT  |   TYPE    | DESCRIPTION                              |
 |:----------|:---------:|:-----------------------------------------|
