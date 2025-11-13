@@ -4,8 +4,8 @@ from algopy import (
     Account,
     Application,
     ARC4Contract,
+    Box,
     BoxMap,
-    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -39,6 +39,7 @@ from .constants import (
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
     PER_BYTE_IN_BOX_MBR,
+    PROPOSAL_APPROVAL_PAGES,
 )
 
 
@@ -155,7 +156,9 @@ class XGovRegistry(
         )
 
         # boxes
-        self.proposal_approval_program = BoxRef(key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX)
+        self.proposal_approval_program = Box(
+            Bytes, key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX
+        )
         self.xgov_box = BoxMap(
             Account,
             typ.XGovBoxValue,
@@ -385,8 +388,7 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        _box, exist = self.proposal_approval_program.maybe()
-        if exist:
+        if self.proposal_approval_program:
             self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
@@ -424,7 +426,7 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
         # Delete the Proposal Approval Program contract box
-        self.proposal_approval_program.delete()
+        del self.proposal_approval_program.value
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
@@ -619,7 +621,8 @@ class XGovRegistry(
         ), err.INVALID_PROPOSER_FEE
 
         assert (
-            0 < config.min_requested_amount.as_uint64()
+            0
+            < config.min_requested_amount.as_uint64()
             < config.max_requested_amount[0].as_uint64()
             < config.max_requested_amount[1].as_uint64()
             < config.max_requested_amount[2].as_uint64()
@@ -632,27 +635,31 @@ class XGovRegistry(
         )
 
         assert (
-            0 < config.discussion_duration[0].as_uint64()
+            0
+            < config.discussion_duration[0].as_uint64()
             <= config.discussion_duration[1].as_uint64()
             <= config.discussion_duration[2].as_uint64()
             <= config.discussion_duration[3].as_uint64()
         ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
 
         assert (
-            0 < config.voting_duration[0].as_uint64()
+            0
+            < config.voting_duration[0].as_uint64()
             <= config.voting_duration[1].as_uint64()
             <= config.voting_duration[2].as_uint64()
             <= config.voting_duration[3].as_uint64()
         ), err.INCONSISTENT_VOTING_DURATION_CONFIG
 
         assert (
-            0 < config.quorum[0].as_uint64()
+            0
+            < config.quorum[0].as_uint64()
             < config.quorum[1].as_uint64()
             < config.quorum[2].as_uint64()
         ), err.INCONSISTENT_QUORUM_CONFIG
 
         assert (
-            0 < config.weighted_quorum[0].as_uint64()
+            0
+            < config.weighted_quorum[0].as_uint64()
             < config.weighted_quorum[1].as_uint64()
             < config.weighted_quorum[2].as_uint64()
         ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
@@ -1106,8 +1113,7 @@ class XGovRegistry(
 
         mbr_before = Global.current_application_address.balance
 
-        proposal_approval, exist = self.proposal_approval_program.maybe()
-        assert exist, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
+        assert self.proposal_approval_program, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
 
         # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
@@ -1116,17 +1122,33 @@ class XGovRegistry(
         ).clear_state_program
 
         bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
-        total_size = proposal_approval.length + compiled_clear_state_1.length
-        extra_pages = total_size // bytes_per_page
+        total_size = (
+            self.proposal_approval_program.length + compiled_clear_state_1.length
+        )
+        total_pages = total_size // bytes_per_page
+
+        # The following assertion makes sure the loop-unrolling is consistent
+        assert total_pages == UInt64(
+            PROPOSAL_APPROVAL_PAGES
+        ), err.INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE
+        bytes_page_2 = (
+            self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
+        )
+        page_1 = self.proposal_approval_program.extract(
+            0 * bytes_per_page, bytes_per_page
+        )
+        page_2 = self.proposal_approval_program.extract(
+            1 * bytes_per_page, bytes_page_2
+        )
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
-            approval_program=proposal_approval,
+            approval_program=(page_1, page_2),
             clear_state_program=compiled_clear_state_1,
             global_num_uint=pcfg.GLOBAL_UINTS,
             global_num_bytes=pcfg.GLOBAL_BYTES,
-            extra_program_pages=extra_pages,
+            extra_program_pages=total_pages,
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
