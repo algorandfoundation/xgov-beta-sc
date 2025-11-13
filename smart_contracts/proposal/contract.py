@@ -49,7 +49,7 @@ class Proposal(
         assert Txn.local_num_byte_slice == prop_cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == prop_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
-        # Global Variables
+        # Base State
         self.proposer = GlobalState(
             Account(),
             key=prop_cfg.GS_KEY_PROPOSER,
@@ -62,6 +62,9 @@ class Proposal(
             String(),
             key=prop_cfg.GS_KEY_TITLE,
         )
+        self.metadata_uploaded = False
+
+        # Time Anchors
         self.open_ts = GlobalState(
             UInt64(),
             key=prop_cfg.GS_KEY_OPEN_TS,
@@ -74,6 +77,8 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_VOTE_OPEN_TS,
         )
+
+        # Proposal State
         self.status = GlobalState(
             UInt64(enm.STATUS_EMPTY),
             key=prop_cfg.GS_KEY_STATUS,
@@ -82,6 +87,8 @@ class Proposal(
             False,  # noqa: FBT003
             key=prop_cfg.GS_KEY_FINALIZED,
         )
+
+        # Proposal Funding
         self.funding_category = GlobalState(
             UInt64(enm.FUNDING_CATEGORY_NULL),
             key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
@@ -102,6 +109,8 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
         )
+
+        # Proposal Vote
         self.committee_id = GlobalState(
             typ.Bytes32.from_bytes(b""),
             key=prop_cfg.GS_KEY_COMMITTEE_ID,
@@ -130,9 +139,8 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_NULLS,
         )
-        self.voters_count = UInt64(0)
+        self.assigned_members = UInt64(0)
         self.assigned_votes = UInt64(0)
-        self.metadata_uploaded = False
 
         # Boxes
         self.voters = BoxMap(
@@ -574,7 +582,10 @@ class Proposal(
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
         # Null votes affect this quorum.
         quorum_defined = self.quorum_voters_threshold() > 0
-        return self.voted_members.value >= self.quorum_voters_threshold() and quorum_defined
+        return (
+            self.voted_members.value >= self.quorum_voters_threshold()
+            and quorum_defined
+        )
 
     @subroutine
     def is_weighted_quorum_votes_reached(self) -> bool:
@@ -582,7 +593,10 @@ class Proposal(
         # Null votes affect this quorum.
         weighted_quorum_defined = self.weighted_quorum_votes_threshold() > 0
         total_votes = self.approvals.value + self.rejections.value + self.nulls.value
-        return total_votes >= self.weighted_quorum_votes_threshold() and weighted_quorum_defined
+        return (
+            total_votes >= self.weighted_quorum_votes_threshold()
+            and weighted_quorum_defined
+        )
 
     @subroutine
     def has_majority_approved(self) -> bool:
@@ -784,12 +798,12 @@ class Proposal(
         self.assign_voter_input_validation(voter, voting_power)
 
         self.voters[voter] = voting_power
-        self.voters_count += 1
+        self.assigned_members += 1
         self.assigned_votes += voting_power
 
     @subroutine
     def _unassign_voter(self, voter: Account, voting_power: UInt64) -> None:
-        self.voters_count -= 1
+        self.assigned_members -= 1
         self.assigned_votes -= voting_power
         del self.voters[voter]
 
@@ -830,7 +844,7 @@ class Proposal(
                 voters[i].address.native, voters[i].voting_power.as_uint64()
             )
 
-        if self.voters_count == self.committee_members.value:
+        if self.assigned_members == self.committee_members.value:
             assert (
                 self.assigned_votes == self.committee_votes.value
             ), err.VOTING_POWER_MISMATCH
@@ -959,7 +973,7 @@ class Proposal(
         self.review_check_authorization()
 
         # check no assigned voters
-        assert not self.voters_count, err.VOTERS_ASSIGNED
+        assert not self.assigned_members, err.VOTERS_ASSIGNED
 
         if block:
             self.status.value = UInt64(enm.STATUS_BLOCKED)
@@ -1043,7 +1057,7 @@ class Proposal(
             return error
 
         # check no assigned voters
-        if self.voters_count > UInt64(0):
+        if self.assigned_members > UInt64(0):
             return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
 
         # refund the locked amount for DRAFT proposals
