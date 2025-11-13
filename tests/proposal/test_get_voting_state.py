@@ -4,6 +4,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
 )
 
+from ..common import CommitteeMember
 from .common import get_proposal_values_from_registry
 
 
@@ -117,6 +118,7 @@ def test_get_voting_state_rejected_proposal(
 
 def test_get_voting_state_approved_proposal(
     no_role_account: SigningAccount,
+    committee: list[CommitteeMember],
     approved_proposal_client: ProposalClient,
 ) -> None:
     result = approved_proposal_client.send.get_voting_state(
@@ -135,7 +137,7 @@ def test_get_voting_state_approved_proposal(
     assert result.quorum_reached
     assert result.weighted_quorum_reached
     assert result.majority_approved
-    if proposal_state.voters_count == proposal_values.members_quorum:
+    if proposal_state.voted_members == len(committee):
         assert result.plebiscite
     else:
         assert not result.plebiscite
@@ -143,14 +145,14 @@ def test_get_voting_state_approved_proposal(
 
 def test_get_voting_state_reviewed_proposal(
     no_role_account: SigningAccount,
+    committee: list[CommitteeMember],
     reviewed_proposal_client: ProposalClient,
 ) -> None:
     result = reviewed_proposal_client.send.get_voting_state(
         params=CommonAppCallParams(sender=no_role_account.address)
     ).abi_return
 
-    proposal_values = get_proposal_values_from_registry(
-        reviewed_proposal_client)
+    proposal_values = get_proposal_values_from_registry(reviewed_proposal_client)
     proposal_state = reviewed_proposal_client.state.global_state
 
     assert result.quorum_voters == proposal_values.members_quorum
@@ -162,7 +164,7 @@ def test_get_voting_state_reviewed_proposal(
     assert result.quorum_reached
     assert result.weighted_quorum_reached
     assert result.majority_approved
-    if proposal_state.voters_count == proposal_values.members_quorum:
+    if proposal_state.voted_members == len(committee):
         assert result.plebiscite
     else:
         assert not result.plebiscite
@@ -170,14 +172,14 @@ def test_get_voting_state_reviewed_proposal(
 
 def test_get_voting_state_blocked_proposal(
     no_role_account: SigningAccount,
+    committee: list[CommitteeMember],
     blocked_proposal_client: ProposalClient,
 ) -> None:
     result = blocked_proposal_client.send.get_voting_state(
         params=CommonAppCallParams(sender=no_role_account.address)
     ).abi_return
 
-    proposal_values = get_proposal_values_from_registry(
-        blocked_proposal_client)
+    proposal_values = get_proposal_values_from_registry(blocked_proposal_client)
     proposal_state = blocked_proposal_client.state.global_state
 
     assert result.quorum_voters == proposal_values.members_quorum
@@ -189,7 +191,7 @@ def test_get_voting_state_blocked_proposal(
     assert result.quorum_reached
     assert result.weighted_quorum_reached
     assert result.majority_approved
-    if proposal_state.voters_count == proposal_values.members_quorum:
+    if proposal_state.voted_members == len(committee):
         assert result.plebiscite
     else:
         assert not result.plebiscite
@@ -197,14 +199,14 @@ def test_get_voting_state_blocked_proposal(
 
 def test_get_voting_state_funded_proposal(
     no_role_account: SigningAccount,
+    committee: list[CommitteeMember],
     funded_proposal_client: ProposalClient,
 ) -> None:
     result = funded_proposal_client.send.get_voting_state(
         params=CommonAppCallParams(sender=no_role_account.address)
     ).abi_return
 
-    proposal_values = get_proposal_values_from_registry(
-        funded_proposal_client)
+    proposal_values = get_proposal_values_from_registry(funded_proposal_client)
     proposal_state = funded_proposal_client.state.global_state
 
     assert result.quorum_voters == proposal_values.members_quorum
@@ -216,7 +218,7 @@ def test_get_voting_state_funded_proposal(
     assert result.quorum_reached
     assert result.weighted_quorum_reached
     assert result.majority_approved
-    if proposal_state.voters_count == proposal_values.members_quorum:
+    if proposal_state.voted_members == len(committee):
         assert result.plebiscite
     else:
         assert not result.plebiscite
