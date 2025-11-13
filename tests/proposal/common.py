@@ -444,7 +444,6 @@ def assert_funded_proposal_global_state(  # type: ignore
 def assert_account_balance(
     algorand_client: AlgorandClient, address: str, expected_balance: int
 ) -> None:
-    print(algorand_client.account.get_information(address).amount, expected_balance)
     assert algorand_client.account.get_information(address).amount == AlgoAmount(
         micro_algo=expected_balance
     )
