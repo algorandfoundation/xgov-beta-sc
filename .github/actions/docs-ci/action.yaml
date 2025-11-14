@@ -9,7 +9,8 @@ runs:
       with:
         globs: |
           README.md
-          docs/*.md
+          SECURITY.md
+          docs/**/*.md
 
     - name: Link Checker
       uses: lycheeverse/lychee-action@v2
@@ -19,7 +20,7 @@ runs:
     - name: Setup mdBook
       uses: peaceiris/actions-mdbook@v2
       with:
-        mdbook-version: '0.4.43'
+        mdbook-version: '0.4.52'
 
     - name: Test mdBook
       shell: bash
