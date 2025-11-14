@@ -23,7 +23,7 @@ jobs:
   build-and-preview:
     name: Docs CI + PR Preview
     runs-on: ubuntu-latest
-    if: github.head_ref != 'release' && !github.event.pull_request.draft
+    if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
 
     steps:
       - name: Checkout source code
