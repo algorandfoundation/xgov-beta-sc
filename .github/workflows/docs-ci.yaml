@@ -1,19 +1,29 @@
-name: Validate docs
+name: Validate & Preview docs
 
 on:
   workflow_call:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
     types: [opened, reopened, synchronize, ready_for_review]
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'SECURITY.md'
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 
 jobs:
-  validate-docs:
-    runs-on: "ubuntu-latest"
-    if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
+  build-and-preview:
+    name: Docs CI + PR Preview
+    runs-on: ubuntu-latest
+    if: github.head_ref != 'release' && !github.event.pull_request.draft
 
     steps:
       - name: Checkout source code
@@ -21,3 +31,21 @@ jobs:
 
       - name: Docs CI actions
         uses: ./.github/actions/docs-ci
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./book
+
+      - name: Deploy (PR Preview)
+        id: deploy
+        uses: actions/deploy-pages@v4
+        with:
+          preview: true
+
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.page_url }}
