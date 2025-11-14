@@ -24,6 +24,9 @@ jobs:
     name: Docs CI + PR Preview
     runs-on: ubuntu-latest
     if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
+    environment:
+      name: preview
+      url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
       - name: Checkout source code
@@ -45,7 +48,3 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           preview: true
-
-    environment:
-      name: preview
-      url: ${{ steps.deploy.outputs.page_url }}
