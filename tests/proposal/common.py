@@ -141,7 +141,7 @@ def quorums_reached(
     voted_members: int,
     total_votes: int,
     *,
-    plebiscite: bool = True,
+    plebiscite: bool = False,
 ) -> bool:
     proposal_values = proposal_client.state.global_state
     proposal_registry_values = get_proposal_values_from_registry(proposal_client)
@@ -230,6 +230,10 @@ def assert_proposal_global_state(
     else:
         assert global_state.vote_open_ts == 0
 
+    if status > STATUS_REJECTED or global_state.finalized:
+        assert not global_state.voters_count
+        assert not global_state.assigned_votes
+
 
 def get_default_params_for_status(status: int, overrides: dict, *, finalized: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
@@ -249,12 +253,6 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         "committee_votes": DEFAULT_COMMITTEE_VOTES,
     }
 
-    # Define common voter-related defaults used in multiple statuses
-    voter_defaults = {
-        "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
-        "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
-    }
-
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
         STATUS_DRAFT: {
@@ -266,35 +264,31 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         STATUS_VOTING: {
             "status": STATUS_VOTING,
             **committee_defaults,
-            **voter_defaults,
+            "voters_count": DEFAULT_COMMITTEE_MEMBERS,
+            "assigned_votes": DEFAULT_COMMITTEE_MEMBERS,
         },
         STATUS_APPROVED: {
             "status": STATUS_APPROVED,
             **committee_defaults,
-            **voter_defaults,
         },
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
         STATUS_REVIEWED: {
             "status": STATUS_REVIEWED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
         STATUS_BLOCKED: {
             "status": STATUS_BLOCKED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
         STATUS_FUNDED: {
             "status": STATUS_FUNDED,
             **committee_defaults,
-            **voter_defaults,
             "locked_amount": 0,
         },
     }.get(status, {})
@@ -628,4 +622,21 @@ def submit_proposal(
         params=CommonAppCallParams(
             sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
         )
+    )
+
+
+def end_voting_session_time(proposal_client: ProposalClient) -> None:
+    voting_duration = get_proposal_values_from_registry(proposal_client).voting_duration
+    vote_open_ts = proposal_client.state.global_state.vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
+
+
+def scrutinize_proposal(
+    scrutinizer: SigningAccount,
+    proposal_client: ProposalClient,
+    scrutiny_fee: AlgoAmount,
+) -> None:
+    end_voting_session_time(proposal_client)
+    proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=scrutinizer.address, static_fee=scrutiny_fee)
     )
