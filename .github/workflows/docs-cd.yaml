@@ -19,7 +19,6 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/docs-ci.yaml
     secrets: inherit
-    permissions: inherit
 
   deploy-docs:
     runs-on: ubuntu-latest
