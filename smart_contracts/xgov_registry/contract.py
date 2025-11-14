@@ -4,8 +4,8 @@ from algopy import (
     Account,
     Application,
     ARC4Contract,
+    Box,
     BoxMap,
-    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -39,6 +39,7 @@ from .constants import (
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
     PER_BYTE_IN_BOX_MBR,
+    PROPOSAL_APPROVAL_PAGES,
 )
 
 
@@ -155,7 +156,9 @@ class XGovRegistry(
         )
 
         # boxes
-        self.proposal_approval_program = BoxRef(key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX)
+        self.proposal_approval_program = Box(
+            Bytes, key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX
+        )
         self.xgov_box = BoxMap(
             Account,
             typ.XGovBoxValue,
@@ -385,8 +388,7 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        _box, exist = self.proposal_approval_program.maybe()
-        if exist:
+        if self.proposal_approval_program:
             self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
@@ -424,7 +426,7 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
         # Delete the Proposal Approval Program contract box
-        self.proposal_approval_program.delete()
+        del self.proposal_approval_program.value
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
@@ -619,7 +621,8 @@ class XGovRegistry(
         ), err.INVALID_PROPOSER_FEE
 
         assert (
-            config.min_requested_amount.as_uint64()
+            0
+            < config.min_requested_amount.as_uint64()
             < config.max_requested_amount[0].as_uint64()
             < config.max_requested_amount[1].as_uint64()
             < config.max_requested_amount[2].as_uint64()
@@ -632,27 +635,31 @@ class XGovRegistry(
         )
 
         assert (
-            config.discussion_duration[0].as_uint64()
+            0
+            < config.discussion_duration[0].as_uint64()
             <= config.discussion_duration[1].as_uint64()
             <= config.discussion_duration[2].as_uint64()
             <= config.discussion_duration[3].as_uint64()
         ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
 
         assert (
-            config.voting_duration[0].as_uint64()
+            0
+            < config.voting_duration[0].as_uint64()
             <= config.voting_duration[1].as_uint64()
             <= config.voting_duration[2].as_uint64()
             <= config.voting_duration[3].as_uint64()
         ), err.INCONSISTENT_VOTING_DURATION_CONFIG
 
         assert (
-            config.quorum[0].as_uint64()
+            0
+            < config.quorum[0].as_uint64()
             < config.quorum[1].as_uint64()
             < config.quorum[2].as_uint64()
         ), err.INCONSISTENT_QUORUM_CONFIG
 
         assert (
-            config.weighted_quorum[0].as_uint64()
+            0
+            < config.weighted_quorum[0].as_uint64()
             < config.weighted_quorum[1].as_uint64()
             < config.weighted_quorum[2].as_uint64()
         ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
@@ -733,6 +740,13 @@ class XGovRegistry(
         self.xgov_box[Txn.sender] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
 
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=arc4.Address(Txn.sender),
+                delegate=voting_address,
+            )
+        )
+
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
         """
@@ -750,6 +764,8 @@ class XGovRegistry(
         # delete box
         del self.xgov_box[Txn.sender]
         self.xgovs.value -= 1
+
+        arc4.emit(typ.XGovUnsubscribed(xgov=arc4.Address(Txn.sender)))
 
     @arc4.abimethod()
     def request_subscribe_xgov(
@@ -815,6 +831,13 @@ class XGovRegistry(
         self.xgovs.value += 1
         # delete the request
         del self.request_box[request_id.as_uint64()]
+
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=request.xgov_addr,
+                delegate=request.owner_addr,
+            )
+        )
 
     @arc4.abimethod()
     def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
@@ -901,6 +924,8 @@ class XGovRegistry(
         # delete the request
         del self.request_unsubscribe_box[request_id.as_uint64()]
 
+        arc4.emit(typ.XGovUnsubscribed(xgov=request.xgov_addr))
+
     @arc4.abimethod()
     def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
         """
@@ -977,6 +1002,8 @@ class XGovRegistry(
             arc4.Bool(False), arc4.Bool(False), arc4.UInt64(0)  # noqa: FBT003
         )
 
+        arc4.emit(typ.ProposerSubscribed(proposer=arc4.Address(Txn.sender)))
+
     @arc4.abimethod()
     def set_proposer_kyc(
         self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
@@ -1002,6 +1029,13 @@ class XGovRegistry(
 
         self.proposer_box[proposer.native] = self.make_proposer_box(
             active_proposal, kyc_status, kyc_expiring
+        )
+
+        arc4.emit(
+            typ.ProposerKYC(
+                proposer=proposer,
+                valid_kyc=arc4.Bool(self.valid_kyc(proposer.native)),
+            )
         )
 
     @arc4.abimethod()
@@ -1031,6 +1065,14 @@ class XGovRegistry(
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
+
+        arc4.emit(
+            typ.NewCommittee(
+                committee_id=committee_id,
+                size=arc4.UInt32(size.as_uint64()),
+                votes=arc4.UInt32(votes.as_uint64()),
+            )
+        )
 
     @arc4.abimethod
     def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
@@ -1071,8 +1113,7 @@ class XGovRegistry(
 
         mbr_before = Global.current_application_address.balance
 
-        proposal_approval, exist = self.proposal_approval_program.maybe()
-        assert exist, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
+        assert self.proposal_approval_program, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
 
         # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
@@ -1081,17 +1122,33 @@ class XGovRegistry(
         ).clear_state_program
 
         bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
-        total_size = proposal_approval.length + compiled_clear_state_1.length
-        extra_pages = total_size // bytes_per_page
+        total_size = (
+            self.proposal_approval_program.length + compiled_clear_state_1.length
+        )
+        total_pages = total_size // bytes_per_page
+
+        # The following assertion makes sure the loop-unrolling is consistent
+        assert total_pages == UInt64(
+            PROPOSAL_APPROVAL_PAGES
+        ), err.INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE
+        bytes_page_2 = (
+            self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
+        )
+        page_1 = self.proposal_approval_program.extract(
+            0 * bytes_per_page, bytes_per_page
+        )
+        page_2 = self.proposal_approval_program.extract(
+            1 * bytes_per_page, bytes_page_2
+        )
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
-            approval_program=proposal_approval,
+            approval_program=(page_1, page_2),
             clear_state_program=compiled_clear_state_1,
             global_num_uint=pcfg.GLOBAL_UINTS,
             global_num_bytes=pcfg.GLOBAL_BYTES,
-            extra_program_pages=extra_pages,
+            extra_program_pages=total_pages,
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
@@ -1124,6 +1181,13 @@ class XGovRegistry(
 
         # Increment pending proposals
         self.pending_proposals.value += 1
+
+        arc4.emit(
+            typ.NewProposal(
+                proposal_id=arc4.UInt64(tx.created_app.id),
+                proposer=arc4.Address(Txn.sender),
+            )
+        )
 
         return tx.created_app.id
 

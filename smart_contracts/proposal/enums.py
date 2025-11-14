@@ -23,7 +23,7 @@ STATUS_BLOCKED: Final[int] = 60  # Blocked with veto, the Grant Proposal can not
 FUNDING_CATEGORY_NULL: Final[int] = 0  # Null category
 FUNDING_CATEGORY_SMALL: Final[int] = 10  # Small category
 FUNDING_CATEGORY_MEDIUM: Final[int] = 20  # Medium category
-FUNDING_CATEGORY_LARGE: Final[int] = 33  # Large category
+FUNDING_CATEGORY_LARGE: Final[int] = 30  # Large category
 
 # Funding Type
 FUNDING_NULL: Final[int] = 0  # Null funding type

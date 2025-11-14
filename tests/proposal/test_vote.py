@@ -33,7 +33,7 @@ def test_vote_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -87,7 +87,7 @@ def test_vote_already_voted(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -236,7 +236,7 @@ def test_vote_reject(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -285,7 +285,7 @@ def test_vote_null(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -334,7 +334,7 @@ def test_vote_mixed(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -409,7 +409,7 @@ def test_vote_mixed_same_vote_call(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(

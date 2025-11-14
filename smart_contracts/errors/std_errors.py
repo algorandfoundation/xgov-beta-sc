@@ -91,5 +91,5 @@ INCONSISTENT_WEIGHTED_QUORUM_CONFIG = "Inconsistent weighted quorum config"
 INVALID_XGOV_FEE = "Invalid xGov fee"
 
 INVALID_PROPOSER_FEE = "Invalid proposer fee"
-
+INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE = "Invalid proposal approval program size"
 MISSING_PROPOSAL_APPROVAL_PROGRAM = "Missing proposal approval program"
