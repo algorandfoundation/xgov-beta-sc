@@ -78,7 +78,18 @@ jobs:
         run: |
           set -o pipefail
           case "${{ matrix.component }}" in
-            xgov_registry) pytest -q tests/xgov_registry ;;
-            proposal)      pytest -q tests/proposal ;;
-            council)       pytest -q tests/council tests/test_utils.py;;
+            xgov_registry)
+              poetry run pytest -q tests/xgov_registry
+              ;;
+            proposal)
+              poetry run pytest -q tests/proposal
+              ;;
+            council)
+              # council shard also runs shared tests at tests/test_utils.py
+              poetry run pytest -q tests/council tests/test_utils.py
+              ;;
+            *)
+              echo "Unknown component: ${{ matrix.component }}"
+              exit 1
+              ;;
           esac
