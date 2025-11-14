@@ -232,30 +232,20 @@ def test_finalize_success_blocked_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     blocked_proposal_client: ProposalClient,
 ) -> None:
-    composer = blocked_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
-    composer.send()
-
     finalize_proposal(
         xgov_registry_mock_client,
         blocked_proposal_client.app_id,
         xgov_daemon,
     )
 
+    voted_members = blocked_proposal_client.state.global_state.voted_members
     assert_blocked_proposal_global_state(
         blocked_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
-        voted_members=len(
-            committee
-        ),  # by default, the xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     min_balance = algorand_client.account.get_information(
@@ -282,30 +272,20 @@ def test_finalize_success_funded_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     funded_proposal_client: ProposalClient,
 ) -> None:
-    composer = funded_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
-    composer.send()
-
     finalize_proposal(
         xgov_registry_mock_client,
         funded_proposal_client.app_id,
         xgov_daemon,
     )
 
+    voted_members = funded_proposal_client.state.global_state.voted_members
     assert_funded_proposal_global_state(
         funded_proposal_client,
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
-        voted_members=len(
-            committee
-        ),  # by default, the xGov Committee approves by plebiscite
-        approvals=DEFAULT_MEMBER_VOTES
-        * len(committee),  # by default, the xGov Committee approves by plebiscite
+        voted_members=voted_members,
+        approvals=DEFAULT_MEMBER_VOTES * voted_members,
     )
 
     min_balance = algorand_client.account.get_information(

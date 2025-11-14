@@ -33,12 +33,12 @@ from tests.common import (
 )
 from tests.proposal.common import (
     assign_voters,
-    get_proposal_values_from_registry,
     open_proposal,
     quorums_reached,
+    scrutinize_proposal,
     submit_proposal,
+    unassign_voters,
 )
-from tests.utils import time_warp
 
 
 @pytest.fixture(scope="session")
@@ -153,7 +153,6 @@ def voting_proposal_client(
         xgov_daemon,
     )
     composer.send()
-
     return submitted_proposal_client
 
 
@@ -163,18 +162,7 @@ def rejected_proposal_client(
     min_fee_times_2: AlgoAmount,
     voting_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    voting_duration = get_proposal_values_from_registry(
-        voting_proposal_client
-    ).voting_duration
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=no_role_account.address, static_fee=min_fee_times_2
-        )
-    )
-
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
     return voting_proposal_client
 
 
@@ -201,54 +189,61 @@ def approved_proposal_client(
         total_votes += committee[member_idx].votes
         member_idx += 1
 
-    voting_duration = get_proposal_values_from_registry(
-        voting_proposal_client
-    ).voting_duration
-    vote_open_ts = voting_proposal_client.state.global_state.vote_open_ts
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    voting_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(sender=no_role_account.address)
-    )
-
+    scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
     return voting_proposal_client
+
+
+@pytest.fixture(scope="function")
+def cleaned_approved_proposal_client(
+    no_role_account: SigningAccount,
+    committee: list[CommitteeMember],
+    approved_proposal_client: ProposalClient,
+) -> ProposalClient:
+    composer = approved_proposal_client.new_group()
+    unassign_voters(
+        composer,
+        committee,
+        no_role_account,
+    )
+    composer.send()
+    return approved_proposal_client
 
 
 @pytest.fixture(scope="function")
 def reviewed_proposal_client(
     xgov_council: SigningAccount,
     min_fee_times_2: AlgoAmount,
-    approved_proposal_client: ProposalClient,
+    cleaned_approved_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    approved_proposal_client.send.review(
+    cleaned_approved_proposal_client.send.review(
         args=ReviewArgs(block=False),
         params=CommonAppCallParams(
             sender=xgov_council.address, static_fee=min_fee_times_2
         ),
     )
-    return approved_proposal_client
+    return cleaned_approved_proposal_client
 
 
 @pytest.fixture(scope="function")
 def blocked_proposal_client(
     xgov_council: SigningAccount,
     min_fee_times_2: AlgoAmount,
-    approved_proposal_client: ProposalClient,
+    cleaned_approved_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    approved_proposal_client.send.review(
+    cleaned_approved_proposal_client.send.review(
         args=ReviewArgs(block=True),
         params=CommonAppCallParams(
             sender=xgov_council.address, static_fee=min_fee_times_2
         ),
     )
-    return approved_proposal_client
+    return cleaned_approved_proposal_client
 
 
 @pytest.fixture(scope="function")
 def funded_proposal_client(
     min_fee_times_3: AlgoAmount,
-    reviewed_proposal_client: ProposalClient,
     xgov_registry_mock_client: XgovRegistryMockClient,
+    reviewed_proposal_client: ProposalClient,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.fund(
         args=FundArgs(proposal_app=reviewed_proposal_client.app_id),

@@ -12,7 +12,7 @@
 | Network  |                      xGov Council                      |
 | :------- | :----------------------------------------------------: |
 | Main Net | [TBD](https://lora.algokit.io/mainnet/application/TBD) |
-| Test Net | [TBD](https://lora.algokit.io/testnet/application/TBD) |
+| Test Net | [749237467](https://lora.algokit.io/testnet/application/749237467) |
 
 ## App Specs
 

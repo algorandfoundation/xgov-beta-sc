@@ -10,11 +10,6 @@ Bytes32 = arc4.StaticArray[arc4.Byte, typing.Literal[32]]
 Error = arc4.String
 
 
-class VoterBox(arc4.Struct, kw_only=True):
-    votes: arc4.UInt64  # Outstanding votes to be used as Approval or Rejection
-    voted: arc4.Bool  # Whether the voter has voted
-
-
 class ProposalTypedGlobalState(arc4.Struct):
     proposer: arc4.Address
     registry_app_id: arc4.UInt64
