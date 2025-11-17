@@ -37,8 +37,6 @@ The xGov Manager **MAY** update the xGov Registry anytime.
 
 The xGov Manager **MAY** reconfigure the parameters of the xGov Registry.
 
-The xGov Manager **MUST NOT** reconfigure the xGov Registry in case of pending Proposals.
-
 ### Treasury Management
 
 The xGov Manager **MAY** execute withdrawals of outstanding funds from the [xGov
