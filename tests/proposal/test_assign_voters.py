@@ -21,7 +21,7 @@ from tests.proposal.common import (
     assert_boxes,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
-    assert_final_proposal_global_state,
+    assert_submitted_proposal_global_state,
     assert_voting_proposal_global_state,
     assign_voters,
     get_voter_box_key,
@@ -50,7 +50,7 @@ def test_assign_voters_success(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voters_count=len(committee),
+        assigned_members=len(committee),
         assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
@@ -85,7 +85,7 @@ def test_assign_voters_not_xgov_daemon(
         )
         composer.send()
 
-    assert_final_proposal_global_state(
+    assert_submitted_proposal_global_state(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
@@ -149,6 +149,7 @@ def test_assign_voters_draft_proposal(
         draft_proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
+        metadata_uploaded=True,
     )
 
     assert_account_balance(
@@ -193,7 +194,7 @@ def test_assign_voters_voting_open(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
-        voters_count=len(committee),
+        assigned_members=len(committee),
         assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
@@ -316,13 +317,13 @@ def test_assign_voters_more_than_allowed(
     )
     composer.send()
 
-    assert_final_proposal_global_state(
+    assert_submitted_proposal_global_state(
         submitted_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         assigned_votes=DEFAULT_MEMBER_VOTES
         * (len(committee) + 1),  # proposer is also assigned
-        voters_count=len(committee) + 1,
+        assigned_members=len(committee) + 1,
     )
 
     assert_boxes(
