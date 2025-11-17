@@ -74,7 +74,8 @@ jobs:
               ;;
           esac
 
-      - name: Run tests scoped by directory (the common utils are tested with council)
+      - name: Run tests scoped by directory
+        # Common utils are tested with Council
         run: |
           set -o pipefail
           case "${{ matrix.component }}" in

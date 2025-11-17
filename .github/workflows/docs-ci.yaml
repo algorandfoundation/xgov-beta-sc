@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate-docs:
-    name: Validate docs (and deploy preview when changed)
+    name: Validate & Preview Docs (if changed)
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request && !github.event.pull_request.draft }}
     environment:

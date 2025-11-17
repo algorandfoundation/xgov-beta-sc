@@ -7,6 +7,7 @@ on:
 
 jobs:
   check-deployments:
+    name: Check Deployments (release PRs only)
     runs-on: ubuntu-latest
 
     steps:
