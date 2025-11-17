@@ -1,14 +1,9 @@
 name: Validate & Preview docs
 
 on:
-  workflow_call:
   pull_request:
     branches: [ main ]
     types: [opened, reopened, synchronize, ready_for_review]
-    paths:
-      - 'docs/**'
-      - 'README.md'
-      - 'SECURITY.md'
 
 permissions:
   contents: read
@@ -16,35 +11,55 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-pr-${{ github.event.pull_request.number || 'called' }}
+  group: pages-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  build-and-preview:
-    name: Docs CI + PR Preview
+  validate-docs:
+    name: Validate docs (and deploy preview when changed)
     runs-on: ubuntu-latest
-    if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
+    if: ${{ github.event.pull_request && !github.event.pull_request.draft }}
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-      - name: Checkout source code
+      - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Docs CI actions
+      - name: Detect docs changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            docs:
+              - 'docs/**'
+              - 'README.md'
+              - 'SECURITY.md'
+
+      - name: No docs changes — mark check as passed
+        if: ${{ steps.changes.outputs.docs != 'true' }}
+        run: |
+          echo "No docs changes detected. Skipping validation and preview."
+          echo "This job still succeeds so required status is green."
+
+      - name: Docs CI actions (lint, links, mdBook build)
+        if: ${{ steps.changes.outputs.docs == 'true' }}
         uses: ./.github/actions/docs-ci
 
       - name: Configure Pages
+        if: ${{ steps.changes.outputs.docs == 'true' }}
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
+        if: ${{ steps.changes.outputs.docs == 'true' }}
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./book
 
       - name: Deploy (PR Preview)
         id: deploy
+        if: ${{ steps.changes.outputs.docs == 'true' }}
         uses: actions/deploy-pages@v4
         with:
           preview: true
