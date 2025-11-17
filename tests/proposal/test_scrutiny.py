@@ -659,7 +659,7 @@ def test_scrutiny_after_time_approve_small_1(
     Test that scrutiny can be called after the time has passed and the proposal is approved
     Members vote and approve, reaching the regular and weighted quorums and relative majority of approvals
     """
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     voted_members, total_votes, member_idx = 0, 0, 0
     while not quorums_reached(
@@ -705,7 +705,7 @@ def test_scrutiny_after_time_approve_small_2(
     Members vote, reaching the regular and weighted quorums
     Majority approves, 1 rejects, reaching the relative majority of approvals
     """
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     num_of_rejections = 1
 
@@ -761,7 +761,7 @@ def test_scrutiny_after_time_approve_small_3(
     Members vote, reaching the regular and weighted quorums
     Majority approves, 1 rejects, and 1 abstains, reaching the relative majority of approvals
     """
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     num_of_rejections = 1
     num_of_abstains = 1
@@ -830,7 +830,7 @@ def test_scrutiny_after_time_approve_small_4(
     Members vote, reaching the regular and weighted quorums
     2 approve, 1 rejects, and the majority abstain, reaching the relative majority of approvals
     """
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     num_of_approvals = 2
     num_of_rejections = 1
@@ -900,7 +900,7 @@ def test_scrutiny_after_time_approve_small_5(
     Members vote, reaching the regular and weighted quorums
     10 approve and 9 reject, reaching the relative majority of approvals
     """
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     num_of_approvals = 10
     num_of_rejections = 9
@@ -961,7 +961,7 @@ def test_scrutiny_after_time_reject_small_1(
     """
     scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
 
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     assert_rejected_proposal_global_state(
         voting_proposal_client,
@@ -986,7 +986,7 @@ def test_scrutiny_after_time_reject_small_2(
     did not reach the regular and weighted quorums and the relative majority of approvals
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -1025,7 +1025,7 @@ def test_scrutiny_after_time_reject_small_3(
     reached the regular quorum but did not reach the weighted quorum and the relative majority of approvals
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
@@ -1066,7 +1066,7 @@ def test_scrutiny_after_time_reject_small_4(
     did not reach the relative majority of approvals
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
@@ -1118,7 +1118,7 @@ def test_scrutiny_after_time_reject_small_5(
     did not reach the relative majority of approvals
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[: len(committee) // 2]:
         xgov_registry_mock_client.send.vote(
@@ -1171,7 +1171,7 @@ def test_scrutiny_after_time_reject_small_6(
     relative majority of approvals is reached
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
@@ -1211,7 +1211,7 @@ def test_scrutiny_after_time_reject_small_7(
     relative majority of approvals is reached
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
@@ -1252,7 +1252,7 @@ def test_scrutiny_after_time_reject_small_8(
     relative majority of approvals is reached
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:3]:
         xgov_registry_mock_client.send.vote(
@@ -1294,7 +1294,7 @@ def test_scrutiny_after_time_reject_small_9(
     relative majority of approvals is reached
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
@@ -1347,7 +1347,7 @@ def test_scrutiny_after_time_reject_small_10(
     relative majority of approvals is reached
     """
     # TODO: Parametrize this test with dynamic quorums
-    voters_count = voting_proposal_client.state.global_state.voters_count
+    voters_count = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
         xgov_registry_mock_client.send.vote(
@@ -1415,7 +1415,7 @@ def test_scrutiny_after_time_reject_small_11(
             ),
         )
 
-    voters_count = submitted_proposal_client.state.global_state.voters_count
+    voters_count = submitted_proposal_client.state.global_state.assigned_members
     assigned_votes = submitted_proposal_client.state.global_state.assigned_votes
     xgov_registry_mock_client.send.vote(
         args=VoteArgs(
