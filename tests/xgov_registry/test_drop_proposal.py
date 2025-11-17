@@ -33,6 +33,7 @@ def test_drop_proposal_success(
         proposer.address,
         xgov_registry_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
         funding_type=enm.FUNDING_RETROACTIVE,
         requested_amount=REQUESTED_AMOUNT,
     )
