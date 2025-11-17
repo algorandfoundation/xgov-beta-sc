@@ -26,9 +26,10 @@ The xGov Registry provides two xGov (un)subscription procedures:
 by the Algorand Foundation, according to a pre-defined trust model. The Managed-Onboarding/Offboarding
 is executed in two steps:
 
-  1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe, declaring
-  the xGov App Address, the Application Owner Address, and a [Relation Type](./xgov-relation-types.md)
-  (enumerative that identifies a pre-defined trust model).
+  1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe,
+  declaring the xGov App Address, the Application Owner Address, and a [Relation
+  Type](./xgov-relation-types.md) (enumerative that identifies a pre-defined trust
+  model).
 
   1. The Algorand Foundation verifies the declared and accountable xGov/Owner Addresses
   relationship off-chain (based on the [Relation Type](./xgov-relation-types.md))
@@ -88,9 +89,10 @@ Box creation.
 
 The xGov Fee **MAY NOT** be paid by the xGov Address.
 
-xGov (Un)Subscription Request Box ID is equal to: `[<d>||<counter>]`, where `<d>` is a domain
-separation prefix which is either `r` for subscription requests or `ru` for unsubscription request,
-`<counter>` is a global counter for pending requests, and `||` denotes concatenation.
+xGov (Un)Subscription Request Box ID is equal to: `[<d>||<counter>]`, where `<d>`
+is a domain separation prefix which is either `r` for subscription requests or `ru`
+for unsubscription request, `<counter>` is a global counter for pending requests,
+and `||` denotes concatenation.
 
 An xGov (Un)Subscription Request Box has the following ABI schema:
 

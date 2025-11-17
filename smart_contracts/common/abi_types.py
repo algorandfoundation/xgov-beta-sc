@@ -10,11 +10,6 @@ Bytes32 = arc4.StaticArray[arc4.Byte, typing.Literal[32]]
 Error = arc4.String
 
 
-class VoterBox(arc4.Struct, kw_only=True):
-    votes: arc4.UInt64  # Outstanding votes to be used as Approval or Rejection
-    voted: arc4.Bool  # Whether the voter has voted
-
-
 class ProposalTypedGlobalState(arc4.Struct):
     proposer: arc4.Address
     registry_app_id: arc4.UInt64
@@ -113,3 +108,105 @@ class XGovBoxValue(arc4.Struct):
     voted_proposals: arc4.UInt64
     last_vote_timestamp: arc4.UInt64
     subscription_round: arc4.UInt64
+
+
+class VotingState(arc4.Struct, kw_only=True):
+    """The voting state of the Proposal"""
+
+    quorum_voters: arc4.UInt32
+    weighted_quorum_votes: arc4.UInt32
+    total_voters: arc4.UInt32
+    total_approvals: arc4.UInt32
+    total_rejections: arc4.UInt32
+    total_nulls: arc4.UInt32
+    quorum_reached: arc4.Bool
+    weighted_quorum_reached: arc4.Bool
+    majority_approved: arc4.Bool
+    plebiscite: arc4.Bool
+
+
+# ARC-28 xGov Registry Events
+
+
+class XGovSubscribed(arc4.Struct, kw_only=True):
+    """An xGov subscribed (either through self-onboarding or managed onboarding)"""
+
+    xgov: arc4.Address
+    delegate: arc4.Address
+
+
+class XGovUnsubscribed(arc4.Struct, kw_only=True):
+    """An xGov unsubscribed (either through self-onboarding or managed onboarding)"""
+
+    xgov: arc4.Address
+
+
+class ProposerSubscribed(arc4.Struct, kw_only=True):
+    """A Proposer subscribed"""
+
+    proposer: arc4.Address
+
+
+class ProposerKYC(arc4.Struct, kw_only=True):
+    """A Proposer KYC status update"""
+
+    proposer: arc4.Address
+    valid_kyc: arc4.Bool
+
+
+class NewCommittee(arc4.Struct, kw_only=True):
+    """A new xGov Committee has been elected"""
+
+    committee_id: Bytes32
+    size: arc4.UInt32
+    votes: arc4.UInt32
+
+
+class NewProposal(arc4.Struct, kw_only=True):
+    """A new Proposal has been opened"""
+
+    proposal_id: arc4.UInt64
+    proposer: arc4.Address
+
+
+# ARC-28 Proposal Events
+
+
+class Opened(arc4.Struct, kw_only=True):
+    """The Proposal has been opened"""
+
+    funding_type: arc4.UInt8
+    requested_amount: arc4.UInt64
+    category: arc4.UInt8
+
+
+class Submitted(arc4.Struct, kw_only=True):
+    """The Proposal has been submitted for voting"""
+
+    vote_opening: arc4.UInt64
+    vote_closing: arc4.UInt64
+    quorum_voters: arc4.UInt32
+    weighted_quorum_votes: arc4.UInt32
+
+
+class Vote(arc4.Struct, kw_only=True):
+    """A vote has been cast on the Proposal"""
+
+    xgov: arc4.Address
+    total_voters: arc4.UInt32
+    total_approvals: arc4.UInt32
+    total_rejections: arc4.UInt32
+    total_nulls: arc4.UInt32
+
+
+class Scrutiny(arc4.Struct, kw_only=True):
+    """The vote has been scrutinized"""
+
+    approved: arc4.Bool
+    plebiscite: arc4.Bool
+
+
+class Review(arc4.Struct, kw_only=True):
+    """The xGov Council has reviewed the Proposal"""
+
+    veto: arc4.Bool

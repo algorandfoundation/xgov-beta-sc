@@ -54,8 +54,7 @@ A Voter Box has the following ABI schema:
 
 ```json
 {
-    "votes": "unit32",
-    "voted": "bool"
+    "votes": "unit32"
 }
 ```
 

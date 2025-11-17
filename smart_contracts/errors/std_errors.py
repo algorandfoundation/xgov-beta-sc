@@ -82,10 +82,14 @@ INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"
 
 INVALID_REGISTRY_ID = "Invalid registry ID"
 
-INCOSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
+INCONSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
+INCONSISTENT_DISCUSSION_DURATION_CONFIG = "Inconsistent discussion duration config"
+INCONSISTENT_VOTING_DURATION_CONFIG = "Inconsistent voting duration config"
+INCONSISTENT_QUORUM_CONFIG = "Inconsistent quorum config"
+INCONSISTENT_WEIGHTED_QUORUM_CONFIG = "Inconsistent weighted quorum config"
 
 INVALID_XGOV_FEE = "Invalid xGov fee"
 
 INVALID_PROPOSER_FEE = "Invalid proposer fee"
-
+INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE = "Invalid proposal approval program size"
 MISSING_PROPOSAL_APPROVAL_PROGRAM = "Missing proposal approval program"

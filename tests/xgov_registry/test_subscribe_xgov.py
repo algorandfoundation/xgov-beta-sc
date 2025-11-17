@@ -80,9 +80,6 @@ def test_app_subscribe_xgov_success(
         ),
         params=CommonAppCallParams(
             static_fee=min_fee_times_3,
-            app_references=[
-                xgov_registry_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )
     final_xgovs = xgov_registry_client.state.global_state.xgovs

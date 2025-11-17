@@ -20,7 +20,7 @@ Vote **SHALL NOT** be modified.
 > Once the Pool is ready to vote, the allocation of `N` votes among _“Approve”_,
 > _“Reject”_, or _“Null”_ is simultaneous and can no longer be modified.
 
-## Voting Outcome
+## Scrutiny
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
 
@@ -36,6 +36,8 @@ votes **do not affect** the relative majority.
 And it is Rejected otherwise.
 
 The Commitment Lock **MUST** be returned to the Proposer if the Proposal is Rejected.
+
+The Voter Boxes of absentees xGovs **SHALL** be deleted.
 
 ## Review
 
