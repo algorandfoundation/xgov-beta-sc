@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages-pr-${{ github.event.pull_request.number }}
+  group: ${{ github.event.pull_request.number && format('pages-pr-{0}', github.event.pull_request.number) || 'pages-release' }}
   cancel-in-progress: true
 
 jobs:
