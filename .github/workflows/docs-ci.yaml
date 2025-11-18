@@ -44,22 +44,22 @@ jobs:
           echo "This job still succeeds so required status is green."
 
       - name: Docs CI actions (lint, links, mdBook build)
-        if: ${{ steps.changes.outputs.docs == 'true' }}
+        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: ./.github/actions/docs-ci
 
       - name: Configure Pages
-        if: ${{ steps.changes.outputs.docs == 'true' }}
+        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: ${{ steps.changes.outputs.docs == 'true' }}
+        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./book
 
       - name: Deploy (PR Preview)
         id: deploy
-        if: ${{ steps.changes.outputs.docs == 'true' }}
+        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: actions/deploy-pages@v4
         with:
           preview: true
