@@ -102,7 +102,7 @@ REQUESTED_AMOUNT = AlgoAmount(micro_algo=reg_cfg.MIN_REQUESTED_AMOUNT)
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
-def compute_quorum_threshold(requested_amount: int, committe_members: int) -> int:
+def compute_quorum_threshold(requested_amount: int, committee_members: int) -> int:
     quorum_min_bps = reg_cfg.QUORUM_SMALL
     quorum_max_bps = reg_cfg.QUORUM_LARGE
     delta_quorum_bps = quorum_max_bps - quorum_min_bps
@@ -113,7 +113,7 @@ def compute_quorum_threshold(requested_amount: int, committe_members: int) -> in
         quorum_min_bps
         + delta_quorum_bps * (requested_amount - amount_min) // delta_amount
     )
-    return relative_to_absolute_amount(committe_members, quorum_bps)
+    return relative_to_absolute_amount(committee_members, quorum_bps)
 
 
 def compute_weighted_quorum_threshold(
