@@ -392,7 +392,7 @@ class XGovRegistry(
             self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
-            _created = self.proposal_approval_program.create(size=size.as_uint64())
+            self.proposal_approval_program.create(size=size.as_uint64())
 
     @arc4.abimethod()
     def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
