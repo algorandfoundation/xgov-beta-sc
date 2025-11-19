@@ -502,6 +502,7 @@ class Proposal(
         quorum_max_bps = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
         )
+        # The xGov Registry ensures quorum_max_bps > quorum_min_bps
         delta_quorum_bps = quorum_max_bps - quorum_min_bps
 
         amount_min = self.get_uint_from_registry_config(
@@ -510,6 +511,7 @@ class Proposal(
         amount_max = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
         )
+        # The xGov Registry ensures amount_max > amount_min
         delta_amount = amount_max - amount_min
 
         quorum_bps = (
@@ -530,6 +532,7 @@ class Proposal(
         weighted_quorum_max_bps = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
         )
+        # The xGov Registry ensures weighted_quorum_max_bps > weighted_quorum_min_bps
         delta_weighted_quorum_bps = weighted_quorum_max_bps - weighted_quorum_min_bps
 
         amount_min = self.get_uint_from_registry_config(
@@ -538,6 +541,7 @@ class Proposal(
         amount_max = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
         )
+        # The xGov Registry ensures amount_max > amount_min
         delta_amount = amount_max - amount_min
 
         weighted_quorum_bps = (
