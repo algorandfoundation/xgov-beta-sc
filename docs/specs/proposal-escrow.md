@@ -14,7 +14,7 @@ The Proposal Escrow is an Address controlled by the Proposal Application.
 | FLOW                       | FROM            | TO            |             AMOUNT             | METHOD     | CONDITION                           |
 |:---------------------------|:----------------|:--------------|:------------------------------:|:-----------|:------------------------------------|
 | Operations Funding         | Proposal Escrow | xGov Daemon   |     % of Open Proposal Fee     | `submit`   |                                     |
-| Return Proposal Commitment | Proposal Escrow | Proposer      |    Proposal Locked Deposit     | `drop`     | Proposal is dropped                 |
+| Return Proposal Commitment | Proposal Escrow | Proposer      |    Proposal Locked Deposit     | `drop`     |                                     |
 | Return Proposal Commitment | Proposal Escrow | Proposer      |    Proposal Locked Deposit     | `scrutiny` | Proposal is rejected                |
 | Return Proposal Commitment | Proposal Escrow | Proposer      |    Proposal Locked Deposit     | `finalize` | Proposal is dropped for staleness   |
 | Return Proposal Commitment | Proposal Escrow | Proposer      |    Proposal Locked Deposit     | `review`   | Veto is not applied (`block=False`) |
