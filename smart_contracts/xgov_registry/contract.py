@@ -128,14 +128,16 @@ class XGovRegistry(
         )
 
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
-        self.quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM)
+        self.quorum_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM
+        )  # No longer used
         self.quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_LARGE)
 
         self.weighted_quorum_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_SMALL
         )
         self.weighted_quorum_medium = GlobalState(
-            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM
+            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM  # No longer used
         )
         self.weighted_quorum_large = GlobalState(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_LARGE
@@ -390,7 +392,7 @@ class XGovRegistry(
             self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
-            self.proposal_approval_program.create(size=size.as_uint64())
+            _created = self.proposal_approval_program.create(size=size.as_uint64())
 
     @arc4.abimethod()
     def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
@@ -649,14 +651,14 @@ class XGovRegistry(
         assert (
             0
             < config.quorum[0].as_uint64()
-            < config.quorum[1].as_uint64()
+            # Quorum Medium no longer used
             < config.quorum[2].as_uint64()
         ), err.INCONSISTENT_QUORUM_CONFIG
 
         assert (
             0
             < config.weighted_quorum[0].as_uint64()
-            < config.weighted_quorum[1].as_uint64()
+            # Weighted Quorum Medium no longer used
             < config.weighted_quorum[2].as_uint64()
         ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
 
@@ -692,11 +694,11 @@ class XGovRegistry(
         self.voting_duration_xlarge.value = config.voting_duration[3].as_uint64()
 
         self.quorum_small.value = config.quorum[0].as_uint64()
-        self.quorum_medium.value = config.quorum[1].as_uint64()
+        self.quorum_medium.value = UInt64(0)  # No longer used
         self.quorum_large.value = config.quorum[2].as_uint64()
 
         self.weighted_quorum_small.value = config.weighted_quorum[0].as_uint64()
-        self.weighted_quorum_medium.value = config.weighted_quorum[1].as_uint64()
+        self.weighted_quorum_medium.value = UInt64(0)  # No longer used
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
@@ -1500,12 +1502,12 @@ class XGovRegistry(
             ),
             quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.quorum_small.value),
-                arc4.UInt64(self.quorum_medium.value),
+                arc4.UInt64(self.quorum_medium.value),  # No longer used
                 arc4.UInt64(self.quorum_large.value),
             ),
             weighted_quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.weighted_quorum_small.value),
-                arc4.UInt64(self.weighted_quorum_medium.value),
+                arc4.UInt64(self.weighted_quorum_medium.value),  # No longer used
                 arc4.UInt64(self.weighted_quorum_large.value),
             ),
             outstanding_funds=arc4.UInt64(self.outstanding_funds.value),
