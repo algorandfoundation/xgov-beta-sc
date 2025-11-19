@@ -430,7 +430,7 @@ init_proposal_contract_after_if_else@4:
 init_proposal_contract_else_body@3:
     // smart_contracts/xgov_registry/contract.py:394-395
     // # Initialize the Proposal Approval Program contract
-    // _created = self.proposal_approval_program.create(size=size.as_uint64())
+    // self.proposal_approval_program.create(size=size.as_uint64())
     btoi
     bytec 8 // 0x7061
     swap
