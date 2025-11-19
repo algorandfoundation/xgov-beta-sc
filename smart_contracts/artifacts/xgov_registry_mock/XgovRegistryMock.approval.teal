@@ -4,7 +4,7 @@
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     intcblock 1 8 0 4 1814400 604800
-    bytecblock 0x151f7c75 "Wrong Proposal Status or finalized" "ERR:" 0x6f70656e5f70726f706f73616c5f666565 0x636f6d6d69747465655f6964 0x7061757365645f7265676973747279 0x7061757365645f70726f706f73616c73 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x78676f765f6461656d6f6e 0x3030303030303030303030303030303030303030303030303030303030303030 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x78676f765f636f756e63696c "Unauthorized" "Missing Config"
+    bytecblock 0x151f7c75 "Wrong Proposal Status or finalized" "ERR:" 0x6f70656e5f70726f706f73616c5f666565 0x636f6d6d69747465655f6964 0x7061757365645f7265676973747279 0x7061757365645f70726f706f73616c73 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x78676f765f6461656d6f6e 0x3030303030303030303030303030303030303030303030303030303030303030 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6c61726765 0x78676f765f636f756e63696c "Unauthorized" "Missing Config"
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/xgov_registry_mock/contract.py:24
@@ -225,10 +225,10 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:96
     // key=reg_cfg.GS_KEY_QUORUM_MEDIUM,
-    bytec 24 // 0x71756f72756d5f6d656469756d
+    pushbytes 0x71756f72756d5f6d656469756d
     // smart_contracts/xgov_registry_mock/contract.py:95
     // UInt64(reg_cfg.QUORUM_MEDIUM),
-    pushint 5000 // 5000
+    intc_2 // 0
     // smart_contracts/xgov_registry_mock/contract.py:94-97
     // self.quorum_medium = GlobalState(
     //     UInt64(reg_cfg.QUORUM_MEDIUM),
@@ -237,7 +237,7 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:100
     // key=reg_cfg.GS_KEY_QUORUM_LARGE,
-    bytec 25 // 0x71756f72756d5f6c61726765
+    bytec 24 // 0x71756f72756d5f6c61726765
     // smart_contracts/xgov_registry_mock/contract.py:99
     // UInt64(reg_cfg.QUORUM_LARGE),
     pushint 7000 // 7000
@@ -249,7 +249,7 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:104
     // key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL,
-    bytec 26 // 0x77656967687465645f71756f72756d5f736d616c6c
+    bytec 25 // 0x77656967687465645f71756f72756d5f736d616c6c
     // smart_contracts/xgov_registry_mock/contract.py:103
     // UInt64(reg_cfg.WEIGHTED_QUORUM_SMALL),
     pushint 5000 // 5000
@@ -261,10 +261,10 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:108
     // key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM,
-    bytec 27 // 0x77656967687465645f71756f72756d5f6d656469756d
+    pushbytes 0x77656967687465645f71756f72756d5f6d656469756d
     // smart_contracts/xgov_registry_mock/contract.py:107
     // UInt64(reg_cfg.WEIGHTED_QUORUM_MEDIUM),
-    pushint 6000 // 6000
+    intc_2 // 0
     // smart_contracts/xgov_registry_mock/contract.py:106-109
     // self.weighted_quorum_medium = GlobalState(
     //     UInt64(reg_cfg.WEIGHTED_QUORUM_MEDIUM),
@@ -273,7 +273,7 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:112
     // key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
-    bytec 28 // 0x77656967687465645f71756f72756d5f6c61726765
+    bytec 26 // 0x77656967687465645f71756f72756d5f6c61726765
     // smart_contracts/xgov_registry_mock/contract.py:111
     // UInt64(reg_cfg.WEIGHTED_QUORUM_LARGE),
     pushint 7000 // 7000
@@ -285,7 +285,7 @@ main:
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:116
     // key=reg_cfg.GS_KEY_XGOV_COUNCIL,
-    bytec 29 // 0x78676f765f636f756e63696c
+    bytec 27 // 0x78676f765f636f756e63696c
     // smart_contracts/xgov_registry_mock/contract.py:115
     // arc4.Address(),
     global ZeroAddress
@@ -324,15 +324,15 @@ main_after_if_else@2:
     // smart_contracts/xgov_registry_mock/contract.py:20
     // class XgovRegistryMock(ARC4Contract):
     txn NumAppArgs
-    bz main___algopy_default_create@44
+    bz main___algopy_default_create@42
     txn OnCompletion
     !
     assert // OnCompletion must be NoOp
     txn ApplicationID
     assert
-    pushbytess 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xc386b03f 0x6811eb76 0x37235b22 0xbbc72d1b 0xd17676d9 0x7cd79aad 0x1c71f4e7 0x29dfd021 0x34a5dc55 0xbb0db011 0x84b7d268 0x839dc51d 0x504c31b9 0x56ad1c6f 0xf83579fd 0x520e1f64 0x53802148 0xa4f766f6 0xa9998b1d 0x4e9c607c 0x650dfa8b 0xc887f086 0x4af84ea5 0x2c64e86f 0x16acce3b 0x910e1aa3 0x37d6adf1 0x6fa6214c 0xf5910756 0x65610a9f 0x26983200 // method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "create_empty_proposal(address)uint64", method "set_proposal_commitment_bps(uint64)void", method "set_min_requested_amount(uint64)void", method "set_max_requested_amount_small(uint64)void", method "set_max_requested_amount_medium(uint64)void", method "set_max_requested_amount_large(uint64)void", method "set_daemon_ops_funding_bps(uint64)void", method "set_discussion_duration_small(uint64)void", method "set_discussion_duration_medium(uint64)void", method "set_discussion_duration_large(uint64)void", method "set_xgov_daemon(address)void", method "set_open_proposal_fee(uint64)void", method "set_committee_id(byte[32])void", method "clear_committee_id()void", method "set_committee_members(uint64)void", method "set_committee_votes(uint64)void", method "set_voting_duration_small(uint64)void", method "set_voting_duration_medium(uint64)void", method "set_voting_duration_large(uint64)void", method "set_quorum_small(uint64)void", method "set_quorum_medium(uint64)void", method "set_quorum_large(uint64)void", method "set_weighted_quorum_small(uint64)void", method "set_weighted_quorum_medium(uint64)void", method "set_weighted_quorum_large(uint64)void", method "vote(uint64,address,uint64,uint64)void", method "set_xgov_council(address)void", method "fund(uint64)void", method "finalize_proposal(uint64)void", method "drop_proposal(uint64)void", method "is_proposal(uint64)void"
+    pushbytess 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xc386b03f 0x6811eb76 0x37235b22 0xbbc72d1b 0xd17676d9 0x7cd79aad 0x1c71f4e7 0x29dfd021 0x34a5dc55 0xbb0db011 0x84b7d268 0x839dc51d 0x504c31b9 0x56ad1c6f 0xf83579fd 0x520e1f64 0x53802148 0xa4f766f6 0xa9998b1d 0x4e9c607c 0xc887f086 0x4af84ea5 0x16acce3b 0x910e1aa3 0x37d6adf1 0x6fa6214c 0xf5910756 0x65610a9f 0x26983200 // method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "create_empty_proposal(address)uint64", method "set_proposal_commitment_bps(uint64)void", method "set_min_requested_amount(uint64)void", method "set_max_requested_amount_small(uint64)void", method "set_max_requested_amount_medium(uint64)void", method "set_max_requested_amount_large(uint64)void", method "set_daemon_ops_funding_bps(uint64)void", method "set_discussion_duration_small(uint64)void", method "set_discussion_duration_medium(uint64)void", method "set_discussion_duration_large(uint64)void", method "set_xgov_daemon(address)void", method "set_open_proposal_fee(uint64)void", method "set_committee_id(byte[32])void", method "clear_committee_id()void", method "set_committee_members(uint64)void", method "set_committee_votes(uint64)void", method "set_voting_duration_small(uint64)void", method "set_voting_duration_medium(uint64)void", method "set_voting_duration_large(uint64)void", method "set_quorum_small(uint64)void", method "set_quorum_large(uint64)void", method "set_weighted_quorum_small(uint64)void", method "set_weighted_quorum_large(uint64)void", method "vote(uint64,address,uint64,uint64)void", method "set_xgov_council(address)void", method "fund(uint64)void", method "finalize_proposal(uint64)void", method "drop_proposal(uint64)void", method "is_proposal(uint64)void"
     txna ApplicationArgs 0
-    match main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 create_empty_proposal set_proposal_commitment_bps set_min_requested_amount set_max_requested_amount_small set_max_requested_amount_medium set_max_requested_amount_large set_daemon_ops_funding_bps set_discussion_duration_small set_discussion_duration_medium set_discussion_duration_large set_xgov_daemon set_open_proposal_fee set_committee_id main_clear_committee_id_route@23 set_committee_members set_committee_votes set_voting_duration_small set_voting_duration_medium set_voting_duration_large set_quorum_small set_quorum_medium set_quorum_large set_weighted_quorum_small set_weighted_quorum_medium set_weighted_quorum_large vote set_xgov_council fund finalize_proposal drop_proposal is_proposal
+    match main_pause_registry_route@6 main_pause_proposals_route@7 main_resume_registry_route@8 main_resume_proposals_route@9 create_empty_proposal set_proposal_commitment_bps set_min_requested_amount set_max_requested_amount_small set_max_requested_amount_medium set_max_requested_amount_large set_daemon_ops_funding_bps set_discussion_duration_small set_discussion_duration_medium set_discussion_duration_large set_xgov_daemon set_open_proposal_fee set_committee_id main_clear_committee_id_route@23 set_committee_members set_committee_votes set_voting_duration_small set_voting_duration_medium set_voting_duration_large set_quorum_small set_quorum_large set_weighted_quorum_small set_weighted_quorum_large vote set_xgov_council fund finalize_proposal drop_proposal is_proposal
     err
 
 main_clear_committee_id_route@23:
@@ -390,7 +390,7 @@ main_pause_registry_route@6:
     intc_0 // 1
     return
 
-main___algopy_default_create@44:
+main___algopy_default_create@42:
     txn OnCompletion
     !
     txn ApplicationID
@@ -430,7 +430,7 @@ create_empty_proposal:
     itxn_field ExtraProgramPages
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(CiAFAAEgCpBOJiUGc3RhdHVzAgAACWZpbmFsaXplZAhwcm9wb3Nlcg9yZWdpc3RyeV9hcHBfaWQBABBmdW5kaW5nX2NhdGVnb3J5EGFzc2lnbmVkX21lbWJlcnMNdm90ZWRfbWVtYmVycwlhcHByb3ZhbHMKcmVqZWN0aW9ucwQVH3x1AU0RY29tbWl0dGVlX21lbWJlcnMFbnVsbHMPY29tbWl0dGVlX3ZvdGVzDmFzc2lnbmVkX3ZvdGVzDGNvbW1pdHRlZV9pZA1sb2NrZWRfYW1vdW50EHF1b3J1bV90aHJlc2hvbGQZd2VpZ2h0ZWRfcXVvcnVtX3RocmVzaG9sZAFWEW9wZW5fcHJvcG9zYWxfZmVlHGRhZW1vbl9vcGVyYXRpb25fZnVuZGluZ19icHMOb3Blbl90aW1lc3RhbXAWdm90ZV9vcGVuaW5nX3RpbWVzdGFtcAxmdW5kaW5nX3R5cGUQcmVxdWVzdGVkX2Ftb3VudA92b3RpbmdfZHVyYXRpb24PcGF1c2VkX3JlZ2lzdHJ5KAAmRVJSOldyb25nIFByb3Bvc2FsIFN0YXR1cyBvciBmaW5hbGl6ZWQUc3VibWlzc2lvbl90aW1lc3RhbXARbWV0YWRhdGFfdXBsb2FkZWQFdGl0bGUFZm9jdXMTZGlzY3Vzc2lvbl9kdXJhdGlvbgt4Z292X2RhZW1vbjEYQACIMTWBAxJEMTSBGhJEMTcURDE2FEQrMgNnJwQiZycRgABnJw0iZycPImcnFiJnJxciZycYImcnHyJnJxkiZygiZyoiZycgImcnIYAAZycGImcnIiJnJxoiZycbImcnEiJnJyMiZyccImcnEyJnJxQiZycHImcnECJnJwgiZycJImcnCiJnJw4iZ4AEJDeNPDYaAI4BAIoxGRREMRhBAHOCDwTtrrnKBHFDmU8Ec3EyGgQ05hPKBA2asNcEGEGg0gRzTb7MBCEtnwcEil5MgAQqwZsFBIAgabQEqMb4CgQkYV+QBOojY/QE29g92TYaAI4PAI0EIAR6BL4FAwX/B4oH/QhdCJEJQAogCu0LGgABACNDgAQhax4HNhoAjgEADQAxGYEFEjEYEERCCeQ2GgFJFSQSRDINRCtMZycEMg1nJxGIC50nEUxnJw2IC4cnDUxnJw+IC34nD0xnJxaIC3UnFkxnJxeIC2wnF0xn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)
+    pushbytes base64(CiAFAAEgCpBOJicGc3RhdHVzAgAACWZpbmFsaXplZAhwcm9wb3Nlcg9yZWdpc3RyeV9hcHBfaWQBABBhc3NpZ25lZF9tZW1iZXJzDXZvdGVkX21lbWJlcnMJYXBwcm92YWxzCnJlamVjdGlvbnMEFR98dQFNEWNvbW1pdHRlZV9tZW1iZXJzEHJlcXVlc3RlZF9hbW91bnQFbnVsbHMPY29tbWl0dGVlX3ZvdGVzEGZ1bmRpbmdfY2F0ZWdvcnkOYXNzaWduZWRfdm90ZXMMY29tbWl0dGVlX2lkDWxvY2tlZF9hbW91bnQQcXVvcnVtX3RocmVzaG9sZBl3ZWlnaHRlZF9xdW9ydW1fdGhyZXNob2xkAVYRb3Blbl9wcm9wb3NhbF9mZWUcZGFlbW9uX29wZXJhdGlvbl9mdW5kaW5nX2Jwcw5vcGVuX3RpbWVzdGFtcBZ2b3RlX29wZW5pbmdfdGltZXN0YW1wDGZ1bmRpbmdfdHlwZQ92b3RpbmdfZHVyYXRpb24PcGF1c2VkX3JlZ2lzdHJ5KAAmRVJSOldyb25nIFByb3Bvc2FsIFN0YXR1cyBvciBmaW5hbGl6ZWQUc3VibWlzc2lvbl90aW1lc3RhbXARbWV0YWRhdGFfdXBsb2FkZWQFdGl0bGUFZm9jdXMTZGlzY3Vzc2lvbl9kdXJhdGlvbhRtaW5fcmVxdWVzdGVkX2Ftb3VudBptYXhfcmVxdWVzdGVkX2Ftb3VudF9sYXJnZQt4Z292X2RhZW1vbjEYQACIMTWBAxJEMTSBGhJEMTcURDE2FEQrMgNnJwQiZycSgABnJwwiZycPImcnFyJnJxgiZycZImcnHyJnJxoiZygiZyoiZycgImcnIYAAZycQImcnIiJnJxsiZycNImcnEyJnJyMiZyccImcnFCJnJxUiZycGImcnESJnJwciZycIImcnCSJnJw4iZ4AEJDeNPDYaAI4BAIoxGRREMRhBAHOCDwTtrrnKBHFDmU8Ec3EyGgQ05hPKBA2asNcEGEGg0gRzTb7MBCEtnwcEil5MgAQqwZsFBIAgabQEqMb4CgQkYV+QBOojY/QE29g92TYaAI4PAI0DuwQVBFkEngWaByUHmAf4CCwI2wm7CogKtQABACNDgAQhax4HNhoAjgEADQAxGYEFEjEYEERCCX82GgFJFSQSRDINRCtMZycE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)
     itxn_field ApprovalProgramPages
     // smart_contracts/xgov_registry_mock/contract.py:176
     // Proposal,
@@ -898,8 +898,8 @@ set_quorum_small:
     return
 
 
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_medium[routing]() -> void:
-set_quorum_medium:
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_large[routing]() -> void:
+set_quorum_large:
     // smart_contracts/xgov_registry_mock/contract.py:395
     // @arc4.abimethod()
     txna ApplicationArgs 1
@@ -910,8 +910,8 @@ set_quorum_medium:
     assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:404
-    // self.quorum_medium.value = quorum
-    bytec 24 // 0x71756f72756d5f6d656469756d
+    // self.quorum_large.value = quorum
+    bytec 24 // 0x71756f72756d5f6c61726765
     swap
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:395
@@ -920,8 +920,8 @@ set_quorum_medium:
     return
 
 
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_quorum_large[routing]() -> void:
-set_quorum_large:
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_small[routing]() -> void:
+set_weighted_quorum_small:
     // smart_contracts/xgov_registry_mock/contract.py:406
     // @arc4.abimethod()
     txna ApplicationArgs 1
@@ -932,8 +932,8 @@ set_quorum_large:
     assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:415
-    // self.quorum_large.value = quorum
-    bytec 25 // 0x71756f72756d5f6c61726765
+    // self.weighted_quorum_small.value = weighted_quorum
+    bytec 25 // 0x77656967687465645f71756f72756d5f736d616c6c
     swap
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:406
@@ -942,8 +942,8 @@ set_quorum_large:
     return
 
 
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_small[routing]() -> void:
-set_weighted_quorum_small:
+// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_large[routing]() -> void:
+set_weighted_quorum_large:
     // smart_contracts/xgov_registry_mock/contract.py:417
     // @arc4.abimethod()
     txna ApplicationArgs 1
@@ -954,8 +954,8 @@ set_weighted_quorum_small:
     assert // invalid number of bytes for arc4.uint64
     btoi
     // smart_contracts/xgov_registry_mock/contract.py:426
-    // self.weighted_quorum_small.value = weighted_quorum
-    bytec 26 // 0x77656967687465645f71756f72756d5f736d616c6c
+    // self.weighted_quorum_large.value = weighted_quorum
+    bytec 26 // 0x77656967687465645f71756f72756d5f6c61726765
     swap
     app_global_put
     // smart_contracts/xgov_registry_mock/contract.py:417
@@ -964,53 +964,9 @@ set_weighted_quorum_small:
     return
 
 
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_medium[routing]() -> void:
-set_weighted_quorum_medium:
-    // smart_contracts/xgov_registry_mock/contract.py:428
-    // @arc4.abimethod()
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_1 // 8
-    ==
-    assert // invalid number of bytes for arc4.uint64
-    btoi
-    // smart_contracts/xgov_registry_mock/contract.py:437
-    // self.weighted_quorum_medium.value = weighted_quorum
-    bytec 27 // 0x77656967687465645f71756f72756d5f6d656469756d
-    swap
-    app_global_put
-    // smart_contracts/xgov_registry_mock/contract.py:428
-    // @arc4.abimethod()
-    intc_0 // 1
-    return
-
-
-// smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_weighted_quorum_large[routing]() -> void:
-set_weighted_quorum_large:
-    // smart_contracts/xgov_registry_mock/contract.py:439
-    // @arc4.abimethod()
-    txna ApplicationArgs 1
-    dup
-    len
-    intc_1 // 8
-    ==
-    assert // invalid number of bytes for arc4.uint64
-    btoi
-    // smart_contracts/xgov_registry_mock/contract.py:448
-    // self.weighted_quorum_large.value = weighted_quorum
-    bytec 28 // 0x77656967687465645f71756f72756d5f6c61726765
-    swap
-    app_global_put
-    // smart_contracts/xgov_registry_mock/contract.py:439
-    // @arc4.abimethod()
-    intc_0 // 1
-    return
-
-
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.vote[routing]() -> void:
 vote:
-    // smart_contracts/xgov_registry_mock/contract.py:450
+    // smart_contracts/xgov_registry_mock/contract.py:428
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1036,7 +992,7 @@ vote:
     intc_1 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/xgov_registry_mock/contract.py:477-484
+    // smart_contracts/xgov_registry_mock/contract.py:455-462
     // error, _tx = arc4.abi_call(
     //     Proposal.vote,
     //     voter,
@@ -1046,12 +1002,12 @@ vote:
     //     fee=0,
     // )
     itxn_begin
-    // smart_contracts/xgov_registry_mock/contract.py:482
+    // smart_contracts/xgov_registry_mock/contract.py:460
     // app_id=proposal_app.as_uint64(),
     uncover 3
     btoi
     itxn_field ApplicationID
-    // smart_contracts/xgov_registry_mock/contract.py:477-484
+    // smart_contracts/xgov_registry_mock/contract.py:455-462
     // error, _tx = arc4.abi_call(
     //     Proposal.vote,
     //     voter,
@@ -1069,11 +1025,11 @@ vote:
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry_mock/contract.py:483
+    // smart_contracts/xgov_registry_mock/contract.py:461
     // fee=0,
     intc_2 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry_mock/contract.py:477-484
+    // smart_contracts/xgov_registry_mock/contract.py:455-462
     // error, _tx = arc4.abi_call(
     //     Proposal.vote,
     //     voter,
@@ -1100,7 +1056,7 @@ vote:
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
-    // smart_contracts/xgov_registry_mock/contract.py:486
+    // smart_contracts/xgov_registry_mock/contract.py:464
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
@@ -1112,10 +1068,10 @@ vote:
     intc_2 // 0
 
 vote_ternary_merge@5:
-    // smart_contracts/xgov_registry_mock/contract.py:486
+    // smart_contracts/xgov_registry_mock/contract.py:464
     // if error.native.startswith(err.ARC_65_PREFIX):
     bz vote_after_if_else@15
-    // smart_contracts/xgov_registry_mock/contract.py:487
+    // smart_contracts/xgov_registry_mock/contract.py:465
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_3 // 4
     dig 1
@@ -1130,22 +1086,22 @@ vote_ternary_merge@5:
     swap
     uncover 2
     substring3
-    // smart_contracts/xgov_registry_mock/contract.py:489
+    // smart_contracts/xgov_registry_mock/contract.py:467
     // case err.UNAUTHORIZED:
-    bytec 30 // "Unauthorized"
-    // smart_contracts/xgov_registry_mock/contract.py:491
+    bytec 28 // "Unauthorized"
+    // smart_contracts/xgov_registry_mock/contract.py:469
     // case err.VOTER_NOT_FOUND:
     pushbytess "Voter not found" "Voter already voted" "Votes exceeded" // "Voter not found", "Voter already voted", "Votes exceeded"
-    // smart_contracts/xgov_registry_mock/contract.py:497
+    // smart_contracts/xgov_registry_mock/contract.py:475
     // case err.MISSING_CONFIG:
-    bytec 31 // "Missing Config"
-    // smart_contracts/xgov_registry_mock/contract.py:499
+    bytec 29 // "Missing Config"
+    // smart_contracts/xgov_registry_mock/contract.py:477
     // case err.WRONG_PROPOSAL_STATUS:
     bytec_1 // "Wrong Proposal Status or finalized"
-    // smart_contracts/xgov_registry_mock/contract.py:501
+    // smart_contracts/xgov_registry_mock/contract.py:479
     // case err.VOTING_PERIOD_EXPIRED:
     pushbytes "Voting Period Expired"
-    // smart_contracts/xgov_registry_mock/contract.py:488-504
+    // smart_contracts/xgov_registry_mock/contract.py:466-482
     // match error_without_prefix:
     //     case err.UNAUTHORIZED:
     //         assert False, err.UNAUTHORIZED  # noqa
@@ -1165,53 +1121,53 @@ vote_ternary_merge@5:
     //         assert False, "Unknown error"  # noqa
     uncover 7
     match vote_switch_case_0@7 vote_switch_case_1@8 vote_switch_case_2@9 vote_switch_case_3@10 vote_switch_case_4@11 vote_switch_case_5@12 vote_switch_case_6@13
-    // smart_contracts/xgov_registry_mock/contract.py:504
+    // smart_contracts/xgov_registry_mock/contract.py:482
     // assert False, "Unknown error"  # noqa
     err // Unknown error
 
 vote_switch_case_6@13:
-    // smart_contracts/xgov_registry_mock/contract.py:502
+    // smart_contracts/xgov_registry_mock/contract.py:480
     // assert False, err.VOTING_PERIOD_EXPIRED  # noqa
     err // Voting Period Expired
 
 vote_switch_case_5@12:
-    // smart_contracts/xgov_registry_mock/contract.py:500
+    // smart_contracts/xgov_registry_mock/contract.py:478
     // assert False, err.WRONG_PROPOSAL_STATUS  # noqa
     err // Wrong Proposal Status or finalized
 
 vote_switch_case_4@11:
-    // smart_contracts/xgov_registry_mock/contract.py:498
+    // smart_contracts/xgov_registry_mock/contract.py:476
     // assert False, err.MISSING_CONFIG  # noqa
     err // Missing Config
 
 vote_switch_case_3@10:
-    // smart_contracts/xgov_registry_mock/contract.py:496
+    // smart_contracts/xgov_registry_mock/contract.py:474
     // assert False, err.VOTES_EXCEEDED  # noqa
     err // Votes exceeded
 
 vote_switch_case_2@9:
-    // smart_contracts/xgov_registry_mock/contract.py:494
+    // smart_contracts/xgov_registry_mock/contract.py:472
     // assert False, err.VOTER_ALREADY_VOTED  # noqa
     err // Voter already voted
 
 vote_switch_case_1@8:
-    // smart_contracts/xgov_registry_mock/contract.py:492
+    // smart_contracts/xgov_registry_mock/contract.py:470
     // assert False, err.VOTER_NOT_FOUND  # noqa
     err // Voter not found
 
 vote_switch_case_0@7:
-    // smart_contracts/xgov_registry_mock/contract.py:490
+    // smart_contracts/xgov_registry_mock/contract.py:468
     // assert False, err.UNAUTHORIZED  # noqa
     err // Unauthorized
 
 vote_after_if_else@15:
-    // smart_contracts/xgov_registry_mock/contract.py:450
+    // smart_contracts/xgov_registry_mock/contract.py:428
     // @arc4.abimethod()
     intc_0 // 1
     return
 
 vote_ternary_false@4:
-    // smart_contracts/xgov_registry_mock/contract.py:486
+    // smart_contracts/xgov_registry_mock/contract.py:464
     // if error.native.startswith(err.ARC_65_PREFIX):
     dig 2
     extract 6 4
@@ -1222,7 +1178,7 @@ vote_ternary_false@4:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.set_xgov_council[routing]() -> void:
 set_xgov_council:
-    // smart_contracts/xgov_registry_mock/contract.py:506
+    // smart_contracts/xgov_registry_mock/contract.py:484
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1230,12 +1186,12 @@ set_xgov_council:
     pushint 32 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/xgov_registry_mock/contract.py:515
+    // smart_contracts/xgov_registry_mock/contract.py:493
     // self.xgov_council.value = xgov_council
-    bytec 29 // 0x78676f765f636f756e63696c
+    bytec 27 // 0x78676f765f636f756e63696c
     swap
     app_global_put
-    // smart_contracts/xgov_registry_mock/contract.py:506
+    // smart_contracts/xgov_registry_mock/contract.py:484
     // @arc4.abimethod()
     intc_0 // 1
     return
@@ -1243,7 +1199,7 @@ set_xgov_council:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.fund[routing]() -> void:
 fund:
-    // smart_contracts/xgov_registry_mock/contract.py:517
+    // smart_contracts/xgov_registry_mock/contract.py:495
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1251,18 +1207,18 @@ fund:
     intc_1 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/xgov_registry_mock/contract.py:531-535
+    // smart_contracts/xgov_registry_mock/contract.py:509-513
     // error, _tx = arc4.abi_call(
     //     Proposal.fund,
     //     app_id=proposal_app.as_uint64(),
     //     fee=0,
     // )
     itxn_begin
-    // smart_contracts/xgov_registry_mock/contract.py:533
+    // smart_contracts/xgov_registry_mock/contract.py:511
     // app_id=proposal_app.as_uint64(),
     btoi
     itxn_field ApplicationID
-    // smart_contracts/xgov_registry_mock/contract.py:531-535
+    // smart_contracts/xgov_registry_mock/contract.py:509-513
     // error, _tx = arc4.abi_call(
     //     Proposal.fund,
     //     app_id=proposal_app.as_uint64(),
@@ -1272,11 +1228,11 @@ fund:
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry_mock/contract.py:534
+    // smart_contracts/xgov_registry_mock/contract.py:512
     // fee=0,
     intc_2 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry_mock/contract.py:531-535
+    // smart_contracts/xgov_registry_mock/contract.py:509-513
     // error, _tx = arc4.abi_call(
     //     Proposal.fund,
     //     app_id=proposal_app.as_uint64(),
@@ -1300,7 +1256,7 @@ fund:
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
-    // smart_contracts/xgov_registry_mock/contract.py:537
+    // smart_contracts/xgov_registry_mock/contract.py:515
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
@@ -1312,10 +1268,10 @@ fund:
     intc_2 // 0
 
 fund_ternary_merge@5:
-    // smart_contracts/xgov_registry_mock/contract.py:537
+    // smart_contracts/xgov_registry_mock/contract.py:515
     // if error.native.startswith(err.ARC_65_PREFIX):
     bz fund_after_if_else@10
-    // smart_contracts/xgov_registry_mock/contract.py:538
+    // smart_contracts/xgov_registry_mock/contract.py:516
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_3 // 4
     dig 1
@@ -1330,13 +1286,13 @@ fund_ternary_merge@5:
     swap
     uncover 2
     substring3
-    // smart_contracts/xgov_registry_mock/contract.py:540
+    // smart_contracts/xgov_registry_mock/contract.py:518
     // case err.UNAUTHORIZED:
-    bytec 30 // "Unauthorized"
-    // smart_contracts/xgov_registry_mock/contract.py:542
+    bytec 28 // "Unauthorized"
+    // smart_contracts/xgov_registry_mock/contract.py:520
     // case err.WRONG_PROPOSAL_STATUS:
     bytec_1 // "Wrong Proposal Status or finalized"
-    // smart_contracts/xgov_registry_mock/contract.py:539-545
+    // smart_contracts/xgov_registry_mock/contract.py:517-523
     // match error_without_prefix:
     //     case err.UNAUTHORIZED:
     //         assert False, err.UNAUTHORIZED  # noqa
@@ -1346,28 +1302,28 @@ fund_ternary_merge@5:
     //         assert False, "Unknown error"  # noqa
     uncover 2
     match fund_switch_case_0@7 fund_switch_case_1@8
-    // smart_contracts/xgov_registry_mock/contract.py:545
+    // smart_contracts/xgov_registry_mock/contract.py:523
     // assert False, "Unknown error"  # noqa
     err // Unknown error
 
 fund_switch_case_1@8:
-    // smart_contracts/xgov_registry_mock/contract.py:543
+    // smart_contracts/xgov_registry_mock/contract.py:521
     // assert False, err.WRONG_PROPOSAL_STATUS  # noqa
     err // Wrong Proposal Status or finalized
 
 fund_switch_case_0@7:
-    // smart_contracts/xgov_registry_mock/contract.py:541
+    // smart_contracts/xgov_registry_mock/contract.py:519
     // assert False, err.UNAUTHORIZED  # noqa
     err // Unauthorized
 
 fund_after_if_else@10:
-    // smart_contracts/xgov_registry_mock/contract.py:517
+    // smart_contracts/xgov_registry_mock/contract.py:495
     // @arc4.abimethod()
     intc_0 // 1
     return
 
 fund_ternary_false@4:
-    // smart_contracts/xgov_registry_mock/contract.py:537
+    // smart_contracts/xgov_registry_mock/contract.py:515
     // if error.native.startswith(err.ARC_65_PREFIX):
     dig 2
     extract 6 4
@@ -1378,7 +1334,7 @@ fund_ternary_false@4:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.finalize_proposal[routing]() -> void:
 finalize_proposal:
-    // smart_contracts/xgov_registry_mock/contract.py:547
+    // smart_contracts/xgov_registry_mock/contract.py:525
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1386,18 +1342,18 @@ finalize_proposal:
     intc_1 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/xgov_registry_mock/contract.py:549-553
+    // smart_contracts/xgov_registry_mock/contract.py:527-531
     // error, _tx = arc4.abi_call(
     //     Proposal.finalize,
     //     app_id=proposal_app.as_uint64(),
     //     fee=0,
     // )
     itxn_begin
-    // smart_contracts/xgov_registry_mock/contract.py:551
+    // smart_contracts/xgov_registry_mock/contract.py:529
     // app_id=proposal_app.as_uint64(),
     btoi
     itxn_field ApplicationID
-    // smart_contracts/xgov_registry_mock/contract.py:549-553
+    // smart_contracts/xgov_registry_mock/contract.py:527-531
     // error, _tx = arc4.abi_call(
     //     Proposal.finalize,
     //     app_id=proposal_app.as_uint64(),
@@ -1407,11 +1363,11 @@ finalize_proposal:
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry_mock/contract.py:552
+    // smart_contracts/xgov_registry_mock/contract.py:530
     // fee=0,
     intc_2 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry_mock/contract.py:549-553
+    // smart_contracts/xgov_registry_mock/contract.py:527-531
     // error, _tx = arc4.abi_call(
     //     Proposal.finalize,
     //     app_id=proposal_app.as_uint64(),
@@ -1435,7 +1391,7 @@ finalize_proposal:
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
-    // smart_contracts/xgov_registry_mock/contract.py:555
+    // smart_contracts/xgov_registry_mock/contract.py:533
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
@@ -1447,10 +1403,10 @@ finalize_proposal:
     intc_2 // 0
 
 finalize_proposal_ternary_merge@5:
-    // smart_contracts/xgov_registry_mock/contract.py:555
+    // smart_contracts/xgov_registry_mock/contract.py:533
     // if error.native.startswith(err.ARC_65_PREFIX):
     bz finalize_proposal_after_if_else@11
-    // smart_contracts/xgov_registry_mock/contract.py:556
+    // smart_contracts/xgov_registry_mock/contract.py:534
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_3 // 4
     dig 1
@@ -1465,16 +1421,16 @@ finalize_proposal_ternary_merge@5:
     swap
     uncover 2
     substring3
-    // smart_contracts/xgov_registry_mock/contract.py:558
+    // smart_contracts/xgov_registry_mock/contract.py:536
     // case err.WRONG_PROPOSAL_STATUS:
     bytec_1 // "Wrong Proposal Status or finalized"
-    // smart_contracts/xgov_registry_mock/contract.py:560
+    // smart_contracts/xgov_registry_mock/contract.py:538
     // case err.MISSING_CONFIG:
-    bytec 31 // "Missing Config"
-    // smart_contracts/xgov_registry_mock/contract.py:562
+    bytec 29 // "Missing Config"
+    // smart_contracts/xgov_registry_mock/contract.py:540
     // case err.VOTERS_ASSIGNED:
     pushbytes "There are voters assigned to this proposal"
-    // smart_contracts/xgov_registry_mock/contract.py:557-565
+    // smart_contracts/xgov_registry_mock/contract.py:535-543
     // match error_without_prefix:
     //     case err.WRONG_PROPOSAL_STATUS:
     //         assert False, err.WRONG_PROPOSAL_STATUS  # noqa
@@ -1486,33 +1442,33 @@ finalize_proposal_ternary_merge@5:
     //         assert False, "Unknown error"  # noqa
     uncover 3
     match finalize_proposal_switch_case_0@7 finalize_proposal_switch_case_1@8 finalize_proposal_switch_case_2@9
-    // smart_contracts/xgov_registry_mock/contract.py:565
+    // smart_contracts/xgov_registry_mock/contract.py:543
     // assert False, "Unknown error"  # noqa
     err // Unknown error
 
 finalize_proposal_switch_case_2@9:
-    // smart_contracts/xgov_registry_mock/contract.py:563
+    // smart_contracts/xgov_registry_mock/contract.py:541
     // assert False, err.VOTERS_ASSIGNED  # noqa
     err // There are voters assigned to this proposal
 
 finalize_proposal_switch_case_1@8:
-    // smart_contracts/xgov_registry_mock/contract.py:561
+    // smart_contracts/xgov_registry_mock/contract.py:539
     // assert False, err.MISSING_CONFIG  # noqa
     err // Missing Config
 
 finalize_proposal_switch_case_0@7:
-    // smart_contracts/xgov_registry_mock/contract.py:559
+    // smart_contracts/xgov_registry_mock/contract.py:537
     // assert False, err.WRONG_PROPOSAL_STATUS  # noqa
     err // Wrong Proposal Status or finalized
 
 finalize_proposal_after_if_else@11:
-    // smart_contracts/xgov_registry_mock/contract.py:547
+    // smart_contracts/xgov_registry_mock/contract.py:525
     // @arc4.abimethod()
     intc_0 // 1
     return
 
 finalize_proposal_ternary_false@4:
-    // smart_contracts/xgov_registry_mock/contract.py:555
+    // smart_contracts/xgov_registry_mock/contract.py:533
     // if error.native.startswith(err.ARC_65_PREFIX):
     dig 2
     extract 6 4
@@ -1523,7 +1479,7 @@ finalize_proposal_ternary_false@4:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.drop_proposal[routing]() -> void:
 drop_proposal:
-    // smart_contracts/xgov_registry_mock/contract.py:567
+    // smart_contracts/xgov_registry_mock/contract.py:545
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1531,18 +1487,18 @@ drop_proposal:
     intc_1 // 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/xgov_registry_mock/contract.py:569-573
+    // smart_contracts/xgov_registry_mock/contract.py:547-551
     // error, _tx = arc4.abi_call(
     //     Proposal.drop,
     //     app_id=proposal_app.as_uint64(),
     //     fee=0,
     // )
     itxn_begin
-    // smart_contracts/xgov_registry_mock/contract.py:571
+    // smart_contracts/xgov_registry_mock/contract.py:549
     // app_id=proposal_app.as_uint64(),
     btoi
     itxn_field ApplicationID
-    // smart_contracts/xgov_registry_mock/contract.py:569-573
+    // smart_contracts/xgov_registry_mock/contract.py:547-551
     // error, _tx = arc4.abi_call(
     //     Proposal.drop,
     //     app_id=proposal_app.as_uint64(),
@@ -1552,11 +1508,11 @@ drop_proposal:
     itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
-    // smart_contracts/xgov_registry_mock/contract.py:572
+    // smart_contracts/xgov_registry_mock/contract.py:550
     // fee=0,
     intc_2 // 0
     itxn_field Fee
-    // smart_contracts/xgov_registry_mock/contract.py:569-573
+    // smart_contracts/xgov_registry_mock/contract.py:547-551
     // error, _tx = arc4.abi_call(
     //     Proposal.drop,
     //     app_id=proposal_app.as_uint64(),
@@ -1580,7 +1536,7 @@ drop_proposal:
     bytec_0 // 0x151f7c75
     ==
     assert // application log value is not the result of an ABI return
-    // smart_contracts/xgov_registry_mock/contract.py:575
+    // smart_contracts/xgov_registry_mock/contract.py:553
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
@@ -1592,10 +1548,10 @@ drop_proposal:
     intc_2 // 0
 
 drop_proposal_ternary_merge@5:
-    // smart_contracts/xgov_registry_mock/contract.py:575
+    // smart_contracts/xgov_registry_mock/contract.py:553
     // if error.native.startswith(err.ARC_65_PREFIX):
     bz drop_proposal_after_if_else@9
-    // smart_contracts/xgov_registry_mock/contract.py:576
+    // smart_contracts/xgov_registry_mock/contract.py:554
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
     intc_3 // 4
     dig 1
@@ -1610,10 +1566,10 @@ drop_proposal_ternary_merge@5:
     swap
     uncover 2
     substring3
-    // smart_contracts/xgov_registry_mock/contract.py:578
+    // smart_contracts/xgov_registry_mock/contract.py:556
     // case err.WRONG_PROPOSAL_STATUS:
     bytec_1 // "Wrong Proposal Status or finalized"
-    // smart_contracts/xgov_registry_mock/contract.py:577-581
+    // smart_contracts/xgov_registry_mock/contract.py:555-559
     // match error_without_prefix:
     //     case err.WRONG_PROPOSAL_STATUS:
     //         assert False, err.WRONG_PROPOSAL_STATUS  # noqa
@@ -1621,23 +1577,23 @@ drop_proposal_ternary_merge@5:
     //         assert False, "Unknown error"  # noqa
     swap
     match drop_proposal_switch_case_0@7
-    // smart_contracts/xgov_registry_mock/contract.py:581
+    // smart_contracts/xgov_registry_mock/contract.py:559
     // assert False, "Unknown error"  # noqa
     err // Unknown error
 
 drop_proposal_switch_case_0@7:
-    // smart_contracts/xgov_registry_mock/contract.py:579
+    // smart_contracts/xgov_registry_mock/contract.py:557
     // assert False, err.WRONG_PROPOSAL_STATUS  # noqa
     err // Wrong Proposal Status or finalized
 
 drop_proposal_after_if_else@9:
-    // smart_contracts/xgov_registry_mock/contract.py:567
+    // smart_contracts/xgov_registry_mock/contract.py:545
     // @arc4.abimethod()
     intc_0 // 1
     return
 
 drop_proposal_ternary_false@4:
-    // smart_contracts/xgov_registry_mock/contract.py:575
+    // smart_contracts/xgov_registry_mock/contract.py:553
     // if error.native.startswith(err.ARC_65_PREFIX):
     dig 2
     extract 6 4
@@ -1648,7 +1604,7 @@ drop_proposal_ternary_false@4:
 
 // smart_contracts.xgov_registry_mock.contract.XgovRegistryMock.is_proposal[routing]() -> void:
 is_proposal:
-    // smart_contracts/xgov_registry_mock/contract.py:583
+    // smart_contracts/xgov_registry_mock/contract.py:561
     // @arc4.abimethod()
     txna ApplicationArgs 1
     len
