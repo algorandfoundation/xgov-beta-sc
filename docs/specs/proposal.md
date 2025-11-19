@@ -50,17 +50,38 @@ The Proposals have two different _funding types_:
 
 Proposals have different _funding sizes_ based on the requested funding amount.
 
-The _funding size_ defines the timing of the Proposal lifecycle and the voting quorums.
+The Proposal’s _requested amount_ (\\( A \\)) **MUST** be bounded as follows:
 
-The Proposal’s requested amount (\\( A \\)) **MUST** be bounded as follows:
+|                                |               Small                |               Medium                |                Large                |
+|:-------------------------------|:----------------------------------:|:-----------------------------------:|:-----------------------------------:|
+| Requested Amount               |  \\( A_\min ≤ A < A_{S,\max} \\)   | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A ≤ A_{L,\max} \\) |
+
+The _funding size_ defines the timing of the Proposal lifecycle.
 
 |                                |              Small              |               Medium                |                Large                |
 |:-------------------------------|:-------------------------------:|:-----------------------------------:|:-----------------------------------:|
-| Requested Amount               | \\( A_\min ≤ A < A_{S,\max} \\) | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A < A_{L,\max} \\) |
 | Discussion time                |           \\( D_S \\)           |             \\( D_M \\)             |             \\( D_L \\)             |
 | Voting time (after discussion) |           \\( V_S \\)           |             \\( V_M \\)             |             \\( V_L \\)             |
-| Democratic Quorum              |         \\( Q_{d,S} \\)         |           \\( Q_{d,M} \\)           |           \\( Q_{d,L} \\)           |
-| Weighted Quorum                |         \\( Q_{w,S} \\)         |           \\( Q_{w,M} \\)           |           \\( Q_{w,L} \\)           |
+
+The _requested amount_ defines voting quorums of the Proposal as follows:
+
+- \\( Q(A) \\, Democratic Quorum (1 xGov, 1 Vote)
+
+$$
+Q(A) = Q_\min + \frac{\Delta Q}{\Delta A} \times (A - A_\min)
+$$
+
+- \\( Q_w(A) \\, Weighted Quorum
+
+$$
+Q_w(A) = Q_{w,\min} + \frac{\Delta Q_w}{\Delta A} \times (A - A_\min)
+$$
+
+Where:
+
+- \\( \Delta Q = Q_\max - Q_\min \\)
+- \\( \Delta Q_w = Q_{w,\max} - Q_{w,\min} \\)
+- \\( \Delta A = A_{L,\max} - A_\min \\)
 
 {{#include ../_include/styles.md:note}}
 > Refer to the [Proposal implementation configuration](../implementation/configuration.md)
