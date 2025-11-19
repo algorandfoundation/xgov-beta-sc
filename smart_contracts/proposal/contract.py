@@ -333,40 +333,6 @@ class Proposal(
             )
 
     @subroutine
-    def get_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.FUNDING_CATEGORY_NULL:
-            return UInt64(0)
-        elif category == enm.FUNDING_CATEGORY_SMALL:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
-            )
-        elif category == enm.FUNDING_CATEGORY_MEDIUM:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_QUORUM_MEDIUM)
-            )
-        else:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
-            )
-
-    @subroutine
-    def get_weighted_quorum(self, category: UInt64) -> UInt64:
-        if category == enm.FUNDING_CATEGORY_NULL:
-            return UInt64(0)
-        elif category == enm.FUNDING_CATEGORY_SMALL:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
-            )
-        elif category == enm.FUNDING_CATEGORY_MEDIUM:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
-            )
-        else:
-            return self.get_uint_from_registry_config(
-                Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
-            )
-
-    @subroutine
     def assert_draft_and_proposer(self) -> None:
         assert self.is_proposer(), err.UNAUTHORIZED
         assert (
@@ -529,15 +495,57 @@ class Proposal(
         ), err.WRONG_METHOD_CALL
 
     @subroutine
-    def compute_quorum_threshold(self, funding_category: UInt64) -> UInt64:
-        quorum_bps = self.get_quorum(funding_category)
+    def compute_quorum_threshold(self) -> UInt64:
+        quorum_min_bps = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
+        )
+        quorum_max_bps = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
+        )
+        delta_quorum_bps = quorum_max_bps - quorum_min_bps
+
+        amount_min = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
+        )
+        amount_max = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
+        )
+        delta_amount = amount_max - amount_min
+
+        quorum_bps = (
+            quorum_min_bps
+            + delta_quorum_bps
+            * (self.requested_amount.value - amount_min)
+            // delta_amount
+        )
         return self.relative_to_absolute_amount(
             self.committee_members.value, quorum_bps
         )
 
     @subroutine
-    def compute_weighted_quorum_threshold(self, funding_category: UInt64) -> UInt64:
-        weighted_quorum_bps = self.get_weighted_quorum(funding_category)
+    def compute_weighted_quorum_threshold(self) -> UInt64:
+        weighted_quorum_min_bps = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
+        )
+        weighted_quorum_max_bps = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
+        )
+        delta_weighted_quorum_bps = weighted_quorum_max_bps - weighted_quorum_min_bps
+
+        amount_min = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
+        )
+        amount_max = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
+        )
+        delta_amount = amount_max - amount_min
+
+        weighted_quorum_bps = (
+            weighted_quorum_min_bps
+            + delta_weighted_quorum_bps
+            * (self.requested_amount.value - amount_min)
+            // delta_amount
+        )
         return self.relative_to_absolute_amount(
             self.committee_votes.value, weighted_quorum_bps
         )
@@ -670,18 +678,18 @@ class Proposal(
         self.locked_amount.value = payment.amount  # The amount is validated
 
         # Configure category dependent values
+        assert (
+            self.funding_category.value != enm.FUNDING_CATEGORY_NULL
+        ), err.MISSING_CONFIG
+        assert self.requested_amount.value != 0, err.MISSING_CONFIG
         self.discussion_duration.value = self.get_discussion_duration(
             self.funding_category.value
         )
         self.voting_duration.value = self.get_voting_duration(
             self.funding_category.value
         )
-        self.quorum_threshold.value = self.compute_quorum_threshold(
-            self.funding_category.value
-        )
-        self.weighted_quorum_threshold.value = self.compute_weighted_quorum_threshold(
-            self.funding_category.value
-        )
+        self.quorum_threshold.value = self.compute_quorum_threshold()
+        self.weighted_quorum_threshold.value = self.compute_weighted_quorum_threshold()
 
         # Update Proposal State and time anchors
         self.status.value = UInt64(enm.STATUS_DRAFT)
