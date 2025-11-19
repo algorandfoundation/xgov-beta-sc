@@ -150,30 +150,3 @@ A Proposal **SHALL** be in one of the following enumerated statuses:
 > Example: a Proposal can be `FUNDED` and `FINALIZED`.
 
 ![Proposal Finite-State Machine](../_images/proposal-state-machine.svg "Proposal Finite-State Machine")
-
-## Escrow
-
-The Proposal Escrow is an Address controlled by the Proposal Application.
-
-### Escrow Inflows
-
-- Partial Open Proposal Fees from xGov Treasury
-
-- Proposal Commitment Lock from the Proposer
-
-### Escrow Outflows
-
-- Operation Funds to xGov Daemon on Proposal submission
-
-- Proposal Commitment Lock to the Proposer if the Proposal is not blocked with a
-veto or to the xGov Treasury otherwise
-
-- Decommissioned MBRs to xGov Treasury
-
-### Escrow MBRs
-
-- Proposal Application Account
-
-- Metadata Box
-
-- xGov Committee Voters Boxes
