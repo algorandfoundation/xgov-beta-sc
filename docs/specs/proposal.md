@@ -46,15 +46,17 @@ The Proposals have two different _funding types_:
    xGov Committee vote, after milestone reviews from the xGov Council, and if the
    xGov Council does not apply a veto according to terms and conditions.
 
-## Funding Sizes
-
-Proposals have different _funding sizes_ based on the requested funding amount.
+## Requested Amount
 
 The Proposal’s _requested amount_ (\\( A \\)) **MUST** be bounded as follows:
 
-|                                |               Small                |               Medium                |                Large                |
-|:-------------------------------|:----------------------------------:|:-----------------------------------:|:-----------------------------------:|
-| Requested Amount               |  \\( A_\min ≤ A < A_{S,\max} \\)   | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A ≤ A_{L,\max} \\) |
+|                                |              Small              |               Medium                |                Large                |
+|:-------------------------------|:-------------------------------:|:-----------------------------------:|:-----------------------------------:|
+| Requested Amount               | \\( A_\min ≤ A < A_{S,\max} \\) | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A ≤ A_{L,\max} \\) |
+
+## Funding Sizes
+
+Proposals have different _funding sizes_ based on the _requested amount_ of funds.
 
 The _funding size_ defines the timing of the Proposal lifecycle.
 
@@ -63,15 +65,38 @@ The _funding size_ defines the timing of the Proposal lifecycle.
 | Discussion time                |           \\( D_S \\)           |             \\( D_M \\)             |             \\( D_L \\)             |
 | Voting time (after discussion) |           \\( V_S \\)           |             \\( V_M \\)             |             \\( V_L \\)             |
 
-The _requested amount_ defines voting quorums of the Proposal as follows:
+{{#include ../_include/styles.md:note}}
+> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> for the Proposal lifecycle timing values.
 
-- \\( Q(A) \\, Democratic Quorum (1 xGov, 1 Vote)
+## Quorum Thresholds
+
+$$
+\newcommand \Comm {\mathsf{Comm}}
+\newcommand \Members {\mathrm{Members}}
+\newcommand \Votes {\mathrm{Votes}}
+$$
+
+Proposals have two _quorum thresholds_ based on the _requested amount_ of funds.
+
+The _quorum thresholds_ define the minimum number of (regular and weighted) votes
+required to approve a Proposal:
+
+- \\( T(A) \\), Democratic Quorum Threshold (`1` xGov, `1` Vote);
+
+- \\( T_w(A) \\), Weighted Quorum Threshold (`1` xGov, `w` Votes).
+
+Given the xGov Committee assigned to the Proposal, with its members and voting power
+(see the [xGov Committee definition](./xgov-committee.md)), the quorum thresholds
+are defined as follows:
+
+- \\( T(A) = \Members(\Comm) \times Q(A) \\), with
 
 $$
 Q(A) = Q_\min + \frac{\Delta Q}{\Delta A} \times (A - A_\min)
 $$
 
-- \\( Q_w(A) \\, Weighted Quorum
+- \\( T_w(A) = \Votes(\Comm) \times Q_w(A) \\), with
 
 $$
 Q_w(A) = Q_{w,\min} + \frac{\Delta Q_w}{\Delta A} \times (A - A_\min)
@@ -79,13 +104,17 @@ $$
 
 Where:
 
+- \\( Q_\min = Q(A_\min) \\)
+- \\( Q_\max = Q(A_{L,\max}) \\)
+- \\( Q_{w,\min} = Q_w(A_\min) \\)
+- \\( Q_{w,\max} = Q_w(A_{L,\max}) \\)
 - \\( \Delta Q = Q_\max - Q_\min \\)
 - \\( \Delta Q_w = Q_{w,\max} - Q_{w,\min} \\)
 - \\( \Delta A = A_{L,\max} - A_\min \\)
 
 {{#include ../_include/styles.md:note}}
 > Refer to the [Proposal implementation configuration](../implementation/configuration.md)
-> for the parameters’ value.
+> for the minimum and maximum quorum values.
 
 ## Metadata
 
