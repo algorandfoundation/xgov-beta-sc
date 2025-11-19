@@ -393,17 +393,6 @@ class XgovRegistryMock(ARC4Contract):
         self.quorum_small.value = quorum
 
     @arc4.abimethod()
-    def set_quorum_medium(self, quorum: UInt64) -> None:
-        """
-        Set the quorum for medium proposals
-
-        Args:
-            quorum (UInt64): The quorum
-
-        """
-        self.quorum_medium.value = quorum
-
-    @arc4.abimethod()
     def set_quorum_large(self, quorum: UInt64) -> None:
         """
         Set the quorum for large proposals
@@ -424,17 +413,6 @@ class XgovRegistryMock(ARC4Contract):
 
         """
         self.weighted_quorum_small.value = weighted_quorum
-
-    @arc4.abimethod()
-    def set_weighted_quorum_medium(self, weighted_quorum: UInt64) -> None:
-        """
-        Set the weighted quorum for medium proposals
-
-        Args:
-            weighted_quorum (UInt64): The weighted quorum
-
-        """
-        self.weighted_quorum_medium.value = weighted_quorum
 
     @arc4.abimethod()
     def set_weighted_quorum_large(self, weighted_quorum: UInt64) -> None:
