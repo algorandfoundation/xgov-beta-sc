@@ -112,6 +112,8 @@ Where:
 - \\( \Delta Q_w = Q_{w,\max} - Q_{w,\min} \\)
 - \\( \Delta A = A_{L,\max} - A_\min \\)
 
+![Proposal Quorum](../_images/proposal-quorum.svg "Proposal Democratic Quorum Example")
+
 {{#include ../_include/styles.md:note}}
 > Refer to the [Proposal implementation configuration](../implementation/configuration.md)
 > for the minimum and maximum quorum values.
