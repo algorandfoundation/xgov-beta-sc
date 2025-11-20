@@ -25,6 +25,8 @@ Let
 - \\( R \in \N \\) be the Application ID of the xGov Registry;
 - \\( B_c \in \N \\) be the block at which the xGov Registry was created.
 
+## Governance Period
+
 A _governance period_ is a pair \\( (B_i, B_f) \in \N^2 \\) such that
 
 $$
@@ -36,20 +38,47 @@ $$
 \end{align}
 $$
 
+And is intended as a range of blocks \\( [B_i; B_f) \\) (\\( B_i \\) included,
+\\( B_f \\) excluded).
+
+> \\( B_i < B_c \\) is valid and denotes a period across the xGov Registry creation.
+
 ## xGovs and Voting Power
 
-An _xGov_ is an address \\( a \in \mathcal{A} \\) that has acknowledged the xGov
-Registry and is therefore eligible to acquire voting power.
+An _xGov_ is an address \\( a \in \A \\) that has acknowledged the xGov Registry
+on block \\( h \\) and is therefore eligible to acquire voting power.
 
-For a fixed governance period \\( (B_i, B_f) \\), the _voting power_ of an xGov
-\\( a \\) in that governance period is the integer
+The xGov acknowledgement is defined by the pair \\( (a, h) \\) (represented on the
+xGov Registry as an xGov Box).
+
+> If xGovs unsubscribe, the xGov acknowledgement of their address \\( a \\) is lost
+> and the pair \\( (a, h) \\) is removed from the xGov Registry state.
+
+For a governance period \\( (B_i, B_f) \\), an address \\( a \\) is an _eligible_
+xGov in \\( [B_c; B_f) \\) if and only if there exists a block height \\( k \\) with
+\\( B_c ≤ k < B_f \\) such that the xGov Registry state at height \\( k \\) contains
+\\( (a, h) \\) for some \\( h ≤ k \\).
+
+> Once the xGov Registry has recorded an acknowledgement \\( (a, h) \\) with
+> \\( h ≥ B_c \\), the address \\( a \\) is considered an eligible xGov for every
+> governance period \\( (B_i, B_f) \\) such that \\( h \in [B_c; B_f) \\); in particular,
+> it is not necessary to re-acknowledge the xGov Registry for subsequent governance
+> periods.
+
+For a fixed governance period \\( (B_i, B_f) \\), the _voting power_ of an eligible
+xGov \\( (a, h) \\) in that governance period is the integer
 
 $$
-w(a; B_i, B_f) \in \N,
+w((a, h); B_i, B_f) \in \N,
 $$
 
-defined as the number of blocks proposed by address \\( a \\) in the range
-\\( [B_i, B_f) \\)[^1].
+defined as the number of blocks proposed by an eligible address \\( a \\) in the
+governance period \\( [B_i; B_f) \\)[^1].
+
+> If an xGov a has acknowledged the xGov Registry at some \\( h \in [B_c; B_f) \\)
+> and has proposed one or more blocks in \\( [B_i; B_f) \\), then all such proposals
+> in \\( [B_i; B_f) \\) contributes to its voting power, including those that occurred
+> before \\( h \\).
 
 ## Definition of xGov Committee
 
@@ -68,7 +97,7 @@ of address–weight pairs \\( (a, v) \\) such that:
 $$
 \begin{align}
   &\textbf{eligibility} &&
-    \forall (a, v) \in C, a \text{ is an eligible xGov in some block of } [B_c, B_f), \\\\
+    \forall (a, v) \in C, a \text{ is an eligible xGov in } [B_c; B_f), \\\\
   &\textbf{voting power} &&
     \forall (a, v) \in C, v = w(a; B_i, B_f), \\\\
   &\textbf{uniqueness} &&
@@ -157,5 +186,5 @@ The xGov Daemon **SHALL** assign the current xGov Committee to Proposals upon cr
 
 ---
 
-[^1]: If \\( a \\) is not eligible as an xGov in \\( [B_c,B_f) \\), its voting power
+[^1]: If \\( a \\) is not eligible as an xGov in \\( [B_c; B_f) \\), its voting power
 is implicitly taken to be zero, and it is not included in the xGov Committee.

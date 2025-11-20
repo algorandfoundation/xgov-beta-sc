@@ -1,6 +1,6 @@
 # xGovs
 
-An xGov **MUST** have an Algorand Address.
+An xGov **MUST** have an Algorand Address (\\( a \\)).
 
 An xGov **MUST** provide a Voting Address.
 
@@ -10,7 +10,15 @@ and less accessible).
 
 The xGov Address and the current Voting Address **MAY** update the Voting Address.
 
-The xGov Address **MAY** unsubscribe itself from being an xGov.
+The xGov Address **MUST** subscribe on (acknowledge) the xGov Registry, to acquire
+the xGov status.
+
+The xGov status is defined as the pair \\( (a, h) \\), where:
+
+- \\( a \\) is the xGov Address;
+- \\( h \\) is the block at which the xGov Address subscribed.
+
+The xGov Address **MAY** unsubscribe from the xGov Registry, losing the xGov status.
 
 {{#include ../_include/styles.md:note}}
 > xGov Address can be associated with any Account type. This ensures the compatibility
@@ -117,6 +125,9 @@ request.
 
 1. The Owner Address declared on the subscription request **MUST** be assigned to
 the Voting Address in the created xGov Box.
+
+1. The subscription round **MUST** be set to the current round number in the created
+xGov Box.
 
 If the Algorand Foundation approves the unsubscription request:
 
