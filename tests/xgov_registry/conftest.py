@@ -152,51 +152,59 @@ def xgov_registry_client_committee_not_declared(
         min_spending_balance=INITIAL_FUNDS,
     )
 
+    config_composer = client.new_group()
+
     # Set xGov Registry Role-Based Access Control
-    client.send.set_committee_manager(
+    config_composer.set_committee_manager(
         args=SetCommitteeManagerArgs(manager=committee_manager.address),
     )
 
-    client.send.set_xgov_subscriber(
+    config_composer.set_xgov_subscriber(
         args=SetXgovSubscriberArgs(subscriber=xgov_subscriber.address),
     )
 
-    client.send.set_payor(
+    config_composer.set_payor(
         args=SetPayorArgs(payor=xgov_payor.address),
     )
 
-    client.send.set_xgov_daemon(
+    config_composer.set_xgov_daemon(
         args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon.address),
     )
 
-    client.send.set_xgov_council(
+    config_composer.set_xgov_council(
         args=SetXgovCouncilArgs(council=xgov_council.address),
     )
 
-    client.send.set_kyc_provider(
+    config_composer.set_kyc_provider(
         args=SetKycProviderArgs(provider=kyc_provider.address),
     )
 
     # Configure xGov Registry
-    client.send.config_xgov_registry(
+    config_composer.config_xgov_registry(
         args=ConfigXgovRegistryArgs(config=xgov_registry_config),
     )
+
+    config_composer.send()
 
     proposal_factory = algorand_client.client.get_typed_app_factory(
         typed_factory=ProposalFactory,
     )
-
     compiled_proposal = proposal_factory.app_factory.compile()
-    client.send.init_proposal_contract(args=(len(compiled_proposal.approval_program),))
+
+    proposal_program_composer = client.new_group()
+    proposal_program_composer.init_proposal_contract(
+        args=(len(compiled_proposal.approval_program),)
+    )
     data_size_per_transaction = load_proposal_contract_data_size_per_transaction()
     bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
     for i in range(bulks):
         chunk = compiled_proposal.approval_program[
             i * data_size_per_transaction : (i + 1) * data_size_per_transaction
         ]
-        client.send.load_proposal_contract(
+        proposal_program_composer.load_proposal_contract(
             args=(i * data_size_per_transaction, chunk),
         )
+    proposal_program_composer.send()
 
     return client
 

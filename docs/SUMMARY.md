@@ -17,6 +17,7 @@
 - [xGov Committee](./specs/xgov-committee.md)
 - [Proposers](./specs/proposers.md)
 - [Proposal](./specs/proposal.md)
+  - [Escrow](./specs/proposal-escrow.md)
   - [Creation](./specs/proposal-creation.md)
   - [Discussion and Submission](./specs/proposal-submission.md)
   - [Vote and Review](./specs/proposal-vote.md)

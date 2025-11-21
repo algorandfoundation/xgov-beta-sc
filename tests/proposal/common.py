@@ -102,46 +102,67 @@ REQUESTED_AMOUNT = AlgoAmount(micro_algo=reg_cfg.MIN_REQUESTED_AMOUNT)
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
+def compute_quorum_threshold(requested_amount: int, committee_members: int) -> int:
+    quorum_min_bps = reg_cfg.QUORUM_SMALL
+    quorum_max_bps = reg_cfg.QUORUM_LARGE
+    delta_quorum_bps = quorum_max_bps - quorum_min_bps
+    amount_min = reg_cfg.MIN_REQUESTED_AMOUNT
+    amount_max = reg_cfg.MAX_REQUESTED_AMOUNT_LARGE
+    delta_amount = amount_max - amount_min
+    quorum_bps = (
+        quorum_min_bps
+        + delta_quorum_bps * (requested_amount - amount_min) // delta_amount
+    )
+    return relative_to_absolute_amount(committee_members, quorum_bps)
+
+
+def compute_weighted_quorum_threshold(
+    requested_amount: int, committee_votes: int
+) -> int:
+    weighted_quorum_min_bps = reg_cfg.WEIGHTED_QUORUM_SMALL
+    weighted_quorum_max_bps = reg_cfg.WEIGHTED_QUORUM_LARGE
+    weighted_delta_quorum_bps = weighted_quorum_max_bps - weighted_quorum_min_bps
+    amount_min = reg_cfg.MIN_REQUESTED_AMOUNT
+    amount_max = reg_cfg.MAX_REQUESTED_AMOUNT_LARGE
+    delta_amount = amount_max - amount_min
+    weighted_quorum_bps = (
+        weighted_quorum_min_bps
+        + weighted_delta_quorum_bps * (requested_amount - amount_min) // delta_amount
+    )
+    return relative_to_absolute_amount(committee_votes, weighted_quorum_bps)
+
+
 def get_proposal_values_from_registry(
     proposal_client: ProposalClient,
 ) -> ProposalRegistryValues | None:
     global_state = proposal_client.state.global_state
     funding_category = global_state.funding_category
+    requested_amount = global_state.requested_amount
     committee_members = global_state.committee_members
     committee_votes = global_state.committee_votes
+    members_quorum = compute_quorum_threshold(requested_amount, committee_members)
+    votes_quorum = compute_weighted_quorum_threshold(requested_amount, committee_votes)
     match funding_category:
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_SMALL:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_SMALL,
                 voting_duration=reg_cfg.VOTING_DURATION_SMALL,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_SMALL
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_SMALL
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_MEDIUM:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_MEDIUM,
                 voting_duration=reg_cfg.VOTING_DURATION_MEDIUM,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_MEDIUM
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_MEDIUM
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_LARGE:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_LARGE,
                 voting_duration=reg_cfg.VOTING_DURATION_LARGE,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_LARGE
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_LARGE
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case _:
             return None

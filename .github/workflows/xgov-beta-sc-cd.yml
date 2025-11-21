@@ -168,5 +168,5 @@ jobs:
           XGOV_CFG_MAX_REQUESTED_AMOUNT: ${{ vars.MAX_REQUESTED_AMOUNT || '10_000_000,20_000_000,30_000_000' }} # defaults: 10 (S), 20 (M), 30 (L) ALGO in microALGO
           XGOV_CFG_DISCUSSION_DURATION: ${{ vars.DISCUSSION_DURATION || '60,60,60,60' }} # defaults: 1 (S), 1 (M), 1 (L), 1 (XL) minute in seconds
           XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '3_600,3_600,3_600,3_600' }} # defaults: 1 (S), 1 (M), 1 (L), 1 (XL) hours in seconds
-          XGOV_CFG_QUORUM: ${{ vars.QUORUM || '500,1_000,2_000' }} # defaults: 5 (S), 10 (M), 20 (L) % in bps
-          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '500,1_000,2_000' }} # defaults: 5 (S), 10 (M), 20 (L) % in bps
+          XGOV_CFG_QUORUM: ${{ vars.QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps
+          XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps

@@ -27,12 +27,22 @@ from the Proposal Escrow to the xGov Daemon to cover the operation fees.
 > The xGov Manager **MAY** update the percentage of the Open Proposal Fee transferred
 > to the xGov Daemon.
 
-## xGov Committee Assignment
+## Vote Distribution
 
-The xGov Daemon **SHALL** assign the xGov Committee of the Submitted Proposal.
+$$
+\newcommand \Comm {\mathsf{Comm}}
+\newcommand \Members {\mathrm{Members}}
+\newcommand \Votes {\mathrm{Votes}}
+$$
 
-The assigned xGov Committee **MUST** have the size (total members) and voting power
-(total votes) of the xGov Committee ID (see [xGov Committee section](./xgov-committee.md)).
+The xGov Daemon **SHALL** distribute the votes to the xGov Committee (\\( \Comm \\))
+assigned to the Proposal.
+
+The distributed votes **MUST** be equal to the xGov Committee Voting Power
+(\\( \Votes(\Comm) \\)) (see [xGov Committee section](./xgov-committee.md#xgov-committee-voting-power)).
+
+The number of voters who received votes **MUST** be equal to the xGov Committee
+Members (\\( \Members(\Comm) \\)) (see [xGov Committee section](./xgov-committee.md#xgov-committee-members)).
 
 The Proposal status **MUST** be set to Voting once the xGov Committee is completely
 assigned.

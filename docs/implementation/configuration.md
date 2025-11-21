@@ -17,9 +17,7 @@
 | Voting duration Small           |     \\( 1 \\)     |          Week          |       \\( 604{,}800 \\)       | seconds  |
 | Voting duration Medium          |     \\( 1 \\)     |          Week          |       \\( 604{,}800 \\)       | seconds  |
 | Voting duration Large           |     \\( 2 \\)     |          Week          |     \\( 1{,}209{,}600 \\)     | seconds  |
-| Quorum Small                    |    \\( 30 \\)     |           %            |        \\( 3{,}000 \\)        |   bps    |
-| Quorum Medium                   |    \\( 50 \\)     |           %            |        \\( 5{,}000 \\)        |   bps    |
-| Quorum Large                    |    \\( 70 \\)     |           %            |        \\( 7{,}000 \\)        |   bps    |
-| Weighted Quorum Small           |    \\( 50 \\)     |           %            |         \\( 5,000 \\)         |   bps    |
-| Weighted Quorum Medium          |    \\( 60 \\)     |           %            |         \\( 6,000 \\)         |   bps    |
-| Weighted Quorum Large           |    \\( 70 \\)     |           %            |         \\( 7,000 \\)         |   bps    |
+| Quorum Min                      |    \\( 30 \\)     |           %            |        \\( 3{,}000 \\)        |   bps    |
+| Quorum Max                      |    \\( 70 \\)     |           %            |        \\( 7{,}000 \\)        |   bps    |
+| Weighted Quorum Min             |    \\( 50 \\)     |           %            |        \\( 5{,}000 \\)        |   bps    |
+| Weighted Quorum Max             |    \\( 70 \\)     |           %            |        \\( 7{,}000 \\)        |   bps    |
