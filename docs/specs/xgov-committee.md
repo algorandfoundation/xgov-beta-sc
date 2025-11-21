@@ -12,7 +12,7 @@ $$
 
 xGov Committees are responsible for voting on Proposals.
 
-The formalization of xGov Committees and their voting power, as defined by [ARC-0086](http://arc.algorand.foundation/ARCs/arc-0086),
+The formalization of xGov Committees and their voting power, as defined by [ARC-0086](https://dev.algorand.co/arc-standards/arc-0086/),
 is provided below.
 
 ## Preliminaries
@@ -130,7 +130,7 @@ $$
 $$
 
 This value corresponds to the `totalMembers` field in the [ARC-86 canonical JSON
-representation](http://arc.algorand.foundation/ARCs/arc-0086#representation) of the
+representation](https://dev.algorand.co/arc-standards/arc-0086/#representation) of the
 xGov Committee.
 
 ### xGov Committee Voting Power
@@ -148,7 +148,7 @@ $$
 \Votes(\Comm) := \sum_{(a, v) \in C} v = \sum_{a \in \Addr(C)} v_C(a).
 $$
 
-This value corresponds to the `totalVotes` field in the [ARC-86 canonical JSON representation](http://arc.algorand.foundation/ARCs/arc-0086#representation)
+This value corresponds to the `totalVotes` field in the [ARC-86 canonical JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representation)
 of the xGov Committee.
 
 Optionally, the _relative vote_ of a member \\( a \in \Addr(C) \\) is
@@ -162,7 +162,7 @@ whenever \\( \Votes(\Comm) > 0 \\).
 ## xGov Committee ID
 
 An xGov Committee is identified by the Committee ID, as defined in [ARC-86 canonical
-JSON representation](http://arc.algorand.foundation/ARCs/arc-0086#representation).
+JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representation).
 
 ## Selection
 
