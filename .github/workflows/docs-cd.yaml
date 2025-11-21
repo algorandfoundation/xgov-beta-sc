@@ -40,6 +40,12 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
 
+      - name: Prepare mdBook output directory
+        shell: bash
+        run: |
+          mkdir -p book
+          chmod -R 777 book
+
       - name: Build mdBook
         run: docker compose run mdbook build
 

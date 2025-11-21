@@ -27,6 +27,12 @@ runs:
         pre-commit run trailing-whitespace --all-files --verbose
         pre-commit run lychee-docker --all-files --verbose
 
+    - name: Prepare mdBook output directory
+      shell: bash
+      run: |
+        mkdir -p book
+        chmod -R 777 book
+
     - name: Build mdBook
       shell: bash
       run: docker compose run mdbook build
