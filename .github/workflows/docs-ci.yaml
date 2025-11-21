@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   validate-docs:
-    name: Validate & Preview docs (if changed)
+    name: Validate & Preview Docs (if changed)
     runs-on: ubuntu-latest
     if: >
       (github.event_name == 'pull_request' &&
@@ -42,11 +42,11 @@ jobs:
               - 'README.md'
               - 'SECURITY.md'
 
-      - name: No docs changes — skip heavy work
+      - name: No docs changes — mark check as passed
         if: ${{ steps.changes.outputs.docs != 'true' }}
         run: |
-          echo "No docs changes detected. Skipping docs CI and preview."
-          echo "Job still succeeds so required status stays green."
+          echo "No docs changes detected. Skipping validation and preview."
+          echo "This job still succeeds so required status is green."
 
       # CI (lint, links, mdBook build) for:
       #   - PRs with docs changes
