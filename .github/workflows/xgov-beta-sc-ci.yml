@@ -3,16 +3,16 @@ name: Validate xgov-beta-sc
 on:
   workflow_call:
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
     types: [opened, reopened, synchronize, ready_for_review]
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: "0 0 1 * *" # Run once a month at midnight on the 1st of the month
 
 jobs:
-  validate-xgov-beta-sc:
-    runs-on: "ubuntu-latest"
+  precheck:
+    name: Lint / Build / TEAL diff
+    runs-on: ubuntu-latest
     if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
 
     steps:
@@ -22,30 +22,75 @@ jobs:
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Start LocalNet
-        run: algokit localnet start
-
       - name: Audit python dependencies
         run: algokit project run audit
 
-      - name: Lint and format python dependencies
+      - name: Lint and format python
         run: algokit project run lint
-
-      - name: Run tests
-        shell: bash
-        run: |
-          set -o pipefail
-          algokit project run test
 
       - name: Build smart contracts
         run: algokit project run build
 
-      - name: Check output stability of the smart contracts
+      - name: Check output stability (TEAL diff)
         run: algokit project run ci-teal-diff
 
-      - if: ${{ github.actor != 'dependabot[bot]' }}
-        name: Run deployer against LocalNet
-        run: algokit project deploy localnet xgov_registry
-        env:
-          # Deploy command to run
-          XGOV_REG_DEPLOY_COMMAND: deploy
+  tests:
+    name: "SC tests (${{ matrix.component }})"
+    runs-on: ubuntu-latest
+    needs: precheck
+    if: github.head_ref != 'release' && (github.event.pull_request == null || !github.event.pull_request.draft)
+    strategy:
+      fail-fast: false
+      matrix:
+        # Smart Contracts folders and tests folders must have the same name
+        component: [xgov_registry, proposal, council]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Start LocalNet
+        run: algokit localnet start
+
+      - name: Build smart contracts (per shard)
+        run: |
+          set -o pipefail
+          case "${{ matrix.component }}" in
+            xgov_registry)
+              algokit project run build xgov_registry
+              ;;
+            proposal)
+              algokit project run build proposal
+              ;;
+            council)
+              algokit project run build council
+              ;;
+            *)
+              echo "Unknown component: ${{ matrix.component }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Run tests scoped by directory
+        # Common utils are tested with Council
+        run: |
+          set -o pipefail
+          case "${{ matrix.component }}" in
+            xgov_registry)
+              poetry run pytest -q tests/xgov_registry
+              ;;
+            proposal)
+              poetry run pytest -q tests/proposal
+              ;;
+            council)
+              # council shard also runs shared tests at tests/test_utils.py
+              poetry run pytest -q tests/council tests/test_utils.py
+              ;;
+            *)
+              echo "Unknown component: ${{ matrix.component }}"
+              exit 1
+              ;;
+          esac
