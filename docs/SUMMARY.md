@@ -24,6 +24,7 @@
 
 # Implementation
 
+- [Events](./implementation/events.md)
 - [Numeric Precisions](./implementation/numeric-precisions.md)
 - [Testing](./implementation/testing.md)
 - [Configuration](./implementation/configuration.md)

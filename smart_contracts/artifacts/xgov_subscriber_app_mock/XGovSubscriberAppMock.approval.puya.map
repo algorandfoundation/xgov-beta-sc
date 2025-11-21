@@ -3,7 +3,7 @@
   "sources": [
     "../../xgov_subscriber_app_mock/contract.py"
   ],
-  "mappings": ";;;;;;;AAcA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;;;;;;;;;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAGwC;;AACzB;;;;;;;;;;AADyB;AAAA;AAAA;AAKxB;;AAAA;;AAAA;AAIb;;;;;;;AALU;;;AAAA;;;AAKV;;;;AAAA;;;;;;;;;;AAAA;;;AAAA;;;AAAA;AAZH;AAAA;AAmBA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAIS;;AAAqB;;AAArB;AAFQ;;;;;;AAFjB;;;;;;;;;;AAAA;;;;;AAAA;AAFH;AAAA",
+  "mappings": ";;;;;;;AAcA;;AAAA;;;AAAA;;AAAA;AAAA;AAAA;;AAAA;AAAA;;;;;;;;;;;;AAAA;;;AAAA;;;;;;AAAA;;;;;;;;;;;AACK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAGwC;;AACzB;;;;;;;;;;AADyB;AAAA;AAAA;AAKxB;;AAAA;;AAAA;AAIb;;;;;;;AALU;;;AAAA;;;AAKV;;;;AAAA;;;;;;;;;;AAAA;;;AAAA;;;AAAA;AAZH;AAAA;AAmBA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAEG;AAGS;;AAAqB;;AAArB;;;;AAHT;;;;;;;;AAAA;;;;;AAAA;AAFH;AAAA",
   "op_pc_offset": 0,
   "pc_events": {
     "1": {
@@ -662,60 +662,36 @@
       ]
     },
     "140": {
-      "op": "global CurrentApplicationAddress",
-      "defined_out": [
-        "app_id#0",
-        "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0"
-      ],
-      "stack_out": [
-        "app_id#0",
-        "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0"
-      ]
-    },
-    "142": {
-      "op": "uncover 2",
+      "op": "swap",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0",
         "app_id#0"
       ]
     },
-    "144": {
+    "141": {
       "op": "itxn_field ApplicationID",
       "stack_out": [
-        "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0"
+        "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "146": {
-      "op": "pushbytes 0x76725559 // method \"unsubscribe_xgov(address)void\"",
+    "143": {
+      "op": "pushbytes 0xdf39fdb9 // method \"unsubscribe_xgov()void\"",
       "defined_out": [
-        "Method(unsubscribe_xgov(address)void)",
-        "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0"
+        "Method(unsubscribe_xgov()void)",
+        "inner_txn_params%0%%param_Fee_idx_0#0"
       ],
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0",
-        "Method(unsubscribe_xgov(address)void)"
+        "Method(unsubscribe_xgov()void)"
       ]
     },
-    "152": {
-      "op": "itxn_field ApplicationArgs",
-      "stack_out": [
-        "inner_txn_params%0%%param_Fee_idx_0#0",
-        "reinterpret_Encoded(uint8[32])%0#0"
-      ]
-    },
-    "154": {
+    "149": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "156": {
+    "151": {
       "op": "intc_3 // appl",
       "defined_out": [
         "appl",
@@ -726,20 +702,20 @@
         "appl"
       ]
     },
-    "157": {
+    "152": {
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
-    "159": {
+    "154": {
       "op": "itxn_field Fee",
       "stack_out": []
     },
-    "161": {
+    "156": {
       "op": "itxn_submit"
     },
-    "162": {
+    "157": {
       "op": "intc_0 // 1",
       "defined_out": [
         "1"
@@ -748,7 +724,7 @@
         "1"
       ]
     },
-    "163": {
+    "158": {
       "op": "return",
       "stack_out": []
     }

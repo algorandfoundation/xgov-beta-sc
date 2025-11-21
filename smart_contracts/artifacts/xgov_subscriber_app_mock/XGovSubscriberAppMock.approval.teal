@@ -118,33 +118,27 @@ unsubscribe_xgov:
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:37-42
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:37-41
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
-    //     arc4.Address(Global.current_application_address),
     //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
     itxn_begin
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:41
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:40
     // fee=(Global.min_txn_fee * 2),
     global MinTxnFee
     pushint 2 // 2
     *
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:39
-    // arc4.Address(Global.current_application_address),
-    global CurrentApplicationAddress
-    uncover 2
+    swap
     itxn_field ApplicationID
-    // smart_contracts/xgov_subscriber_app_mock/contract.py:37-42
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:37-41
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
-    //     arc4.Address(Global.current_application_address),
     //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
-    pushbytes 0x76725559 // method "unsubscribe_xgov(address)void"
-    itxn_field ApplicationArgs
+    pushbytes 0xdf39fdb9 // method "unsubscribe_xgov()void"
     itxn_field ApplicationArgs
     intc_3 // appl
     itxn_field TypeEnum

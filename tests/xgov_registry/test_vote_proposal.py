@@ -39,9 +39,6 @@ def test_vote_proposal_success(
         params=CommonAppCallParams(
             sender=committee[0].account.address,
             static_fee=min_fee_times_2,
-            app_references=[
-                voting_proposal_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )
 
@@ -106,9 +103,6 @@ def test_vote_proposal_not_in_voting_phase(
             params=CommonAppCallParams(
                 sender=committee[0].account.address,
                 static_fee=min_fee_times_2,
-                app_references=[
-                    draft_proposal_client.app_id
-                ],  # FIXME: This should have been autopopulated
             ),
         )
 
@@ -191,8 +185,5 @@ def test_vote_proposal_paused_registry_error(
         params=CommonAppCallParams(
             sender=committee[0].account.address,
             static_fee=min_fee_times_2,
-            app_references=[
-                voting_proposal_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )
