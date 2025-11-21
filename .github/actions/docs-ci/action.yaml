@@ -20,7 +20,7 @@ runs:
     - name: Setup mdBook
       uses: peaceiris/actions-mdbook@v2
       with:
-        mdbook-version: '0.4.52'
+        mdbook-version: '0.4.48'
 
     - name: Test mdBook
       shell: bash
