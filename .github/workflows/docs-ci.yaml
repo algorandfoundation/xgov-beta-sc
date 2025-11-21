@@ -17,9 +17,13 @@ concurrency:
 
 jobs:
   validate-docs:
-    name: Validate & Preview Docs (if changed)
+    name: Validate & Preview docs (if changed)
     runs-on: ubuntu-latest
-    if: ${{ (github.event.pull_request && !github.event.pull_request.draft) || github.event_name == 'workflow_call' }}
+    if: >
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.draft == false) ||
+      github.event_name == 'workflow_call'
+
     environment:
       name: preview
       url: ${{ steps.deploy.outputs.page_url }}
@@ -38,29 +42,33 @@ jobs:
               - 'README.md'
               - 'SECURITY.md'
 
-      - name: No docs changes — mark check as passed
+      - name: No docs changes — skip heavy work
         if: ${{ steps.changes.outputs.docs != 'true' }}
         run: |
-          echo "No docs changes detected. Skipping validation and preview."
-          echo "This job still succeeds so required status is green."
+          echo "No docs changes detected. Skipping docs CI and preview."
+          echo "Job still succeeds so required status stays green."
 
+      # CI (lint, links, mdBook build) for:
+      #   - PRs with docs changes
+      #   - workflow_call (release), regardless of change detection if you prefer
       - name: Docs CI actions (lint, links, mdBook build)
         if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: ./.github/actions/docs-ci
 
+      # PR preview: PRs only, never on workflow_call
       - name: Configure Pages
-        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
+        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
-        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
+        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./book
 
       - name: Deploy (PR Preview)
         id: deploy
-        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
+        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
         uses: actions/deploy-pages@v4
         with:
           preview: true
