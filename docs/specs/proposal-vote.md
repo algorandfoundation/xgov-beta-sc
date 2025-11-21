@@ -37,9 +37,11 @@ And it is Rejected otherwise.
 
 The Commitment Lock **MUST** be returned to the Proposer if the Proposal is Rejected.
 
-The Voter Boxes of absentees xGovs **SHALL** be deleted.
+The xGov Daemon **SHALL** delete Voter Boxes of absentees xGovs.
 
 ## Review
+
+All Voter Box **MUST** be deleted before reviewing the Proposal.
 
 The xGov Council **MUST** review Approved Proposals.
 
