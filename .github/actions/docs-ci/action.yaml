@@ -1,17 +1,16 @@
 name: Docs CI action
 description: 'Lint docs, build mdBook'
+
 runs:
   using: "composite"
-
   steps:
-    - shell: bash
-
     - name: Checkout repo
       uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
     - name: Install pre-commit
+      shell: bash
       run: pip install --upgrade pip pre-commit
 
     - name: Cache pre-commit hooks
@@ -22,10 +21,12 @@ runs:
         restore-keys: precommit-${{ runner.os }}-
 
     - name: Run pre-commit hooks
+      shell: bash
       run: |
         pre-commit run markdownlint --all-files --verbose
         pre-commit run trailing-whitespace --all-files --verbose
         pre-commit run lychee --all-files --verbose
 
     - name: Build mdBook
+      shell: bash
       run: docker compose run mdbook build
