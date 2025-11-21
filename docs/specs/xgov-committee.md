@@ -130,8 +130,8 @@ $$
 $$
 
 This value corresponds to the `totalMembers` field in the [ARC-86 canonical JSON
-representation](https://dev.algorand.co/arc-standards/arc-0086/#representation) of the
-xGov Committee.
+representation](https://dev.algorand.co/arc-standards/arc-0086/#representation) of
+the xGov Committee.
 
 ### xGov Committee Voting Power
 
