@@ -50,7 +50,7 @@ jobs:
 
       # CI (lint, links, mdBook build) for:
       #   - PRs with docs changes
-      #   - workflow_call (release), regardless of change detection if you prefer
+      #   - workflow_call (release), runs regardless of change detection
       - name: Docs CI actions (lint, links, mdBook build)
         if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
         uses: ./.github/actions/docs-ci
