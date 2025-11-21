@@ -69,10 +69,9 @@ def test_config_xgov_registry_pending_proposals(
     proposal_client: ProposalClient,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.NO_PENDING_PROPOSALS):
-        xgov_registry_client.send.config_xgov_registry(
-            args=ConfigXgovRegistryArgs(config=xgov_registry_config)
-        )
+    xgov_registry_client.send.config_xgov_registry(
+        args=ConfigXgovRegistryArgs(config=xgov_registry_config)
+    )
 
 
 def test_config_xgov_registry_open_proposal_fee_too_low(

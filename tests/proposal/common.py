@@ -189,42 +189,56 @@ def assert_proposal_global_state(
     registry_app_id: int,
     status: int = STATUS_EMPTY,
     finalized: bool = False,
+    metadata_uploaded: bool = False,
     title: str = "",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
     funding_type: int = FUNDING_NULL,
     requested_amount: int = 0,
     locked_amount: int = 0,
+    discussion_duration: int = 0,
+    voting_duration: int = 0,
+    quorum_threshold: int = 0,
+    weighted_quorum_threshold: int = 0,
     committee_id: bytes = b"",
     committee_members: int = 0,
     committee_votes: int = 0,
+    open_proposal_fee: int = 0,
+    daemon_ops_funding_bps: int = 0,
     voted_members: int = 0,
     approvals: int = 0,
     rejections: int = 0,
     nulls: int = 0,
     assigned_votes: int = 0,
-    voters_count: int = 0,
+    assigned_members: int = 0,
 ) -> None:
     global_state = proposal_client.state.global_state
     assert global_state.proposer == proposer_address
     assert global_state.title == title
     assert global_state.status == status
     assert global_state.finalized == finalized
+    assert global_state.metadata_uploaded == metadata_uploaded
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
     assert global_state.funding_type == funding_type
     assert global_state.requested_amount == requested_amount
     assert global_state.locked_amount == locked_amount
+    assert global_state.discussion_duration == discussion_duration
+    assert global_state.voting_duration == voting_duration
+    assert global_state.quorum_threshold == quorum_threshold
+    assert global_state.weighted_quorum_threshold == weighted_quorum_threshold
     assert bytes(global_state.committee_id) == committee_id
     assert global_state.committee_members == committee_members
     assert global_state.committee_votes == committee_votes
+    assert global_state.open_proposal_fee == open_proposal_fee
+    assert global_state.daemon_ops_funding_bps == daemon_ops_funding_bps
     assert global_state.voted_members == voted_members
     assert global_state.approvals == approvals
     assert global_state.rejections == rejections
     assert global_state.nulls == nulls
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
-    assert global_state.assigned_members == voters_count
+    assert global_state.assigned_members == assigned_members
 
     if status == STATUS_EMPTY:
         assert global_state.open_ts == 0
@@ -255,51 +269,57 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         "locked_amount": LOCKED_AMOUNT,
         "funding_category": FUNDING_CATEGORY_SMALL,
         "focus": DEFAULT_FOCUS,
+        "metadata_uploaded": True,
     }
 
-    # Define common committee-related defaults used in multiple statuses
-    committee_defaults = {
+    # Define common Registry defaults used in multiple statuses
+    registry_defaults = {
         "committee_id": DEFAULT_COMMITTEE_ID,
         "committee_members": DEFAULT_COMMITTEE_MEMBERS,
         "committee_votes": DEFAULT_COMMITTEE_VOTES,
+        "open_proposal_fee": reg_cfg.OPEN_PROPOSAL_FEE,
+        "daemon_ops_funding_bps": reg_cfg.DAEMON_OPS_FUNDING_BPS,
     }
 
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
         STATUS_DRAFT: {
             "status": STATUS_DRAFT,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0 if finalized else LOCKED_AMOUNT,
         },
-        STATUS_SUBMITTED: {"status": STATUS_SUBMITTED, **committee_defaults},
+        STATUS_SUBMITTED: {
+            "status": STATUS_SUBMITTED,
+            **registry_defaults,
+        },
         STATUS_VOTING: {
             "status": STATUS_VOTING,
-            **committee_defaults,
-            "voters_count": DEFAULT_COMMITTEE_MEMBERS,
-            "assigned_votes": DEFAULT_COMMITTEE_MEMBERS,
+            **registry_defaults,
+            "assigned_members": DEFAULT_COMMITTEE_MEMBERS,
+            "assigned_votes": DEFAULT_COMMITTEE_VOTES,
         },
         STATUS_APPROVED: {
             "status": STATUS_APPROVED,
-            **committee_defaults,
+            **registry_defaults,
         },
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
         STATUS_REVIEWED: {
             "status": STATUS_REVIEWED,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
         STATUS_BLOCKED: {
             "status": STATUS_BLOCKED,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
         STATUS_FUNDED: {
             "status": STATUS_FUNDED,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
     }.get(status, {})
@@ -318,11 +338,16 @@ def assert_proposal_with_status(  # type: ignore
     **overrides,  # noqa: ANN003
 ) -> None:
     params = get_default_params_for_status(status, overrides, finalized=finalized)  # type: ignore
+    from_registry = get_proposal_values_from_registry(proposal_client)
     assert_proposal_global_state(
         proposal_client,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
         finalized=finalized,
+        discussion_duration=from_registry.discussion_duration,
+        voting_duration=from_registry.voting_duration,
+        quorum_threshold=from_registry.members_quorum,
+        weighted_quorum_threshold=from_registry.votes_quorum,
         **params,  # type: ignore
     )
 
@@ -342,6 +367,8 @@ def assert_empty_proposal_global_state(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
+        open_proposal_fee=reg_cfg.OPEN_PROPOSAL_FEE,
+        daemon_ops_funding_bps=reg_cfg.DAEMON_OPS_FUNDING_BPS,
     )
 
 
@@ -351,10 +378,17 @@ def assert_draft_proposal_global_state(  # type: ignore
     registry_app_id: int,
     *,
     finalized: bool = False,
+    metadata_uploaded: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        proposal_client, proposer_address, registry_app_id, STATUS_DRAFT, finalized=finalized, **kwargs  # type: ignore
+        proposal_client,
+        proposer_address,
+        registry_app_id,
+        STATUS_DRAFT,
+        finalized=finalized,
+        metadata_uploaded=metadata_uploaded,
+        **kwargs,  # type: ignore
     )
 
 
@@ -393,7 +427,7 @@ def assert_rejected_proposal_global_state(  # type: ignore
     )
 
 
-def assert_final_proposal_global_state(  # type: ignore
+def assert_submitted_proposal_global_state(  # type: ignore
     proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,

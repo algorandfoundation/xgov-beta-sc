@@ -7,193 +7,193 @@ main:
     bytecblock 0x70726f706f736572 0x72656769737472795f6170705f6964 0x 0x737461747573 0x7265717565737465645f616d6f756e74 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573
     txn ApplicationID
     bnz main_after_if_else@2
-    // smart_contracts/proposal_mock/contract.py:21
+    // smart_contracts/proposal_mock/contract.py:22
     // key=prop_cfg.GS_KEY_PROPOSER,
     bytec_0 // 0x70726f706f736572
-    // smart_contracts/proposal_mock/contract.py:20
+    // smart_contracts/proposal_mock/contract.py:21
     // arc4.Address(),
     global ZeroAddress
-    // smart_contracts/proposal_mock/contract.py:19-22
+    // smart_contracts/proposal_mock/contract.py:20-23
     // self.proposer = GlobalState(
     //     arc4.Address(),
     //     key=prop_cfg.GS_KEY_PROPOSER,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:25
+    // smart_contracts/proposal_mock/contract.py:26
     // key=prop_cfg.GS_KEY_REGISTRY_APP_ID,
     bytec_1 // 0x72656769737472795f6170705f6964
-    // smart_contracts/proposal_mock/contract.py:24
+    // smart_contracts/proposal_mock/contract.py:25
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:23-26
+    // smart_contracts/proposal_mock/contract.py:24-27
     // self.registry_app_id = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_REGISTRY_APP_ID,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:29
+    // smart_contracts/proposal_mock/contract.py:30
     // key=prop_cfg.GS_KEY_TITLE,
     pushbytes 0x7469746c65
-    // smart_contracts/proposal_mock/contract.py:28
+    // smart_contracts/proposal_mock/contract.py:29
     // String(),
     bytec_2 // ""
-    // smart_contracts/proposal_mock/contract.py:27-30
+    // smart_contracts/proposal_mock/contract.py:28-31
     // self.title = GlobalState(
     //     String(),
     //     key=prop_cfg.GS_KEY_TITLE,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:33
+    // smart_contracts/proposal_mock/contract.py:34
     // key=prop_cfg.GS_KEY_OPEN_TS,
     pushbytes 0x6f70656e5f74696d657374616d70
-    // smart_contracts/proposal_mock/contract.py:32
+    // smart_contracts/proposal_mock/contract.py:33
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:31-34
+    // smart_contracts/proposal_mock/contract.py:32-35
     // self.submission_ts = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_OPEN_TS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:37
+    // smart_contracts/proposal_mock/contract.py:38
     // key=prop_cfg.GS_KEY_SUBMISSION_TS,
     pushbytes 0x7375626d697373696f6e5f74696d657374616d70
-    // smart_contracts/proposal_mock/contract.py:36
+    // smart_contracts/proposal_mock/contract.py:37
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:35-38
+    // smart_contracts/proposal_mock/contract.py:36-39
     // self.finalization_ts = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_SUBMISSION_TS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:41
+    // smart_contracts/proposal_mock/contract.py:42
     // key=prop_cfg.GS_KEY_STATUS,
     bytec_3 // 0x737461747573
-    // smart_contracts/proposal_mock/contract.py:40
+    // smart_contracts/proposal_mock/contract.py:41
     // UInt64(enm.STATUS_EMPTY),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:39-42
+    // smart_contracts/proposal_mock/contract.py:40-43
     // self.status = GlobalState(
     //     UInt64(enm.STATUS_EMPTY),
     //     key=prop_cfg.GS_KEY_STATUS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:45
+    // smart_contracts/proposal_mock/contract.py:46
     // key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
     pushbytes 0x66756e64696e675f63617465676f7279
-    // smart_contracts/proposal_mock/contract.py:44
+    // smart_contracts/proposal_mock/contract.py:45
     // UInt64(enm.FUNDING_CATEGORY_NULL),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:43-46
+    // smart_contracts/proposal_mock/contract.py:44-47
     // self.funding_category = GlobalState(
     //     UInt64(enm.FUNDING_CATEGORY_NULL),
     //     key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:49
+    // smart_contracts/proposal_mock/contract.py:50
     // key=prop_cfg.GS_KEY_FUNDING_TYPE,
     pushbytes 0x66756e64696e675f74797065
-    // smart_contracts/proposal_mock/contract.py:48
+    // smart_contracts/proposal_mock/contract.py:49
     // UInt64(enm.FUNDING_NULL),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:47-50
+    // smart_contracts/proposal_mock/contract.py:48-51
     // self.funding_type = GlobalState(
     //     UInt64(enm.FUNDING_NULL),
     //     key=prop_cfg.GS_KEY_FUNDING_TYPE,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:53
+    // smart_contracts/proposal_mock/contract.py:54
     // key=prop_cfg.GS_KEY_REQUESTED_AMOUNT,
     bytec 4 // 0x7265717565737465645f616d6f756e74
-    // smart_contracts/proposal_mock/contract.py:52
+    // smart_contracts/proposal_mock/contract.py:53
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:51-54
+    // smart_contracts/proposal_mock/contract.py:52-55
     // self.requested_amount = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_REQUESTED_AMOUNT,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:57
+    // smart_contracts/proposal_mock/contract.py:58
     // key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
     pushbytes 0x6c6f636b65645f616d6f756e74
-    // smart_contracts/proposal_mock/contract.py:56
+    // smart_contracts/proposal_mock/contract.py:57
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:55-58
+    // smart_contracts/proposal_mock/contract.py:56-59
     // self.locked_amount = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:61
-    // key=prop_cfg.GS_KEY_COMMITTEE_ID,
+    // smart_contracts/proposal_mock/contract.py:62
+    // key=reg_cfg.GS_KEY_COMMITTEE_ID,
     bytec 5 // 0x636f6d6d69747465655f6964
-    // smart_contracts/proposal_mock/contract.py:60
+    // smart_contracts/proposal_mock/contract.py:61
     // typ.Bytes32.from_bytes(b""),
     bytec_2 // 0x
-    // smart_contracts/proposal_mock/contract.py:59-62
+    // smart_contracts/proposal_mock/contract.py:60-63
     // self.committee_id = GlobalState(
     //     typ.Bytes32.from_bytes(b""),
-    //     key=prop_cfg.GS_KEY_COMMITTEE_ID,
+    //     key=reg_cfg.GS_KEY_COMMITTEE_ID,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:65
-    // key=prop_cfg.GS_KEY_COMMITTEE_MEMBERS,
+    // smart_contracts/proposal_mock/contract.py:66
+    // key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
     bytec 6 // 0x636f6d6d69747465655f6d656d62657273
-    // smart_contracts/proposal_mock/contract.py:64
+    // smart_contracts/proposal_mock/contract.py:65
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:63-66
+    // smart_contracts/proposal_mock/contract.py:64-67
     // self.committee_members = GlobalState(
     //     UInt64(),
-    //     key=prop_cfg.GS_KEY_COMMITTEE_MEMBERS,
+    //     key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:69
-    // key=prop_cfg.GS_KEY_COMMITTEE_VOTES,
+    // smart_contracts/proposal_mock/contract.py:70
+    // key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
     bytec 7 // 0x636f6d6d69747465655f766f746573
-    // smart_contracts/proposal_mock/contract.py:68
+    // smart_contracts/proposal_mock/contract.py:69
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:67-70
+    // smart_contracts/proposal_mock/contract.py:68-71
     // self.committee_votes = GlobalState(
     //     UInt64(),
-    //     key=prop_cfg.GS_KEY_COMMITTEE_VOTES,
+    //     key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:73
+    // smart_contracts/proposal_mock/contract.py:74
     // key=prop_cfg.GS_KEY_VOTED_MEMBERS,
     pushbytes 0x766f7465645f6d656d62657273
-    // smart_contracts/proposal_mock/contract.py:72
+    // smart_contracts/proposal_mock/contract.py:73
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:71-74
+    // smart_contracts/proposal_mock/contract.py:72-75
     // self.voted_members = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_VOTED_MEMBERS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:77
+    // smart_contracts/proposal_mock/contract.py:78
     // key=prop_cfg.GS_KEY_APPROVALS,
     pushbytes 0x617070726f76616c73
-    // smart_contracts/proposal_mock/contract.py:76
+    // smart_contracts/proposal_mock/contract.py:77
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:75-78
+    // smart_contracts/proposal_mock/contract.py:76-79
     // self.approvals = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_APPROVALS,
     // )
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:81
+    // smart_contracts/proposal_mock/contract.py:82
     // key=prop_cfg.GS_KEY_REJECTIONS,
     pushbytes 0x72656a656374696f6e73
-    // smart_contracts/proposal_mock/contract.py:80
+    // smart_contracts/proposal_mock/contract.py:81
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal_mock/contract.py:79-82
+    // smart_contracts/proposal_mock/contract.py:80-83
     // self.rejections = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_REJECTIONS,
@@ -201,7 +201,7 @@ main:
     app_global_put
 
 main_after_if_else@2:
-    // smart_contracts/proposal_mock/contract.py:17
+    // smart_contracts/proposal_mock/contract.py:18
     // class ProposalMock(ARC4Contract):
     txn OnCompletion
     !
@@ -214,13 +214,13 @@ main_after_if_else@2:
     err
 
 main_release_funds_route@8:
-    // smart_contracts/proposal_mock/contract.py:105
+    // smart_contracts/proposal_mock/contract.py:106
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 main_create_NoOp@11:
-    // smart_contracts/proposal_mock/contract.py:17
+    // smart_contracts/proposal_mock/contract.py:18
     // class ProposalMock(ARC4Contract):
     pushbytes 0xcc694eaa // method "create(address)void"
     txna ApplicationArgs 0
@@ -230,7 +230,7 @@ main_create_NoOp@11:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.create[routing]() -> void:
 create:
-    // smart_contracts/proposal_mock/contract.py:84
+    // smart_contracts/proposal_mock/contract.py:85
     // @arc4.abimethod(create="require")
     txna ApplicationArgs 1
     dup
@@ -238,17 +238,17 @@ create:
     intc_3 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/proposal_mock/contract.py:86
+    // smart_contracts/proposal_mock/contract.py:87
     // self.proposer.value = proposer
     bytec_0 // 0x70726f706f736572
     swap
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:87
+    // smart_contracts/proposal_mock/contract.py:88
     // self.registry_app_id.value = Global.caller_application_id
     bytec_1 // 0x72656769737472795f6170705f6964
     global CallerApplicationID
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:84
+    // smart_contracts/proposal_mock/contract.py:85
     // @arc4.abimethod(create="require")
     intc_1 // 1
     return
@@ -256,7 +256,7 @@ create:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.set_status[routing]() -> void:
 set_status:
-    // smart_contracts/proposal_mock/contract.py:89
+    // smart_contracts/proposal_mock/contract.py:90
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -265,12 +265,12 @@ set_status:
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
-    // smart_contracts/proposal_mock/contract.py:91
+    // smart_contracts/proposal_mock/contract.py:92
     // self.status.value = status
     bytec_3 // 0x737461747573
     swap
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:89
+    // smart_contracts/proposal_mock/contract.py:90
     // @arc4.abimethod()
     intc_1 // 1
     return
@@ -278,7 +278,7 @@ set_status:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.set_requested_amount[routing]() -> void:
 set_requested_amount:
-    // smart_contracts/proposal_mock/contract.py:93
+    // smart_contracts/proposal_mock/contract.py:94
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -287,12 +287,12 @@ set_requested_amount:
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
-    // smart_contracts/proposal_mock/contract.py:95
+    // smart_contracts/proposal_mock/contract.py:96
     // self.requested_amount.value = requested_amount
     bytec 4 // 0x7265717565737465645f616d6f756e74
     swap
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:93
+    // smart_contracts/proposal_mock/contract.py:94
     // @arc4.abimethod()
     intc_1 // 1
     return
@@ -300,7 +300,7 @@ set_requested_amount:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.set_committee_details[routing]() -> void:
 set_committee_details:
-    // smart_contracts/proposal_mock/contract.py:97
+    // smart_contracts/proposal_mock/contract.py:98
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -322,22 +322,22 @@ set_committee_details:
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
-    // smart_contracts/proposal_mock/contract.py:101
+    // smart_contracts/proposal_mock/contract.py:102
     // self.committee_id.value = metadata_hash.copy()
     bytec 5 // 0x636f6d6d69747465655f6964
     uncover 3
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:102
+    // smart_contracts/proposal_mock/contract.py:103
     // self.committee_members.value = size
     bytec 6 // 0x636f6d6d69747465655f6d656d62657273
     uncover 2
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:103
+    // smart_contracts/proposal_mock/contract.py:104
     // self.committee_votes.value = votes
     bytec 7 // 0x636f6d6d69747465655f766f746573
     swap
     app_global_put
-    // smart_contracts/proposal_mock/contract.py:97
+    // smart_contracts/proposal_mock/contract.py:98
     // @arc4.abimethod()
     intc_1 // 1
     return
@@ -345,7 +345,7 @@ set_committee_details:
 
 // smart_contracts.proposal_mock.contract.ProposalMock.vote[routing]() -> void:
 vote:
-    // smart_contracts/proposal_mock/contract.py:109
+    // smart_contracts/proposal_mock/contract.py:110
     // @arc4.abimethod()
     txna ApplicationArgs 1
     len

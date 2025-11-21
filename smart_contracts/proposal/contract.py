@@ -58,11 +58,28 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_REGISTRY_APP_ID,
         )
-        self.title = GlobalState(
-            String(),
-            key=prop_cfg.GS_KEY_TITLE,
+
+        # From xGov Registry
+        self.committee_id = GlobalState(
+            typ.Bytes32.from_bytes(b""),
+            key=reg_cfg.GS_KEY_COMMITTEE_ID,
         )
-        self.metadata_uploaded = False
+        self.committee_members = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+        )
+        self.committee_votes = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
+        )
+        self.open_proposal_fee = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
+        )
+        self.daemon_ops_funding_bps = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
+        )
 
         # Time Anchors
         self.open_ts = GlobalState(
@@ -87,8 +104,16 @@ class Proposal(
             False,  # noqa: FBT003
             key=prop_cfg.GS_KEY_FINALIZED,
         )
+        self.metadata_uploaded = GlobalState(
+            False,  # noqa: FBT003
+            key=prop_cfg.GS_KEY_METADATA_UPLOADED,
+        )
 
-        # Proposal Funding
+        # Proposal Configuration
+        self.title = GlobalState(
+            String(),
+            key=prop_cfg.GS_KEY_TITLE,
+        )
         self.funding_category = GlobalState(
             UInt64(enm.FUNDING_CATEGORY_NULL),
             key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
@@ -109,19 +134,31 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
         )
+        self.discussion_duration = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_DISCUSSION_DURATION,
+        )
+        self.voting_duration = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_VOTING_DURATION,
+        )
+        self.quorum_threshold = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_QUORUM_THRESHOLD,
+        )
+        self.weighted_quorum_threshold = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_WEIGHTED_QUORUM_THRESHOLD,
+        )
 
         # Proposal Vote
-        self.committee_id = GlobalState(
-            typ.Bytes32.from_bytes(b""),
-            key=prop_cfg.GS_KEY_COMMITTEE_ID,
+        self.assigned_members = GlobalState(
+            UInt64(0),
+            key=prop_cfg.GS_KEY_ASSIGNED_MEMBERS,
         )
-        self.committee_members = GlobalState(
-            UInt64(),
-            key=prop_cfg.GS_KEY_COMMITTEE_MEMBERS,
-        )
-        self.committee_votes = GlobalState(
-            UInt64(),
-            key=prop_cfg.GS_KEY_COMMITTEE_VOTES,
+        self.assigned_votes = GlobalState(
+            UInt64(0),
+            key=prop_cfg.GS_KEY_ASSIGNED_VOTES,
         )
         self.voted_members = GlobalState(
             UInt64(),
@@ -139,8 +176,6 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_NULLS,
         )
-        self.assigned_members = UInt64(0)
-        self.assigned_votes = UInt64(0)
 
         # Boxes
         self.voters = BoxMap(
@@ -154,15 +189,25 @@ class Proposal(
         )
 
     @subroutine
-    def is_voting_open(self) -> tuple[bool, typ.Error]:
-        voting_duration = Global.latest_timestamp - self.vote_open_ts.value
-        maximum_voting_duration, error = self.get_voting_duration(
-            self.funding_category.value
+    def get_uint_from_registry_config(self, global_state_key: Bytes) -> UInt64:
+        value, exists = AppGlobal.get_ex_uint64(
+            self.registry_app_id.value, global_state_key
         )
-        if error != typ.Error(""):
-            return False, error
+        assert exists, err.MISSING_CONFIG
+        return value
 
-        return voting_duration <= maximum_voting_duration, typ.Error("")
+    @subroutine
+    def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
+        value, exists = AppGlobal.get_ex_bytes(
+            self.registry_app_id.value, global_state_key
+        )
+        assert exists, err.MISSING_CONFIG
+        return value
+
+    @subroutine
+    def is_voting_open(self) -> bool:
+        elapsed_voting_duration = Global.latest_timestamp - self.vote_open_ts.value
+        return elapsed_voting_duration <= self.voting_duration.value
 
     @subroutine
     def review_check_authorization(self) -> None:
@@ -214,11 +259,7 @@ class Proposal(
         if self.status.value != enm.STATUS_VOTING:
             return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
 
-        is_voting_open, error = self.is_voting_open()
-        if error != typ.Error(""):
-            return error
-
-        if not is_voting_open:
+        if not self.is_voting_open():
             return typ.Error(err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED)
 
         return typ.Error("")
@@ -244,12 +285,8 @@ class Proposal(
     @subroutine
     def scrutiny_check_authorization(self) -> None:
         assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
-
-        is_voting_open, error = self.is_voting_open()
-        assert error == typ.Error(""), err.MISSING_CONFIG
-
         assert (
-            not is_voting_open  # voting period has ended
+            not self.is_voting_open()  # voting period has ended
             or self.is_plebiscite()  # all committee members already voted
         ), err.VOTING_ONGOING
 
@@ -268,22 +305,20 @@ class Proposal(
     @subroutine
     def get_discussion_duration(self, category: UInt64) -> UInt64:
         if category == enm.FUNDING_CATEGORY_SMALL:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
             )
         elif category == enm.FUNDING_CATEGORY_MEDIUM:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
             )
         else:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
             )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        return value
 
     @subroutine
-    def get_voting_duration(self, category: UInt64) -> tuple[UInt64, typ.Error]:
+    def get_voting_duration(self, category: UInt64) -> UInt64:
         if category == enm.FUNDING_CATEGORY_SMALL:
             return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
@@ -300,73 +335,36 @@ class Proposal(
     @subroutine
     def get_quorum(self, category: UInt64) -> UInt64:
         if category == enm.FUNDING_CATEGORY_NULL:
-            value = UInt64(0)
-            error = typ.Error("")
+            return UInt64(0)
         elif category == enm.FUNDING_CATEGORY_SMALL:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
             )
         elif category == enm.FUNDING_CATEGORY_MEDIUM:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_MEDIUM)
             )
         else:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
             )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        return value
 
     @subroutine
     def get_weighted_quorum(self, category: UInt64) -> UInt64:
         if category == enm.FUNDING_CATEGORY_NULL:
-            value = UInt64(0)
-            error = typ.Error("")
+            return UInt64(0)
         elif category == enm.FUNDING_CATEGORY_SMALL:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
             )
         elif category == enm.FUNDING_CATEGORY_MEDIUM:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM)
             )
         else:
-            value, error = self.get_uint_from_registry_config(
+            return self.get_uint_from_registry_config(
                 Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
             )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-        return value
-
-    @subroutine
-    def verify_and_set_committee(self) -> typ.Error:
-
-        committee_id = typ.Bytes32.from_bytes(
-            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
-        )
-        if committee_id == typ.Bytes32.from_bytes(b""):
-            return typ.Error(err.ARC_65_PREFIX + err.EMPTY_COMMITTEE_ID)
-
-        committee_members, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
-        )
-        if error != typ.Error(""):
-            return error
-        if committee_members <= UInt64(0):
-            return typ.Error(err.ARC_65_PREFIX + err.WRONG_COMMITTEE_MEMBERS)
-
-        committee_votes, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
-        )
-        if error != typ.Error(""):
-            return error
-        if committee_votes <= UInt64(0):
-            return typ.Error(err.ARC_65_PREFIX + err.WRONG_COMMITTEE_VOTES)
-
-        self.committee_id.value = committee_id.copy()
-        self.committee_members.value = committee_members
-        self.committee_votes.value = committee_votes
-
-        return typ.Error("")
 
     @subroutine
     def assert_draft_and_proposer(self) -> None:
@@ -377,15 +375,11 @@ class Proposal(
 
     @subroutine
     def submit_check_authorization(self) -> None:
-
         self.assert_draft_and_proposer()
-
-        discussion_duration = Global.latest_timestamp - self.open_ts.value
-        minimum_discussion_duration = self.get_discussion_duration(
-            self.funding_category.value
-        )
-
-        assert discussion_duration >= minimum_discussion_duration, err.TOO_EARLY
+        elapsed_discussion_duration = Global.latest_timestamp - self.open_ts.value
+        assert (
+            elapsed_discussion_duration >= self.discussion_duration.value
+        ), err.TOO_EARLY
 
     @subroutine
     def drop_check_authorization(self) -> typ.Error:
@@ -425,15 +419,13 @@ class Proposal(
             or funding_type == enm.FUNDING_RETROACTIVE
         ), err.WRONG_FUNDING_TYPE
 
-        min_requested_amount, error = self.get_uint_from_registry_config(
+        min_requested_amount = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
 
-        max_requested_amount_large, error = self.get_uint_from_registry_config(
+        max_requested_amount_large = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
 
         assert requested_amount >= min_requested_amount, err.WRONG_MIN_REQUESTED_AMOUNT
         assert (
@@ -447,11 +439,10 @@ class Proposal(
         return amount * fraction_in_bps // const.BPS
 
     @subroutine
-    def get_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
-        proposal_commitment_bps, error = self.get_uint_from_registry_config(
+    def compute_expected_locked_amount(self, requested_amount: UInt64) -> UInt64:
+        proposal_commitment_bps = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
         return self.relative_to_absolute_amount(
             requested_amount,
             proposal_commitment_bps,
@@ -461,7 +452,7 @@ class Proposal(
     def open_payment_validation(
         self, payment: gtxn.PaymentTransaction, requested_amount: UInt64
     ) -> None:
-        expected_lock_amount = self.get_expected_locked_amount(requested_amount)
+        expected_lock_amount = self.compute_expected_locked_amount(requested_amount)
 
         assert payment.sender == self.proposer.value, err.WRONG_SENDER
         assert (
@@ -470,51 +461,25 @@ class Proposal(
         assert payment.amount == expected_lock_amount, err.WRONG_LOCKED_AMOUNT
 
     @subroutine
-    def set_category(self, requested_amount: UInt64) -> None:
-        max_requested_amount_small, error = self.get_uint_from_registry_config(
+    def get_category(self, requested_amount: UInt64) -> UInt64:
+        max_requested_amount_small = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-
-        max_requested_amount_medium, error = self.get_uint_from_registry_config(
+        max_requested_amount_medium = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
         )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-
         if requested_amount <= max_requested_amount_small:
-            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_SMALL)
+            return UInt64(enm.FUNDING_CATEGORY_SMALL)
         elif requested_amount <= max_requested_amount_medium:
-            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_MEDIUM)
+            return UInt64(enm.FUNDING_CATEGORY_MEDIUM)
         else:
-            self.funding_category.value = UInt64(enm.FUNDING_CATEGORY_LARGE)
-
-    @subroutine
-    def get_uint_from_registry_config(
-        self, global_state_key: Bytes
-    ) -> tuple[UInt64, typ.Error]:
-        value, exists = AppGlobal.get_ex_uint64(
-            self.registry_app_id.value, global_state_key
-        )
-        error = typ.Error("")
-        if not exists:
-            error = typ.Error(err.ARC_65_PREFIX + err.MISSING_CONFIG)
-        return value, error
-
-    @subroutine
-    def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
-        value, exists = AppGlobal.get_ex_bytes(
-            self.registry_app_id.value, global_state_key
-        )
-        assert exists, err.MISSING_CONFIG
-        return value
+            return UInt64(enm.FUNDING_CATEGORY_LARGE)
 
     @subroutine
     def check_registry_not_paused(self) -> None:
-        registry_paused, error = self.get_uint_from_registry_config(
+        registry_paused = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
         )
-
-        assert error == typ.Error(""), err.MISSING_CONFIG
         assert not registry_paused, err.PAUSED_REGISTRY
 
     @subroutine
@@ -564,15 +529,15 @@ class Proposal(
         ), err.WRONG_METHOD_CALL
 
     @subroutine
-    def quorum_voters_threshold(self) -> UInt64:
-        quorum_bps = self.get_quorum(self.funding_category.value)
+    def compute_quorum_threshold(self, funding_category: UInt64) -> UInt64:
+        quorum_bps = self.get_quorum(funding_category)
         return self.relative_to_absolute_amount(
             self.committee_members.value, quorum_bps
         )
 
     @subroutine
-    def weighted_quorum_votes_threshold(self) -> UInt64:
-        weighted_quorum_bps = self.get_weighted_quorum(self.funding_category.value)
+    def compute_weighted_quorum_threshold(self, funding_category: UInt64) -> UInt64:
+        weighted_quorum_bps = self.get_weighted_quorum(funding_category)
         return self.relative_to_absolute_amount(
             self.committee_votes.value, weighted_quorum_bps
         )
@@ -581,20 +546,19 @@ class Proposal(
     def is_quorum_voters_reached(self) -> bool:
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
         # Null votes affect this quorum.
-        quorum_defined = self.quorum_voters_threshold() > 0
+        quorum_defined = self.quorum_threshold.value > 0
         return (
-            self.voted_members.value >= self.quorum_voters_threshold()
-            and quorum_defined
+            self.voted_members.value >= self.quorum_threshold.value and quorum_defined
         )
 
     @subroutine
     def is_weighted_quorum_votes_reached(self) -> bool:
         # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
         # Null votes affect this quorum.
-        weighted_quorum_defined = self.weighted_quorum_votes_threshold() > 0
+        weighted_quorum_defined = self.weighted_quorum_threshold.value > 0
         total_votes = self.approvals.value + self.rejections.value + self.nulls.value
         return (
-            total_votes >= self.weighted_quorum_votes_threshold()
+            total_votes >= self.weighted_quorum_threshold.value
             and weighted_quorum_defined
         )
 
@@ -623,17 +587,37 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the xGov Registry
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.EMPTY_COMMITTEE_ID: If the committee ID is not available from the registry
-            err.WRONG_COMMITTEE_MEMBERS: If the committee members do not match the required number
-            err.WRONG_COMMITTEE_VOTES: If the committee votes do not match the required number
         """
         assert (
             Global.caller_application_id != 0
         ), err.UNAUTHORIZED  # Only callable by another contract
 
+        # Set Proposal Base State
         self.proposer.value = proposer.native
         self.registry_app_id.value = Global.caller_application_id
 
-        return self.verify_and_set_committee()
+        # Set values from xGov Registry
+        self.committee_id.value = typ.Bytes32.from_bytes(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
+        )
+        self.committee_members.value = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
+        )
+        self.committee_votes.value = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
+        )
+        self.open_proposal_fee.value = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
+        )
+        self.daemon_ops_funding_bps.value = self.get_uint_from_registry_config(
+            Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
+        )
+
+        # Post validation
+        if self.committee_id.value == typ.Bytes32.from_bytes(b""):
+            return typ.Error(err.ARC_65_PREFIX + err.EMPTY_COMMITTEE_ID)
+
+        return typ.Error("")
 
     @arc4.abimethod()
     def open(
@@ -677,16 +661,31 @@ class Proposal(
         )
         self.open_payment_validation(payment, requested_amount.as_uint64())
 
+        # Configure Proposal
         self.title.value = title.native
-        self.set_category(requested_amount.as_uint64())
+        self.funding_category.value = self.get_category(requested_amount.as_uint64())
         self.funding_type.value = funding_type.as_uint64()
         self.requested_amount.value = requested_amount.as_uint64()
         self.focus.value = focus.as_uint64()
-        self.locked_amount.value = self.get_expected_locked_amount(
-            requested_amount.as_uint64()
+        self.locked_amount.value = payment.amount  # The amount is validated
+
+        # Configure category dependent values
+        self.discussion_duration.value = self.get_discussion_duration(
+            self.funding_category.value
         )
-        self.open_ts.value = Global.latest_timestamp
+        self.voting_duration.value = self.get_voting_duration(
+            self.funding_category.value
+        )
+        self.quorum_threshold.value = self.compute_quorum_threshold(
+            self.funding_category.value
+        )
+        self.weighted_quorum_threshold.value = self.compute_weighted_quorum_threshold(
+            self.funding_category.value
+        )
+
+        # Update Proposal State and time anchors
         self.status.value = UInt64(enm.STATUS_DRAFT)
+        self.open_ts.value = Global.latest_timestamp
 
         arc4.emit(
             typ.Opened(
@@ -718,7 +717,7 @@ class Proposal(
         self.upload_metadata_check_authorization()
         self.upload_metadata_input_validation(payload)
 
-        self.metadata_uploaded = True
+        self.metadata_uploaded.value = True
 
         if is_first_in_group:
             # clear and write the metadata to the box
@@ -769,42 +768,31 @@ class Proposal(
 
         self.submit_check_authorization()
 
-        self.status.value = UInt64(enm.STATUS_SUBMITTED)
-        self.submission_ts.value = Global.latest_timestamp
-
-        open_proposal_fee, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
-        )
-        assert error == typ.Error(""), err.MISSING_CONFIG
-
-        assert self.metadata_uploaded, err.MISSING_METADATA
-
-        daemon_ops_funding_bps, error = self.get_uint_from_registry_config(
-            Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
-        )
-        assert error == typ.Error(""), err.MISSING_CONFIG
+        assert self.metadata_uploaded.value, err.MISSING_METADATA
 
         self.pay(
             receiver=Account(
                 self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
             ),
             amount=self.relative_to_absolute_amount(
-                open_proposal_fee, daemon_ops_funding_bps
+                self.open_proposal_fee.value, self.daemon_ops_funding_bps.value
             ),
         )
+        self.status.value = UInt64(enm.STATUS_SUBMITTED)
+        self.submission_ts.value = Global.latest_timestamp
 
     @subroutine
     def _assign_voter(self, voter: Account, voting_power: UInt64) -> None:
         self.assign_voter_input_validation(voter, voting_power)
 
         self.voters[voter] = voting_power
-        self.assigned_members += 1
-        self.assigned_votes += voting_power
+        self.assigned_members.value += 1
+        self.assigned_votes.value += voting_power
 
     @subroutine
     def _unassign_voter(self, voter: Account, voting_power: UInt64) -> None:
-        self.assigned_members -= 1
-        self.assigned_votes -= voting_power
+        self.assigned_members.value -= 1
+        self.assigned_votes.value -= voting_power
         del self.voters[voter]
 
     @arc4.abimethod()
@@ -844,26 +832,22 @@ class Proposal(
                 voters[i].address.native, voters[i].voting_power.as_uint64()
             )
 
-        if self.assigned_members == self.committee_members.value:
+        if self.assigned_members.value == self.committee_members.value:
             assert (
-                self.assigned_votes == self.committee_votes.value
+                self.assigned_votes.value == self.committee_votes.value
             ), err.VOTING_POWER_MISMATCH
             self.status.value = UInt64(enm.STATUS_VOTING)
             self.vote_open_ts.value = Global.latest_timestamp
-
-            maximum_voting_duration, _error = self.get_voting_duration(
-                self.funding_category.value
-            )
 
             arc4.emit(
                 typ.Submitted(
                     vote_opening=arc4.UInt64(self.vote_open_ts.value),
                     vote_closing=arc4.UInt64(
-                        self.vote_open_ts.value + maximum_voting_duration
+                        self.vote_open_ts.value + self.voting_duration.value
                     ),
-                    quorum_voters=arc4.UInt32(self.quorum_voters_threshold()),
+                    quorum_voters=arc4.UInt32(self.quorum_threshold.value),
                     weighted_quorum_votes=arc4.UInt32(
-                        self.weighted_quorum_votes_threshold()
+                        self.weighted_quorum_threshold.value
                     ),
                 )
             )
@@ -973,7 +957,7 @@ class Proposal(
         self.review_check_authorization()
 
         # check no assigned voters
-        assert not self.assigned_members, err.VOTERS_ASSIGNED
+        assert self.assigned_members.value == 0, err.VOTERS_ASSIGNED
 
         if block:
             self.status.value = UInt64(enm.STATUS_BLOCKED)
@@ -1057,7 +1041,7 @@ class Proposal(
             return error
 
         # check no assigned voters
-        if self.assigned_members > UInt64(0):
+        if self.assigned_members.value > 0:
             return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
 
         # refund the locked amount for DRAFT proposals
@@ -1168,8 +1152,8 @@ class Proposal(
         """
 
         return typ.VotingState(
-            quorum_voters=arc4.UInt32(self.quorum_voters_threshold()),
-            weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_votes_threshold()),
+            quorum_voters=arc4.UInt32(self.quorum_threshold.value),
+            weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_threshold.value),
             total_voters=arc4.UInt32(self.voted_members.value),
             total_approvals=arc4.UInt32(self.approvals.value),
             total_rejections=arc4.UInt32(self.rejections.value),

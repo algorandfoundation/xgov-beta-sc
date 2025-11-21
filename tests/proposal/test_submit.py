@@ -17,7 +17,7 @@ from tests.proposal.common import (
     assert_account_balance,
     assert_draft_proposal_global_state,
     assert_empty_proposal_global_state,
-    assert_final_proposal_global_state,
+    assert_submitted_proposal_global_state,
     open_proposal,
     submit_proposal,
 )
@@ -51,7 +51,7 @@ def test_submit_success(
         expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,
     )
 
-    assert_final_proposal_global_state(
+    assert_submitted_proposal_global_state(
         draft_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
@@ -77,6 +77,7 @@ def test_submit_not_proposer(
         draft_proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
+        metadata_uploaded=True,
     )
 
     assert_account_balance(
@@ -131,7 +132,7 @@ def test_submit_twice(
             proposer=proposer,
         )
 
-    assert_final_proposal_global_state(
+    assert_submitted_proposal_global_state(
         draft_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
@@ -157,6 +158,7 @@ def test_submit_too_early(
         draft_proposal_client,
         registry_app_id=xgov_registry_mock_client.app_id,
         proposer_address=proposer.address,
+        metadata_uploaded=True,
     )
 
     assert_account_balance(
@@ -226,7 +228,7 @@ def test_submit_paused_registry_error(
         expected_balance=xgov_daemon_balance_before_submit + daemon_ops_funding_bps,
     )
 
-    assert_final_proposal_global_state(
+    assert_submitted_proposal_global_state(
         draft_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,

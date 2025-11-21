@@ -89,6 +89,7 @@ def test_finalize_draft_proposal(
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
     )
 
     min_balance = algorand_client.account.get_information(

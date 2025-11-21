@@ -12,6 +12,7 @@ from algopy import (
 from ..common import abi_types as typ
 from ..proposal import config as prop_cfg
 from ..proposal import enums as enm
+from ..xgov_registry import config as reg_cfg
 
 
 class ProposalMock(ARC4Contract):
@@ -58,15 +59,15 @@ class ProposalMock(ARC4Contract):
         )
         self.committee_id = GlobalState(
             typ.Bytes32.from_bytes(b""),
-            key=prop_cfg.GS_KEY_COMMITTEE_ID,
+            key=reg_cfg.GS_KEY_COMMITTEE_ID,
         )
         self.committee_members = GlobalState(
             UInt64(),
-            key=prop_cfg.GS_KEY_COMMITTEE_MEMBERS,
+            key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
         )
         self.committee_votes = GlobalState(
             UInt64(),
-            key=prop_cfg.GS_KEY_COMMITTEE_VOTES,
+            key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
         self.voted_members = GlobalState(
             UInt64(),

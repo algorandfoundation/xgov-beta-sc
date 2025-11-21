@@ -205,10 +205,6 @@ class XGovRegistry(
         return Txn.sender == self.committee_manager.value.native
 
     @subroutine
-    def no_pending_proposals(self) -> bool:
-        return self.pending_proposals.value == 0
-
-    @subroutine
     def _is_proposal(self, proposal_id: UInt64) -> bool:
         return Application(proposal_id).creator == Global.current_application_address
 
@@ -315,11 +311,13 @@ class XGovRegistry(
         self.max_committee_size.value = mbr_available_for_committee // voter_mbr
 
     @subroutine
-    def decrement_pending_proposals(self, proposal_id: UInt64) -> None:
-        # Decrement pending proposals count
-        self.pending_proposals.value -= 1
+    def increment_pending_proposals(self, proposer: Account) -> None:
+        self.pending_proposals.value += 1
+        self.proposer_box[proposer].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
-        # Update proposer's active proposal status
+    @subroutine
+    def decrement_pending_proposals(self, proposal_id: UInt64) -> None:
+        self.pending_proposals.value -= 1
         proposer = self.get_proposal_proposer(proposal_id)
         self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
 
@@ -579,11 +577,9 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
-            err.NO_PENDING_PROPOSALS: If there are currently pending proposals
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
         # ⚠️ WARNING: Any update that modifies Box MBRs must be followed by a
         # reconfiguration of the Registry to ensure consistency
@@ -1053,11 +1049,15 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Manager
             err.WRONG_CID_LENGTH: If the committee ID is not of the correct length
+            err.WRONG_COMMITTEE_MEMBERS: If the committee is empty
+            err.WRONG_COMMITTEE_VOTES: If the committee voting power is zero
             err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
+        assert size.as_uint64() > 0, err.WRONG_COMMITTEE_MEMBERS
+        assert votes.as_uint64() > 0, err.WRONG_COMMITTEE_VOTES
         assert (
             size.as_uint64() <= self.max_committee_size.value
         ), err.COMMITTEE_SIZE_TOO_LARGE
@@ -1131,20 +1131,17 @@ class XGovRegistry(
         assert total_pages == UInt64(
             PROPOSAL_APPROVAL_PAGES
         ), err.INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE
-        bytes_page_2 = (
+        bytes_last_page = (
             self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
         )
         page_1 = self.proposal_approval_program.extract(
-            0 * bytes_per_page, bytes_per_page
-        )
-        page_2 = self.proposal_approval_program.extract(
-            1 * bytes_per_page, bytes_page_2
+            0 * bytes_per_page, bytes_last_page
         )
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
-            approval_program=(page_1, page_2),
+            approval_program=page_1,
             clear_state_program=compiled_clear_state_1,
             global_num_uint=pcfg.GLOBAL_UINTS,
             global_num_bytes=pcfg.GLOBAL_BYTES,
@@ -1154,23 +1151,14 @@ class XGovRegistry(
         if error.native.startswith(err.ARC_65_PREFIX):
             error_without_prefix = String.from_bytes(error.native.bytes[4:])
             match error_without_prefix:
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.EMPTY_COMMITTEE_ID:
                     assert False, err.EMPTY_COMMITTEE_ID  # noqa
-                case err.WRONG_COMMITTEE_MEMBERS:
-                    assert False, err.WRONG_COMMITTEE_MEMBERS  # noqa
-                case err.WRONG_COMMITTEE_VOTES:
-                    assert False, err.WRONG_COMMITTEE_VOTES  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
         else:
             assert error.native == "", "Unknown error"
 
         mbr_after = Global.current_application_address.balance
-
-        # Update proposer state
-        self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
         # Transfer funds to the new Proposal App, excluding the MBR needed for the Proposal App
         itxn.Payment(
@@ -1179,8 +1167,7 @@ class XGovRegistry(
             fee=0,
         ).submit()
 
-        # Increment pending proposals
-        self.pending_proposals.value += 1
+        self.increment_pending_proposals(Txn.sender)
 
         arc4.emit(
             typ.NewProposal(
@@ -1215,7 +1202,6 @@ class XGovRegistry(
             err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
             err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
-            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
             err.VOTER_ALREADY_VOTED: If the xGov has already voted on this Proposal
             err.VOTES_EXCEEDED: If the total votes exceed the maximum allowed
@@ -1255,8 +1241,6 @@ class XGovRegistry(
             match error_without_prefix:
                 case err.WRONG_PROPOSAL_STATUS:
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.VOTER_NOT_FOUND:
                     assert False, err.VOTER_NOT_FOUND  # noqa
                 case err.VOTES_EXCEEDED:
@@ -1333,7 +1317,6 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
-            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTERS_ASSIGNED: If there are still assigned voters
         """
 
@@ -1355,8 +1338,6 @@ class XGovRegistry(
             match error_without_prefix:
                 case err.WRONG_PROPOSAL_STATUS:
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.VOTERS_ASSIGNED:
                     assert False, err.VOTERS_ASSIGNED  # noqa
                 case _:

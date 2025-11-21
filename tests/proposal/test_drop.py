@@ -55,6 +55,7 @@ def test_drop_success(
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
     )
 
     assert_account_balance(
@@ -104,6 +105,7 @@ def test_drop_twice(
         proposer.address,
         xgov_registry_mock_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
     )
 
     assert_account_balance(

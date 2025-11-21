@@ -128,6 +128,7 @@ def test_finalize_draft_proposal_xgov_daemon(
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
         funding_type=enm.FUNDING_RETROACTIVE,
     )
 
