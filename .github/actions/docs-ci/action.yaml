@@ -25,7 +25,7 @@ runs:
       run: |
         pre-commit run markdownlint --all-files --verbose
         pre-commit run trailing-whitespace --all-files --verbose
-        pre-commit run lychee --all-files --verbose
+        pre-commit run lychee-docker --all-files --verbose
 
     - name: Build mdBook
       shell: bash
