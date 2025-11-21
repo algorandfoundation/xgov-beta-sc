@@ -40,16 +40,14 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
 
-      - name: Setup mdBook
-        uses: peaceiris/actions-mdbook@v2
-        with:
-          mdbook-version: '0.4.52'
-
-      - name: Install mdBook Mermaid plugin
-        run: cargo install mdbook-mermaid && mdbook-mermaid install .
+      - name: Prepare mdBook output directory
+        shell: bash
+        run: |
+          mkdir -p book
+          chmod -R 777 book
 
       - name: Build mdBook
-        run: mdbook build
+        run: docker compose run mdbook build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,35 +1,38 @@
 name: Docs CI action
-description: 'Lint docs, build and test mdBook'
+description: 'Lint docs, build mdBook'
+
 runs:
   using: "composite"
-
   steps:
-    - name: Check Markdown linting
-      uses: DavidAnson/markdownlint-cli2-action@v20
+    - name: Checkout repo
+      uses: actions/checkout@v5
       with:
-        globs: |
-          README.md
-          SECURITY.md
-          docs/**/*.md
+        fetch-depth: 0
 
-    - name: Link Checker
-      uses: lycheeverse/lychee-action@v2
-      with:
-        fail: true
-
-    - name: Setup mdBook
-      uses: peaceiris/actions-mdbook@v2
-      with:
-        mdbook-version: '0.4.52'
-
-    - name: Test mdBook
+    - name: Install pre-commit
       shell: bash
-      run: mdbook test
+      run: pip install --upgrade pip pre-commit
 
-    - name: Install mdBook Mermaid plugin
+    - name: Cache pre-commit hooks
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: precommit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        restore-keys: precommit-${{ runner.os }}-
+
+    - name: Run pre-commit hooks
       shell: bash
-      run: cargo install mdbook-mermaid && mdbook-mermaid install .
+      run: |
+        pre-commit run markdownlint --all-files --verbose
+        pre-commit run trailing-whitespace --all-files --verbose
+        pre-commit run lychee-docker --all-files --verbose
+
+    - name: Prepare mdBook output directory
+      shell: bash
+      run: |
+        mkdir -p book
+        chmod -R 777 book
 
     - name: Build mdBook
       shell: bash
-      run: mdbook build
+      run: docker compose run mdbook build
