@@ -34,6 +34,6 @@
 
 ---
 
-[Bug Bounty Program](./BUG-BOUNTY.md)
 [Contribution Guidelines](./CONTRIBUTION-GUIDELINES.md)
+[Bug Bounty Program](./BUG-BOUNTY.md)
 [License](./LICENSE.md)
