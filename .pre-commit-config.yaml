@@ -46,7 +46,7 @@ repos:
         name: mdbook build
         description: "Builds mdBook."
         entry: mdbook build
-        language: rust
+        language: system
         minimum_pre_commit_version: 3.2.0
         additional_dependencies: [ ]
         pass_filenames: false
@@ -55,7 +55,7 @@ repos:
         name: mdbook test
         description: "Checks mdBook pass tests."
         entry: mdbook test
-        language: rust
+        language: system
         minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
         additional_dependencies: [ ]
@@ -85,7 +85,6 @@ repos:
         minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
         additional_dependencies: [ ]
-        files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
 
   - repo: https://github.com/lycheeverse/lychee
     rev: lychee-v0.21.0
