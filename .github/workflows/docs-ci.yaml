@@ -26,7 +26,7 @@ jobs:
 
     environment:
       name: preview
-      url: ${{ steps.deploy.outputs.page_url }}
+      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.page_url || '' }}
 
     steps:
       - name: Checkout source code
