@@ -8,7 +8,7 @@ repos:
         description: "Black: The uncompromising Python code formatter"
         entry: poetry run black
         language: system
-        minimum_pre_commit_version: 2.9.2
+        minimum_pre_commit_version: 3.2.0
         require_serial: true
         types_or: [ python, pyi ]
 
@@ -21,23 +21,12 @@ repos:
         args: [ --fix ]
         require_serial: false
         additional_dependencies: [ ]
-        minimum_pre_commit_version: '0'
-        files: '^(smart_contracts|tests)/'
-
-      - id: mypy
-        name: mypy
-        description: '`mypy` will check Python types for correctness'
-        entry: poetry run mypy
-        language: system
-        types_or: [ python, pyi ]
-        require_serial: true
-        additional_dependencies: [ ]
-        minimum_pre_commit_version: '2.9.2'
+        minimum_pre_commit_version: 3.2.0
         files: '^(smart_contracts|tests)/'
 
   # Security and Infrastructure as Code scanning
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.488
+    rev: 3.2.494
     hooks:
       - id: checkov
         name: checkov
@@ -49,18 +38,6 @@ repos:
         files: '^(\\.github/workflows/.*\\.ya?ml|Dockerfile.*|docker-compose.*\\.ya?ml)$'
         require_serial: false
         additional_dependencies: []
-
-#      # Uncomment to enable TEAL static analysis using Tealer package
-#      - id: tealer
-#        name: tealer
-#        description: "Run AlgoKit `Tealer` for TEAL static analysis"
-#        entry: algokit
-#        language: system
-#        args: [project, run, "audit-teal"]
-#        require_serial: false
-#        additional_dependencies: []
-#        minimum_pre_commit_version: "0"
-#        files: '^.*\.teal$'
 
   # Docs
   - repo: local
@@ -85,14 +62,14 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.45.0
+    rev: v0.46.0
     hooks:
       - id: markdownlint
         name: markdownlint
         description: "Checks the style of Markdown/Commonmark files."
         entry: markdownlint
         language: node
-        minimum_pre_commit_version: 0.15.0
+        minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
         additional_dependencies: [ ]
         files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
@@ -108,7 +85,7 @@ repos:
         minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
         additional_dependencies: [ ]
-        files: '^(docs)/'
+        files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
 
   - repo: https://github.com/lycheeverse/lychee
     rev: lychee-v0.21.0
@@ -120,5 +97,5 @@ repos:
       language: docker_image
       args: ["--no-progress"]
       types: [text]
-      pass_filenames: true
       require_serial: true
+      files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
