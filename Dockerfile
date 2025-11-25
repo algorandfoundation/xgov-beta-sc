@@ -2,8 +2,8 @@
 
 FROM rust:1.91-slim-bookworm
 
-ARG MDBOOK_VERSION=0.4.52
-ARG MERMAID_VERSION=0.16.2
+ARG MDBOOK_VERSION=0.5.1
+ARG MERMAID_VERSION=0.17.0
 
 # Create an unprivileged user that will own the working tree.
 RUN useradd --create-home --shell /bin/bash mdbookuser

@@ -36,9 +36,10 @@ jobs:
           private-key: ${{ secrets.BOT_SK }}
 
       - name: Checkout source code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           token: ${{ steps.app-token.outputs.token }}
+          submodules: recursive
 
       - name: Prepare mdBook output directory
         shell: bash
