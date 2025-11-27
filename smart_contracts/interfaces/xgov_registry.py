@@ -164,7 +164,11 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     @abstractmethod
     @arc4.abimethod()
     def set_proposer_kyc(
-        self, *, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
+        self,
+        *,
+        proposer: arc4.Address,
+        kyc_status: arc4.Bool,
+        kyc_expiring: arc4.UInt64,
     ) -> None:
         pass
 
@@ -229,7 +233,9 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, *, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
+    def get_xgov_box(
+        self, *, xgov_address: arc4.Address
+    ) -> tuple[typ.XGovBoxValue, bool]:
         pass
 
     @abstractmethod
