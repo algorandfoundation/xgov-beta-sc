@@ -3,7 +3,6 @@ import typing as t
 from algopy import (
     Account,
     Application,
-    ARC4Contract,
     Box,
     BoxMap,
     Bytes,
@@ -25,6 +24,7 @@ from algopy import (
 
 import smart_contracts.common.abi_types as typ
 import smart_contracts.errors.std_errors as err
+from smart_contracts.interfaces.xgov_registry import XGovRegistryInterface
 
 from ..proposal import config as pcfg
 from ..proposal import constants as pcts
@@ -44,7 +44,7 @@ from .constants import (
 
 
 class XGovRegistry(
-    ARC4Contract,
+    XGovRegistryInterface,
     state_totals=StateTotals(
         global_bytes=cfg.GLOBAL_BYTES,
         global_uints=cfg.GLOBAL_UINTS,
@@ -52,6 +52,8 @@ class XGovRegistry(
         local_uints=cfg.LOCAL_UINTS,
     ),
 ):
+    """xGov Registry Contract"""
+
     def __init__(self) -> None:
         # Preconditions
         assert Txn.global_num_byte_slice == cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
@@ -59,25 +61,28 @@ class XGovRegistry(
         assert Txn.local_num_byte_slice == cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
-        # Initialize global state variables
-        self.paused_registry = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_REGISTRY)
-        self.paused_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_PROPOSALS)
-
+        # Role-Based Access Control (RBAC)
         self.xgov_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_MANAGER)
         self.xgov_subscriber = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_XGOV_SUBSCRIBER
         )
         self.xgov_payor = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_PAYOR)
         self.xgov_council = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_COUNCIL)
-
         self.kyc_provider = GlobalState(arc4.Address(), key=cfg.GS_KEY_KYC_PROVIDER)
         self.committee_manager = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
         )
         self.xgov_daemon = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_DAEMON)
 
+        # Registry Control States
+        self.paused_registry = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_REGISTRY)
+        self.paused_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_PROPOSALS)
+
+        # xGov Treasury
+        self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
+
+        # Fees
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
-        self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
         self.open_proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_OPEN_PROPOSAL_FEE)
         self.daemon_ops_funding_bps = GlobalState(
@@ -87,6 +92,7 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS
         )
 
+        # Requested Amount Limits
         self.min_requested_amount = GlobalState(
             UInt64(), key=cfg.GS_KEY_MIN_REQUESTED_AMOUNT
         )
@@ -101,6 +107,7 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE
         )
 
+        # Time Limits
         self.discussion_duration_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_SMALL
         )
@@ -113,7 +120,6 @@ class XGovRegistry(
         self.discussion_duration_xlarge = GlobalState(
             UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_XLARGE
         )
-
         self.voting_duration_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_VOTING_DURATION_SMALL
         )
@@ -127,12 +133,14 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_VOTING_DURATION_XLARGE
         )
 
+        # Quorums
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
         self.quorum_medium = GlobalState(
             UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM
         )  # No longer used
         self.quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_LARGE)
 
+        # Weighted Quorums
         self.weighted_quorum_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_SMALL
         )
@@ -143,21 +151,20 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_LARGE
         )
 
-        self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
-
+        # xGov Committee
         self.committee_id = GlobalState(typ.Bytes32, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
-
-        self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
-
-        self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
-
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
         )
 
-        # boxes
+        # Counters
+        self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
+        self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
+        self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
+
+        # Boxes
         self.proposal_approval_program = Box(
             Bytes, key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX
         )
@@ -166,7 +173,6 @@ class XGovRegistry(
             typ.XGovBoxValue,
             key_prefix=cfg.XGOV_BOX_MAP_PREFIX,
         )
-
         self.request_box = BoxMap(
             UInt64,
             typ.XGovSubscribeRequestBoxValue,
@@ -177,13 +183,12 @@ class XGovRegistry(
             typ.XGovSubscribeRequestBoxValue,
             key_prefix=cfg.REQUEST_UNSUBSCRIBE_BOX_MAP_PREFIX,
         )
-
         self.proposer_box = BoxMap(
             Account,
             typ.ProposerBoxValue,
             key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX,
         )
-        # declared here just for MBR calculation purposes, not to be used
+        # Declared here just for MBR calculation purposes, not to be used
         self.voters = BoxMap(
             Account,
             UInt64,
@@ -1077,7 +1082,7 @@ class XGovRegistry(
         )
 
     @arc4.abimethod
-    def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
+    def open_proposal(self, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
         """
         Creates a new Proposal.
 
@@ -1178,7 +1183,7 @@ class XGovRegistry(
             )
         )
 
-        return tx.created_app.id
+        return arc4.UInt64(tx.created_app.id)
 
     @arc4.abimethod()
     def vote_proposal(
