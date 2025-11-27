@@ -380,7 +380,7 @@ class XGovRegistry(
         assert self.entropy() == TemplateVar[Bytes]("entropy")
 
     @arc4.abimethod()
-    def init_proposal_contract(self, size: arc4.UInt64) -> None:
+    def init_proposal_contract(self, *, size: arc4.UInt64) -> None:
         """
         Initializes the Proposal Approval Program contract.
 
@@ -400,7 +400,7 @@ class XGovRegistry(
             self.proposal_approval_program.create(size=size.as_uint64())
 
     @arc4.abimethod()
-    def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
+    def load_proposal_contract(self, *, offset: arc4.UInt64, data: Bytes) -> None:
         """
         Loads the Proposal Approval Program contract.
 
@@ -485,7 +485,7 @@ class XGovRegistry(
         self.xgov_manager.value = manager
 
     @arc4.abimethod()
-    def set_payor(self, payor: arc4.Address) -> None:
+    def set_payor(self, *, payor: arc4.Address) -> None:
         """
         Sets the xGov Payor.
 
@@ -500,7 +500,7 @@ class XGovRegistry(
         self.xgov_payor.value = payor
 
     @arc4.abimethod()
-    def set_xgov_council(self, council: arc4.Address) -> None:
+    def set_xgov_council(self, *, council: arc4.Address) -> None:
         """
         Sets the xGov Council.
 
@@ -515,7 +515,7 @@ class XGovRegistry(
         self.xgov_council.value = council
 
     @arc4.abimethod()
-    def set_xgov_subscriber(self, subscriber: arc4.Address) -> None:
+    def set_xgov_subscriber(self, *, subscriber: arc4.Address) -> None:
         """
         Sets the xGov Subscriber.
 
@@ -530,7 +530,7 @@ class XGovRegistry(
         self.xgov_subscriber.value = subscriber
 
     @arc4.abimethod()
-    def set_kyc_provider(self, provider: arc4.Address) -> None:
+    def set_kyc_provider(self, *, provider: arc4.Address) -> None:
         """
         Sets the KYC provider.
 
@@ -545,7 +545,7 @@ class XGovRegistry(
         self.kyc_provider.value = provider
 
     @arc4.abimethod()
-    def set_committee_manager(self, manager: arc4.Address) -> None:
+    def set_committee_manager(self, *, manager: arc4.Address) -> None:
         """
         Sets the Committee Manager.
 
@@ -560,7 +560,7 @@ class XGovRegistry(
         self.committee_manager.value = manager
 
     @arc4.abimethod()
-    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
+    def set_xgov_daemon(self, *, xgov_daemon: arc4.Address) -> None:
         """
         Sets the xGov Daemon.
 
@@ -575,7 +575,7 @@ class XGovRegistry(
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
+    def config_xgov_registry(self, *, config: typ.XGovRegistryConfig) -> None:
         """
         Sets the configuration of the xGov Registry.
 
@@ -719,7 +719,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov(
-        self, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
+        self, *, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
     ) -> None:
         """
         Subscribes the sender to being an xGov.
@@ -773,6 +773,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def request_subscribe_xgov(
         self,
+        *,
         xgov_address: arc4.Address,
         owner_address: arc4.Address,
         relation_type: arc4.UInt64,
@@ -814,7 +815,7 @@ class XGovRegistry(
         self.request_id.value += 1
 
     @arc4.abimethod()
-    def approve_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Approves a subscribe request to xGov.
 
@@ -843,7 +844,7 @@ class XGovRegistry(
         )
 
     @arc4.abimethod()
-    def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def reject_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Rejects a subscribe request to xGov.
 
@@ -862,6 +863,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def request_unsubscribe_xgov(
         self,
+        *,
         xgov_address: arc4.Address,
         owner_address: arc4.Address,
         relation_type: arc4.UInt64,
@@ -904,7 +906,7 @@ class XGovRegistry(
         self.request_id.value += 1
 
     @arc4.abimethod()
-    def approve_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def approve_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Approves a request to unsubscribe from xGov.
 
@@ -930,7 +932,7 @@ class XGovRegistry(
         arc4.emit(typ.XGovUnsubscribed(xgov=request.xgov_addr))
 
     @arc4.abimethod()
-    def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def reject_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Rejects a request to unsubscribe from xGov.
 
@@ -948,7 +950,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_voting_account(
-        self, xgov_address: arc4.Address, voting_address: arc4.Address
+        self, *, xgov_address: arc4.Address, voting_address: arc4.Address
     ) -> None:
         """
         Sets the Voting Address for the xGov.
@@ -979,7 +981,7 @@ class XGovRegistry(
         self.xgov_box[xgov_address.native].voting_address = voting_address
 
     @arc4.abimethod()
-    def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
+    def subscribe_proposer(self, *, payment: gtxn.PaymentTransaction) -> None:
         """
         Subscribes the sender to being a Proposer.
 
@@ -1009,7 +1011,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def set_proposer_kyc(
-        self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
+        self, *, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
     ) -> None:
         """
         Sets a proposer's KYC status.
@@ -1043,7 +1045,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def declare_committee(
-        self, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+        self, *, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.
@@ -1082,7 +1084,7 @@ class XGovRegistry(
         )
 
     @arc4.abimethod
-    def open_proposal(self, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
+    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
         """
         Creates a new Proposal.
 
@@ -1188,6 +1190,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def vote_proposal(
         self,
+        *,
         proposal_id: arc4.UInt64,
         xgov_address: arc4.Address,
         approval_votes: arc4.UInt64,
@@ -1260,7 +1263,7 @@ class XGovRegistry(
             assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
-    def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Disburses the funds for an approved Proposal.
 
@@ -1313,7 +1316,7 @@ class XGovRegistry(
             assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
-    def finalize_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def finalize_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Finalize a Proposal.
 
@@ -1355,7 +1358,7 @@ class XGovRegistry(
         self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
-    def drop_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def drop_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Drops a Proposal.
 
@@ -1394,7 +1397,7 @@ class XGovRegistry(
         self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
-    def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
+    def deposit_funds(self, *, payment: gtxn.PaymentTransaction) -> None:
         """
         Deposits xGov program funds into the xGov Treasury (xGov Registry Account).
 
@@ -1411,7 +1414,7 @@ class XGovRegistry(
         self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()
-    def withdraw_funds(self, amount: arc4.UInt64) -> None:
+    def withdraw_funds(self, *, amount: arc4.UInt64) -> None:
         """
         Remove xGov program funds from the xGov Treasury (xGov Registry Account).
 
@@ -1523,7 +1526,7 @@ class XGovRegistry(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
+    def get_xgov_box(self, *, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
         """
         Returns the xGov box for the given address.
 
@@ -1550,6 +1553,7 @@ class XGovRegistry(
     @arc4.abimethod(readonly=True)
     def get_proposer_box(
         self,
+        *,
         proposer_address: arc4.Address,
     ) -> tuple[typ.ProposerBoxValue, bool]:
         """
@@ -1577,6 +1581,7 @@ class XGovRegistry(
     @arc4.abimethod(readonly=True)
     def get_request_box(
         self,
+        *,
         request_id: arc4.UInt64,
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         """
@@ -1603,7 +1608,7 @@ class XGovRegistry(
 
     @arc4.abimethod(readonly=True)
     def get_request_unsubscribe_box(
-        self, request_id: arc4.UInt64
+        self, *, request_id: arc4.UInt64
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         """
         Returns the xGov unsubscribe request box for the given unsubscribe request ID.
@@ -1628,5 +1633,5 @@ class XGovRegistry(
         return val.copy(), exists
 
     @arc4.abimethod()
-    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
