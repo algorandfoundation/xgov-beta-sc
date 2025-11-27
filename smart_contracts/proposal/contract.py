@@ -40,6 +40,8 @@ class Proposal(
         local_uints=prop_cfg.LOCAL_UINTS,
     ),
 ):
+    """Proposal Contract"""
+
     def __init__(self) -> None:
         # Preconditions
         assert (
