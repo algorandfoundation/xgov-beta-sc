@@ -20,6 +20,16 @@ updates:
           - minor
           - patch
 
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
   - package-ecosystem: docker-compose
     directory: "/"
     schedule:
