@@ -2,10 +2,12 @@ from abc import ABC, abstractmethod
 
 from algopy import ARC4Contract, arc4, gtxn
 
-from smart_contracts.common import abi_types as typ
+import smart_contracts.common.abi_types as typ
 
 
 class ProposalInterface(ARC4Contract, ABC):
+    """Proposal Contract Interface"""
+
     @abstractmethod
     @arc4.abimethod(create="require")
     def create(self, *, proposer: arc4.Address) -> typ.Error:
