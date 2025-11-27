@@ -11,7 +11,7 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    VoteArgs,
+    VoteProposalArgs,
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
@@ -78,8 +78,8 @@ def test_scrutiny_voting_ongoing_2(
     """
     Proposal is in voting status, and not all committee members have voted yet.
     """
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[0].account.address,
             approvals=committee[0].votes,
@@ -105,8 +105,8 @@ def test_scrutiny_voting_ongoing_3(
     Proposal is in voting status, and there is 1 vote missing.
     """
     for cm in committee[:-1]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -130,8 +130,8 @@ def test_scrutiny_twice(
     voting_proposal_client: ProposalClient,
 ) -> None:
     for cm in committee:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -174,8 +174,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
     num_of_rejections = 0
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -185,8 +185,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -196,8 +196,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_1(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -238,8 +238,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
     num_of_rejections = 1
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -249,8 +249,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -260,8 +260,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_2(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -302,8 +302,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
     num_of_rejections = 9
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -313,8 +313,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -324,8 +324,8 @@ def test_scrutiny_voting_completed_ahead_of_time_approve_3(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -366,8 +366,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_1(
     num_of_rejections = 0
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -410,8 +410,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
     num_of_rejections = 1
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -421,8 +421,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_2(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -465,8 +465,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
     num_of_rejections = 1
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -476,8 +476,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -487,8 +487,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_3(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -531,8 +531,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
     num_of_rejections = 2
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -542,8 +542,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -553,8 +553,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_4(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -597,8 +597,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
     num_of_rejections = 10
 
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -608,8 +608,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         )
 
     for cm in committee[num_of_approvals : num_of_approvals + num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -619,8 +619,8 @@ def test_scrutiny_voting_completed_ahead_of_time_reject_5(
         )
 
     for cm in committee[num_of_approvals + num_of_rejections :]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -665,8 +665,8 @@ def test_scrutiny_after_time_approve_small_1(
     while not quorums_reached(
         voting_proposal_client, voted_members, total_votes, plebiscite=False
     ):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=committee[member_idx].account.address,
                 approvals=committee[member_idx].votes,
@@ -714,8 +714,8 @@ def test_scrutiny_after_time_approve_small_2(
         voting_members <= len(committee) - num_of_rejections
     )  # We need at least 1 voting member to reject
     for cm in committee[: voting_members - num_of_rejections]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -724,8 +724,8 @@ def test_scrutiny_after_time_approve_small_2(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[-1].account.address,
             approvals=0,
@@ -771,8 +771,8 @@ def test_scrutiny_after_time_approve_small_3(
         voting_members <= len(committee) - num_of_rejections - num_of_abstains
     )  # We need at least 1 voting member to reject and 1 to abstain
     for cm in committee[: voting_members - (num_of_rejections + num_of_abstains)]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -781,8 +781,8 @@ def test_scrutiny_after_time_approve_small_3(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[-(num_of_rejections + num_of_abstains)].account.address,
             approvals=0,
@@ -791,8 +791,8 @@ def test_scrutiny_after_time_approve_small_3(
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[-num_of_abstains].account.address,
             approvals=0,
@@ -840,8 +840,8 @@ def test_scrutiny_after_time_approve_small_4(
         voting_members <= len(committee) - num_of_approvals - num_of_rejections
     )  # We need at least 2 voting members to approve and 1 to reject
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -850,8 +850,8 @@ def test_scrutiny_after_time_approve_small_4(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[num_of_approvals].account.address,
             approvals=0,
@@ -861,8 +861,8 @@ def test_scrutiny_after_time_approve_small_4(
     )
 
     for cm in committee[(num_of_approvals + num_of_rejections) : voting_members]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -912,8 +912,8 @@ def test_scrutiny_after_time_approve_small_5(
         committee
     )  # We need at least 10 voting members to approve and 9 to abstain
     for cm in committee[:num_of_approvals]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -923,8 +923,8 @@ def test_scrutiny_after_time_approve_small_5(
         )
 
     for cm in committee[num_of_approvals:voters]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -988,8 +988,8 @@ def test_scrutiny_after_time_reject_small_2(
     # TODO: Parametrize this test with dynamic quorums
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[0].account.address,
             approvals=0,
@@ -1028,8 +1028,8 @@ def test_scrutiny_after_time_reject_small_3(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -1069,8 +1069,8 @@ def test_scrutiny_after_time_reject_small_4(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -1079,8 +1079,8 @@ def test_scrutiny_after_time_reject_small_4(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[2].account.address,
             approvals=committee[2].votes,
@@ -1121,8 +1121,8 @@ def test_scrutiny_after_time_reject_small_5(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[: len(committee) // 2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=0,
@@ -1132,8 +1132,8 @@ def test_scrutiny_after_time_reject_small_5(
         )
 
     for cm in committee[len(committee) // 2 : -1]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -1173,8 +1173,8 @@ def test_scrutiny_after_time_reject_small_6(
     # TODO: Parametrize this test with dynamic quorums
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[0].account.address,
             approvals=committee[0].votes,
@@ -1214,8 +1214,8 @@ def test_scrutiny_after_time_reject_small_7(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -1255,8 +1255,8 @@ def test_scrutiny_after_time_reject_small_8(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:3]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -1297,8 +1297,8 @@ def test_scrutiny_after_time_reject_small_9(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -1307,8 +1307,8 @@ def test_scrutiny_after_time_reject_small_9(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[2].account.address,
             approvals=0,
@@ -1350,8 +1350,8 @@ def test_scrutiny_after_time_reject_small_10(
     assigned_members = voting_proposal_client.state.global_state.assigned_members
     assigned_votes = voting_proposal_client.state.global_state.assigned_votes
     for cm in committee[:2]:
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
                 proposal_app=voting_proposal_client.app_id,
                 voter=cm.account.address,
                 approvals=cm.votes,
@@ -1360,8 +1360,8 @@ def test_scrutiny_after_time_reject_small_10(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=voting_proposal_client.app_id,
             voter=committee[2].account.address,
             approvals=0,
@@ -1417,8 +1417,8 @@ def test_scrutiny_after_time_reject_small_11(
 
     assigned_members = submitted_proposal_client.state.global_state.assigned_members
     assigned_votes = submitted_proposal_client.state.global_state.assigned_votes
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
             proposal_app=submitted_proposal_client.app_id,
             voter=committee[0].account.address,
             approvals=48,
