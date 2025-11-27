@@ -3,7 +3,6 @@
 from algopy import (
     Account,
     Application,
-    ARC4Contract,
     Box,
     BoxMap,
     Bytes,
@@ -23,6 +22,7 @@ from algopy.op import AppGlobal, GTxn
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
+from smart_contracts.interfaces.proposal import ProposalInterface
 
 from ..common.abi_types import CommitteeMember
 from ..xgov_registry import config as reg_cfg
@@ -32,7 +32,7 @@ from . import enums as enm
 
 
 class Proposal(
-    ARC4Contract,
+    ProposalInterface,
     state_totals=StateTotals(
         global_bytes=prop_cfg.GLOBAL_BYTES,
         global_uints=prop_cfg.GLOBAL_UINTS,
@@ -953,7 +953,7 @@ class Proposal(
         )
 
     @arc4.abimethod()
-    def review(self, block: bool) -> None:  # noqa: FBT001
+    def review(self, *, block: bool) -> None:
         """Review the proposal.
 
         Args:
