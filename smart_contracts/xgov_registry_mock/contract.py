@@ -148,11 +148,11 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
-    def init_proposal_contract(self, size: arc4.UInt64) -> None:
+    def init_proposal_contract(self, *, size: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
-    def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
+    def load_proposal_contract(self, *, offset: arc4.UInt64, data: Bytes) -> None:
         pass
 
     @arc4.abimethod()
@@ -176,35 +176,35 @@ class XgovRegistryMock(XGovRegistryInterface):
         self.paused_proposals.value = UInt64(0)
 
     @arc4.abimethod()
-    def set_xgov_manager(self, manager: arc4.Address) -> None:
+    def set_xgov_manager(self, *, manager: arc4.Address) -> None:
         pass
 
     @arc4.abimethod()
-    def set_payor(self, payor: arc4.Address) -> None:
+    def set_payor(self, *, payor: arc4.Address) -> None:
         pass
 
     @arc4.abimethod()
-    def set_xgov_council(self, council: arc4.Address) -> None:
+    def set_xgov_council(self, *, council: arc4.Address) -> None:
         self.xgov_council.value = council
 
     @arc4.abimethod()
-    def set_xgov_subscriber(self, subscriber: arc4.Address) -> None:
+    def set_xgov_subscriber(self, *, subscriber: arc4.Address) -> None:
         pass
 
     @arc4.abimethod()
-    def set_kyc_provider(self, provider: arc4.Address) -> None:
+    def set_kyc_provider(self, *, provider: arc4.Address) -> None:
         pass
 
     @arc4.abimethod()
-    def set_committee_manager(self, manager: arc4.Address) -> None:
+    def set_committee_manager(self, *, manager: arc4.Address) -> None:
         pass
 
     @arc4.abimethod()
-    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
+    def set_xgov_daemon(self, *, xgov_daemon: arc4.Address) -> None:
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
+    def config_xgov_registry(self, *, config: typ.XGovRegistryConfig) -> None:
         pass
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
@@ -213,7 +213,7 @@ class XgovRegistryMock(XGovRegistryInterface):
 
     @arc4.abimethod()
     def subscribe_xgov(
-        self, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
+        self, *, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
     ) -> None:
         pass
 
@@ -222,16 +222,17 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
-    def approve_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
-    def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def reject_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
     def request_subscribe_xgov(
         self,
+        *,
         xgov_address: arc4.Address,
         owner_address: arc4.Address,
         relation_type: arc4.UInt64,
@@ -242,6 +243,7 @@ class XgovRegistryMock(XGovRegistryInterface):
     @arc4.abimethod()
     def request_unsubscribe_xgov(
         self,
+        *,
         xgov_address: arc4.Address,
         owner_address: arc4.Address,
         relation_type: arc4.UInt64,
@@ -250,55 +252,56 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
-    def approve_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def approve_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
-    def reject_unsubscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def reject_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
     def set_voting_account(
-        self, xgov_address: arc4.Address, voting_address: arc4.Address
+        self, *, xgov_address: arc4.Address, voting_address: arc4.Address
     ) -> None:
         pass
 
     @arc4.abimethod()
-    def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
+    def subscribe_proposer(self, *, payment: gtxn.PaymentTransaction) -> None:
         pass
 
     @arc4.abimethod()
     def set_proposer_kyc(
-        self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
+        self, *, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
     ) -> None:
         pass
 
     @arc4.abimethod()
     def declare_committee(
-        self, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+        self, *, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
 
     @arc4.abimethod()
-    def open_proposal(self, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
+    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
         return arc4.UInt64(0)
 
     @arc4.abimethod()
     def vote_proposal(
         self,
-        proposal_app: arc4.UInt64,
-        voter: arc4.Address,
-        approvals: arc4.UInt64,
-        rejections: arc4.UInt64,
+        *,
+        proposal_id: arc4.UInt64,
+        xgov_address: arc4.Address,
+        approval_votes: arc4.UInt64,
+        rejection_votes: arc4.UInt64,
     ) -> None:
         error, _tx = arc4.abi_call(
             Proposal.vote,
-            voter,
-            approvals,
-            rejections,
-            app_id=proposal_app.as_uint64(),
+            xgov_address,
+            approval_votes.as_uint64(),
+            rejection_votes.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -323,10 +326,10 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def pay_grant_proposal(self, proposal_app: arc4.UInt64) -> None:
+    def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.fund,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -341,10 +344,10 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def finalize_proposal(self, proposal_app: arc4.UInt64) -> None:
+    def finalize_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.finalize,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -361,10 +364,10 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def drop_proposal(self, proposal_app: arc4.UInt64) -> None:
+    def drop_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.drop,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -377,11 +380,11 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
+    def deposit_funds(self, *, payment: gtxn.PaymentTransaction) -> None:
         pass
 
     @arc4.abimethod()
-    def withdraw_funds(self, amount: arc4.UInt64) -> None:
+    def withdraw_funds(self, *, amount: arc4.UInt64) -> None:
         pass
 
     @arc4.abimethod()
@@ -442,7 +445,7 @@ class XgovRegistryMock(XGovRegistryInterface):
         )
 
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
+    def get_xgov_box(self, *, xgov_address: arc4.Address) -> tuple[typ.XGovBoxValue, bool]:
         return (
             typ.XGovBoxValue(
                 voting_address=arc4.Address(),
@@ -456,6 +459,7 @@ class XgovRegistryMock(XGovRegistryInterface):
     @arc4.abimethod(readonly=True)
     def get_proposer_box(
         self,
+        *,
         proposer_address: arc4.Address,
     ) -> tuple[typ.ProposerBoxValue, bool]:
         return (
@@ -470,6 +474,7 @@ class XgovRegistryMock(XGovRegistryInterface):
     @arc4.abimethod(readonly=True)
     def get_request_box(
         self,
+        *,
         request_id: arc4.UInt64,
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         return (
@@ -483,7 +488,7 @@ class XgovRegistryMock(XGovRegistryInterface):
 
     @arc4.abimethod(readonly=True)
     def get_request_unsubscribe_box(
-        self, request_id: arc4.UInt64
+        self, *, request_id: arc4.UInt64
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         return (
             typ.XGovSubscribeRequestBoxValue(
@@ -495,12 +500,13 @@ class XgovRegistryMock(XGovRegistryInterface):
         )
 
     @arc4.abimethod()
-    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         return
 
     @arc4.abimethod()
     def create_empty_proposal(
         self,
+        *,
         proposer: arc4.Address,
     ) -> UInt64:
         mbr_before = Global.current_application_address.min_balance
