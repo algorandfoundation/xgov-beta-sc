@@ -46,7 +46,7 @@ def test_drop_success(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.drop_proposal(
-        args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+        args=DropProposalArgs(proposal_id=draft_proposal_client.app_id),
         params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
@@ -88,13 +88,13 @@ def test_drop_twice(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.drop_proposal(
-        args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+        args=DropProposalArgs(proposal_id=draft_proposal_client.app_id),
         params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.drop_proposal(
-            args=DropProposalArgs(proposal_app=draft_proposal_client.app_id),
+            args=DropProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=proposer.address, static_fee=min_fee_times_3
             ),
@@ -134,7 +134,7 @@ def test_drop_empty_proposal(
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.drop_proposal(
-            args=DropProposalArgs(proposal_app=proposal_client.app_id),
+            args=DropProposalArgs(proposal_id=proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=proposer.address, static_fee=min_fee_times_2
             ),

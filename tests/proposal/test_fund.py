@@ -30,7 +30,7 @@ def test_fund_empty_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -45,7 +45,7 @@ def test_fund_draft_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=draft_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -60,7 +60,7 @@ def test_fund_submitted_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=submitted_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=submitted_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -75,7 +75,7 @@ def test_fund_voting_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=voting_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=voting_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -90,7 +90,7 @@ def test_fund_approved_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=approved_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=approved_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -105,7 +105,7 @@ def test_fund_rejected_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=rejected_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=rejected_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -120,7 +120,7 @@ def test_fund_blocked_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=blocked_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=blocked_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_payor.address, static_fee=min_fee_times_3
             ),
@@ -141,7 +141,7 @@ def test_fund_success(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.pay_grant_proposal(
-        args=PayGrantProposalArgs(proposal_app=reviewed_proposal_client.app_id),
+        args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_payor.address, static_fee=min_fee_times_3
         ),
@@ -177,7 +177,7 @@ def test_fund_twice(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.pay_grant_proposal(
-        args=PayGrantProposalArgs(proposal_app=reviewed_proposal_client.app_id),
+        args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_payor.address, static_fee=min_fee_times_3
         ),
@@ -200,7 +200,7 @@ def test_fund_twice(
 
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.pay_grant_proposal(
-            args=PayGrantProposalArgs(proposal_app=reviewed_proposal_client.app_id),
+            args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=proposer.address, static_fee=min_fee_times_3
             ),

@@ -172,10 +172,10 @@ def approved_proposal_client(
     while not quorums_reached(voting_proposal_client, voted_members, total_votes):
         xgov_registry_mock_client.send.vote_proposal(
             args=VoteProposalArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=committee[member_idx].account.address,
-                approvals=committee[member_idx].votes,
-                rejections=0,
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[member_idx].account.address,
+                approval_votes=committee[member_idx].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -240,7 +240,7 @@ def funded_proposal_client(
     reviewed_proposal_client: ProposalClient,
 ) -> ProposalClient:
     xgov_registry_mock_client.send.pay_grant_proposal(
-        args=PayGrantProposalArgs(proposal_app=reviewed_proposal_client.app_id),
+        args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
         params=CommonAppCallParams(static_fee=min_fee_times_3),
     )
     return reviewed_proposal_client

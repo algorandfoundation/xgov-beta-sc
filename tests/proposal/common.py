@@ -662,7 +662,7 @@ def finalize_proposal(
 ) -> None:
     xgov_registry_client.send.finalize_proposal(
         args=FinalizeProposalArgs(
-            proposal_app=proposal_app_id,
+            proposal_id=proposal_app_id,
         ),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, signer=xgov_daemon.signer, static_fee=static_fee
