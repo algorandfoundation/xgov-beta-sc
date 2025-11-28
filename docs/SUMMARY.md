@@ -30,6 +30,7 @@
 - [Testing](./implementation/testing.md)
 - [Configuration](./implementation/configuration.md)
 - [Deployment](./implementation/deployment.md)
+- [Integrations](./implementation/integrations.md)
 - [CI/CD](./implementation/ci-cd.md)
 
 ---

@@ -37,7 +37,7 @@ def test_finalize_empty_proposal(
     proposal_client: ProposalClient,
 ) -> None:
     xgov_registry_mock_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
+        args=FinalizeProposalArgs(proposal_id=proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, static_fee=min_fee_times_3
         ),
@@ -57,7 +57,7 @@ def test_finalize_empty_proposal(
     # Test that finalize cannot be replayed from this state
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_3
             ),
@@ -78,7 +78,7 @@ def test_finalize_draft_proposal(
     ).amount.micro_algo
 
     xgov_registry_mock_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(proposal_app=draft_proposal_client.app_id),
+        args=FinalizeProposalArgs(proposal_id=draft_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, static_fee=min_fee_times_4
         ),
@@ -105,7 +105,7 @@ def test_finalize_draft_proposal(
     # Test that finalize cannot be replayed from this state
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=draft_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=draft_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_4
             ),
@@ -122,7 +122,7 @@ def test_finalize_submitted_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=submitted_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=submitted_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_2
             ),
@@ -139,7 +139,7 @@ def test_finalize_voting_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=voting_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=voting_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_2
             ),
@@ -156,7 +156,7 @@ def test_finalize_approved_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=approved_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=approved_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_3
             ),
@@ -173,7 +173,7 @@ def test_finalize_reviewed_proposal(
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=reviewed_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=reviewed_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_3
             ),
@@ -346,7 +346,7 @@ def test_finalize_wrong_box_ref(
 
     with pytest.raises(LogicError, match=err.VOTERS_ASSIGNED):
         xgov_registry_mock_client.send.finalize_proposal(
-            args=FinalizeProposalArgs(proposal_app=rejected_proposal_client.app_id),
+            args=FinalizeProposalArgs(proposal_id=rejected_proposal_client.app_id),
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_2
             ),
