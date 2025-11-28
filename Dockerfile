@@ -22,6 +22,10 @@ RUN apt-get update \
 RUN cargo install --locked --force --root /usr/local mdbook --version ${MDBOOK_VERSION} \
     && cargo install --locked --force --root /usr/local mdbook-mermaid --version ${MERMAID_VERSION}
 
+# Wrap mdbook to automatically remove .html suffixes after build
+RUN mv /usr/local/bin/mdbook /usr/local/bin/mdbook-original
+COPY --chmod=755 docker/mdbook-wrapper.sh /usr/local/bin/mdbook
+
 # Ensure the non-root user can access /book.
 RUN chown -R mdbookuser:mdbookuser /book
 
