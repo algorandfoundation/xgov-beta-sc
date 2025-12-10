@@ -3,9 +3,8 @@ import typing as t
 from algopy import (
     Account,
     Application,
-    ARC4Contract,
+    Box,
     BoxMap,
-    BoxRef,
     Bytes,
     Global,
     GlobalState,
@@ -25,6 +24,7 @@ from algopy import (
 
 import smart_contracts.common.abi_types as typ
 import smart_contracts.errors.std_errors as err
+from smart_contracts.interfaces.xgov_registry import XGovRegistryInterface
 
 from ..proposal import config as pcfg
 from ..proposal import constants as pcts
@@ -39,11 +39,12 @@ from .constants import (
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
     PER_BYTE_IN_BOX_MBR,
+    PROPOSAL_APPROVAL_PAGES,
 )
 
 
 class XGovRegistry(
-    ARC4Contract,
+    XGovRegistryInterface,
     state_totals=StateTotals(
         global_bytes=cfg.GLOBAL_BYTES,
         global_uints=cfg.GLOBAL_UINTS,
@@ -51,6 +52,8 @@ class XGovRegistry(
         local_uints=cfg.LOCAL_UINTS,
     ),
 ):
+    """xGov Registry Contract"""
+
     def __init__(self) -> None:
         # Preconditions
         assert Txn.global_num_byte_slice == cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
@@ -58,25 +61,28 @@ class XGovRegistry(
         assert Txn.local_num_byte_slice == cfg.LOCAL_BYTES, err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
-        # Initialize global state variables
-        self.paused_registry = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_REGISTRY)
-        self.paused_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_PROPOSALS)
-
+        # Role-Based Access Control (RBAC)
         self.xgov_manager = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_MANAGER)
         self.xgov_subscriber = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_XGOV_SUBSCRIBER
         )
         self.xgov_payor = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_PAYOR)
         self.xgov_council = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_COUNCIL)
-
         self.kyc_provider = GlobalState(arc4.Address(), key=cfg.GS_KEY_KYC_PROVIDER)
         self.committee_manager = GlobalState(
             arc4.Address(), key=cfg.GS_KEY_COMMITTEE_MANAGER
         )
         self.xgov_daemon = GlobalState(arc4.Address(), key=cfg.GS_KEY_XGOV_DAEMON)
 
+        # Registry Control States
+        self.paused_registry = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_REGISTRY)
+        self.paused_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PAUSED_PROPOSALS)
+
+        # xGov Treasury
+        self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
+
+        # Fees
         self.xgov_fee = GlobalState(UInt64(), key=cfg.GS_KEY_XGOV_FEE)
-        self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
         self.proposer_fee = GlobalState(UInt64(), key=cfg.GS_KEY_PROPOSER_FEE)
         self.open_proposal_fee = GlobalState(UInt64(), key=cfg.GS_KEY_OPEN_PROPOSAL_FEE)
         self.daemon_ops_funding_bps = GlobalState(
@@ -86,6 +92,7 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS
         )
 
+        # Requested Amount Limits
         self.min_requested_amount = GlobalState(
             UInt64(), key=cfg.GS_KEY_MIN_REQUESTED_AMOUNT
         )
@@ -100,6 +107,7 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE
         )
 
+        # Time Limits
         self.discussion_duration_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_SMALL
         )
@@ -112,7 +120,6 @@ class XGovRegistry(
         self.discussion_duration_xlarge = GlobalState(
             UInt64(), key=cfg.GS_KEY_DISCUSSION_DURATION_XLARGE
         )
-
         self.voting_duration_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_VOTING_DURATION_SMALL
         )
@@ -126,57 +133,65 @@ class XGovRegistry(
             UInt64(), key=cfg.GS_KEY_VOTING_DURATION_XLARGE
         )
 
+        # Quorums
         self.quorum_small = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_SMALL)
-        self.quorum_medium = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM)
+        self.quorum_medium = GlobalState(
+            UInt64(), key=cfg.GS_KEY_QUORUM_MEDIUM
+        )  # No longer used
         self.quorum_large = GlobalState(UInt64(), key=cfg.GS_KEY_QUORUM_LARGE)
 
+        # Weighted Quorums
         self.weighted_quorum_small = GlobalState(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_SMALL
         )
         self.weighted_quorum_medium = GlobalState(
-            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM
+            UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_MEDIUM  # No longer used
         )
         self.weighted_quorum_large = GlobalState(
             UInt64(), key=cfg.GS_KEY_WEIGHTED_QUORUM_LARGE
         )
 
-        self.outstanding_funds = GlobalState(UInt64(), key=cfg.GS_KEY_OUTSTANDING_FUNDS)
-
+        # xGov Committee
         self.committee_id = GlobalState(typ.Bytes32, key=cfg.GS_KEY_COMMITTEE_ID)
         self.committee_members = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_MEMBERS)
         self.committee_votes = GlobalState(UInt64(), key=cfg.GS_KEY_COMMITTEE_VOTES)
-
-        self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
-
-        self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
-
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
         )
 
-        # boxes
-        self.proposal_approval_program = BoxRef(key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX)
+        # Counters
+        self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
+        self.pending_proposals = GlobalState(UInt64(), key=cfg.GS_KEY_PENDING_PROPOSALS)
+        self.request_id = GlobalState(UInt64(), key=cfg.GS_KEY_REQUEST_ID)
+
+        # Boxes
+        self.proposal_approval_program = Box(
+            Bytes, key=cfg.PROPOSAL_APPROVAL_PROGRAM_BOX
+        )
         self.xgov_box = BoxMap(
             Account,
             typ.XGovBoxValue,
             key_prefix=cfg.XGOV_BOX_MAP_PREFIX,
         )
-
         self.request_box = BoxMap(
             UInt64,
             typ.XGovSubscribeRequestBoxValue,
             key_prefix=cfg.REQUEST_BOX_MAP_PREFIX,
         )
-
+        self.request_unsubscribe_box = BoxMap(
+            UInt64,
+            typ.XGovSubscribeRequestBoxValue,
+            key_prefix=cfg.REQUEST_UNSUBSCRIBE_BOX_MAP_PREFIX,
+        )
         self.proposer_box = BoxMap(
             Account,
             typ.ProposerBoxValue,
             key_prefix=cfg.PROPOSER_BOX_MAP_PREFIX,
         )
-        # declared here just for MBR calculation purposes, not to be used
+        # Declared here just for MBR calculation purposes, not to be used
         self.voters = BoxMap(
             Account,
-            typ.VoterBox,
+            UInt64,
             key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
@@ -195,10 +210,6 @@ class XGovRegistry(
     @subroutine
     def is_xgov_committee_manager(self) -> bool:
         return Txn.sender == self.committee_manager.value.native
-
-    @subroutine
-    def no_pending_proposals(self) -> bool:
-        return self.pending_proposals.value == 0
 
     @subroutine
     def _is_proposal(self, proposal_id: UInt64) -> bool:
@@ -278,7 +289,10 @@ class XGovRegistry(
 
     @subroutine
     def set_max_committee_size(
-        self, open_proposal_fee: UInt64, daemon_ops_funding_bps: UInt64
+        self,
+        open_proposal_fee: UInt64,
+        daemon_ops_funding_bps: UInt64,
+        voter_mbr: UInt64,
     ) -> None:
         """
         Sets the maximum committee size based on the open proposal fee.
@@ -286,6 +300,7 @@ class XGovRegistry(
         Args:
             open_proposal_fee (UInt64): The open proposal fee to calculate the maximum committee size
             daemon_ops_funding_bps (UInt64): The basis points for daemon operations funding
+            voter_mbr (UInt64): Voter Box MBR
         """
 
         daemon_ops_funding = self.relative_to_absolute_amount(
@@ -300,18 +315,16 @@ class XGovRegistry(
 
         mbr_available_for_committee = open_proposal_fee - to_substract
 
-        per_voter_mbr = self.calc_box_map_mbr(
-            self.voters.key_prefix.length, size_of(Account), size_of(typ.VoterBox)
-        )
+        self.max_committee_size.value = mbr_available_for_committee // voter_mbr
 
-        self.max_committee_size.value = mbr_available_for_committee // per_voter_mbr
+    @subroutine
+    def increment_pending_proposals(self, proposer: Account) -> None:
+        self.pending_proposals.value += 1
+        self.proposer_box[proposer].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
     @subroutine
     def decrement_pending_proposals(self, proposal_id: UInt64) -> None:
-        # Decrement pending proposals count
         self.pending_proposals.value -= 1
-
-        # Update proposer's active proposal status
         proposer = self.get_proposal_proposer(proposal_id)
         self.proposer_box[proposer].active_proposal = arc4.Bool(False)  # noqa: FBT003
 
@@ -367,7 +380,7 @@ class XGovRegistry(
         assert self.entropy() == TemplateVar[Bytes]("entropy")
 
     @arc4.abimethod()
-    def init_proposal_contract(self, size: arc4.UInt64) -> None:
+    def init_proposal_contract(self, *, size: arc4.UInt64) -> None:
         """
         Initializes the Proposal Approval Program contract.
 
@@ -380,15 +393,14 @@ class XGovRegistry(
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
-        _box, exist = self.proposal_approval_program.maybe()
-        if exist:
+        if self.proposal_approval_program:
             self.proposal_approval_program.resize(size.as_uint64())
         else:
             # Initialize the Proposal Approval Program contract
             self.proposal_approval_program.create(size=size.as_uint64())
 
     @arc4.abimethod()
-    def load_proposal_contract(self, offset: arc4.UInt64, data: Bytes) -> None:
+    def load_proposal_contract(self, *, offset: arc4.UInt64, data: Bytes) -> None:
         """
         Loads the Proposal Approval Program contract.
 
@@ -419,7 +431,7 @@ class XGovRegistry(
         assert self.is_xgov_manager(), err.UNAUTHORIZED
 
         # Delete the Proposal Approval Program contract box
-        self.proposal_approval_program.delete()
+        del self.proposal_approval_program.value
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
@@ -473,7 +485,7 @@ class XGovRegistry(
         self.xgov_manager.value = manager
 
     @arc4.abimethod()
-    def set_payor(self, payor: arc4.Address) -> None:
+    def set_payor(self, *, payor: arc4.Address) -> None:
         """
         Sets the xGov Payor.
 
@@ -488,7 +500,7 @@ class XGovRegistry(
         self.xgov_payor.value = payor
 
     @arc4.abimethod()
-    def set_xgov_council(self, council: arc4.Address) -> None:
+    def set_xgov_council(self, *, council: arc4.Address) -> None:
         """
         Sets the xGov Council.
 
@@ -503,7 +515,7 @@ class XGovRegistry(
         self.xgov_council.value = council
 
     @arc4.abimethod()
-    def set_xgov_subscriber(self, subscriber: arc4.Address) -> None:
+    def set_xgov_subscriber(self, *, subscriber: arc4.Address) -> None:
         """
         Sets the xGov Subscriber.
 
@@ -518,7 +530,7 @@ class XGovRegistry(
         self.xgov_subscriber.value = subscriber
 
     @arc4.abimethod()
-    def set_kyc_provider(self, provider: arc4.Address) -> None:
+    def set_kyc_provider(self, *, provider: arc4.Address) -> None:
         """
         Sets the KYC provider.
 
@@ -533,7 +545,7 @@ class XGovRegistry(
         self.kyc_provider.value = provider
 
     @arc4.abimethod()
-    def set_committee_manager(self, manager: arc4.Address) -> None:
+    def set_committee_manager(self, *, manager: arc4.Address) -> None:
         """
         Sets the Committee Manager.
 
@@ -548,7 +560,7 @@ class XGovRegistry(
         self.committee_manager.value = manager
 
     @arc4.abimethod()
-    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
+    def set_xgov_daemon(self, *, xgov_daemon: arc4.Address) -> None:
         """
         Sets the xGov Daemon.
 
@@ -563,7 +575,7 @@ class XGovRegistry(
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def config_xgov_registry(self, config: typ.XGovRegistryConfig) -> None:
+    def config_xgov_registry(self, *, config: typ.XGovRegistryConfig) -> None:
         """
         Sets the configuration of the xGov Registry.
 
@@ -572,12 +584,12 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the current xGov Manager
-            err.NO_PENDING_PROPOSALS: If there are currently pending proposals
         """
 
         assert self.is_xgov_manager(), err.UNAUTHORIZED
-        assert self.no_pending_proposals(), err.NO_PENDING_PROPOSALS
 
+        # ⚠️ WARNING: Any update that modifies Box MBRs must be followed by a
+        # reconfiguration of the Registry to ensure consistency
         xgov_box_mbr = self.calc_box_map_mbr(
             self.xgov_box.key_prefix.length,
             size_of(Account),
@@ -596,6 +608,12 @@ class XGovRegistry(
             size_of(typ.ProposerBoxValue),
         )
 
+        voter_mbr = self.calc_box_map_mbr(
+            self.voters.key_prefix.length,
+            size_of(Account),
+            size_of(UInt64),
+        )
+
         assert (
             config.xgov_fee.as_uint64() >= xgov_box_mbr
             and config.xgov_fee.as_uint64() >= xgov_request_box_mbr
@@ -606,16 +624,48 @@ class XGovRegistry(
         ), err.INVALID_PROPOSER_FEE
 
         assert (
-            config.min_requested_amount.as_uint64()
+            0
+            < config.min_requested_amount.as_uint64()
             < config.max_requested_amount[0].as_uint64()
             < config.max_requested_amount[1].as_uint64()
             < config.max_requested_amount[2].as_uint64()
-        ), err.INCOSISTENT_REQUESTED_AMOUNT_CONFIG
+        ), err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG
 
         self.set_max_committee_size(
             config.open_proposal_fee.as_uint64(),
             config.daemon_ops_funding_bps.as_uint64(),
+            voter_mbr,
         )
+
+        assert (
+            0
+            < config.discussion_duration[0].as_uint64()
+            <= config.discussion_duration[1].as_uint64()
+            <= config.discussion_duration[2].as_uint64()
+            <= config.discussion_duration[3].as_uint64()
+        ), err.INCONSISTENT_DISCUSSION_DURATION_CONFIG
+
+        assert (
+            0
+            < config.voting_duration[0].as_uint64()
+            <= config.voting_duration[1].as_uint64()
+            <= config.voting_duration[2].as_uint64()
+            <= config.voting_duration[3].as_uint64()
+        ), err.INCONSISTENT_VOTING_DURATION_CONFIG
+
+        assert (
+            0
+            < config.quorum[0].as_uint64()
+            # Quorum Medium no longer used
+            < config.quorum[2].as_uint64()
+        ), err.INCONSISTENT_QUORUM_CONFIG
+
+        assert (
+            0
+            < config.weighted_quorum[0].as_uint64()
+            # Weighted Quorum Medium no longer used
+            < config.weighted_quorum[2].as_uint64()
+        ), err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG
 
         self.xgov_fee.value = config.xgov_fee.as_uint64()
         self.proposer_fee.value = config.proposer_fee.as_uint64()
@@ -649,11 +699,11 @@ class XGovRegistry(
         self.voting_duration_xlarge.value = config.voting_duration[3].as_uint64()
 
         self.quorum_small.value = config.quorum[0].as_uint64()
-        self.quorum_medium.value = config.quorum[1].as_uint64()
+        self.quorum_medium.value = UInt64(0)  # No longer used
         self.quorum_large.value = config.quorum[2].as_uint64()
 
         self.weighted_quorum_small.value = config.weighted_quorum[0].as_uint64()
-        self.weighted_quorum_medium.value = config.weighted_quorum[1].as_uint64()
+        self.weighted_quorum_medium.value = UInt64(0)  # No longer used
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
@@ -669,7 +719,7 @@ class XGovRegistry(
 
     @arc4.abimethod()
     def subscribe_xgov(
-        self, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
+        self, *, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
     ) -> None:
         """
         Subscribes the sender to being an xGov.
@@ -693,13 +743,17 @@ class XGovRegistry(
         self.xgov_box[Txn.sender] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
 
-    @arc4.abimethod()
-    def unsubscribe_xgov(self, xgov_address: arc4.Address) -> None:
-        """
-        Unsubscribes the designated address from being an xGov.
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=arc4.Address(Txn.sender),
+                delegate=voting_address,
+            )
+        )
 
-        Args:
-            xgov_address (arc4.Address): The address of the xGov to unsubscribe
+    @arc4.abimethod()
+    def unsubscribe_xgov(self) -> None:
+        """
+        Unsubscribes the sender from being an xGov.
 
         Raises:
             err.UNAUTHORIZED: If the sender is not currently an xGov
@@ -707,22 +761,19 @@ class XGovRegistry(
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
 
-        # ensure the provided address is an xGov
-        assert xgov_address.native in self.xgov_box, err.UNAUTHORIZED
-        # get the voting address
-        voting_address = self.xgov_box[xgov_address.native].voting_address.native
-        # ensure the sender is the xGov or the voting address
-        assert (
-            xgov_address.native == Txn.sender or voting_address == Txn.sender
-        ), err.UNAUTHORIZED
+        # ensure the sender is an xGov
+        assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
 
         # delete box
-        del self.xgov_box[xgov_address.native]
+        del self.xgov_box[Txn.sender]
         self.xgovs.value -= 1
+
+        arc4.emit(typ.XGovUnsubscribed(xgov=arc4.Address(Txn.sender)))
 
     @arc4.abimethod()
     def request_subscribe_xgov(
         self,
+        *,
         xgov_address: arc4.Address,
         owner_address: arc4.Address,
         relation_type: arc4.UInt64,
@@ -764,7 +815,7 @@ class XGovRegistry(
         self.request_id.value += 1
 
     @arc4.abimethod()
-    def approve_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Approves a subscribe request to xGov.
 
@@ -785,8 +836,15 @@ class XGovRegistry(
         # delete the request
         del self.request_box[request_id.as_uint64()]
 
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=request.xgov_addr,
+                delegate=request.owner_addr,
+            )
+        )
+
     @arc4.abimethod()
-    def reject_subscribe_xgov(self, request_id: arc4.UInt64) -> None:
+    def reject_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         """
         Rejects a subscribe request to xGov.
 
@@ -803,8 +861,96 @@ class XGovRegistry(
         del self.request_box[request_id.as_uint64()]
 
     @arc4.abimethod()
+    def request_unsubscribe_xgov(
+        self,
+        *,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        """
+        Requests to unsubscribe from the xGov.
+
+        Args:
+            xgov_address (arc4.Address): The address of the xGov
+            owner_address (arc4.Address): The address of the xGov Address owner/controller
+            relation_type (arc4.UInt64): The type of relationship enum
+            payment (gtxn.PaymentTransaction): The payment transaction covering the xGov (unsubscribe) fee
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the declared Application owner address
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the requested xGov address is not an xGov
+            err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
+        """
+
+        assert Txn.sender == owner_address.native, err.UNAUTHORIZED
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+
+        # ensure the xgov_address is already an xGov
+        assert xgov_address.native in self.xgov_box, err.NOT_XGOV
+
+        # check payment
+        assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
+
+        # create unsubscribe request box
+        ruid = self.request_id.value
+        self.request_unsubscribe_box[ruid] = typ.XGovSubscribeRequestBoxValue(
+            xgov_addr=xgov_address,
+            owner_addr=owner_address,
+            relation_type=relation_type,
+        )
+
+        # increment request id
+        self.request_id.value += 1
+
+    @arc4.abimethod()
+    def approve_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        """
+        Approves a request to unsubscribe from xGov.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request to approve
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # get the request
+        request = self.request_unsubscribe_box[request_id.as_uint64()].copy()
+
+        # del the xGov
+        del self.xgov_box[request.xgov_addr.native]
+        self.xgovs.value -= 1
+
+        # delete the request
+        del self.request_unsubscribe_box[request_id.as_uint64()]
+
+        arc4.emit(typ.XGovUnsubscribed(xgov=request.xgov_addr))
+
+    @arc4.abimethod()
+    def reject_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        """
+        Rejects a request to unsubscribe from xGov.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request to reject
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+
+        # delete the request
+        del self.request_unsubscribe_box[request_id.as_uint64()]
+
+    @arc4.abimethod()
     def set_voting_account(
-        self, xgov_address: arc4.Address, voting_address: arc4.Address
+        self, *, xgov_address: arc4.Address, voting_address: arc4.Address
     ) -> None:
         """
         Sets the Voting Address for the xGov.
@@ -835,7 +981,7 @@ class XGovRegistry(
         self.xgov_box[xgov_address.native].voting_address = voting_address
 
     @arc4.abimethod()
-    def subscribe_proposer(self, payment: gtxn.PaymentTransaction) -> None:
+    def subscribe_proposer(self, *, payment: gtxn.PaymentTransaction) -> None:
         """
         Subscribes the sender to being a Proposer.
 
@@ -861,9 +1007,15 @@ class XGovRegistry(
             arc4.Bool(False), arc4.Bool(False), arc4.UInt64(0)  # noqa: FBT003
         )
 
+        arc4.emit(typ.ProposerSubscribed(proposer=arc4.Address(Txn.sender)))
+
     @arc4.abimethod()
     def set_proposer_kyc(
-        self, proposer: arc4.Address, kyc_status: arc4.Bool, kyc_expiring: arc4.UInt64
+        self,
+        *,
+        proposer: arc4.Address,
+        kyc_status: arc4.Bool,
+        kyc_expiring: arc4.UInt64,
     ) -> None:
         """
         Sets a proposer's KYC status.
@@ -888,9 +1040,16 @@ class XGovRegistry(
             active_proposal, kyc_status, kyc_expiring
         )
 
+        arc4.emit(
+            typ.ProposerKYC(
+                proposer=proposer,
+                valid_kyc=arc4.Bool(self.valid_kyc(proposer.native)),
+            )
+        )
+
     @arc4.abimethod()
     def declare_committee(
-        self, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+        self, *, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
     ) -> None:
         """
         Sets the xGov Committee in charge.
@@ -903,11 +1062,15 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Manager
             err.WRONG_CID_LENGTH: If the committee ID is not of the correct length
+            err.WRONG_COMMITTEE_MEMBERS: If the committee is empty
+            err.WRONG_COMMITTEE_VOTES: If the committee voting power is zero
             err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
+        assert size.as_uint64() > 0, err.WRONG_COMMITTEE_MEMBERS
+        assert votes.as_uint64() > 0, err.WRONG_COMMITTEE_VOTES
         assert (
             size.as_uint64() <= self.max_committee_size.value
         ), err.COMMITTEE_SIZE_TOO_LARGE
@@ -916,8 +1079,16 @@ class XGovRegistry(
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
 
+        arc4.emit(
+            typ.NewCommittee(
+                committee_id=committee_id,
+                size=arc4.UInt32(size.as_uint64()),
+                votes=arc4.UInt32(votes.as_uint64()),
+            )
+        )
+
     @arc4.abimethod
-    def open_proposal(self, payment: gtxn.PaymentTransaction) -> UInt64:
+    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
         """
         Creates a new Proposal.
 
@@ -955,8 +1126,7 @@ class XGovRegistry(
 
         mbr_before = Global.current_application_address.balance
 
-        proposal_approval, exist = self.proposal_approval_program.maybe()
-        assert exist, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
+        assert self.proposal_approval_program, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
 
         # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
@@ -965,39 +1135,43 @@ class XGovRegistry(
         ).clear_state_program
 
         bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
-        total_size = proposal_approval.length + compiled_clear_state_1.length
-        extra_pages = total_size // bytes_per_page
+        total_size = (
+            self.proposal_approval_program.length + compiled_clear_state_1.length
+        )
+        total_pages = total_size // bytes_per_page
+
+        # The following assertion makes sure the loop-unrolling is consistent
+        assert total_pages == UInt64(
+            PROPOSAL_APPROVAL_PAGES
+        ), err.INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE
+        bytes_last_page = (
+            self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
+        )
+        page_1 = self.proposal_approval_program.extract(
+            0 * bytes_per_page, bytes_last_page
+        )
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
-            approval_program=proposal_approval,
+            approval_program=page_1,
             clear_state_program=compiled_clear_state_1,
             global_num_uint=pcfg.GLOBAL_UINTS,
             global_num_bytes=pcfg.GLOBAL_BYTES,
-            extra_program_pages=extra_pages,
+            extra_program_pages=total_pages,
         )
 
         if error.native.startswith(err.ARC_65_PREFIX):
             error_without_prefix = String.from_bytes(error.native.bytes[4:])
             match error_without_prefix:
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.EMPTY_COMMITTEE_ID:
                     assert False, err.EMPTY_COMMITTEE_ID  # noqa
-                case err.WRONG_COMMITTEE_MEMBERS:
-                    assert False, err.WRONG_COMMITTEE_MEMBERS  # noqa
-                case err.WRONG_COMMITTEE_VOTES:
-                    assert False, err.WRONG_COMMITTEE_VOTES  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
         else:
             assert error.native == "", "Unknown error"
 
         mbr_after = Global.current_application_address.balance
-
-        # Update proposer state
-        self.proposer_box[Txn.sender].active_proposal = arc4.Bool(True)  # noqa: FBT003
 
         # Transfer funds to the new Proposal App, excluding the MBR needed for the Proposal App
         itxn.Payment(
@@ -1006,14 +1180,21 @@ class XGovRegistry(
             fee=0,
         ).submit()
 
-        # Increment pending proposals
-        self.pending_proposals.value += 1
+        self.increment_pending_proposals(Txn.sender)
 
-        return tx.created_app.id
+        arc4.emit(
+            typ.NewProposal(
+                proposal_id=arc4.UInt64(tx.created_app.id),
+                proposer=arc4.Address(Txn.sender),
+            )
+        )
+
+        return arc4.UInt64(tx.created_app.id)
 
     @arc4.abimethod()
     def vote_proposal(
         self,
+        *,
         proposal_id: arc4.UInt64,
         xgov_address: arc4.Address,
         approval_votes: arc4.UInt64,
@@ -1035,7 +1216,6 @@ class XGovRegistry(
             err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
             err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
-            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
             err.VOTER_ALREADY_VOTED: If the xGov has already voted on this Proposal
             err.VOTES_EXCEEDED: If the total votes exceed the maximum allowed
@@ -1075,12 +1255,8 @@ class XGovRegistry(
             match error_without_prefix:
                 case err.WRONG_PROPOSAL_STATUS:
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.VOTER_NOT_FOUND:
                     assert False, err.VOTER_NOT_FOUND  # noqa
-                case err.VOTER_ALREADY_VOTED:
-                    assert False, err.VOTER_ALREADY_VOTED  # noqa
                 case err.VOTES_EXCEEDED:
                     assert False, err.VOTES_EXCEEDED  # noqa
                 case err.VOTING_PERIOD_EXPIRED:
@@ -1091,7 +1267,7 @@ class XGovRegistry(
             assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
-    def pay_grant_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Disburses the funds for an approved Proposal.
 
@@ -1144,7 +1320,7 @@ class XGovRegistry(
             assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
-    def finalize_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def finalize_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Finalize a Proposal.
 
@@ -1155,7 +1331,6 @@ class XGovRegistry(
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.INVALID_PROPOSAL: If the proposal_id is not a proposal contract
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
-            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.VOTERS_ASSIGNED: If there are still assigned voters
         """
 
@@ -1177,8 +1352,6 @@ class XGovRegistry(
             match error_without_prefix:
                 case err.WRONG_PROPOSAL_STATUS:
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
-                case err.MISSING_CONFIG:
-                    assert False, err.MISSING_CONFIG  # noqa
                 case err.VOTERS_ASSIGNED:
                     assert False, err.VOTERS_ASSIGNED  # noqa
                 case _:
@@ -1189,7 +1362,7 @@ class XGovRegistry(
         self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
-    def drop_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def drop_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         """
         Drops a Proposal.
 
@@ -1228,7 +1401,7 @@ class XGovRegistry(
         self.decrement_pending_proposals(proposal_id.as_uint64())
 
     @arc4.abimethod()
-    def deposit_funds(self, payment: gtxn.PaymentTransaction) -> None:
+    def deposit_funds(self, *, payment: gtxn.PaymentTransaction) -> None:
         """
         Deposits xGov program funds into the xGov Treasury (xGov Registry Account).
 
@@ -1245,7 +1418,7 @@ class XGovRegistry(
         self.outstanding_funds.value += payment.amount
 
     @arc4.abimethod()
-    def withdraw_funds(self, amount: arc4.UInt64) -> None:
+    def withdraw_funds(self, *, amount: arc4.UInt64) -> None:
         """
         Remove xGov program funds from the xGov Treasury (xGov Registry Account).
 
@@ -1341,12 +1514,12 @@ class XGovRegistry(
             ),
             quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.quorum_small.value),
-                arc4.UInt64(self.quorum_medium.value),
+                arc4.UInt64(self.quorum_medium.value),  # No longer used
                 arc4.UInt64(self.quorum_large.value),
             ),
             weighted_quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
                 arc4.UInt64(self.weighted_quorum_small.value),
-                arc4.UInt64(self.weighted_quorum_medium.value),
+                arc4.UInt64(self.weighted_quorum_medium.value),  # No longer used
                 arc4.UInt64(self.weighted_quorum_large.value),
             ),
             outstanding_funds=arc4.UInt64(self.outstanding_funds.value),
@@ -1357,7 +1530,9 @@ class XGovRegistry(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(self, xgov_address: arc4.Address) -> typ.XGovBoxValue:
+    def get_xgov_box(
+        self, *, xgov_address: arc4.Address
+    ) -> tuple[typ.XGovBoxValue, bool]:
         """
         Returns the xGov box for the given address.
 
@@ -1366,11 +1541,27 @@ class XGovRegistry(
 
         Returns:
             typ.XGovBoxValue: The xGov box value
+            bool: `True` if xGov box exists, else `False`
         """
-        return self.xgov_box[xgov_address.native].copy()
+        exists = xgov_address.native in self.xgov_box
+        if exists:
+            val = self.xgov_box[xgov_address.native].copy()
+        else:
+            val = typ.XGovBoxValue(
+                voting_address=arc4.Address(),
+                voted_proposals=arc4.UInt64(0),
+                last_vote_timestamp=arc4.UInt64(0),
+                subscription_round=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod(readonly=True)
-    def get_proposer_box(self, proposer_address: arc4.Address) -> typ.ProposerBoxValue:
+    def get_proposer_box(
+        self,
+        *,
+        proposer_address: arc4.Address,
+    ) -> tuple[typ.ProposerBoxValue, bool]:
         """
         Returns the Proposer box for the given address.
 
@@ -1379,13 +1570,26 @@ class XGovRegistry(
 
         Returns:
             typ.ProposerBoxValue: The Proposer box value
+            bool: `True` if Proposer box exists, else `False`
         """
-        return self.proposer_box[proposer_address.native].copy()
+        exists = proposer_address.native in self.proposer_box
+        if exists:
+            val = self.proposer_box[proposer_address.native].copy()
+        else:
+            val = typ.ProposerBoxValue(
+                active_proposal=arc4.Bool(),
+                kyc_status=arc4.Bool(),
+                kyc_expiring=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod(readonly=True)
     def get_request_box(
-        self, request_id: arc4.UInt64
-    ) -> typ.XGovSubscribeRequestBoxValue:
+        self,
+        *,
+        request_id: arc4.UInt64,
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         """
         Returns the xGov subscribe request box for the given request ID.
 
@@ -1394,9 +1598,46 @@ class XGovRegistry(
 
         Returns:
             typ.XGovSubscribeRequestBoxValue: The subscribe request box value
+            bool: `True` if xGov subscribe request box exists, else `False`
         """
-        return self.request_box[request_id.as_uint64()].copy()
+        exists = request_id.as_uint64() in self.request_box
+        if exists:
+            val = self.request_box[request_id.as_uint64()].copy()
+        else:
+            val = typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
+
+    @arc4.abimethod(readonly=True)
+    def get_request_unsubscribe_box(
+        self, *, request_id: arc4.UInt64
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
+        """
+        Returns the xGov unsubscribe request box for the given unsubscribe request ID.
+
+        Args:
+            request_id (arc4.UInt64): The ID of the unsubscribe request
+
+        Returns:
+            typ.XGovSubscribeRequestBoxValue: The unsubscribe request box value
+            bool: `True` if xGov unsubscribe request box exists, else `False`
+        """
+        exists = request_id.as_uint64() in self.request_unsubscribe_box
+        if exists:
+            val = self.request_unsubscribe_box[request_id.as_uint64()].copy()
+        else:
+            val = typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            )
+
+        return val.copy(), exists
 
     @arc4.abimethod()
-    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL

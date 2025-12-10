@@ -1,0 +1,67 @@
+name: Pause or Resume xgov Registry Smart Contract
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: "Network to pause or resume on (e.g., testnet, mainnet)"
+        required: true
+        default: "testnet"
+        type: string
+      pause_proposals:
+        description: "Whether to pause proposals (true/false)"
+        required: false
+        default: false
+        type: boolean
+      resume_proposals:
+        description: "Whether to resume proposals (true/false)"
+        required: false
+        default: false
+        type: boolean
+      pause_registry:
+        description: "Whether to pause registry (true/false)"
+        required: false
+        default: false
+        type: boolean
+      resume_registry:
+        description: "Whether to resume registry (true/false)"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  pause-resume:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Pause or Resume xgov Registry Smart Contract
+        run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: pause_or_resume
+          # Vault configuration for transaction signing
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ${{ github.event.inputs.network == 'mainnet' && secrets.VAULT_ROLE_MAINNET || secrets.VAULT_ROLE_TESTNET }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_OIDC_MOUNT_PATH || 'oidc' }}
+          VAULT_KEY_NAME: ${{ github.event.inputs.network == 'mainnet' && secrets.VAULT_KEY_NAME_MAINNET || secrets.VAULT_KEY_NAME_TESTNET }}
+          MULTISIG_ALGORAND_ADDRESS: ${{ github.event.inputs.network == 'mainnet' && vars.MULTISIG_ADDRESS_MAINNET || '' }}
+          VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
+          # The deployer account
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+          # Pause/Resume inputs
+          XGOV_REG_PAUSE_PROPOSALS: ${{ github.event.inputs.pause_proposals }}
+          XGOV_REG_RESUME_PROPOSALS: ${{ github.event.inputs.resume_proposals }}
+          XGOV_REG_PAUSE_REGISTRY: ${{ github.event.inputs.pause_registry }}
+          XGOV_REG_RESUME_REGISTRY: ${{ github.event.inputs.resume_registry }}

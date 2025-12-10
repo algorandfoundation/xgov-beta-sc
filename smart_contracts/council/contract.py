@@ -10,6 +10,7 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
+    subroutine,
     urange,
 )
 from algopy.op import AppGlobal
@@ -20,6 +21,7 @@ from smart_contracts.common import abi_types as typ
 from ..proposal import config as proposal_cfg
 from ..proposal import contract as proposal_contract
 from ..proposal import enums as proposal_enm
+from ..xgov_registry import config as reg_cfg
 from ..xgov_registry import contract as registry_contract
 from . import config as council_cfg
 
@@ -43,11 +45,6 @@ class Council(
         ), err.WRONG_LOCAL_BYTES
         assert Txn.local_num_uint == council_cfg.LOCAL_UINTS, err.WRONG_LOCAL_UINTS
 
-        self.admin = GlobalState(
-            Account,
-            key=council_cfg.GS_KEY_ADMIN,
-        )
-
         self.registry_app_id = GlobalState(
             UInt64(),
             key=council_cfg.GS_KEY_REGISTRY_APP_ID,
@@ -66,13 +63,32 @@ class Council(
             UInt64, typ.CouncilVotingBox, key_prefix=council_cfg.VOTES_KEY_PREFIX
         )
 
+    @subroutine
+    def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
+        value, exists = AppGlobal.get_ex_bytes(
+            self.registry_app_id.value, global_state_key
+        )
+        assert exists, err.MISSING_CONFIG
+        return value
+
+    @subroutine
+    def is_manager(self) -> bool:
+        return Txn.sender == Account(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_MANAGER))
+        )
+
+    @subroutine
+    def is_committee_manager(self) -> bool:
+        return Txn.sender == Account(
+            self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_MANAGER))
+        )
+
     @arc4.abimethod(create="require")
-    def create(self, admin: Account, registry_id: UInt64) -> None:
+    def create(self, registry_id: UInt64) -> None:
         """
         Create a new council contract.
 
         Args:
-            admin: The address of the admin who can manage the council.
             registry_id: The application ID of the XGovRegistry contract.
 
         Raises:
@@ -81,9 +97,19 @@ class Council(
 
         assert registry_id > 0, err.INVALID_REGISTRY_ID
 
-        self.admin.value = admin
         self.registry_app_id.value = registry_id
         self.member_count.value = UInt64(0)
+
+    @arc4.abimethod(allow_actions=["UpdateApplication"])
+    def update_council(self) -> None:
+        """
+        Update the council contract.
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the admin.
+        """
+
+        assert self.is_manager(), err.UNAUTHORIZED
 
     @arc4.abimethod()
     def add_member(self, address: arc4.Address) -> None:
@@ -94,11 +120,11 @@ class Council(
             address: The address of the member to add.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the admin.
+            err.UNAUTHORIZED: If the sender is not the xGov committee manager.
             err.VOTER_ALREADY_ASSIGNED: If the address is already a member.
         """
 
-        assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+        assert self.is_committee_manager(), err.UNAUTHORIZED
         assert address.native not in self.members, err.VOTER_ALREADY_ASSIGNED
 
         self.members[address.native] = typ.Empty()
@@ -113,11 +139,11 @@ class Council(
             address: The address of the member to remove.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the admin.
+            err.UNAUTHORIZED: If the sender is not the xGov committee manager.
             err.VOTER_NOT_FOUND: If the address is not a member.
         """
 
-        assert Txn.sender == self.admin.value, err.UNAUTHORIZED
+        assert self.is_committee_manager(), err.UNAUTHORIZED
         assert address.native in self.members, err.VOTER_NOT_FOUND
 
         del self.members[address.native]

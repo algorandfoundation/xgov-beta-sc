@@ -15,10 +15,10 @@ from tests.utils import ERROR_TO_REGEX
 
 
 def test_add_member_success(
-    deployer: SigningAccount,
-    council_client: CouncilClient,
     algorand_client: AlgorandClient,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
+    council_client: CouncilClient,
 ) -> None:
     before_global_state = council_client.state.global_state.get_all()
     # sp = algorand_client.get_suggested_params()
@@ -28,8 +28,8 @@ def test_add_member_success(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -41,9 +41,9 @@ def test_add_member_success(
 
 
 def test_add_member_not_admin(
+    algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     council_client: CouncilClient,
-    algorand_client: AlgorandClient,
 ) -> None:
     with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         council_client.send.add_member(
@@ -58,18 +58,18 @@ def test_add_member_not_admin(
 
 
 def test_add_member_already_member(
-    deployer: SigningAccount,
-    council_client: CouncilClient,
     algorand_client: AlgorandClient,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
+    council_client: CouncilClient,
 ) -> None:
     council_client.send.add_member(
         args=AddMemberArgs(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -79,8 +79,8 @@ def test_add_member_already_member(
                 address=no_role_account.address,
             ),
             params=CommonAppCallParams(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=committee_manager.address,
+                signer=committee_manager.signer,
                 note=b"meh",
             ),
         )

@@ -36,10 +36,12 @@ GS_KEY_VOTING_DURATION_MEDIUM: Final[bytes] = b"voting_duration_medium"
 GS_KEY_VOTING_DURATION_LARGE: Final[bytes] = b"voting_duration_large"
 GS_KEY_VOTING_DURATION_XLARGE: Final[bytes] = b"voting_duration_xlarge"
 GS_KEY_QUORUM_SMALL: Final[bytes] = b"quorum_small"
-GS_KEY_QUORUM_MEDIUM: Final[bytes] = b"quorum_medium"
+GS_KEY_QUORUM_MEDIUM: Final[bytes] = b"quorum_medium"  # No longer used
 GS_KEY_QUORUM_LARGE: Final[bytes] = b"quorum_large"
 GS_KEY_WEIGHTED_QUORUM_SMALL: Final[bytes] = b"weighted_quorum_small"
-GS_KEY_WEIGHTED_QUORUM_MEDIUM: Final[bytes] = b"weighted_quorum_medium"
+GS_KEY_WEIGHTED_QUORUM_MEDIUM: Final[bytes] = (
+    b"weighted_quorum_medium"  # No longer used
+)
 GS_KEY_WEIGHTED_QUORUM_LARGE: Final[bytes] = b"weighted_quorum_large"
 GS_KEY_OUTSTANDING_FUNDS: Final[bytes] = b"outstanding_funds"
 GS_KEY_PENDING_PROPOSALS: Final[bytes] = b"pending_proposals"
@@ -52,6 +54,7 @@ GS_KEY_MAX_COMMITTEE_SIZE: Final[bytes] = b"max_committee_size"
 PROPOSAL_APPROVAL_PROGRAM_BOX: Final[bytes] = b"pa"
 XGOV_BOX_MAP_PREFIX: Final[bytes] = b"x"
 REQUEST_BOX_MAP_PREFIX: Final[bytes] = b"r"
+REQUEST_UNSUBSCRIBE_BOX_MAP_PREFIX: Final[bytes] = b"ru"
 PROPOSER_BOX_MAP_PREFIX: Final[bytes] = b"p"
 
 # Parameters
@@ -86,8 +89,8 @@ VOTING_DURATION_XLARGE: Final[int] = 4 * WEEKS_TO_SECONDS  # 4 weeks
 
 ## Quorums
 QUORUM_SMALL: Final[int] = 30 * PERC_TO_BPS  # 30%
-QUORUM_MEDIUM: Final[int] = 50 * PERC_TO_BPS  # 50%
+QUORUM_MEDIUM: Final[int] = 0  # No longer used
 QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
 WEIGHTED_QUORUM_SMALL: Final[int] = 50 * PERC_TO_BPS  # 50%
-WEIGHTED_QUORUM_MEDIUM: Final[int] = 60 * PERC_TO_BPS  # 60%
+WEIGHTED_QUORUM_MEDIUM: Final[int] = 0  # No longer used
 WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%

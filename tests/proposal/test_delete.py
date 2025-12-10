@@ -21,8 +21,7 @@ from tests.proposal.common import (
 
 
 def test_delete_empty_proposal(
-    proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         proposal_client.send.delete.delete(
@@ -31,8 +30,7 @@ def test_delete_empty_proposal(
 
 
 def test_delete_draft_proposal(
-    draft_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, draft_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         draft_proposal_client.send.delete.delete(
@@ -41,8 +39,7 @@ def test_delete_draft_proposal(
 
 
 def test_delete_final_proposal(
-    submitted_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, submitted_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         submitted_proposal_client.send.delete.delete(
@@ -51,8 +48,7 @@ def test_delete_final_proposal(
 
 
 def test_delete_voting_proposal(
-    voting_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, voting_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         voting_proposal_client.send.delete.delete(
@@ -61,8 +57,7 @@ def test_delete_voting_proposal(
 
 
 def test_delete_approved_proposal(
-    approved_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, approved_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         approved_proposal_client.send.delete.delete(
@@ -71,8 +66,7 @@ def test_delete_approved_proposal(
 
 
 def test_delete_reviewed_proposal(
-    reviewed_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, reviewed_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         reviewed_proposal_client.send.delete.delete(
@@ -81,8 +75,7 @@ def test_delete_reviewed_proposal(
 
 
 def test_delete_rejected_proposal(
-    rejected_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, rejected_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         rejected_proposal_client.send.delete.delete(
@@ -91,8 +84,7 @@ def test_delete_rejected_proposal(
 
 
 def test_delete_blocked_proposal(
-    blocked_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
+    xgov_daemon: SigningAccount, blocked_proposal_client: ProposalClient
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         blocked_proposal_client.send.delete.delete(
@@ -101,9 +93,9 @@ def test_delete_blocked_proposal(
 
 
 def test_delete_funded_proposal(
-    funded_proposal_client: ProposalClient,
-    xgov_daemon: SigningAccount,
     min_fee_times_3: AlgoAmount,
+    xgov_daemon: SigningAccount,
+    funded_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         funded_proposal_client.send.delete.delete(
@@ -114,12 +106,12 @@ def test_delete_funded_proposal(
 
 
 def test_delete_success(
-    rejected_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
     min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(
@@ -148,11 +140,11 @@ def test_delete_success(
 
 
 def test_delete_not_xgov_daemon(
-    rejected_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
+    committee: list[CommitteeMember],
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    rejected_proposal_client: ProposalClient,
 ) -> None:
     composer = rejected_proposal_client.new_group()
     unassign_voters(

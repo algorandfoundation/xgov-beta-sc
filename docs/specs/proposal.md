@@ -46,25 +46,77 @@ The Proposals have two different _funding types_:
    xGov Committee vote, after milestone reviews from the xGov Council, and if the
    xGov Council does not apply a veto according to terms and conditions.
 
-## Funding Sizes
+## Requested Amount
 
-Proposals have different _funding sizes_ based on the requested funding amount.
-
-The _funding size_ defines the timing of the Proposal lifecycle and the voting quorums.
-
-The Proposal’s requested amount (\\( A \\)) **MUST** be bounded as follows:
+The Proposal’s _requested amount_ (\\( A \\)) **MUST** be bounded as follows:
 
 |                                |              Small              |               Medium                |                Large                |
 |:-------------------------------|:-------------------------------:|:-----------------------------------:|:-----------------------------------:|
-| Requested Amount               | \\( A_\min ≤ A < A_{S,\max} \\) | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A < A_{L,\max} \\) |
+| Requested Amount               | \\( A_\min ≤ A < A_{S,\max} \\) | \\( A_{S,\max} ≤ A < A_{M,\max} \\) | \\( A_{M,\max} ≤ A ≤ A_{L,\max} \\) |
+
+## Funding Sizes
+
+Proposals have different _funding sizes_ based on the _requested amount_ of funds.
+
+The _funding size_ defines the timing of the Proposal lifecycle.
+
+|                                |              Small              |               Medium                |                Large                |
+|:-------------------------------|:-------------------------------:|:-----------------------------------:|:-----------------------------------:|
 | Discussion time                |           \\( D_S \\)           |             \\( D_M \\)             |             \\( D_L \\)             |
 | Voting time (after discussion) |           \\( V_S \\)           |             \\( V_M \\)             |             \\( V_L \\)             |
-| Democratic Quorum              |         \\( Q_{d,S} \\)         |           \\( Q_{d,M} \\)           |           \\( Q_{d,L} \\)           |
-| Weighted Quorum                |         \\( Q_{w,S} \\)         |           \\( Q_{w,M} \\)           |           \\( Q_{w,L} \\)           |
 
 {{#include ../_include/styles.md:note}}
 > Refer to the [Proposal implementation configuration](../implementation/configuration.md)
-> for the parameters’ value.
+> for the Proposal lifecycle timing values.
+
+## Quorum Thresholds
+
+$$
+\newcommand \Comm {\mathsf{Comm}}
+\newcommand \Members {\mathrm{Members}}
+\newcommand \Votes {\mathrm{Votes}}
+$$
+
+Proposals have two _quorum thresholds_ based on the _requested amount_ of funds.
+
+The _quorum thresholds_ define the minimum number of (regular and weighted) votes
+required to approve a Proposal:
+
+- \\( T(A) \\), Democratic Quorum Threshold (`1` xGov, `1` Vote);
+
+- \\( T_w(A) \\), Weighted Quorum Threshold (`1` xGov, `w` Votes).
+
+Given the xGov Committee assigned to the Proposal, with its members and voting power
+(see the [xGov Committee definition](./xgov-committee.md)), the quorum thresholds
+are defined as follows:
+
+- \\( T(A) = \Members(\Comm) \times Q(A) \\), with
+
+$$
+Q(A) = Q_\min + \frac{\Delta Q}{\Delta A} \times (A - A_\min)
+$$
+
+- \\( T_w(A) = \Votes(\Comm) \times Q_w(A) \\), with
+
+$$
+Q_w(A) = Q_{w,\min} + \frac{\Delta Q_w}{\Delta A} \times (A - A_\min)
+$$
+
+Where:
+
+- \\( Q_\min = Q(A_\min) \\)
+- \\( Q_\max = Q(A_{L,\max}) \\)
+- \\( Q_{w,\min} = Q_w(A_\min) \\)
+- \\( Q_{w,\max} = Q_w(A_{L,\max}) \\)
+- \\( \Delta Q = Q_\max - Q_\min \\)
+- \\( \Delta Q_w = Q_{w,\max} - Q_{w,\min} \\)
+- \\( \Delta A = A_{L,\max} - A_\min \\)
+
+![Proposal Quorum](../_images/proposal-quorum.svg "Proposal Democratic Quorum Example")
+
+{{#include ../_include/styles.md:note}}
+> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> for the minimum and maximum quorum values.
 
 ## Metadata
 
@@ -81,18 +133,18 @@ The Proposal Metadata Box body has no ABI schema (raw bytes).
 
 A Proposal **SHALL** be in one of the following enumerated statuses:
 
-| Status      |  Enum  | Description                                                                                                                                                            |
-|:------------|:------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `EMPTY`     |  `0`   | The xGov Registry creates an empty proposal, the Proposer **SHOULD** open a draft (or it **SHOULD** be finalized for staleness)                                        |
-| `DRAFT`     |  `10`  | The Proposer **MAY** submit (with updated metadata) or drop the draft (or it **SHOULD** be finalized for staleness)                                                    |
-| `SUBMITTED` |  `20`  | The xGov Daemon **SHALL** assign the xGov Committee to the submitted proposal, which is then opened to vote                                                            |
-| `VOTING`    |  `25`  | The xGov Committee **MAY** vote the proposal until the voting session expires                                                                                          |
-| `APPROVED`  |  `30`  | The outcome of the vote scrutiny (quorum and majority) approved the proposal, the xGov Council **SHALL** review it                                                     |
-| `REJECTED`  |  `40`  | The outcome of the vote scrutiny (quorum and majority) rejected the proposal, it **SHOULD** be finalized                                                               |
-| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the xGov Payor **MAY** disburse the requested amount                                           |
-| `BLOCKED`   |  `60`  | The xGov Council blocked the approved proposal with veto, it **SHOULD** be finalized, the requested amount **MUST NOT** be paid, the locked amount **MUST** be slashed |
-| `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                   |
-| `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                           |
+| Status      |  Enum  | Description                                                                                                                                                                          |
+|:------------|:------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `EMPTY`     |  `0`   | The xGov Registry creates an empty proposal, the Proposer **SHOULD** open a draft (or it **SHOULD** be finalized for staleness)                                                      |
+| `DRAFT`     |  `10`  | The Proposer **MAY** submit (with updated metadata) or drop the draft (or it **SHOULD** be finalized for staleness)                                                                  |
+| `SUBMITTED` |  `20`  | The xGov Daemon **SHALL** assign the xGov Committee to the submitted proposal, which is then opened to vote                                                                          |
+| `VOTING`    |  `25`  | The xGov Committee **MAY** vote the proposal until the voting session expires                                                                                                        |
+| `APPROVED`  |  `30`  | The outcome of the vote scrutiny (quorum and majority) approved the proposal, the absentees **SHALL** be deleted, the xGov Council **SHALL** review it                               |
+| `REJECTED`  |  `40`  | The outcome of the vote scrutiny (quorum and majority) rejected the proposal, the absentees **SHALL** be deleted, it **SHOULD** be finalized                                         |
+| `REVIEWED`  |  `45`  | The xGov Council positively reviewed the approved proposal (T&C, etc.), the locked amount **MUST** be returned to the Proposer, the xGov Payor **MAY** disburse the requested amount |
+| `BLOCKED`   |  `60`  | The xGov Council blocked the approved proposal with veto, it **SHOULD** be finalized, the locked amount **MUST** be slashed, the requested amount **MUST NOT** be paid               |
+| `FUNDED`    |  `50`  | The xGov Payor paid the requested amount, it **SHOULD** be finalized                                                                                                                 |
+| `FINALIZED` | `bool` | The proposal life cycle is terminated and **MAY** be deleted                                                                                                                         |
 
 {{#include ../_include/styles.md:note}}
 > The `FINALIZED` boolean flag is not an enumerated state, since it can be superposed
@@ -100,29 +152,3 @@ A Proposal **SHALL** be in one of the following enumerated statuses:
 > Example: a Proposal can be `FUNDED` and `FINALIZED`.
 
 ![Proposal Finite-State Machine](../_images/proposal-state-machine.svg "Proposal Finite-State Machine")
-
-## Escrow
-
-The Proposal Escrow is an Address controlled by the Proposal Application.
-
-### Escrow Inflows
-
-- Partial Open Proposal Fees from xGov Treasury
-
-- Proposal Commitment Lock from the Proposer
-
-### Escrow Outflows
-
-- Operation Funds to xGov Daemon on Proposal submission
-
-- Proposal Commitment Lock to xGov Treasury if the Proposal is blocked with a veto
-
-- Decommissioned MBRs to xGov Treasury
-
-### Escrow MBRs
-
-- Proposal Application Account
-
-- Metadata Box
-
-- xGov Committee Voters Boxes

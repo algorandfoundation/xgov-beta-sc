@@ -47,6 +47,7 @@ from smart_contracts.proposal.enums import (
     STATUS_VOTING,
 )
 from smart_contracts.xgov_registry import config as reg_cfg
+from smart_contracts.xgov_registry.constants import PROPOSAL_APPROVAL_PAGES
 from tests.common import (
     DEFAULT_COMMITTEE_ID,
     DEFAULT_COMMITTEE_MEMBERS,
@@ -59,7 +60,17 @@ from tests.utils import time_warp
 
 MAX_UPLOAD_PAYLOAD_SIZE = 2041  # 2048 - 4 bytes (method selector) - 2 bytes (payload length) - 1 byte (boolean flag)
 
-PROPOSAL_MBR = 200_000 + (28_500 * GLOBAL_UINTS) + (50_000 * GLOBAL_BYTES)
+MBR_PER_APP_PAGE = 100_000
+MBR_PER_SCHEMA_ENTRY = 25_000
+MBR_PER_UINT_ENTRY = MBR_PER_SCHEMA_ENTRY + 3_500
+MBR_PER_BYTES_ENTRY = MBR_PER_SCHEMA_ENTRY + 25_000
+
+PROPOSAL_PAGES = PROPOSAL_APPROVAL_PAGES + 1
+PROPOSAL_MBR = (
+    PROPOSAL_PAGES * MBR_PER_APP_PAGE
+    + (MBR_PER_UINT_ENTRY * GLOBAL_UINTS)
+    + (MBR_PER_BYTES_ENTRY * GLOBAL_BYTES)
+)
 PROPOSAL_PARTIAL_FEE = reg_cfg.OPEN_PROPOSAL_FEE - PROPOSAL_MBR
 
 PROPOSAL_TITLE = "Test Proposal"
@@ -91,46 +102,67 @@ REQUESTED_AMOUNT = AlgoAmount(micro_algo=reg_cfg.MIN_REQUESTED_AMOUNT)
 LOCKED_AMOUNT = get_locked_amount(REQUESTED_AMOUNT)
 
 
+def compute_quorum_threshold(requested_amount: int, committee_members: int) -> int:
+    quorum_min_bps = reg_cfg.QUORUM_SMALL
+    quorum_max_bps = reg_cfg.QUORUM_LARGE
+    delta_quorum_bps = quorum_max_bps - quorum_min_bps
+    amount_min = reg_cfg.MIN_REQUESTED_AMOUNT
+    amount_max = reg_cfg.MAX_REQUESTED_AMOUNT_LARGE
+    delta_amount = amount_max - amount_min
+    quorum_bps = (
+        quorum_min_bps
+        + delta_quorum_bps * (requested_amount - amount_min) // delta_amount
+    )
+    return relative_to_absolute_amount(committee_members, quorum_bps)
+
+
+def compute_weighted_quorum_threshold(
+    requested_amount: int, committee_votes: int
+) -> int:
+    weighted_quorum_min_bps = reg_cfg.WEIGHTED_QUORUM_SMALL
+    weighted_quorum_max_bps = reg_cfg.WEIGHTED_QUORUM_LARGE
+    weighted_delta_quorum_bps = weighted_quorum_max_bps - weighted_quorum_min_bps
+    amount_min = reg_cfg.MIN_REQUESTED_AMOUNT
+    amount_max = reg_cfg.MAX_REQUESTED_AMOUNT_LARGE
+    delta_amount = amount_max - amount_min
+    weighted_quorum_bps = (
+        weighted_quorum_min_bps
+        + weighted_delta_quorum_bps * (requested_amount - amount_min) // delta_amount
+    )
+    return relative_to_absolute_amount(committee_votes, weighted_quorum_bps)
+
+
 def get_proposal_values_from_registry(
     proposal_client: ProposalClient,
 ) -> ProposalRegistryValues | None:
     global_state = proposal_client.state.global_state
     funding_category = global_state.funding_category
+    requested_amount = global_state.requested_amount
     committee_members = global_state.committee_members
     committee_votes = global_state.committee_votes
+    members_quorum = compute_quorum_threshold(requested_amount, committee_members)
+    votes_quorum = compute_weighted_quorum_threshold(requested_amount, committee_votes)
     match funding_category:
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_SMALL:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_SMALL,
                 voting_duration=reg_cfg.VOTING_DURATION_SMALL,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_SMALL
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_SMALL
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_MEDIUM:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_MEDIUM,
                 voting_duration=reg_cfg.VOTING_DURATION_MEDIUM,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_MEDIUM
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_MEDIUM
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case smart_contracts.proposal.enums.FUNDING_CATEGORY_LARGE:
             return ProposalRegistryValues(
                 discussion_duration=reg_cfg.DISCUSSION_DURATION_LARGE,
                 voting_duration=reg_cfg.VOTING_DURATION_LARGE,
-                members_quorum=relative_to_absolute_amount(
-                    committee_members, reg_cfg.QUORUM_LARGE
-                ),
-                votes_quorum=relative_to_absolute_amount(
-                    committee_votes, reg_cfg.WEIGHTED_QUORUM_LARGE
-                ),
+                members_quorum=members_quorum,
+                votes_quorum=votes_quorum,
             )
         case _:
             return None
@@ -141,7 +173,7 @@ def quorums_reached(
     voted_members: int,
     total_votes: int,
     *,
-    plebiscite: bool = True,
+    plebiscite: bool = False,
 ) -> bool:
     proposal_values = proposal_client.state.global_state
     proposal_registry_values = get_proposal_values_from_registry(proposal_client)
@@ -178,42 +210,56 @@ def assert_proposal_global_state(
     registry_app_id: int,
     status: int = STATUS_EMPTY,
     finalized: bool = False,
+    metadata_uploaded: bool = False,
     title: str = "",
     funding_category: int = FUNDING_CATEGORY_NULL,
     focus: int = 0,
     funding_type: int = FUNDING_NULL,
     requested_amount: int = 0,
     locked_amount: int = 0,
+    discussion_duration: int = 0,
+    voting_duration: int = 0,
+    quorum_threshold: int = 0,
+    weighted_quorum_threshold: int = 0,
     committee_id: bytes = b"",
     committee_members: int = 0,
     committee_votes: int = 0,
+    open_proposal_fee: int = 0,
+    daemon_ops_funding_bps: int = 0,
     voted_members: int = 0,
     approvals: int = 0,
     rejections: int = 0,
     nulls: int = 0,
     assigned_votes: int = 0,
-    voters_count: int = 0,
+    assigned_members: int = 0,
 ) -> None:
     global_state = proposal_client.state.global_state
     assert global_state.proposer == proposer_address
     assert global_state.title == title
     assert global_state.status == status
     assert global_state.finalized == finalized
+    assert global_state.metadata_uploaded == metadata_uploaded
     assert global_state.funding_category == funding_category
     assert global_state.focus == focus
     assert global_state.funding_type == funding_type
     assert global_state.requested_amount == requested_amount
     assert global_state.locked_amount == locked_amount
+    assert global_state.discussion_duration == discussion_duration
+    assert global_state.voting_duration == voting_duration
+    assert global_state.quorum_threshold == quorum_threshold
+    assert global_state.weighted_quorum_threshold == weighted_quorum_threshold
     assert bytes(global_state.committee_id) == committee_id
     assert global_state.committee_members == committee_members
     assert global_state.committee_votes == committee_votes
+    assert global_state.open_proposal_fee == open_proposal_fee
+    assert global_state.daemon_ops_funding_bps == daemon_ops_funding_bps
     assert global_state.voted_members == voted_members
     assert global_state.approvals == approvals
     assert global_state.rejections == rejections
     assert global_state.nulls == nulls
     assert global_state.registry_app_id == registry_app_id
     assert global_state.assigned_votes == assigned_votes
-    assert global_state.voters_count == voters_count
+    assert global_state.assigned_members == assigned_members
 
     if status == STATUS_EMPTY:
         assert global_state.open_ts == 0
@@ -230,6 +276,10 @@ def assert_proposal_global_state(
     else:
         assert global_state.vote_open_ts == 0
 
+    if status > STATUS_REJECTED or global_state.finalized:
+        assert not global_state.assigned_members
+        assert not global_state.assigned_votes
+
 
 def get_default_params_for_status(status: int, overrides: dict, *, finalized: bool) -> dict:  # type: ignore
     # Define common parameters that are shared across statuses
@@ -240,60 +290,57 @@ def get_default_params_for_status(status: int, overrides: dict, *, finalized: bo
         "locked_amount": LOCKED_AMOUNT,
         "funding_category": FUNDING_CATEGORY_SMALL,
         "focus": DEFAULT_FOCUS,
+        "metadata_uploaded": True,
     }
 
-    # Define common committee-related defaults used in multiple statuses
-    committee_defaults = {
+    # Define common Registry defaults used in multiple statuses
+    registry_defaults = {
         "committee_id": DEFAULT_COMMITTEE_ID,
         "committee_members": DEFAULT_COMMITTEE_MEMBERS,
         "committee_votes": DEFAULT_COMMITTEE_VOTES,
-    }
-
-    # Define common voter-related defaults used in multiple statuses
-    voter_defaults = {
-        "voters_count": 0 if finalized else DEFAULT_COMMITTEE_MEMBERS,
-        "assigned_votes": 0 if finalized else 10 * DEFAULT_COMMITTEE_MEMBERS,
+        "open_proposal_fee": reg_cfg.OPEN_PROPOSAL_FEE,
+        "daemon_ops_funding_bps": reg_cfg.DAEMON_OPS_FUNDING_BPS,
     }
 
     # Specific status defaults, with shared defaults included where needed
     status_defaults = {
         STATUS_DRAFT: {
             "status": STATUS_DRAFT,
-            **committee_defaults,
+            **registry_defaults,
             "locked_amount": 0 if finalized else LOCKED_AMOUNT,
         },
-        STATUS_SUBMITTED: {"status": STATUS_SUBMITTED, **committee_defaults},
+        STATUS_SUBMITTED: {
+            "status": STATUS_SUBMITTED,
+            **registry_defaults,
+        },
         STATUS_VOTING: {
             "status": STATUS_VOTING,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
+            "assigned_members": DEFAULT_COMMITTEE_MEMBERS,
+            "assigned_votes": DEFAULT_COMMITTEE_VOTES,
         },
         STATUS_APPROVED: {
             "status": STATUS_APPROVED,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
         },
         STATUS_REJECTED: {
             "status": STATUS_REJECTED,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
         STATUS_REVIEWED: {
             "status": STATUS_REVIEWED,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
+            "locked_amount": 0,
         },
         STATUS_BLOCKED: {
             "status": STATUS_BLOCKED,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
         STATUS_FUNDED: {
             "status": STATUS_FUNDED,
-            **committee_defaults,
-            **voter_defaults,
+            **registry_defaults,
             "locked_amount": 0,
         },
     }.get(status, {})
@@ -312,11 +359,16 @@ def assert_proposal_with_status(  # type: ignore
     **overrides,  # noqa: ANN003
 ) -> None:
     params = get_default_params_for_status(status, overrides, finalized=finalized)  # type: ignore
+    from_registry = get_proposal_values_from_registry(proposal_client)
     assert_proposal_global_state(
         proposal_client,
         proposer_address=proposer_address,
         registry_app_id=registry_app_id,
         finalized=finalized,
+        discussion_duration=from_registry.discussion_duration,
+        voting_duration=from_registry.voting_duration,
+        quorum_threshold=from_registry.members_quorum,
+        weighted_quorum_threshold=from_registry.votes_quorum,
         **params,  # type: ignore
     )
 
@@ -336,6 +388,8 @@ def assert_empty_proposal_global_state(
         committee_id=DEFAULT_COMMITTEE_ID,
         committee_members=DEFAULT_COMMITTEE_MEMBERS,
         committee_votes=DEFAULT_COMMITTEE_VOTES,
+        open_proposal_fee=reg_cfg.OPEN_PROPOSAL_FEE,
+        daemon_ops_funding_bps=reg_cfg.DAEMON_OPS_FUNDING_BPS,
     )
 
 
@@ -345,10 +399,17 @@ def assert_draft_proposal_global_state(  # type: ignore
     registry_app_id: int,
     *,
     finalized: bool = False,
+    metadata_uploaded: bool = False,
     **kwargs,  # noqa: ANN003
 ) -> None:
     assert_proposal_with_status(
-        proposal_client, proposer_address, registry_app_id, STATUS_DRAFT, finalized=finalized, **kwargs  # type: ignore
+        proposal_client,
+        proposer_address,
+        registry_app_id,
+        STATUS_DRAFT,
+        finalized=finalized,
+        metadata_uploaded=metadata_uploaded,
+        **kwargs,  # type: ignore
     )
 
 
@@ -387,7 +448,7 @@ def assert_rejected_proposal_global_state(  # type: ignore
     )
 
 
-def assert_final_proposal_global_state(  # type: ignore
+def assert_submitted_proposal_global_state(  # type: ignore
     proposal_client: ProposalClient,
     proposer_address: str,
     registry_app_id: int,
@@ -601,7 +662,7 @@ def finalize_proposal(
 ) -> None:
     xgov_registry_client.send.finalize_proposal(
         args=FinalizeProposalArgs(
-            proposal_app=proposal_app_id,
+            proposal_id=proposal_app_id,
         ),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, signer=xgov_daemon.signer, static_fee=static_fee
@@ -627,4 +688,21 @@ def submit_proposal(
         params=CommonAppCallParams(
             sender=proposer.address, static_fee=AlgoAmount(micro_algo=MIN_TXN_FEE * 2)
         )
+    )
+
+
+def end_voting_session_time(proposal_client: ProposalClient) -> None:
+    voting_duration = get_proposal_values_from_registry(proposal_client).voting_duration
+    vote_open_ts = proposal_client.state.global_state.vote_open_ts
+    time_warp(vote_open_ts + voting_duration + 1)
+
+
+def scrutinize_proposal(
+    scrutinizer: SigningAccount,
+    proposal_client: ProposalClient,
+    scrutiny_fee: AlgoAmount,
+) -> None:
+    end_voting_session_time(proposal_client)
+    proposal_client.send.scrutiny(
+        params=CommonAppCallParams(sender=scrutinizer.address, static_fee=scrutiny_fee)
     )

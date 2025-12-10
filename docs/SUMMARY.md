@@ -17,6 +17,7 @@
 - [xGov Committee](./specs/xgov-committee.md)
 - [Proposers](./specs/proposers.md)
 - [Proposal](./specs/proposal.md)
+  - [Escrow](./specs/proposal-escrow.md)
   - [Creation](./specs/proposal-creation.md)
   - [Discussion and Submission](./specs/proposal-submission.md)
   - [Vote and Review](./specs/proposal-vote.md)
@@ -24,14 +25,16 @@
 
 # Implementation
 
+- [Events](./implementation/events.md)
 - [Numeric Precisions](./implementation/numeric-precisions.md)
 - [Testing](./implementation/testing.md)
 - [Configuration](./implementation/configuration.md)
 - [Deployment](./implementation/deployment.md)
+- [Integrations](./implementation/integrations.md)
 - [CI/CD](./implementation/ci-cd.md)
 
 ---
 
-[Bug Bounty Program](./BUG-BOUNTY.md)
 [Contribution Guidelines](./CONTRIBUTION-GUIDELINES.md)
+[Bug Bounty Program](./BUG-BOUNTY.md)
 [License](./LICENSE.md)

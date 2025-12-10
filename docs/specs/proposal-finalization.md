@@ -8,8 +8,6 @@ If the Proposal is Funded:
 
 - The requested amount **MUST BE** transferred from the xGov Treasury to its Proposer.
 
-- The Commitment Lock **MUST** be returned to the Proposer.
-
 ## Finalize
 
 The xGov Daemon **SHOULD** finalize:
@@ -20,11 +18,6 @@ The xGov Daemon **SHOULD** finalize:
 
 If a Draft Proposal is finalized, the Commitment Lock **MUST** be returned to the
 Proposer.
-
-The xGov Daemon **SHALL** delete the Voter Boxes of Funded, Rejected, or Blocked
-Proposals.
-
-All Voter Box **MUST** be deleted before finalizing the Proposal.
 
 Outstanding balance of the Proposal Escrow **MUST** be returned to the xGov Treasury.
 

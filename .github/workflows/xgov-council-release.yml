@@ -1,0 +1,157 @@
+name: Manual Council Contract Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for deployment'
+        required: true
+        type: choice
+        options:
+          - localnet
+          - testnet
+          - mainnet
+        default: localnet
+      create_release:
+        description: 'Create a GitHub release for this deployment'
+        required: true
+        type: boolean
+        default: false
+      registry_app_id:
+        description: 'Registry app ID (optional, will use environment variable if not provided)'
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  create-council-release:
+    runs-on: ubuntu-latest
+    if: inputs.create_release
+    outputs:
+      tag: ${{ steps.extract-version.outputs.tag }}
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.BOT_ID }}
+          private-key: ${{ secrets.BOT_SK }}
+
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Configure git
+        shell: bash
+        run: |
+          # set git user and email as test invoke git
+          git config --global user.email "actions@github.com" && git config --global user.name "github-actions"
+
+      - name: Extract version from pyproject.toml
+        id: extract-version
+        run: |
+          BASE_VERSION=$(grep '^version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "version=$BASE_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Get next canary number for testnet
+        id: canary-number
+        if: inputs.environment == 'testnet'
+        run: |
+          BASE_VERSION="${{ steps.extract-version.outputs.version }}"
+          CANARY_TAGS=$(git tag -l "council-v${BASE_VERSION}.canary.*" | sort -V)
+          if [ -z "$CANARY_TAGS" ]; then
+            CANARY_NUM=1
+          else
+            LATEST_CANARY=$(echo "$CANARY_TAGS" | tail -1)
+            CANARY_NUM=$(echo "$LATEST_CANARY" | sed "s/council-v${BASE_VERSION}\.canary\.\([0-9]*\)/\1/")
+            CANARY_NUM=$((CANARY_NUM + 1))
+          fi
+          echo "number=$CANARY_NUM" >> $GITHUB_OUTPUT
+
+      - name: Set release tag
+        id: set-tag
+        run: |
+          BASE_VERSION="${{ steps.extract-version.outputs.version }}"
+          if [ "${{ inputs.environment }}" == "testnet" ]; then
+            TAG="council-v${BASE_VERSION}.canary.${{ steps.canary-number.outputs.number }}"
+          else
+            TAG="council-v${BASE_VERSION}-${{ inputs.environment }}"
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_ENV
+
+      - name: Create council release tag
+        run: |
+          TAG="${{ steps.set-tag.outputs.tag }}"
+          git tag -a "$TAG" -m "Council Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub council release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          tag_name: ${{ steps.set-tag.outputs.tag }}
+          name: Council Release ${{ steps.set-tag.outputs.tag }}
+          body: |
+            🚀 **Council Contract Release ${{ steps.set-tag.outputs.tag }}**
+
+            This ${{ inputs.environment == 'testnet' && 'canary' || '' }} release has been manually deployed to Algorand ${{ inputs.environment == 'testnet' && 'Testnet' || 'Mainnet' }}
+
+            ## Deployment
+            - **Registry App ID**: ${{ inputs.registry_app_id || 'from environment variable' }}
+
+            ## Changes
+            This release includes the latest Council contract updates.
+
+            ${{ inputs.environment == 'testnet' && '**⚠️ Note**: This is a canary release for testing purposes. Not suitable for production use.' || '' }}
+          draft: false
+          prerelease: ${{ inputs.environment == 'testnet' }}
+
+  deploy-council:
+    runs-on: "ubuntu-latest"
+    needs: [create-council-release]
+    environment: contract-${{ inputs.environment }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Deploy council to ${{ inputs.environment }}
+        run: algokit project deploy ${{ inputs.environment }} council
+        env:
+          # Registry app ID - use input if provided, otherwise fall back to environment variable
+          XGOV_REGISTRY_APP_ID: ${{ inputs.registry_app_id || (inputs.environment == 'mainnet' && vars.XGOV_REGISTRY_APP_ID_MAINNET) || (inputs.environment == 'testnet' && vars.XGOV_REGISTRY_APP_ID_TESTNET) || (inputs.environment == 'localnet' && vars.XGOV_REGISTRY_APP_ID_LOCALNET) || '' }}
+          # Mainnet Vault configuration for transaction signing
+          VAULT_URL: ${{ inputs.environment == 'mainnet' && secrets.VAULT_URL || '' }}
+          VAULT_OIDC_ROLE: ${{ inputs.environment == 'mainnet' && secrets.VAULT_ROLE_MAINNET || '' }}
+          VAULT_OIDC_MOUNT_PATH: ${{ inputs.environment == 'mainnet' && (secrets.VAULT_OIDC_MOUNT_PATH || 'oidc') || '' }}
+          VAULT_KEY_NAME: ${{ inputs.environment == 'mainnet' && secrets.VAULT_KEY_NAME_MAINNET || '' }}
+          MULTISIG_ALGORAND_ADDRESS: ${{ inputs.environment == 'mainnet' && (vars.MULTISIG_ADDRESS_MAINNET || '') || '' }}
+          VAULT_NAMESPACE: ${{ inputs.environment == 'mainnet' && secrets.VAULT_NAMESPACE || '' }}
+          # Testnet/Localnet direct deployer and dispenser accounts
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+
+  notify-deployment:
+    runs-on: ubuntu-latest
+    needs: [create-council-release, deploy-council]
+    if: always() && needs.create-council-release.result == 'success'
+    steps:
+      - name: Notify successful deployment
+        if: needs.deploy-council.result == 'success'
+        run: |
+          VERSION="${{ needs.create-council-release.outputs.version || 'latest' }}"
+          echo "✅ Successfully deployed Council contract ${VERSION} to ${{ inputs.environment }}"
+
+      - name: Notify failed deployment
+        if: needs.deploy-council.result == 'failure'
+        run: |
+          echo "❌ Failed to deploy Council contract ${VERSION} to ${{ inputs.environment }}"
+          exit 1

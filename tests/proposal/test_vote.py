@@ -7,13 +7,16 @@ from algokit_utils import (
     SigningAccount,
 )
 
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
+from smart_contracts.artifacts.proposal.proposal_client import (
+    GetVoterBoxArgs,
+    ProposalClient,
+)
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
-    VoteArgs,
+    VoteProposalArgs,
     XgovRegistryMockClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.common import CommitteeMember
+from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
     assert_boxes,
     assert_voting_proposal_global_state,
@@ -25,86 +28,84 @@ from tests.utils import time_warp
 def test_vote_success(
     algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    proposer: SigningAccount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=committee[0].votes,
-            rejections=0,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=committee[0].votes,
+            rejection_votes=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
-
     assert_voting_proposal_global_state(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
         approvals=committee[0].votes,
+        assigned_members=assigned_members - 1,
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
-    assert_boxes(
-        algorand_client=algorand_client,
-        app_id=voting_proposal_client.app_id,
-        expected_boxes=[
-            (
-                get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
-            )
-            for cm in committee[1:]
-        ]
-        + [(get_voter_box_key(committee[0].account.address), "AAAAAAAAAAqA")],
-    )
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists
 
 
 def test_vote_not_committee_member(
     min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.VOTER_NOT_FOUND):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=proposer.address,
-                approvals=42,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=proposer.address,
+                approval_votes=42,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
 
 def test_vote_already_voted(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=committee[0].votes,
-            rejections=0,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=committee[0].votes,
+            rejection_votes=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    with pytest.raises(LogicError, match=err.VOTER_ALREADY_VOTED):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=committee[0].votes,
-                rejections=0,
+    with pytest.raises(LogicError, match=err.VOTER_NOT_FOUND):
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -115,35 +116,30 @@ def test_vote_already_voted(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
         approvals=committee[0].votes,
+        assigned_members=assigned_members - 1,
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
-    assert_boxes(
-        algorand_client=algorand_client,
-        app_id=voting_proposal_client.app_id,
-        expected_boxes=[
-            (
-                get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
-            )
-            for cm in committee[1:]
-        ]
-        + [(get_voter_box_key(committee[0].account.address), "AAAAAAAAAAqA")],
-    )
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists
 
 
 def test_vote_empty_proposal(
     min_fee_times_2: AlgoAmount,
-    proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=committee[0].votes,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -151,18 +147,17 @@ def test_vote_empty_proposal(
 
 def test_vote_draft_proposal(
     min_fee_times_2: AlgoAmount,
-    draft_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    draft_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=draft_proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=committee[0].votes,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=draft_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -170,30 +165,29 @@ def test_vote_draft_proposal(
 
 def test_vote_submitted_proposal(
     min_fee_times_2: AlgoAmount,
-    submitted_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=submitted_proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=committee[0].votes,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=submitted_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
 
 def test_vote_voting_expired(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     reg_gs = xgov_registry_mock_client.state.global_state
 
@@ -203,12 +197,12 @@ def test_vote_voting_expired(
     time_warp(vote_open_ts + voting_duration + 1)
 
     with pytest.raises(LogicError, match=err.VOTING_PERIOD_EXPIRED):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=committee[0].votes,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=committee[0].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -217,6 +211,8 @@ def test_vote_voting_expired(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        assigned_members=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(
@@ -225,7 +221,7 @@ def test_vote_voting_expired(
         expected_boxes=[
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee
         ],
@@ -233,19 +229,21 @@ def test_vote_voting_expired(
 
 
 def test_vote_reject(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=0,
-            rejections=committee[0].votes,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=0,
+            rejection_votes=committee[0].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -256,6 +254,8 @@ def test_vote_reject(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
         rejections=committee[0].votes,
+        assigned_members=assigned_members - 1,
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
     assert_boxes(
@@ -264,33 +264,35 @@ def test_vote_reject(
         expected_boxes=[
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee[1:]
-        ]
-        + [
-            (
-                get_voter_box_key(committee[0].account.address),
-                "AAAAAAAAAAqA",
-            )
         ],
     )
 
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists
+
 
 def test_vote_null(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=0,
-            rejections=0,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=0,
+            rejection_votes=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -301,6 +303,8 @@ def test_vote_null(
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=1,
         nulls=committee[0].votes,
+        assigned_members=assigned_members - 1,
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
     assert_boxes(
@@ -309,53 +313,55 @@ def test_vote_null(
         expected_boxes=[
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee[1:]
-        ]
-        + [
-            (
-                get_voter_box_key(committee[0].account.address),
-                "AAAAAAAAAAqA",
-            )
         ],
     )
 
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists
+
 
 def test_vote_mixed(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=committee[0].votes,
-            rejections=0,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=committee[0].votes,
+            rejection_votes=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[1].account.address,
-            approvals=0,
-            rejections=committee[0].votes,
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[1].account.address,
+            approval_votes=0,
+            rejection_votes=committee[0].votes,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
 
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[2].account.address,
-            approvals=0,
-            rejections=0,
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[2].account.address,
+            approval_votes=0,
+            rejection_votes=0,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -368,6 +374,11 @@ def test_vote_mixed(
         approvals=committee[0].votes,
         rejections=committee[0].votes,
         nulls=committee[0].votes,
+        assigned_members=assigned_members - 3,
+        assigned_votes=assigned_votes
+        - committee[0].votes
+        - committee[1].votes
+        - committee[2].votes,
     )
 
     assert_boxes(
@@ -376,34 +387,36 @@ def test_vote_mixed(
         expected_boxes=[
             (
                 get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
             for cm in committee[3:]
-        ]
-        + [
-            (
-                get_voter_box_key(cm.account.address),
-                "AAAAAAAAAAqA",
-            )
-            for cm in committee[:3]
         ],
     )
 
+    for cm in committee[:3]:
+        _, exists = voting_proposal_client.send.get_voter_box(
+            args=GetVoterBoxArgs(voter_address=cm.account.address),
+            params=CommonAppCallParams(sender=proposer.address),
+        ).abi_return
+        assert not exists
+
 
 def test_vote_mixed_same_vote_call(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
-    xgov_registry_mock_client.send.vote(
-        args=VoteArgs(
-            proposal_app=voting_proposal_client.app_id,
-            voter=committee[0].account.address,
-            approvals=6,
-            rejections=4,
+    assigned_members = voting_proposal_client.state.global_state.assigned_members
+    assigned_votes = voting_proposal_client.state.global_state.assigned_votes
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=6,
+            rejection_votes=4,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
@@ -415,35 +428,32 @@ def test_vote_mixed_same_vote_call(
         voted_members=1,
         approvals=6,
         rejections=4,
+        assigned_members=assigned_members - 1,
+        assigned_votes=assigned_votes - committee[0].votes,
     )
 
-    assert_boxes(
-        algorand_client=algorand_client,
-        app_id=voting_proposal_client.app_id,
-        expected_boxes=[
-            (
-                get_voter_box_key(committee[0].account.address),
-                "AAAAAAAAAAqA",
-            )
-        ],
-    )
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists
 
 
 def test_vote_exceeded(
-    min_fee_times_2: AlgoAmount,
-    voting_proposal_client: ProposalClient,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     algorand_client: AlgorandClient,
-    proposer: SigningAccount,
+    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.VOTES_EXCEEDED):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=committee[0].account.address,
-                approvals=6,
-                rejections=5,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=6,
+                rejection_votes=5,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -452,6 +462,8 @@ def test_vote_exceeded(
         voting_proposal_client,
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
+        assigned_members=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
     )
 
     assert_boxes(
@@ -460,7 +472,7 @@ def test_vote_exceeded(
         expected_boxes=[
             (
                 get_voter_box_key(committee[0].account.address),
-                "AAAAAAAAAAoA",
+                "AAAAAAAAAAo=",
             )
         ],
     )

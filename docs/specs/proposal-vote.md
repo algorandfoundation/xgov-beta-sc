@@ -20,15 +20,15 @@ Vote **SHALL NOT** be modified.
 > Once the Pool is ready to vote, the allocation of `N` votes among _“Approve”_,
 > _“Reject”_, or _“Null”_ is simultaneous and can no longer be modified.
 
-## Voting Outcome
+## Scrutiny
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
 
-- A category-dependent _democratic quorum_ of all xGov Committee (one xGov, one vote)
-is reached. _“Null”_ votes **affect** this quorum.
+- A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached. _“Null”_
+votes **affect** this quorum.
 
-- A category-dependent _weighted quorum_ of all xGov Committee voting power is reached.
-_“Null”_ votes **affect** this quorum.
+- A _weighted quorum_ of all xGov Committee voting power is reached. _“Null”_ votes
+**affect** this quorum.
 
 - The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached. _“Null”_
 votes **do not affect** the relative majority.
@@ -37,7 +37,11 @@ And it is Rejected otherwise.
 
 The Commitment Lock **MUST** be returned to the Proposer if the Proposal is Rejected.
 
+The xGov Daemon **SHALL** delete Voter Boxes of absentees xGovs.
+
 ## Review
+
+All Voter Box **MUST** be deleted before reviewing the Proposal.
 
 The xGov Council **MUST** review Approved Proposals.
 
@@ -55,3 +59,7 @@ In case of a Blocked Proposal:
 
 - The Commitment Lock **MUST** be transferred (slashed) from the Proposal Escrow
 to the xGov Treasury.
+
+In case of a Reviewed Proposal:
+
+- The Commitment Lock **MUST** be returned from the Proposal Escrow to the Proposer.

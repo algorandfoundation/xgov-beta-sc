@@ -1,28 +1,63 @@
-# pyright: reportMissingModuleSource=false
+import typing as t
 
 from algopy import (
-    ARC4Contract,
+    Bytes,
     Global,
     GlobalState,
     String,
     UInt64,
     arc4,
+    gtxn,
     itxn,
 )
 
+import smart_contracts.common.abi_types as typ
 import smart_contracts.errors.std_errors as err
+from smart_contracts.interfaces.xgov_registry import XGovRegistryInterface
 from smart_contracts.proposal.contract import Proposal
 
 from ..common.abi_types import Bytes32
 from ..xgov_registry import config as reg_cfg
 
 
-class XgovRegistryMock(ARC4Contract):
+class XgovRegistryMock(XGovRegistryInterface):
     def __init__(self) -> None:
+
+        # Role-Based Access Control (RBAC)
+        self.xgov_council = GlobalState(
+            arc4.Address(),
+            key=reg_cfg.GS_KEY_XGOV_COUNCIL,
+        )
+        self.xgov_daemon = GlobalState(
+            arc4.Address(),
+            key=reg_cfg.GS_KEY_XGOV_DAEMON,
+        )
+
+        # Registry Control States
+        self.paused_registry = GlobalState(
+            UInt64(0),
+            key=reg_cfg.GS_KEY_PAUSED_REGISTRY,
+        )
+        self.paused_proposals = GlobalState(
+            UInt64(0),
+            key=reg_cfg.GS_KEY_PAUSED_PROPOSALS,
+        )
+
+        # Fees
+        self.open_proposal_fee = GlobalState(
+            UInt64(reg_cfg.OPEN_PROPOSAL_FEE),
+            key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
+        )
+        self.daemon_ops_funding_bps = GlobalState(
+            UInt64(reg_cfg.DAEMON_OPS_FUNDING_BPS),
+            key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
+        )
         self.proposal_commitment_bps = GlobalState(
             UInt64(reg_cfg.PROPOSAL_COMMITMENT_BPS),
             key=reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS,
         )
+
+        # Requested Amount Limits
         self.min_requested_amount = GlobalState(
             UInt64(reg_cfg.MIN_REQUESTED_AMOUNT),
             key=reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT,
@@ -39,10 +74,8 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(reg_cfg.MAX_REQUESTED_AMOUNT_LARGE),
             key=reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE,
         )
-        self.daemon_ops_funding_bps = GlobalState(
-            UInt64(reg_cfg.DAEMON_OPS_FUNDING_BPS),
-            key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
-        )
+
+        # Time Limits
         self.discussion_duration_small = GlobalState(
             UInt64(reg_cfg.DISCUSSION_DURATION_SMALL),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL,
@@ -54,26 +87,6 @@ class XgovRegistryMock(ARC4Contract):
         self.discussion_duration_large = GlobalState(
             UInt64(reg_cfg.DISCUSSION_DURATION_LARGE),
             key=reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE,
-        )
-        self.xgov_daemon = GlobalState(
-            arc4.Address(),
-            key=reg_cfg.GS_KEY_XGOV_DAEMON,
-        )
-        self.open_proposal_fee = GlobalState(
-            UInt64(reg_cfg.OPEN_PROPOSAL_FEE),
-            key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
-        )
-        self.committee_id = GlobalState(
-            Bytes32.from_bytes(b"0" * 32),
-            key=reg_cfg.GS_KEY_COMMITTEE_ID,
-        )
-        self.committee_members = GlobalState(
-            UInt64(),
-            key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
-        )
-        self.committee_votes = GlobalState(
-            UInt64(),
-            key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
         )
         self.voting_duration_small = GlobalState(
             UInt64(reg_cfg.VOTING_DURATION_SMALL),
@@ -87,6 +100,22 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(reg_cfg.VOTING_DURATION_LARGE),
             key=reg_cfg.GS_KEY_VOTING_DURATION_LARGE,
         )
+
+        # xGov Committee
+        self.committee_id = GlobalState(
+            Bytes32.from_bytes(b"0" * 32),
+            key=reg_cfg.GS_KEY_COMMITTEE_ID,
+        )
+        self.committee_members = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
+        )
+        self.committee_votes = GlobalState(
+            UInt64(),
+            key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
+        )
+
+        # Quorums
         self.quorum_small = GlobalState(
             UInt64(reg_cfg.QUORUM_SMALL),
             key=reg_cfg.GS_KEY_QUORUM_SMALL,
@@ -99,6 +128,8 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(reg_cfg.QUORUM_LARGE),
             key=reg_cfg.GS_KEY_QUORUM_LARGE,
         )
+
+        # Weighted Quorums
         self.weighted_quorum_small = GlobalState(
             UInt64(reg_cfg.WEIGHTED_QUORUM_SMALL),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL,
@@ -111,375 +142,170 @@ class XgovRegistryMock(ARC4Contract):
             UInt64(reg_cfg.WEIGHTED_QUORUM_LARGE),
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
         )
-        self.xgov_council = GlobalState(
-            arc4.Address(),
-            key=reg_cfg.GS_KEY_XGOV_COUNCIL,
-        )
-        self.paused_registry = GlobalState(
-            UInt64(0),
-            key=reg_cfg.GS_KEY_PAUSED_REGISTRY,
-        )
-        self.paused_proposals = GlobalState(
-            UInt64(0),
-            key=reg_cfg.GS_KEY_PAUSED_PROPOSALS,
-        )
+
+    @arc4.abimethod(create="require")
+    def create(self) -> None:
+        pass
+
+    @arc4.abimethod()
+    def init_proposal_contract(self, *, size: arc4.UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def load_proposal_contract(self, *, offset: arc4.UInt64, data: Bytes) -> None:
+        pass
+
+    @arc4.abimethod()
+    def delete_proposal_contract_box(self) -> None:
+        pass
 
     @arc4.abimethod()
     def pause_registry(self) -> None:
-        """
-        Pauses the xGov Registry non-administrative methods.
-        """
-
         self.paused_registry.value = UInt64(1)
 
     @arc4.abimethod()
     def pause_proposals(self) -> None:
-        """
-        Pauses the creation of new Proposals.
-        """
-
         self.paused_proposals.value = UInt64(1)
 
     @arc4.abimethod()
     def resume_registry(self) -> None:
-        """
-        Resumes the xGov Registry non-administrative methods.
-        """
-
         self.paused_registry.value = UInt64(0)
 
     @arc4.abimethod()
     def resume_proposals(self) -> None:
-        """
-        Resumes the creation of new Proposals.
-        """
-
         self.paused_proposals.value = UInt64(0)
 
     @arc4.abimethod()
-    def create_empty_proposal(
-        self,
-        proposer: arc4.Address,
-    ) -> UInt64:
-        """
-        Create an empty proposal
-
-        Args:
-            proposer (arc4.Address): The proposer's address
-
-        Returns:
-            UInt64: The ID of the created proposal
-
-        """
-        mbr_before = Global.current_application_address.min_balance
-        res = arc4.arc4_create(
-            Proposal,
-            proposer,
-        )
-        mbr_after = Global.current_application_address.min_balance
-
-        itxn.Payment(
-            receiver=res.created_app.address,
-            amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
-            fee=0,
-        ).submit()
-
-        return res.created_app.id
+    def set_xgov_manager(self, *, manager: arc4.Address) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_proposal_commitment_bps(self, commitment_bps: UInt64) -> None:
-        """
-        Set the proposal commitment in basis points
-
-        Args:
-            commitment_bps (UInt64): The commitment in basis points
-
-        """
-        self.proposal_commitment_bps.value = commitment_bps
+    def set_payor(self, *, payor: arc4.Address) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_min_requested_amount(self, min_requested_amount: UInt64) -> None:
-        """
-        Set the minimum requested amount
-
-        Args:
-            min_requested_amount (UInt64): The minimum requested amount
-
-        """
-        self.min_requested_amount.value = min_requested_amount
+    def set_xgov_council(self, *, council: arc4.Address) -> None:
+        self.xgov_council.value = council
 
     @arc4.abimethod()
-    def set_max_requested_amount_small(self, max_requested_amount: UInt64) -> None:
-        """
-        Set the maximum requested amount for small proposals
-
-        Args:
-            max_requested_amount (UInt64): The maximum requested amount
-
-        """
-        self.max_requested_amount_small.value = max_requested_amount
+    def set_xgov_subscriber(self, *, subscriber: arc4.Address) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_max_requested_amount_medium(self, max_requested_amount: UInt64) -> None:
-        """
-        Set the maximum requested amount for medium proposals
-
-        Args:
-            max_requested_amount (UInt64): The maximum requested amount
-
-        """
-        self.max_requested_amount_medium.value = max_requested_amount
+    def set_kyc_provider(self, *, provider: arc4.Address) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_max_requested_amount_large(self, max_requested_amount: UInt64) -> None:
-        """
-        Set the maximum requested amount for large proposals
-
-        Args:
-            max_requested_amount (UInt64): The maximum requested amount
-
-        """
-        self.max_requested_amount_large.value = max_requested_amount
+    def set_committee_manager(self, *, manager: arc4.Address) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_daemon_ops_funding_bps(self, daemon_ops_funding_bps: UInt64) -> None:
-        """
-        Set the daemon operations funding in basis points
-
-        Args:
-            daemon_ops_funding_bps (UInt64): The daemon operations funding in basis points
-
-        """
-        self.daemon_ops_funding_bps.value = daemon_ops_funding_bps
-
-    @arc4.abimethod()
-    def set_discussion_duration_small(self, discussion_duration: UInt64) -> None:
-        """
-        Set the discussion duration for small proposals
-
-        Args:
-            discussion_duration (UInt64): The discussion duration
-
-        """
-        self.discussion_duration_small.value = discussion_duration
-
-    @arc4.abimethod()
-    def set_discussion_duration_medium(self, discussion_duration: UInt64) -> None:
-        """
-        Set the discussion duration for medium proposals
-
-        Args:
-            discussion_duration (UInt64): The discussion duration
-
-        """
-        self.discussion_duration_medium.value = discussion_duration
-
-    @arc4.abimethod()
-    def set_discussion_duration_large(self, discussion_duration: UInt64) -> None:
-        """
-        Set the discussion duration for large proposals
-
-        Args:
-            discussion_duration (UInt64): The discussion duration
-
-        """
-        self.discussion_duration_large.value = discussion_duration
-
-    @arc4.abimethod()
-    def set_xgov_daemon(self, xgov_daemon: arc4.Address) -> None:
-        """
-        Set the xGov Daemon
-
-        Args:
-            xgov_daemon (arc4.Address): The xGov Daemon
-
-        """
+    def set_xgov_daemon(self, *, xgov_daemon: arc4.Address) -> None:
         self.xgov_daemon.value = xgov_daemon
 
     @arc4.abimethod()
-    def set_open_proposal_fee(self, open_proposal_fee: UInt64) -> None:
-        """
-        Set the fee to open a proposal
+    def config_xgov_registry(self, *, config: typ.XGovRegistryConfig) -> None:
+        pass
 
-        Args:
-            open_proposal_fee (UInt64): The proposal fee
-
-        """
-        self.open_proposal_fee.value = open_proposal_fee
+    @arc4.abimethod(allow_actions=["UpdateApplication"])
+    def update_xgov_registry(self) -> None:
+        pass
 
     @arc4.abimethod()
-    def set_committee_id(self, committee_id: Bytes32) -> None:
-        """
-        Set the committee ID
-
-        Args:
-            committee_id (Cid): The committee ID
-
-        """
-        self.committee_id.value = committee_id.copy()
-
-    @arc4.abimethod()
-    def clear_committee_id(self) -> None:
-        """
-        Clear the committee ID
-
-        """
-        self.committee_id.value = Bytes32.from_bytes(b"0" * 32)
-
-    @arc4.abimethod()
-    def set_committee_members(self, committee_members: UInt64) -> None:
-        """
-        Set the number of committee members
-
-        Args:
-            committee_members (UInt64): The number of committee members
-
-        """
-        self.committee_members.value = committee_members
-
-    @arc4.abimethod()
-    def set_committee_votes(self, committee_votes: UInt64) -> None:
-        """
-        Set the number of committee votes
-
-        Args:
-            committee_votes (UInt64): The number of committee votes
-
-        """
-        self.committee_votes.value = committee_votes
-
-    @arc4.abimethod()
-    def set_voting_duration_small(self, voting_duration: UInt64) -> None:
-        """
-        Set the voting duration for small proposals
-
-        Args:
-            voting_duration (UInt64): The voting duration
-
-        """
-        self.voting_duration_small.value = voting_duration
-
-    @arc4.abimethod()
-    def set_voting_duration_medium(self, voting_duration: UInt64) -> None:
-        """
-        Set the voting duration for medium proposals
-
-        Args:
-            voting_duration (UInt64): The voting duration
-
-        """
-        self.voting_duration_medium.value = voting_duration
-
-    @arc4.abimethod()
-    def set_voting_duration_large(self, voting_duration: UInt64) -> None:
-        """
-        Set the voting duration for large proposals
-
-        Args:
-            voting_duration (UInt64): The voting duration
-
-        """
-        self.voting_duration_large.value = voting_duration
-
-    @arc4.abimethod()
-    def set_quorum_small(self, quorum: UInt64) -> None:
-        """
-        Set the quorum for small proposals
-
-        Args:
-            quorum (UInt64): The quorum
-
-        """
-        self.quorum_small.value = quorum
-
-    @arc4.abimethod()
-    def set_quorum_medium(self, quorum: UInt64) -> None:
-        """
-        Set the quorum for medium proposals
-
-        Args:
-            quorum (UInt64): The quorum
-
-        """
-        self.quorum_medium.value = quorum
-
-    @arc4.abimethod()
-    def set_quorum_large(self, quorum: UInt64) -> None:
-        """
-        Set the quorum for large proposals
-
-        Args:
-            quorum (UInt64): The quorum
-
-        """
-        self.quorum_large.value = quorum
-
-    @arc4.abimethod()
-    def set_weighted_quorum_small(self, weighted_quorum: UInt64) -> None:
-        """
-        Set the weighted quorum for small proposals
-
-        Args:
-            weighted_quorum (UInt64): The weighted quorum
-
-        """
-        self.weighted_quorum_small.value = weighted_quorum
-
-    @arc4.abimethod()
-    def set_weighted_quorum_medium(self, weighted_quorum: UInt64) -> None:
-        """
-        Set the weighted quorum for medium proposals
-
-        Args:
-            weighted_quorum (UInt64): The weighted quorum
-
-        """
-        self.weighted_quorum_medium.value = weighted_quorum
-
-    @arc4.abimethod()
-    def set_weighted_quorum_large(self, weighted_quorum: UInt64) -> None:
-        """
-        Set the weighted quorum for large proposals
-
-        Args:
-            weighted_quorum (UInt64): The weighted quorum
-
-        """
-        self.weighted_quorum_large.value = weighted_quorum
-
-    @arc4.abimethod()
-    def vote(
-        self,
-        proposal_app: arc4.UInt64,
-        voter: arc4.Address,
-        approvals: arc4.UInt64,
-        rejections: arc4.UInt64,
+    def subscribe_xgov(
+        self, *, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
     ) -> None:
-        """
-        Vote on a proposal
+        pass
 
-        Args:
-            proposal_app (arc4.UInt64): The proposal app
-            voter (arc4.Address): The voter
-            approvals (arc4.UInt64): The number of approvals
-            rejections (arc4.UInt64): The number of rejections
+    @arc4.abimethod()
+    def unsubscribe_xgov(self) -> None:
+        pass
 
-        Raises:
-            err.UNAUTHORIZED: If the sender is not the registry contract
-            err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
-            err.VOTER_ALREADY_VOTED: If the voter has already voted
-            err.VOTES_EXCEEDED: If the total votes exceed the assigned voting power
-            err.MISSING_CONFIG: If one of the required configuration values is missing
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
-            err.VOTING_PERIOD_EXPIRED: If the voting period has expired
+    @arc4.abimethod()
+    def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        pass
 
-        """
+    @arc4.abimethod()
+    def reject_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def request_subscribe_xgov(
+        self,
+        *,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        pass
+
+    @arc4.abimethod()
+    def request_unsubscribe_xgov(
+        self,
+        *,
+        xgov_address: arc4.Address,
+        owner_address: arc4.Address,
+        relation_type: arc4.UInt64,
+        payment: gtxn.PaymentTransaction,
+    ) -> None:
+        pass
+
+    @arc4.abimethod()
+    def approve_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def reject_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def set_voting_account(
+        self, *, xgov_address: arc4.Address, voting_address: arc4.Address
+    ) -> None:
+        pass
+
+    @arc4.abimethod()
+    def subscribe_proposer(self, *, payment: gtxn.PaymentTransaction) -> None:
+        pass
+
+    @arc4.abimethod()
+    def set_proposer_kyc(
+        self,
+        *,
+        proposer: arc4.Address,
+        kyc_status: arc4.Bool,
+        kyc_expiring: arc4.UInt64,
+    ) -> None:
+        pass
+
+    @arc4.abimethod()
+    def declare_committee(
+        self, *, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+    ) -> None:
+        self.committee_id.value = committee_id.copy()
+        self.committee_members.value = size.as_uint64()
+        self.committee_votes.value = votes.as_uint64()
+
+    @arc4.abimethod()
+    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
+        return arc4.UInt64(0)
+
+    @arc4.abimethod()
+    def vote_proposal(
+        self,
+        *,
+        proposal_id: arc4.UInt64,
+        xgov_address: arc4.Address,
+        approval_votes: arc4.UInt64,
+        rejection_votes: arc4.UInt64,
+    ) -> None:
         error, _tx = arc4.abi_call(
             Proposal.vote,
-            voter,
-            approvals,
-            rejections,
-            app_id=proposal_app.as_uint64(),
+            xgov_address,
+            approval_votes.as_uint64(),
+            rejection_votes.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -504,33 +330,10 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def set_xgov_council(self, xgov_council: arc4.Address) -> None:
-        """
-        Set the XGov council
-
-        Args:
-            xgov_council (arc4.Address): The XGov council
-
-        """
-        self.xgov_council.value = xgov_council
-
-    @arc4.abimethod()
-    def fund(self, proposal_app: arc4.UInt64) -> None:
-        """
-        Fund a proposal
-
-        Args:
-            proposal_app (arc4.UInt64): The proposal app
-
-        Raises:
-            err.UNAUTHORIZED: If the sender is not the registry contract
-            err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_APPROVED
-            err.MISSING_CONFIG: If one of the required configuration values is missing
-
-        """
+    def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.fund,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -545,10 +348,10 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def finalize_proposal(self, proposal_app: arc4.UInt64) -> None:
+    def finalize_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.finalize,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -565,10 +368,10 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def drop_proposal(self, proposal_app: arc4.UInt64) -> None:
+    def drop_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         error, _tx = arc4.abi_call(
             Proposal.drop,
-            app_id=proposal_app.as_uint64(),
+            app_id=proposal_id.as_uint64(),
             fee=0,
         )
 
@@ -581,5 +384,148 @@ class XgovRegistryMock(ARC4Contract):
                     assert False, "Unknown error"  # noqa
 
     @arc4.abimethod()
-    def is_proposal(self, proposal_id: arc4.UInt64) -> None:
+    def deposit_funds(self, *, payment: gtxn.PaymentTransaction) -> None:
+        pass
+
+    @arc4.abimethod()
+    def withdraw_funds(self, *, amount: arc4.UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def withdraw_balance(self) -> None:
+        pass
+
+    @arc4.abimethod(readonly=True)
+    def get_state(self) -> typ.TypedGlobalState:
+        return typ.TypedGlobalState(
+            paused_registry=arc4.Bool(bool(self.paused_registry.value)),
+            paused_proposals=arc4.Bool(bool(self.paused_proposals.value)),
+            xgov_manager=arc4.Address(Global.zero_address),
+            xgov_payor=arc4.Address(Global.zero_address),
+            xgov_council=self.xgov_council.value,
+            xgov_subscriber=arc4.Address(Global.zero_address),
+            kyc_provider=arc4.Address(Global.zero_address),
+            committee_manager=arc4.Address(Global.zero_address),
+            xgov_daemon=self.xgov_daemon.value,
+            xgov_fee=arc4.UInt64(0),
+            proposer_fee=arc4.UInt64(0),
+            open_proposal_fee=arc4.UInt64(self.open_proposal_fee.value),
+            daemon_ops_funding_bps=arc4.UInt64(self.daemon_ops_funding_bps.value),
+            proposal_commitment_bps=arc4.UInt64(self.proposal_commitment_bps.value),
+            min_requested_amount=arc4.UInt64(self.min_requested_amount.value),
+            max_requested_amount=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
+                arc4.UInt64(self.max_requested_amount_small.value),
+                arc4.UInt64(self.max_requested_amount_medium.value),
+                arc4.UInt64(self.max_requested_amount_large.value),
+            ),
+            discussion_duration=arc4.StaticArray[arc4.UInt64, t.Literal[4]](
+                arc4.UInt64(self.discussion_duration_small.value),
+                arc4.UInt64(self.discussion_duration_medium.value),
+                arc4.UInt64(self.discussion_duration_large.value),
+                arc4.UInt64(0),
+            ),
+            voting_duration=arc4.StaticArray[arc4.UInt64, t.Literal[4]](
+                arc4.UInt64(self.voting_duration_small.value),
+                arc4.UInt64(self.voting_duration_medium.value),
+                arc4.UInt64(self.voting_duration_large.value),
+                arc4.UInt64(0),
+            ),
+            quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
+                arc4.UInt64(self.quorum_small.value),
+                arc4.UInt64(self.quorum_medium.value),  # No longer used
+                arc4.UInt64(self.quorum_large.value),
+            ),
+            weighted_quorum=arc4.StaticArray[arc4.UInt64, t.Literal[3]](
+                arc4.UInt64(self.weighted_quorum_small.value),
+                arc4.UInt64(self.weighted_quorum_medium.value),
+                # No longer used
+                arc4.UInt64(self.weighted_quorum_large.value),
+            ),
+            outstanding_funds=arc4.UInt64(0),
+            pending_proposals=arc4.UInt64(0),
+            committee_id=self.committee_id.value.copy(),
+            committee_members=arc4.UInt64(self.committee_members.value),
+            committee_votes=arc4.UInt64(self.committee_votes.value),
+        )
+
+    @arc4.abimethod(readonly=True)
+    def get_xgov_box(
+        self, *, xgov_address: arc4.Address
+    ) -> tuple[typ.XGovBoxValue, bool]:
+        return (
+            typ.XGovBoxValue(
+                voting_address=arc4.Address(),
+                voted_proposals=arc4.UInt64(0),
+                last_vote_timestamp=arc4.UInt64(0),
+                subscription_round=arc4.UInt64(0),
+            ),
+            False,
+        )
+
+    @arc4.abimethod(readonly=True)
+    def get_proposer_box(
+        self,
+        *,
+        proposer_address: arc4.Address,
+    ) -> tuple[typ.ProposerBoxValue, bool]:
+        return (
+            typ.ProposerBoxValue(
+                active_proposal=arc4.Bool(),
+                kyc_status=arc4.Bool(),
+                kyc_expiring=arc4.UInt64(0),
+            ),
+            False,
+        )
+
+    @arc4.abimethod(readonly=True)
+    def get_request_box(
+        self,
+        *,
+        request_id: arc4.UInt64,
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
+        return (
+            typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            ),
+            False,
+        )
+
+    @arc4.abimethod(readonly=True)
+    def get_request_unsubscribe_box(
+        self, *, request_id: arc4.UInt64
+    ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
+        return (
+            typ.XGovSubscribeRequestBoxValue(
+                xgov_addr=arc4.Address(),
+                owner_addr=arc4.Address(),
+                relation_type=arc4.UInt64(0),
+            ),
+            False,
+        )
+
+    @arc4.abimethod()
+    def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         return
+
+    @arc4.abimethod()
+    def create_empty_proposal(
+        self,
+        *,
+        proposer: arc4.Address,
+    ) -> UInt64:
+        mbr_before = Global.current_application_address.min_balance
+        res = arc4.arc4_create(
+            Proposal,
+            proposer,
+        )
+        mbr_after = Global.current_application_address.min_balance
+
+        itxn.Payment(
+            receiver=res.created_app.address,
+            amount=self.open_proposal_fee.value - (mbr_after - mbr_before),
+            fee=0,
+        ).submit()
+
+        return res.created_app.id

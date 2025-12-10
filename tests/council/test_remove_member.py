@@ -16,10 +16,10 @@ from tests.utils import ERROR_TO_REGEX
 
 
 def test_remove_member_success(
-    deployer: SigningAccount,
-    council_client: CouncilClient,
     algorand_client: AlgorandClient,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
+    council_client: CouncilClient,
 ) -> None:
     before_global_state = council_client.state.global_state.get_all()
 
@@ -28,8 +28,8 @@ def test_remove_member_success(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -44,8 +44,8 @@ def test_remove_member_success(
             address=no_role_account.address,
         ),
         params=CommonAppCallParams(
-            sender=deployer.address,
-            signer=deployer.signer,
+            sender=committee_manager.address,
+            signer=committee_manager.signer,
         ),
     )
 
@@ -57,9 +57,9 @@ def test_remove_member_success(
 
 
 def test_remove_member_not_admin(
+    algorand_client: AlgorandClient,
     no_role_account: SigningAccount,
     council_client: CouncilClient,
-    algorand_client: AlgorandClient,
 ) -> None:
     with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.UNAUTHORIZED]):
         council_client.send.remove_member(
@@ -74,10 +74,10 @@ def test_remove_member_not_admin(
 
 
 def test_remove_member_not_member(
-    deployer: SigningAccount,
-    council_client: CouncilClient,
     algorand_client: AlgorandClient,
+    committee_manager: SigningAccount,
     no_role_account: SigningAccount,
+    council_client: CouncilClient,
 ) -> None:
     with pytest.raises(LogicError, match=ERROR_TO_REGEX[err.VOTER_NOT_FOUND]):
         council_client.send.remove_member(
@@ -85,7 +85,7 @@ def test_remove_member_not_member(
                 address=no_role_account.address,
             ),
             params=CommonAppCallParams(
-                sender=deployer.address,
-                signer=deployer.signer,
+                sender=committee_manager.address,
+                signer=committee_manager.signer,
             ),
         )

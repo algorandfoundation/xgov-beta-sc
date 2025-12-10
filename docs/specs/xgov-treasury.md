@@ -4,23 +4,28 @@ The xGov Treasury is an Algorand Address controlled by the xGov Registry.
 
 ## Treasury Inflows
 
-- Governance funds from the Algorand Foundation;
-
-- xGov Fee deposits from xGovs on subscription/request;
-
-- Proposer Fees from Proposers on subscription;
-
-- Open Proposal Fees from Proposers on proposal submission;
-
-- Proposal Commitment from Proposal Escrows if a veto is applied to the Proposal.
+| FLOW                        | FROM            | TO            |         AMOUNT          | METHOD                     | CONDITION                      |
+|:----------------------------|:----------------|:--------------|:-----------------------:|:---------------------------|:-------------------------------|
+| Deposit Governance Funds    | Anyone          | xGov Treasury |           Any           | `deposit_funds`            |                                |
+| xGov Subscription           | Anyone          | xGov Treasury |        xGov Fee         | `subscribe_xgov`           |                                |
+| xGov Subscription Request   | Anyone          | xGov Treasury |        xGov Fee         | `request_subscribe_xgov`   |                                |
+| xGov Unsubscription Request | Anyone          | xGov Treasury |        xGov Fee         | `request_unsubscribe_xgov` |                                |
+| Proposer Subscription       | Anyone          | xGov Treasury |      Proposer Fee       | `subscribe_proposer`       |                                |
+| Open Proposal               | Anyone          | xGov Treasury |    Open Proposal Fee    | `open_proposal`            |                                |
+| Slash Proposal Commitment   | Proposal Escrow | xGov Treasury | Proposal Locked Deposit | `review` (on Proposal)     | Veto is applied (`block=True`) |
 
 ## Treasury Outflows
 
-- Partial Open Proposal Fees to Proposal Escrow on Proposal submission;
+| FLOW                         | FROM          | TO              |                         AMOUNT                          | METHOD               | CONDITION            |
+|:-----------------------------|:--------------|:----------------|:-------------------------------------------------------:|:---------------------|:---------------------|
+| Open Proposal                | xGov Treasury | Proposal Escrow |                  Partial Proposal Fee                   | `open_proposal`      |                      |
+| Pay Proposal                 | xGov Treasury | Proposer        |                    Requested Amount                     | `pay_grant_proposal` | Proposal is approved |
+| Withdraw Governance Funds    | xGov Treasury | xGov Manager    |            Up to available Governance Funds             | `withdraw_funds`     |                      |
+| Withdraw Outstanding Balance | xGov Treasury | xGov Manager    | Outstanding balance, excluding MBR and Governance Funds | `withdraw_balance`   |                      |
 
-- Proposal Funds to the Proposer on proposal payment;
-
-- Algorand Foundation withdrawals of outstanding funds.
+{{#include ../_include/styles.md:note}}
+> Partial Open Proposal Fees are equal to the Open Proposal Fee discounted by the
+> Proposal Application MBR.
 
 ## Treasury MBRs
 
@@ -31,7 +36,3 @@ The xGov Treasury is an Algorand Address controlled by the xGov Registry.
 - Proposer Boxes;
 
 - Created Proposal Applications.
-
-{{#include ../_include/styles.md:note}}
-> Partial Open Proposal Fees are equal to the Open Proposal Fee discounted by the
-> Proposal Application MBR.

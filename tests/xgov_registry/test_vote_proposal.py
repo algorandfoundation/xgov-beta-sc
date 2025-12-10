@@ -13,7 +13,6 @@ from smart_contracts.artifacts.proposal.proposal_client import (
     ProposalClient,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-    GetXgovBoxArgs,
     SubscribeXgovArgs,
     VoteProposalArgs,
     XGovRegistryClient,
@@ -27,8 +26,8 @@ from tests.xgov_registry.common import get_xgov_fee
 def test_vote_proposal_success(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
@@ -40,28 +39,25 @@ def test_vote_proposal_success(
         params=CommonAppCallParams(
             sender=committee[0].account.address,
             static_fee=min_fee_times_2,
-            app_references=[
-                voting_proposal_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )
 
-    xgov_box = xgov_registry_client.send.get_xgov_box(
-        args=GetXgovBoxArgs(xgov_address=committee[0].account.address)
-    ).abi_return
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        committee[0].account.address
+    )
 
     assert xgov_box.voted_proposals == 1  # type: ignore
     assert xgov_box.last_vote_timestamp > 0  # type: ignore
 
 
 def test_vote_proposal_not_in_voting_phase(
-    committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
-    draft_proposal_client: ProposalClient,
     algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    min_fee_times_2: AlgoAmount,
+    draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_fee = get_xgov_fee(xgov_registry_client)
     submit_proposal(
@@ -107,9 +103,6 @@ def test_vote_proposal_not_in_voting_phase(
             params=CommonAppCallParams(
                 sender=committee[0].account.address,
                 static_fee=min_fee_times_2,
-                app_references=[
-                    draft_proposal_client.app_id
-                ],  # FIXME: This should have been autopopulated
             ),
         )
 
@@ -131,8 +124,8 @@ def test_vote_proposal_not_a_proposal_app(
 
 def test_vote_proposal_not_an_xgov(
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.vote_proposal(
@@ -148,9 +141,9 @@ def test_vote_proposal_not_an_xgov(
 
 def test_vote_proposal_wrong_voting_address(
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     xgov: SigningAccount,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.MUST_BE_VOTING_ADDRESS):
         xgov_registry_client.send.vote_proposal(
@@ -167,8 +160,8 @@ def test_vote_proposal_wrong_voting_address(
 def test_vote_proposal_paused_registry_error(
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
-    xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.pause_registry()
     with pytest.raises(LogicError, match=err.PAUSED_REGISTRY):
@@ -192,8 +185,5 @@ def test_vote_proposal_paused_registry_error(
         params=CommonAppCallParams(
             sender=committee[0].account.address,
             static_fee=min_fee_times_2,
-            app_references=[
-                voting_proposal_client.app_id
-            ],  # FIXME: This should have been autopopulated
         ),
     )

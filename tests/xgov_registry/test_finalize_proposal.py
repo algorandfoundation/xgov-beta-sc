@@ -23,24 +23,20 @@ def test_finalize_funded_proposal_success(
     min_fee_times_3: AlgoAmount,
     xgov_daemon: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    funded_unassigned_voters_proposal_client: ProposalClient,
+    funded_proposal_client: ProposalClient,
 ) -> None:
-    proposer_address = (
-        funded_unassigned_voters_proposal_client.state.global_state.proposer
-    )
+    proposer_address = funded_proposal_client.state.global_state.proposer
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
 
     xgov_registry_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(
-            proposal_id=funded_unassigned_voters_proposal_client.app_id
-        ),
+        args=FinalizeProposalArgs(proposal_id=funded_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_daemon.address, static_fee=min_fee_times_3
         ),
     )
 
     assert_funded_proposal_global_state(
-        funded_unassigned_voters_proposal_client,
+        funded_proposal_client,
         proposer_address,
         xgov_registry_client.app_id,
         finalized=True,
@@ -57,8 +53,8 @@ def test_finalize_funded_proposal_success(
 def test_finalize_empty_proposal_not_xgov_daemon(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.finalize_proposal(
@@ -72,8 +68,8 @@ def test_finalize_empty_proposal_not_xgov_daemon(
 def test_finalize_empty_proposal_xgov_daemon(
     min_fee_times_3: AlgoAmount,
     xgov_daemon: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     proposer_address = proposal_client.state.global_state.proposer
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
@@ -99,8 +95,8 @@ def test_finalize_empty_proposal_xgov_daemon(
 def test_finalize_draft_proposal_not_xgov_daemon(
     min_fee_times_4: AlgoAmount,
     no_role_account: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.finalize_proposal(
@@ -114,8 +110,8 @@ def test_finalize_draft_proposal_not_xgov_daemon(
 def test_finalize_draft_proposal_xgov_daemon(
     min_fee_times_4: AlgoAmount,
     xgov_daemon: SigningAccount,
-    xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     proposer_address = draft_proposal_client.state.global_state.proposer
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
@@ -132,6 +128,7 @@ def test_finalize_draft_proposal_xgov_daemon(
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
         finalized=True,
+        metadata_uploaded=True,
         funding_type=enm.FUNDING_RETROACTIVE,
     )
 
@@ -175,24 +172,20 @@ def test_finalize_funded_proposal_not_xgov_daemon(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    funded_unassigned_voters_proposal_client: ProposalClient,
+    funded_proposal_client: ProposalClient,
 ) -> None:
-    proposer_address = (
-        funded_unassigned_voters_proposal_client.state.global_state.proposer
-    )
+    proposer_address = funded_proposal_client.state.global_state.proposer
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
 
     xgov_registry_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(
-            proposal_id=funded_unassigned_voters_proposal_client.app_id
-        ),
+        args=FinalizeProposalArgs(proposal_id=funded_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=no_role_account.address, static_fee=min_fee_times_3
         ),
     )
 
     assert_funded_proposal_global_state(
-        funded_unassigned_voters_proposal_client,
+        funded_proposal_client,
         proposer_address,
         xgov_registry_client.app_id,
         finalized=True,
@@ -210,24 +203,20 @@ def test_finalize_blocked_proposal_not_xgov_daemon(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    blocked_unassigned_voters_proposal_client: ProposalClient,
+    blocked_proposal_client: ProposalClient,
 ) -> None:
-    proposer_address = (
-        blocked_unassigned_voters_proposal_client.state.global_state.proposer
-    )
+    proposer_address = blocked_proposal_client.state.global_state.proposer
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
 
     xgov_registry_client.send.finalize_proposal(
-        args=FinalizeProposalArgs(
-            proposal_id=blocked_unassigned_voters_proposal_client.app_id
-        ),
+        args=FinalizeProposalArgs(proposal_id=blocked_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=no_role_account.address, static_fee=min_fee_times_3
         ),
     )
 
     assert_blocked_proposal_global_state(
-        blocked_unassigned_voters_proposal_client,
+        blocked_proposal_client,
         proposer_address,
         xgov_registry_client.app_id,
         finalized=True,

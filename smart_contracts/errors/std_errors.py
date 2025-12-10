@@ -49,7 +49,7 @@ EXPIRED_KYC = "Expired KYC"
 INSUFFICIENT_TREASURY_FUNDS = "Insufficient treasury funds"
 ALREADY_PROPOSER = "Already a proposer"
 ALREADY_XGOV = "Already an xGov"
-NO_PENDING_PROPOSALS = "Cannot perform operation with pending proposals"
+NOT_XGOV = "Not an xGov"
 INVALID_VOTE = "Invalid vote"
 MUST_BE_VOTING_ADDRESS = "Must be voting address"
 PROPOSER_DOES_NOT_EXIST = "Proposer does not exist"
@@ -81,10 +81,14 @@ INVALID_OPEN_PROPOSAL_FEE = "Invalid open proposal fee"
 
 INVALID_REGISTRY_ID = "Invalid registry ID"
 
-INCOSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
+INCONSISTENT_REQUESTED_AMOUNT_CONFIG = "Inconsistent requested amount config"
+INCONSISTENT_DISCUSSION_DURATION_CONFIG = "Inconsistent discussion duration config"
+INCONSISTENT_VOTING_DURATION_CONFIG = "Inconsistent voting duration config"
+INCONSISTENT_QUORUM_CONFIG = "Inconsistent quorum config"
+INCONSISTENT_WEIGHTED_QUORUM_CONFIG = "Inconsistent weighted quorum config"
 
 INVALID_XGOV_FEE = "Invalid xGov fee"
 
 INVALID_PROPOSER_FEE = "Invalid proposer fee"
-
+INVALID_PROPOSAL_APPROVAL_PROGRAM_SIZE = "Invalid proposal approval program size"
 MISSING_PROPOSAL_APPROVAL_PROGRAM = "Missing proposal approval program"

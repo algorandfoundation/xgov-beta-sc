@@ -18,8 +18,8 @@ from tests.xgov_registry.common import assert_registry_config
 
 
 def test_config_xgov_registry_success(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     xgov_registry_client.send.config_xgov_registry(
         args=ConfigXgovRegistryArgs(config=xgov_registry_config)
@@ -53,9 +53,9 @@ def test_config_xgov_registry_success(
 
 
 def test_config_xgov_registry_not_manager(
-    xgov_registry_client: XGovRegistryClient,
-    xgov_registry_config: XGovRegistryConfig,
     no_role_account: SigningAccount,
+    xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.config_xgov_registry(
@@ -65,20 +65,19 @@ def test_config_xgov_registry_not_manager(
 
 
 def test_config_xgov_registry_pending_proposals(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config: XGovRegistryConfig,
     proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.NO_PENDING_PROPOSALS):
-        xgov_registry_client.send.config_xgov_registry(
-            args=ConfigXgovRegistryArgs(config=xgov_registry_config)
-        )
+    xgov_registry_client.send.config_xgov_registry(
+        args=ConfigXgovRegistryArgs(config=xgov_registry_config)
+    )
 
 
 def test_config_xgov_registry_open_proposal_fee_too_low(
-    xgov_registry_client: XGovRegistryClient,
     xgov_registry_config_dict: dict,  # type: ignore
     xgov_registry_config: XGovRegistryConfig,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
 
     daemon_ops_funding_bps = xgov_registry_config.daemon_ops_funding_bps
@@ -92,5 +91,108 @@ def test_config_xgov_registry_open_proposal_fee_too_low(
         xgov_registry_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
                 config=XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_inconsistent_requested_amount(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where max_requested_amount values are not in ascending order
+    xgov_registry_config_dict["max_requested_amount"] = [
+        3_000_000,
+        2_000_000,
+        1_000_000,
+    ]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)
+                # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_min_requested_amount_not_less_than_small(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where min_requested_amount is not less than max_requested_amount_small
+    xgov_registry_config_dict["min_requested_amount"] = 2_000_000  # type: ignore
+    xgov_registry_config_dict["max_requested_amount"] = [
+        1_000_000,
+        5_000_000,
+        10_000_000,
+    ]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_REQUESTED_AMOUNT_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)
+                # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_inconsistent_discussion_duration(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where discussion_duration values are not in ascending order
+    xgov_registry_config_dict["discussion_duration"] = [400, 300, 200, 100]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_DISCUSSION_DURATION_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_inconsistent_voting_duration(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where voting_duration values are not in ascending order
+    xgov_registry_config_dict["voting_duration"] = [400, 300, 200, 100]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_VOTING_DURATION_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_inconsistent_quorum(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where quorum values are not in ascending order
+    xgov_registry_config_dict["quorum"] = [300, 200, 100]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_QUORUM_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)
+                # type: ignore
+            ),
+        )
+
+
+def test_config_xgov_registry_inconsistent_weighted_quorum(
+    xgov_registry_config_dict: dict,  # type: ignore
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    # Test case where weighted_quorum values are not in ascending order
+    xgov_registry_config_dict["weighted_quorum"] = [3000, 2000, 1000]  # type: ignore
+
+    with pytest.raises(LogicError, match=err.INCONSISTENT_WEIGHTED_QUORUM_CONFIG):
+        xgov_registry_client.send.config_xgov_registry(
+            args=ConfigXgovRegistryArgs(
+                config=XGovRegistryConfig(**xgov_registry_config_dict)
+                # type: ignore
             ),
         )

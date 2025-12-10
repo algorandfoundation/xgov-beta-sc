@@ -53,14 +53,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
       - name: Set roles
-        run: algokit project deploy ${{ github.event.inputs.network }}
+        run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: set_roles

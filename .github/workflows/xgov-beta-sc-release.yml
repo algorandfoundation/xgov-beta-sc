@@ -25,7 +25,7 @@ jobs:
           private-key: ${{ secrets.BOT_SK }}
 
       - name: Checkout source code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
@@ -76,13 +76,13 @@ jobs:
     environment: contract-mainnet
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Deploy to mainnet
-        run: algokit project deploy mainnet
+      - name: Deploy registry to mainnet
+        run: algokit project deploy mainnet xgov_registry
         env:
           # Deploy command to run
           XGOV_REG_DEPLOY_COMMAND: deploy

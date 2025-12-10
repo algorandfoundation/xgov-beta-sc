@@ -27,14 +27,17 @@ def test_request_subscribe_xgov_success(
     xgov_subscriber_app: XGovSubscriberAppMockClient,
 ) -> None:
     initial_request_id = xgov_registry_client.state.global_state.request_id
+    xgov_address = xgov_subscriber_app.app_address
+    owner_address = deployer.address
+    relation_type = 0
     xgov_registry_client.send.request_subscribe_xgov(
         args=RequestSubscribeXgovArgs(
-            xgov_address=xgov_subscriber_app.app_address,
-            owner_address=deployer.address,
-            relation_type=0,
+            xgov_address=xgov_address,
+            owner_address=owner_address,
+            relation_type=relation_type,
             payment=algorand_client.create_transaction.payment(
                 PaymentParams(
-                    sender=deployer.address,
+                    sender=owner_address,
                     receiver=xgov_registry_client.app_address,
                     amount=get_xgov_fee(xgov_registry_client),
                 )
@@ -43,6 +46,14 @@ def test_request_subscribe_xgov_success(
     )
     final_request_id = xgov_registry_client.state.global_state.request_id
     assert final_request_id == initial_request_id + 1
+
+    request_box = xgov_registry_client.state.box.request_box.get_value(
+        initial_request_id
+    )
+
+    assert request_box.owner_addr == owner_address
+    assert request_box.xgov_addr == xgov_address
+    assert request_box.relation_type == relation_type
 
 
 def test_request_subscribe_unauthorized(
