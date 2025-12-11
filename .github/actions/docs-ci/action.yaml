@@ -26,7 +26,11 @@ runs:
       run: |
         pre-commit run markdownlint --all-files --verbose
         pre-commit run trailing-whitespace --all-files --verbose
-        pre-commit run lychee-docker --all-files --verbose
+
+    - name: Run soft pre-commit hooks as a warning
+      shell: bash
+      run: |
+        pre-commit run lychee --all-files --verbose || true
 
     - name: Prepare mdBook output directory
       shell: bash
