@@ -25,7 +25,7 @@ jobs:
 
     environment:
       name: preview
-      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.url || '' }}
+      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.deployment-url || '' }}
 
     steps:
       - name: Checkout source code
@@ -60,10 +60,9 @@ jobs:
       - name: Deploy to Cloudflare Pages (Preview)
         id: deploy
         if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: xgov-beta-docs
-          directory: book
+          command: pages deploy book --project-name=xgov-beta-docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
