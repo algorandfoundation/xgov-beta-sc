@@ -4,10 +4,16 @@ The xGov Architecture source code is released on the official [GitHub repository
 
 Issues can be submitted on the [GitHub issues page](https://github.com/algorandfoundation/xgov-beta-sc/issues).
 
-External contributions to _tests_ and _documentation_ are welcome. If you would like
-to contribute, please read these guidelines and consider submitting a [Pull Request](https://github.com/algorandfoundation/xgov-beta-sc/pulls).
+External contributions are welcome. If you would like to contribute, please read
+these guidelines and consider submitting a [Pull Request](https://github.com/algorandfoundation/xgov-beta-sc/pulls).
 
 > ⚠️ Commits must be signed!
+
+## Code Guidelines
+
+The xGov Architecture is implemented in Algorand Python.
+
+Any external contributions **MUST** pass the [CI/CD pipeline]().
 
 ## Docs Guidelines
 
