@@ -13,7 +13,12 @@ these guidelines and consider submitting a [Pull Request](https://github.com/alg
 
 The xGov Architecture is implemented in Algorand Python.
 
-Any external contributions **MUST** pass the [CI/CD pipeline]().
+Any external contributions **MUST**:
+
+1. Be submitted as a [Pull Request](https://github.com/algorandfoundation/xgov-beta-sc/pulls).
+1. Pass the [CI/CD pipeline](./implementation/ci-cd.md);
+1. Update the relevant documentation;
+1. Be approved by the xGov Architecture maintainers.
 
 ## Docs Guidelines
 
