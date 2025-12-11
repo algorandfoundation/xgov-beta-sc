@@ -3,7 +3,6 @@
 from algopy import (
     Account,
     Application,
-    ARC4Contract,
     Box,
     BoxMap,
     Bytes,
@@ -23,6 +22,7 @@ from algopy.op import AppGlobal, GTxn
 
 import smart_contracts.errors.std_errors as err
 from smart_contracts.common import abi_types as typ
+from smart_contracts.interfaces.proposal import ProposalInterface
 
 from ..common.abi_types import CommitteeMember
 from ..xgov_registry import config as reg_cfg
@@ -32,7 +32,7 @@ from . import enums as enm
 
 
 class Proposal(
-    ARC4Contract,
+    ProposalInterface,
     state_totals=StateTotals(
         global_bytes=prop_cfg.GLOBAL_BYTES,
         global_uints=prop_cfg.GLOBAL_UINTS,
@@ -40,6 +40,8 @@ class Proposal(
         local_uints=prop_cfg.LOCAL_UINTS,
     ),
 ):
+    """Proposal Contract"""
+
     def __init__(self) -> None:
         # Preconditions
         assert (
@@ -589,7 +591,7 @@ class Proposal(
         )
 
     @arc4.abimethod(create="require")
-    def create(self, proposer: arc4.Address) -> typ.Error:
+    def create(self, *, proposer: arc4.Address) -> typ.Error:
         """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Args:
@@ -634,6 +636,7 @@ class Proposal(
     @arc4.abimethod()
     def open(
         self,
+        *,
         payment: gtxn.PaymentTransaction,
         title: arc4.String,
         funding_type: arc4.UInt64,
@@ -709,7 +712,7 @@ class Proposal(
 
     @arc4.abimethod()
     def upload_metadata(
-        self, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool
+        self, *, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool
     ) -> None:
         """Upload the proposal metadata.
 
@@ -810,6 +813,7 @@ class Proposal(
     @arc4.abimethod()
     def assign_voters(
         self,
+        *,
         voters: arc4.DynamicArray[CommitteeMember],
     ) -> None:
         """Assign multiple voters to the proposal.
@@ -866,7 +870,7 @@ class Proposal(
 
     @arc4.abimethod()
     def vote(
-        self, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
+        self, *, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
     ) -> typ.Error:
         """Vote on the proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
@@ -953,7 +957,7 @@ class Proposal(
         )
 
     @arc4.abimethod()
-    def review(self, block: bool) -> None:  # noqa: FBT001
+    def review(self, *, block: bool) -> None:
         """Review the proposal.
 
         Args:
@@ -1008,7 +1012,7 @@ class Proposal(
         return typ.Error("")
 
     @arc4.abimethod()
-    def unassign_voters(self, voters: arc4.DynamicArray[arc4.Address]) -> None:
+    def unassign_voters(self, *, voters: arc4.DynamicArray[arc4.Address]) -> None:
         """Unassign voters from the proposal.
 
         Args:
@@ -1126,7 +1130,7 @@ class Proposal(
         )
 
     @arc4.abimethod(readonly=True)
-    def get_voter_box(self, voter_address: arc4.Address) -> tuple[arc4.UInt64, bool]:
+    def get_voter_box(self, *, voter_address: arc4.Address) -> tuple[arc4.UInt64, bool]:
         """
         Returns the Voter box for the given address.
 

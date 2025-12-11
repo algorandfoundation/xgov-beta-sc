@@ -13,13 +13,11 @@ from smart_contracts.artifacts.proposal.proposal_client import (
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     CreateEmptyProposalArgs,
-    FundArgs,
-    SetCommitteeIdArgs,
-    SetCommitteeMembersArgs,
-    SetCommitteeVotesArgs,
+    DeclareCommitteeArgs,
+    PayGrantProposalArgs,
     SetXgovCouncilArgs,
     SetXgovDaemonArgs,
-    VoteArgs,
+    VoteProposalArgs,
     XgovRegistryMockClient,
     XgovRegistryMockFactory,
 )
@@ -67,24 +65,20 @@ def xgov_registry_mock_client(
         typed_factory=XgovRegistryMockFactory,
         default_sender=deployer.address,
     )
-    client, _ = factory.send.create.bare()  # type: ignore
+    client, _ = factory.send.create.create()
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=client.app_address,
         min_spending_balance=AlgoAmount(micro_algo=int(INITIAL_FUNDS.micro_algo) * 100),
     )
 
     client.send.set_xgov_daemon(args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon.address))
-    client.send.set_xgov_council(
-        args=SetXgovCouncilArgs(xgov_council=xgov_council.address)
-    )
-    client.send.set_committee_id(
-        args=SetCommitteeIdArgs(committee_id=DEFAULT_COMMITTEE_ID)
-    )
-    client.send.set_committee_members(
-        args=SetCommitteeMembersArgs(committee_members=DEFAULT_COMMITTEE_MEMBERS)
-    )
-    client.send.set_committee_votes(
-        args=SetCommitteeVotesArgs(committee_votes=DEFAULT_COMMITTEE_VOTES)
+    client.send.set_xgov_council(args=SetXgovCouncilArgs(council=xgov_council.address))
+    client.send.declare_committee(
+        args=DeclareCommitteeArgs(
+            committee_id=DEFAULT_COMMITTEE_ID,
+            size=DEFAULT_COMMITTEE_MEMBERS,
+            votes=DEFAULT_COMMITTEE_VOTES,
+        )
     )
 
     return client
@@ -176,12 +170,12 @@ def approved_proposal_client(
 ) -> ProposalClient:
     voted_members, total_votes, member_idx = 0, 0, 0
     while not quorums_reached(voting_proposal_client, voted_members, total_votes):
-        xgov_registry_mock_client.send.vote(
-            args=VoteArgs(
-                proposal_app=voting_proposal_client.app_id,
-                voter=committee[member_idx].account.address,
-                approvals=committee[member_idx].votes,
-                rejections=0,
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[member_idx].account.address,
+                approval_votes=committee[member_idx].votes,
+                rejection_votes=0,
             ),
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
@@ -245,8 +239,8 @@ def funded_proposal_client(
     xgov_registry_mock_client: XgovRegistryMockClient,
     reviewed_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    xgov_registry_mock_client.send.fund(
-        args=FundArgs(proposal_app=reviewed_proposal_client.app_id),
+    xgov_registry_mock_client.send.pay_grant_proposal(
+        args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
         params=CommonAppCallParams(static_fee=min_fee_times_3),
     )
     return reviewed_proposal_client
