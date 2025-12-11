@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Mainnet Stable Release xgov-beta-sc"]
     types: [completed]
+  workflow_dispatch:
 
 permissions:
   contents: read
