@@ -2,14 +2,13 @@ name: Validate & Preview docs
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
     types: [opened, reopened, synchronize, ready_for_review]
   workflow_call:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  pull-requests: write
 
 concurrency:
   group: ${{ github.event.pull_request.number && format('pages-pr-{0}', github.event.pull_request.number) || 'pages-release' }}
@@ -26,7 +25,7 @@ jobs:
 
     environment:
       name: preview
-      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.page_url || '' }}
+      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.deployment-url || '' }}
 
     steps:
       - name: Checkout source code
@@ -58,19 +57,12 @@ jobs:
         uses: ./.github/actions/docs-ci
 
       # PR preview: PRs only, never on workflow_call
-      - name: Configure Pages
-        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: ./book
-
-      - name: Deploy (PR Preview)
+      - name: Deploy to Cloudflare Pages (Preview)
         id: deploy
         if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
-        uses: actions/deploy-pages@v4
+        uses: cloudflare/wrangler-action@v3
         with:
-          preview: true
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy book --project-name=xgov-beta-docs
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
