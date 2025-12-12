@@ -16,14 +16,14 @@ concurrency:
 
 jobs:
   validate-docs:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/docs-ci.yaml
     secrets: inherit
 
   deploy-docs:
     runs-on: ubuntu-latest
     needs: [validate-docs]
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/create-github-app-token@v2
@@ -53,5 +53,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy book --project-name=xgov-beta-docs
+          command: pages deploy ./book --project-name=xgov-beta-docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
