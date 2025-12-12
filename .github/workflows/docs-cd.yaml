@@ -47,6 +47,14 @@ jobs:
       - name: Build mdBook
         run: docker compose run mdbook build
 
+      - name: Verify book directory contents
+        run: |
+          echo "Contents of book directory:"
+          ls -laR book/
+          echo "---"
+          echo "Total files to deploy:"
+          find book -type f | wc -l
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
