@@ -16,7 +16,6 @@ concurrency:
 
 jobs:
   validate-docs:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/docs-ci.yaml
     secrets: inherit
 
