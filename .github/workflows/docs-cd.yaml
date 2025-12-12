@@ -16,14 +16,14 @@ concurrency:
 
 jobs:
   validate-docs:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     uses: ./.github/workflows/docs-ci.yaml
     secrets: inherit
 
   deploy-docs:
     runs-on: ubuntu-latest
     needs: [validate-docs]
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - uses: actions/create-github-app-token@v2
@@ -47,11 +47,19 @@ jobs:
       - name: Build mdBook
         run: docker compose run mdbook build
 
+      - name: Verify book directory contents
+        run: |
+          echo "Contents of book directory:"
+          ls -laR book/
+          echo "---"
+          echo "Total files to deploy:"
+          find book -type f | wc -l
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy book --project-name=xgov-beta-docs
+          command: pages deploy ./book --project-name=xgov-beta-docs
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
