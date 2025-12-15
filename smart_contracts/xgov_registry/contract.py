@@ -158,6 +158,12 @@ class XGovRegistry(
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
         )
+        self.last_committee_anchor = GlobalState(
+            UInt64, key=cfg.GS_KEY_LAST_COMMITTEE_ANCHOR
+        )
+        self.last_committee_update = GlobalState(
+            UInt64, key=cfg.GS_KEY_LAST_COMMITTEE_UPDATE
+        )
 
         # Counters
         self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
@@ -286,6 +292,11 @@ class XGovRegistry(
         return (
             key_prefix_length + key_type_size + value_type_size
         ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
+
+    @subroutine
+    def get_committee_anchor(self) -> UInt64:
+        r = Global.round
+        return r - (r % TemplateVar[UInt64]("governance_period"))
 
     @subroutine
     def set_max_committee_size(
@@ -1066,6 +1077,12 @@ class XGovRegistry(
             err.WRONG_COMMITTEE_VOTES: If the committee voting power is zero
             err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
+        # Initialize Committee rounds (these global vars are not initialized on App
+        # creation since have been introduced after xGov Registry creation on MainNet)
+        _value, exists = self.last_committee_anchor.maybe()
+        if not exists:
+            self.last_committee_anchor.value = UInt64(0)
+            self.last_committee_update.value = UInt64(0)
 
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
@@ -1078,6 +1095,8 @@ class XGovRegistry(
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
+        self.last_committee_anchor.value = self.get_committee_anchor()
+        self.last_committee_update.value = Global.round
 
         arc4.emit(
             typ.NewCommittee(
@@ -1096,16 +1115,27 @@ class XGovRegistry(
             payment (gtxn.PaymentTransaction): payment for covering the proposal fee (includes child contract MBR)
 
         Raises:
+            err.PAUSED_REGISTRY: If the xGov Registry is paused
+            err.PAUSED_PROPOSALS: If new proposals are paused
+            err.COMMITTEE_STALE: If the xGov Committee is stale (or not declared)
             err.UNAUTHORIZED: If the sender is not a Proposer
             err.ALREADY_ACTIVE_PROPOSAL: If the proposer already has an active proposal
             err.INVALID_KYC: If the Proposer does not have valid KYC
             err.INSUFFICIENT_FEE: If the fee for the current transaction doesn't cover the inner transaction fees
             err.WRONG_RECEIVER: If the payment receiver is not the xGov Registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the open_proposal_fee global state key
+            err.MISSING_PROPOSAL_APPROVAL_PROGRAM: If the Proposal Approval Program contract is not set
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
         assert not self.paused_proposals.value, err.PAUSED_PROPOSALS
+
+        committee_anchor = self.get_committee_anchor()
+        committee_delay = Global.round - committee_anchor
+        assert (
+            committee_anchor == self.last_committee_anchor.value
+            or committee_delay <= TemplateVar[UInt64]("committee_grace_period")
+        ), (err.COMMITTEE_STALE)
 
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
@@ -1161,6 +1191,8 @@ class XGovRegistry(
             extra_program_pages=total_pages,
         )
 
+        # WARNING: The following error now is shadowed COMMITTEE_STALE. We can remove
+        # this error condition on the Proposal in a future major update.
         if error.native.startswith(err.ARC_65_PREFIX):
             error_without_prefix = String.from_bytes(error.native.bytes[4:])
             match error_without_prefix:
