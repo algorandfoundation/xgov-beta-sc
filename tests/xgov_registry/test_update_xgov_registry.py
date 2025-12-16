@@ -17,8 +17,12 @@ def test_update_xgov_registry_success(
 ) -> None:
     xgov_registry_client.send.update.update_xgov_registry(
         compilation_params=AppClientCompilationParams(
-            deploy_time_params={"entropy": b""}
-        )
+            deploy_time_params={
+                "entropy": b"",
+                "governance_period": 69,
+                "committee_grace_period": 42,
+            }
+        ),
     )
 
 
@@ -29,7 +33,11 @@ def test_update_xgov_registry_not_manager(
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
         xgov_registry_client.send.update.update_xgov_registry(
             compilation_params=AppClientCompilationParams(
-                deploy_time_params={"entropy": b""}
+                deploy_time_params={
+                    "entropy": b"",
+                    "governance_period": 69,
+                    "committee_grace_period": 42,
+                }
             ),
             params=CommonAppCallParams(sender=no_role_account.address),
         )

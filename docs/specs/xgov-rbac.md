@@ -47,7 +47,7 @@ Treasury](./xgov-treasury.md).
 The xGov Committee Manager is an Algorand Address controlled by the Algorand Foundation.
 
 The xGov Committee Manager **SHALL** declare the xGov Committee currently in charge
-on the xGov Registry.
+on the xGov Registry (see [xGov Committee section](./xgov-committee.md#declaration)).
 
 ## xGov Daemon
 

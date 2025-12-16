@@ -161,23 +161,29 @@ whenever \\( \Votes(\Comm) > 0 \\).
 
 ## xGov Committee ID
 
-An xGov Committee is identified by the Committee ID, as defined in [ARC-86 canonical
+An xGov Committee is identified by the _Committee ID_, as defined in [ARC-86 canonical
 JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representation).
 
 ## Selection
 
-The xGov Committee selection and the assignment of their voting power is performed
-by the Algorand Foundation.
+The xGov Committee selection procedure and the assignment of their voting power is
+performed by the Algorand Foundation.
 
 ## Declaration
 
-The xGov Committee Manager **SHALL** declare on the xGov Registry:
+Given the xGov Committee for the governance period \\( [Bi; Bf) \\), the xGov Committee
+Manager **SHALL** declare on the xGov Registry:
 
-- The current Committee ID;
+- The Committee ID;
 
-- The current xGov Committee Members;
+- The xGov Committee Members \\( \Members(\Comm) \\);
 
-- The current xGov Committee Voting Power.
+- The xGov Committee Voting Power \\( \Votes(\Comm) \\).
+
+within the rounds interval \\( [B_i; B_i + 10^3) \\).
+
+If the xGov Committee Manager fails to declare the xGov Committee within the rounds
+interval, the xGov Committee is considered _stale_ and Proposals are suspended.
 
 ## Assignment to Proposal
 
