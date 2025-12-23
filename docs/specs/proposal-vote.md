@@ -20,6 +20,8 @@ Vote **SHALL NOT** be modified.
 > Once the Pool is ready to vote, the allocation of `N` votes among _“Approve”_,
 > _“Reject”_, or _“Null”_ is simultaneous and can no longer be modified.
 
+Vote **MUST BE** sent either by the xGov Address or the Voting Address.
+
 ## Scrutiny
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
