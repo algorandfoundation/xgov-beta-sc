@@ -74,8 +74,8 @@ and Docs)
 
 ### Unprotected Branches
 
-Features, major refactoring, dependency bumps, or bugfixes **SHALL** be carried out
-on a dedicated unprotected branch pointing to the trunk (`main`).
+Features, major refactoring, dependency bumps, or bugfixes **SHALL** be carried
+out on a dedicated unprotected branch pointing to the trunk (`main`).
 
 The `pyproject.toml` release version bumps **SHALL** be carried out on a dedicated
 unprotected branch pointing to the `release` branch.
@@ -101,13 +101,14 @@ The CI/CD pipeline is implemented with the following _automated_ workflows:
 - Smart Contracts CD (to TestNet)
 
 - Documentation CI (tests, lint)
-- Documentation CD (to GitHub Pages)
+- Documentation CD (to <https://docs.xgov.algorand.co/>)
 
 - Release CI (validate release tag, version, etc.)
 - Release (to MainNet)
 
 And the following _manually dispatchable_ workflows:
 
+- PR previews for external contributions
 - xGov Registry parameters configuration
 - xGov Registry RBAC management
 - Pause and Resume Proposals
