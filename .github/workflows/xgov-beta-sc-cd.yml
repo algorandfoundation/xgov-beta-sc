@@ -173,7 +173,7 @@ jobs:
 
   trigger-ts-client-canary:
     runs-on: ubuntu-latest
-    needs: [create-canary-release, deploy-testnet]
+    needs: [create-canary-release]
     if: needs.create-canary-release.result == 'success' && needs.create-canary-release.outputs.should-deploy == 'true'
     steps:
       - uses: actions/create-github-app-token@v2
