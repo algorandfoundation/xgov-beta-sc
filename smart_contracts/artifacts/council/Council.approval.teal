@@ -89,7 +89,7 @@ main_switch_case_next@5:
     // ):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     bz main_create_NoOp@12
     pushbytess 0x19d702fa 0x92ebf6de 0xf7f4481f 0xdbd83dd9 // method "add_member(address)void", method "remove_member(address)void", method "vote(uint64,bool)void", method "op_up()void"
@@ -127,7 +127,7 @@ main_update_council_route@4:
     ==
     txn ApplicationID
     &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
+    assert
     b update_council
 
 
@@ -138,7 +138,7 @@ create:
     txna ApplicationArgs 1
     dup
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
@@ -288,7 +288,7 @@ vote:
     txna ApplicationArgs 1
     dupn 2
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     btoi
@@ -373,7 +373,7 @@ vote:
     assert // Invalid proposal
     // smart_contracts/council/contract.py:184
     // assert status == proposal_enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
-    pushint 30 // 30
+    pushint 30
     ==
     assert // Wrong Proposal Status or finalized
     // smart_contracts/council/contract.py:188
@@ -452,13 +452,13 @@ vote_for_header@5:
     // smart_contracts/council/contract.py:200
     // Txn.sender != self.votes[proposal_id][i].address
     dig 6
-    pushint 33 // 33
+    pushint 33
     *
     intc_2 // 2
     +
     dig 1
     swap
-    pushint 33 // 33
+    pushint 33
     box_extract
     dup
     extract 0 32
@@ -471,7 +471,7 @@ vote_for_header@5:
     assert // Voter already voted
     // smart_contracts/council/contract.py:203
     // if self.votes[proposal_id][i].block:
-    pushint 256 // 256
+    pushint 256
     getbit
     bytec_3 // 0x00
     intc_0 // 0

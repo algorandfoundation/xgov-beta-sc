@@ -35,8 +35,8 @@ $$
 \newcommand \Votes {\mathrm{Votes}}
 $$
 
-The xGov Daemon **SHALL** distribute the votes to the xGov Committee (\\( \Comm \\))
-assigned to the Proposal.
+The xGov Daemon **SHALL** distribute the votes to the xGov Committee
+(\\( \Comm \\)) assigned to the Proposal.
 
 The distributed votes **MUST** be equal to the xGov Committee Voting Power
 (\\( \Votes(\Comm) \\)) (see [xGov Committee section](./xgov-committee.md#xgov-committee-voting-power)).

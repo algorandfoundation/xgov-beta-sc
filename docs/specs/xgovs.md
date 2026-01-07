@@ -30,9 +30,9 @@ The xGov Registry provides two xGov (un)subscription procedures:
 
 - **Self-Subscription**: the xGov Address **MUST** call the xGov Registry.
 
-- **Managed-Subscription**: the ownership of the xGov _App_ Address is verified off-chain,
-by the Algorand Foundation, according to a pre-defined trust model. The Managed-Onboarding/Offboarding
-is executed in two steps:
+- **Managed-Subscription**: the ownership of the xGov _App_ Address is verified
+off-chain, by the Algorand Foundation, according to a pre-defined trust model. The
+Managed-Onboarding/Offboarding is executed in two steps:
 
   1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe,
   declaring the xGov App Address, the Application Owner Address, and a [Relation
@@ -89,8 +89,8 @@ The Voting Address declared on subscription **MUST BE** assigned to the xGov Box
 
 ### xGov Managed-Subscription
 
-An xGov (Un)Subscription Request is associated with a Box on the xGov Registry, called
-_xGov (Un)Subscription Request Box_.
+An xGov (Un)Subscription Request is associated with a Box on the xGov Registry,
+called _xGov (Un)Subscription Request Box_.
 
 The xGov Fee **MUST** be paid to the xGov Treasury upon xGov (Un)Subscription Request
 Box creation.

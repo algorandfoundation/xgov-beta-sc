@@ -26,7 +26,7 @@ repos:
 
   # Security and Infrastructure as Code scanning
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.494
+    rev: 3.2.497
     hooks:
       - id: checkov
         name: checkov
@@ -62,7 +62,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.46.0
+    rev: v0.47.0
     hooks:
       - id: markdownlint
         name: markdownlint
@@ -87,12 +87,12 @@ repos:
         additional_dependencies: [ ]
 
   - repo: https://github.com/lycheeverse/lychee
-    rev: lychee-v0.21.0
+    rev: lychee-v0.22.0
     hooks:
     - id: lychee-docker
       name: lychee
       description: "Run 'lychee' docker image for fast, async, stream-based link checking"
-      entry: lycheeverse/lychee:sha-1aa89fe-alpine
+      entry: lycheeverse/lychee:sha-03bbbd7-alpine
       language: docker_image
       args: ["--no-progress"]
       types: [text]

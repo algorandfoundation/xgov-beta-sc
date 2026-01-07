@@ -42,9 +42,9 @@ The Proposals have two different _funding types_:
    - Claim: _“I want to do X, it has the potential Y for the Algorand ecosystem,
    I would like to receive Z staggered behind these milestones”_.
 
-   - Positive outcome: funding will be disbursed if the Proposal is approved by the
-   xGov Committee vote, after milestone reviews from the xGov Council, and if the
-   xGov Council does not apply a veto according to terms and conditions.
+   - Positive outcome: funding will be disbursed if the Proposal is approved by
+   the xGov Committee vote, after milestone reviews from the xGov Council, and if
+   the xGov Council does not apply a veto according to terms and conditions.
 
 ## Requested Amount
 
