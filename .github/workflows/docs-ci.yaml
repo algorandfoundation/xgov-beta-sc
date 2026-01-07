@@ -5,13 +5,19 @@ on:
     branches: [main]
     types: [opened, reopened, synchronize, ready_for_review]
   workflow_call:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to preview (for fork PRs)'
+        required: true
+        type: string
 
 permissions:
   contents: read
   pull-requests: write
 
 concurrency:
-  group: ${{ github.event.pull_request.number && format('pages-pr-{0}', github.event.pull_request.number) || 'pages-release' }}
+  group: ${{ github.event.pull_request.number && format('pages-pr-{0}', github.event.pull_request.number) || inputs.pr_number && format('pages-pr-{0}', inputs.pr_number) || 'pages-release' }}
   cancel-in-progress: true
 
 jobs:
@@ -21,14 +27,28 @@ jobs:
     if: >
       (github.event_name == 'pull_request' && github.event.pull_request.draft == false) ||
       github.event_name == 'workflow_dispatch' ||
-      github.event_name == 'workflow_run'
+      github.event_name == 'workflow_call'
 
     environment:
       name: preview
-      url: ${{ github.event_name == 'pull_request' && steps.deploy.outputs.deployment-url || '' }}
+      url: ${{ steps.deploy.outputs.deployment-url || '' }}
 
     steps:
-      - name: Checkout source code
+      - name: Checkout source code (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Checkout source code (manual trigger for fork PR)
+        if: github.event_name == 'workflow_dispatch' && inputs.pr_number
+        uses: actions/checkout@v6
+        with:
+          ref: refs/pull/${{ inputs.pr_number }}/merge
+          submodules: recursive
+
+      - name: Checkout source code (workflow_call)
+        if: github.event_name == 'workflow_call'
         uses: actions/checkout@v6
         with:
           submodules: recursive
@@ -43,26 +63,35 @@ jobs:
               - 'README.md'
               - 'SECURITY.md'
 
+      - name: Check if fork PR (skip deploy, validation only)
+        id: fork-check
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "is_fork=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Fork PR detected. Maintainer can trigger preview manually via workflow_dispatch."
+          else
+            echo "is_fork=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: No docs changes — mark check as passed
         if: ${{ steps.changes.outputs.docs != 'true' }}
         run: |
           echo "No docs changes detected. Skipping validation and preview."
           echo "This job still succeeds so required status is green."
 
-      # CI (lint, links, mdBook build) for:
-      #   - PRs with docs changes
-      #   - workflow_call (release), runs regardless of change detection
       - name: Docs CI actions (lint, links, mdBook build)
-        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' }}
+        if: ${{ steps.changes.outputs.docs == 'true' || github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' }}
         uses: ./.github/actions/docs-ci
 
-      # PR preview: PRs only, never on workflow_call
       - name: Deploy to Cloudflare Pages (Preview)
         id: deploy
-        if: ${{ steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' }}
+        if: >
+          (steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' && steps.fork-check.outputs.is_fork != 'true') ||
+          (github.event_name == 'workflow_dispatch' && inputs.pr_number)
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ./book --project-name=xgov-docs --branch=pr-${{ github.event.pull_request.number }}
+          command: pages deploy ./book --project-name=xgov-docs --branch=pr-${{ github.event.pull_request.number || inputs.pr_number }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
