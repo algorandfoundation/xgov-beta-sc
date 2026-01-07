@@ -7,7 +7,8 @@ All the percentages **MUST** have a precision of two decimals and be expressed a
 Virtual Machine (AVM) `uint64`.
 
 {{#include ../_include/styles.md:example}}
-> The AVM works with `uint64`, therefore \\( 100.00 \\% = 10{,}000 \mathrm{bps} \\).
+> The AVM works with `uint64`, therefore
+> \\( 100.00 \\% = 10{,}000 \mathrm{bps} \\).
 > So, \\( 12.5 \\% \\) of \\( X \\) is calculated on the AVM as:
 >
 > $$

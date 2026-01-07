@@ -19,9 +19,9 @@ Sections like this are either pseudo-code or data structures.
 
 ## Math Symbols
 
-For a correct rendering of mathematical symbols and formulas, it is recommended to
-right-click on the symbol below, and select `Math Settings -> Math Renderer -> Common
-HTML` from the drop-down menu.
+For a correct rendering of mathematical symbols and formulas, it is recommended
+to right-click on the symbol below, and select `Math Settings -> Math Renderer ->
+Common HTML` from the drop-down menu.
 
 $$
 \mathcal{C}
