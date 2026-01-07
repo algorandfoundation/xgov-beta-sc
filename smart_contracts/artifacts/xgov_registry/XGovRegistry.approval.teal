@@ -11,13 +11,13 @@ main:
     // # Preconditions
     // assert Txn.global_num_byte_slice == cfg.GLOBAL_BYTES, err.WRONG_GLOBAL_BYTES
     txn GlobalNumByteSlice
-    pushint 28 // 28
+    pushint 28
     ==
     assert // Wrong Global Bytes allocation
     // smart_contracts/xgov_registry/contract.py:60
     // assert Txn.global_num_uint == cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    pushint 36 // 36
+    pushint 36
     ==
     assert // Wrong Global UInts allocation
     // smart_contracts/xgov_registry/contract.py:61
@@ -347,7 +347,7 @@ main_switch_case_next@5:
     // ):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     bz main_create_NoOp@49
     pushbytess 0x959c4762 0x6c1f564d 0xe10a512e 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x37d6adf1 0xd4216b6e 0xba8520f2 0x1677b30e 0x84b7d268 0x653a0bdb 0xa082cef8 0xdf39fdb9 0x45077390 0x3c31bc02 0x0d2c7891 0x93facdba 0xce8b3a1c 0xfaea081f 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0xdb27b9af 0xf5910756 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x00b3cef5 0x27630d65 0x824f98bc 0x49548ba0 0x826784f6 0x26983200 // method "init_proposal_contract(uint64)void", method "load_proposal_contract(uint64,byte[])void", method "delete_proposal_contract_box()void", method "pause_registry()void", method "pause_proposals()void", method "resume_registry()void", method "resume_proposals()void", method "set_xgov_manager(address)void", method "set_payor(address)void", method "set_xgov_council(address)void", method "set_xgov_subscriber(address)void", method "set_kyc_provider(address)void", method "set_committee_manager(address)void", method "set_xgov_daemon(address)void", method "config_xgov_registry((uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3]))void", method "subscribe_xgov(address,pay)void", method "unsubscribe_xgov()void", method "request_subscribe_xgov(address,address,uint64,pay)void", method "approve_subscribe_xgov(uint64)void", method "reject_subscribe_xgov(uint64)void", method "request_unsubscribe_xgov(address,address,uint64,pay)void", method "approve_unsubscribe_xgov(uint64)void", method "reject_unsubscribe_xgov(uint64)void", method "set_voting_account(address,address)void", method "subscribe_proposer(pay)void", method "set_proposer_kyc(address,bool,uint64)void", method "declare_committee(byte[32],uint64,uint64)void", method "open_proposal(pay)uint64", method "vote_proposal(uint64,address,uint64,uint64)void", method "pay_grant_proposal(uint64)void", method "finalize_proposal(uint64)void", method "drop_proposal(uint64)void", method "deposit_funds(pay)void", method "withdraw_funds(uint64)void", method "withdraw_balance()void", method "get_state()(bool,bool,address,address,address,address,address,address,address,uint64,uint64,uint64,uint64,uint64,uint64,uint64[3],uint64[4],uint64[4],uint64[3],uint64[3],uint64,uint64,byte[32],uint64,uint64)", method "get_xgov_box(address)((address,uint64,uint64,uint64),bool)", method "get_proposer_box(address)((bool,bool,uint64),bool)", method "get_request_box(uint64)((address,address,uint64),bool)", method "get_request_unsubscribe_box(uint64)((address,address,uint64),bool)", method "is_proposal(uint64)void"
@@ -379,7 +379,7 @@ main_update_xgov_registry_route@4:
     ==
     txn ApplicationID
     &&
-    assert // OnCompletion must be UpdateApplication && can only call when not creating
+    assert
     b update_xgov_registry
 
 
@@ -397,8 +397,10 @@ create:
     // assert self.entropy() == TemplateVar[Bytes]("entropy")
     dup
     ==
+    assert
     // smart_contracts/xgov_registry/contract.py:373
     // @arc4.abimethod(create="require")
+    intc_1 // 1
     return
 
 
@@ -461,7 +463,7 @@ load_proposal_contract:
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     dig 1
     len
@@ -766,7 +768,7 @@ config_xgov_registry:
     txna ApplicationArgs 1
     dupn 2
     len
-    pushint 184 // 184
+    pushint 184
     ==
     assert // invalid number of bytes for smart_contracts.common.abi_types.XGovRegistryConfig
     // smart_contracts/xgov_registry/contract.py:589
@@ -782,7 +784,7 @@ config_xgov_registry:
     // return (
     //     key_prefix_length + key_type_size + value_type_size
     // ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
-    pushint 38100 // 38100
+    pushint 38100
     // smart_contracts/xgov_registry/contract.py:618
     // config.xgov_fee.as_uint64() >= xgov_box_mbr
     >=
@@ -797,7 +799,7 @@ config_xgov_registry:
     // return (
     //     key_prefix_length + key_type_size + value_type_size
     // ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
-    pushint 34900 // 34900
+    pushint 34900
     // smart_contracts/xgov_registry/contract.py:619
     // and config.xgov_fee.as_uint64() >= xgov_request_box_mbr
     >=
@@ -826,7 +828,7 @@ config_xgov_registry_bool_merge@5:
     // return (
     //     key_prefix_length + key_type_size + value_type_size
     // ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
-    pushint 19300 // 19300
+    pushint 19300
     // smart_contracts/xgov_registry/contract.py:623
     // config.proposer_fee.as_uint64() >= proposer_box_mbr
     >=
@@ -837,7 +839,7 @@ config_xgov_registry_bool_merge@5:
     assert // Invalid proposer fee
     // smart_contracts/xgov_registry/contract.py:628
     // < config.min_requested_amount.as_uint64()
-    pushint 40 // 40
+    pushint 40
     extract_uint64
     dup
     bury 17
@@ -891,7 +893,7 @@ config_xgov_registry_bool_merge@5:
     // smart_contracts/xgov_registry/contract.py:631
     // < config.max_requested_amount[2].as_uint64()
     dig 17
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:630-631
     // < config.max_requested_amount[1].as_uint64()
@@ -919,7 +921,7 @@ config_xgov_registry_bool_merge@11:
     // config.open_proposal_fee.as_uint64(),
     dig 1
     dup
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     dup
     cover 2
@@ -927,7 +929,7 @@ config_xgov_registry_bool_merge@11:
     // smart_contracts/xgov_registry/contract.py:636
     // config.daemon_ops_funding_bps.as_uint64(),
     dup
-    pushint 24 // 24
+    pushint 24
     extract_uint64
     dup
     bury 8
@@ -935,11 +937,11 @@ config_xgov_registry_bool_merge@11:
     // return amount * fraction_in_bps // BPS
     dig 2
     *
-    pushint 10000 // 10000
+    pushint 10000
     /
     // smart_contracts/xgov_registry/contract.py:311
     // UInt64(MAX_MBR_PER_APP + MAX_MBR_PER_BOX + ACCOUNT_MBR) + daemon_ops_funding
-    pushint 16835300 // 16835300
+    pushint 16835300
     +
     // smart_contracts/xgov_registry/contract.py:314
     // assert open_proposal_fee > to_substract, err.INVALID_OPEN_PROPOSAL_FEE
@@ -956,7 +958,7 @@ config_xgov_registry_bool_merge@11:
     // return (
     //     key_prefix_length + key_type_size + value_type_size
     // ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
-    pushint 18900 // 18900
+    pushint 18900
     // smart_contracts/xgov_registry/contract.py:318
     // self.max_committee_size.value = mbr_available_for_committee // voter_mbr
     /
@@ -1002,7 +1004,7 @@ config_xgov_registry_bool_merge@11:
     // smart_contracts/xgov_registry/contract.py:644
     // <= config.discussion_duration[2].as_uint64()
     dig 16
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     dup
     bury 11
@@ -1019,7 +1021,7 @@ config_xgov_registry_bool_merge@11:
     // smart_contracts/xgov_registry/contract.py:645
     // <= config.discussion_duration[3].as_uint64()
     dig 16
-    pushint 24 // 24
+    pushint 24
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:644-645
     // <= config.discussion_duration[2].as_uint64()
@@ -1083,7 +1085,7 @@ config_xgov_registry_bool_merge@17:
     // smart_contracts/xgov_registry/contract.py:652
     // <= config.voting_duration[2].as_uint64()
     dig 20
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     dup
     bury 8
@@ -1100,7 +1102,7 @@ config_xgov_registry_bool_merge@17:
     // smart_contracts/xgov_registry/contract.py:653
     // <= config.voting_duration[3].as_uint64()
     dig 20
-    pushint 24 // 24
+    pushint 24
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:652-653
     // <= config.voting_duration[2].as_uint64()
@@ -1142,7 +1144,7 @@ config_xgov_registry_bool_merge@23:
     // # Quorum Medium no longer used
     // < config.quorum[2].as_uint64()
     dig 19
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:658
     // < config.quorum[0].as_uint64()
@@ -1181,7 +1183,7 @@ config_xgov_registry_bool_merge@27:
     // # Weighted Quorum Medium no longer used
     // < config.weighted_quorum[2].as_uint64()
     dig 18
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:665
     // < config.weighted_quorum[0].as_uint64()
@@ -1273,7 +1275,7 @@ config_xgov_registry_bool_merge@31:
     // self.max_requested_amount_large.value = config.max_requested_amount[
     //     2
     // ].as_uint64()
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:683
     // self.max_requested_amount_large.value = config.max_requested_amount[
@@ -1309,7 +1311,7 @@ config_xgov_registry_bool_merge@31:
     // smart_contracts/xgov_registry/contract.py:691
     // self.discussion_duration_large.value = config.discussion_duration[2].as_uint64()
     dup
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     bytec 33 // 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
     swap
@@ -1318,7 +1320,7 @@ config_xgov_registry_bool_merge@31:
     // self.discussion_duration_xlarge.value = config.discussion_duration[
     //     3
     // ].as_uint64()
-    pushint 24 // 24
+    pushint 24
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:692
     // self.discussion_duration_xlarge.value = config.discussion_duration[
@@ -1346,14 +1348,14 @@ config_xgov_registry_bool_merge@31:
     // smart_contracts/xgov_registry/contract.py:698
     // self.voting_duration_large.value = config.voting_duration[2].as_uint64()
     dup
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     bytec 37 // 0x766f74696e675f6475726174696f6e5f6c61726765
     swap
     app_global_put
     // smart_contracts/xgov_registry/contract.py:699
     // self.voting_duration_xlarge.value = config.voting_duration[3].as_uint64()
-    pushint 24 // 24
+    pushint 24
     extract_uint64
     bytec 38 // 0x766f74696e675f6475726174696f6e5f786c61726765
     swap
@@ -1371,7 +1373,7 @@ config_xgov_registry_bool_merge@31:
     // smart_contracts/xgov_registry/contract.py:703
     // self.quorum_large.value = config.quorum[2].as_uint64()
     dig 19
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     bytec 41 // 0x71756f72756d5f6c61726765
     swap
@@ -1389,7 +1391,7 @@ config_xgov_registry_bool_merge@31:
     // smart_contracts/xgov_registry/contract.py:707
     // self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
     dig 18
-    pushint 16 // 16
+    pushint 16
     extract_uint64
     bytec 44 // 0x77656967687465645f71756f72756d5f6c61726765
     swap
@@ -2449,7 +2451,7 @@ open_proposal:
     // assert Txn.fee >= (Global.min_txn_fee * 3), err.INSUFFICIENT_FEE
     txn Fee
     global MinTxnFee
-    pushint 3 // 3
+    pushint 3
     *
     >=
     assert // Insufficient fee
@@ -2487,11 +2489,11 @@ open_proposal:
     // smart_contracts/xgov_registry/contract.py:1139
     // self.proposal_approval_program.length + compiled_clear_state_1.length
     dup
-    pushint 4 // 4
+    pushint 4
     +
     // smart_contracts/xgov_registry/contract.py:1137
     // bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
-    pushint 2048 // 2048
+    pushint 2048
     // smart_contracts/xgov_registry/contract.py:1141
     // total_pages = total_size // bytes_per_page
     /
@@ -2511,7 +2513,7 @@ open_proposal:
     -
     // smart_contracts/xgov_registry/contract.py:1137
     // bytes_per_page = UInt64(BYTES_PER_APP_PAGE)
-    pushint 2048 // 2048
+    pushint 2048
     // smart_contracts/xgov_registry/contract.py:1148
     // self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
     *
@@ -2548,11 +2550,11 @@ open_proposal:
     itxn_field ExtraProgramPages
     // smart_contracts/xgov_registry/contract.py:1160
     // global_num_bytes=pcfg.GLOBAL_BYTES,
-    pushint 3 // 3
+    pushint 3
     itxn_field GlobalNumByteSlice
     // smart_contracts/xgov_registry/contract.py:1159
     // global_num_uint=pcfg.GLOBAL_UINTS,
-    pushint 26 // 26
+    pushint 26
     itxn_field GlobalNumUint
     // smart_contracts/xgov_registry/contract.py:1131-1135
     // # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
@@ -2584,21 +2586,21 @@ open_proposal:
     itxn_submit
     itxn LastLog
     dupn 2
+    extract 0 4
+    bytec_3 // 0x151f7c75
+    ==
+    assert // application log value is not the result of an ABI return
+    dup
     extract 4 0
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    dup
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // application log value is not the result of an ABI return
     itxn CreatedApplicationID
     swap
     // smart_contracts/xgov_registry/contract.py:1164
@@ -2607,7 +2609,7 @@ open_proposal:
     dup
     len
     dup
-    pushint 4 // 4
+    pushint 4
     <
     bz open_proposal_ternary_false@4
     intc_0 // 0
@@ -2618,12 +2620,12 @@ open_proposal_ternary_merge@5:
     bz open_proposal_else_body@9
     // smart_contracts/xgov_registry/contract.py:1165
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
-    pushint 4 // 4
+    pushint 4
     dig 1
     dup
     cover 2
     >=
-    pushint 4 // 4
+    pushint 4
     dig 2
     uncover 2
     select
@@ -2870,7 +2872,7 @@ vote_proposal:
     // )
     itob
     uncover 2
-    pushint 40 // 40
+    pushint 40
     uncover 2
     box_replace
     // smart_contracts/xgov_registry/contract.py:1241-1242
@@ -2906,28 +2908,28 @@ vote_proposal:
     itxn_submit
     itxn LastLog
     dupn 2
+    extract 0 4
+    bytec_3 // 0x151f7c75
+    ==
+    assert // application log value is not the result of an ABI return
+    dup
     extract 4 0
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    dup
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // application log value is not the result of an ABI return
     // smart_contracts/xgov_registry/contract.py:1253
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
     len
     dup
-    pushint 4 // 4
+    pushint 4
     <
     bz vote_proposal_ternary_false@4
     intc_0 // 0
@@ -2938,12 +2940,12 @@ vote_proposal_ternary_merge@5:
     bz vote_proposal_else_body@12
     // smart_contracts/xgov_registry/contract.py:1254
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
-    pushint 4 // 4
+    pushint 4
     dig 1
     dup
     cover 2
     >=
-    pushint 4 // 4
+    pushint 4
     dig 2
     uncover 2
     select
@@ -2956,7 +2958,7 @@ vote_proposal_ternary_merge@5:
     bytec 23 // "Wrong Proposal Status or finalized"
     // smart_contracts/xgov_registry/contract.py:1258
     // case err.VOTER_NOT_FOUND:
-    pushbytess "Voter not found" "Votes exceeded" "Voting Period Expired" // "Voter not found", "Votes exceeded", "Voting Period Expired"
+    pushbytess "Voter not found" "Votes exceeded" "Voting Period Expired"
     // smart_contracts/xgov_registry/contract.py:1255-1265
     // match error_without_prefix:
     //     case err.WRONG_PROPOSAL_STATUS:
@@ -3129,28 +3131,28 @@ pay_grant_proposal:
     itxn_submit
     itxn LastLog
     dupn 2
+    extract 0 4
+    bytec_3 // 0x151f7c75
+    ==
+    assert // application log value is not the result of an ABI return
+    dup
     extract 4 0
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    dup
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // application log value is not the result of an ABI return
     // smart_contracts/xgov_registry/contract.py:1312
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
     len
     dup
-    pushint 4 // 4
+    pushint 4
     <
     bz pay_grant_proposal_ternary_false@4
     intc_0 // 0
@@ -3161,12 +3163,12 @@ pay_grant_proposal_ternary_merge@5:
     bz pay_grant_proposal_else_body@9
     // smart_contracts/xgov_registry/contract.py:1313
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
-    pushint 4 // 4
+    pushint 4
     dig 1
     dup
     cover 2
     >=
-    pushint 4 // 4
+    pushint 4
     dig 2
     uncover 2
     select
@@ -3253,7 +3255,7 @@ finalize_proposal:
     // ):
     bz finalize_proposal_if_body@3
     dup
-    pushint 10 // 10
+    pushint 10
     ==
     bz finalize_proposal_after_if_else@4
 
@@ -3293,21 +3295,21 @@ finalize_proposal_after_if_else@4:
     dup
     bury 6
     dup
+    extract 0 4
+    bytec_3 // 0x151f7c75
+    ==
+    assert // application log value is not the result of an ABI return
+    dup
     extract 4 0
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    dup
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // application log value is not the result of an ABI return
     // smart_contracts/xgov_registry/contract.py:1350
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
@@ -3316,7 +3318,7 @@ finalize_proposal_after_if_else@4:
     len
     dup
     bury 4
-    pushint 4 // 4
+    pushint 4
     <
     bz finalize_proposal_ternary_false@7
     intc_0 // 0
@@ -3327,12 +3329,12 @@ finalize_proposal_ternary_merge@8:
     bz finalize_proposal_else_body@13
     // smart_contracts/xgov_registry/contract.py:1351
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
-    pushint 4 // 4
+    pushint 4
     dig 3
     dup
     cover 2
     >=
-    pushint 4 // 4
+    pushint 4
     dig 2
     uncover 2
     select
@@ -3445,28 +3447,28 @@ drop_proposal:
     itxn_submit
     itxn LastLog
     dupn 2
+    extract 0 4
+    bytec_3 // 0x151f7c75
+    ==
+    assert // application log value is not the result of an ABI return
+    dup
     extract 4 0
     dup
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
-    dup
-    extract 0 4
-    bytec_3 // 0x151f7c75
-    ==
-    assert // application log value is not the result of an ABI return
     // smart_contracts/xgov_registry/contract.py:1391
     // if error.native.startswith(err.ARC_65_PREFIX):
     extract 6 0
     dup
     len
     dup
-    pushint 4 // 4
+    pushint 4
     <
     bz drop_proposal_ternary_false@4
     intc_0 // 0
@@ -3477,12 +3479,12 @@ drop_proposal_ternary_merge@5:
     bz drop_proposal_else_body@9
     // smart_contracts/xgov_registry/contract.py:1392
     // error_without_prefix = String.from_bytes(error.native.bytes[4:])
-    pushint 4 // 4
+    pushint 4
     dig 1
     dup
     cover 2
     >=
-    pushint 4 // 4
+    pushint 4
     dig 2
     uncover 2
     select
@@ -3609,7 +3611,7 @@ withdraw_funds:
     // assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
     txn Fee
     global MinTxnFee
-    pushint 2 // 2
+    pushint 2
     *
     >=
     assert // Insufficient fee
@@ -3666,7 +3668,7 @@ withdraw_balance:
     // assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
     txn Fee
     global MinTxnFee
-    pushint 2 // 2
+    pushint 2
     *
     >=
     assert // Insufficient fee
