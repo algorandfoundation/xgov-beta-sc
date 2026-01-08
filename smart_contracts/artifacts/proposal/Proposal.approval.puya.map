@@ -39,7 +39,7 @@
       ]
     },
     "587": {
-      "op": "pushint 3 // 3",
+      "op": "pushint 3",
       "defined_out": [
         "3",
         "tmp%0#2"
@@ -73,7 +73,7 @@
       ]
     },
     "593": {
-      "op": "pushint 26 // 26",
+      "op": "pushint 26",
       "defined_out": [
         "26",
         "tmp%2#1"
@@ -786,8 +786,7 @@
       ]
     },
     "737": {
-      "error": "OnCompletion must be NoOp",
-      "op": "assert // OnCompletion must be NoOp",
+      "op": "assert",
       "stack_out": []
     },
     "738": {
@@ -982,8 +981,7 @@
       ]
     },
     "880": {
-      "error": "OnCompletion must be DeleteApplication && can only call when not creating",
-      "op": "assert // OnCompletion must be DeleteApplication && can only call when not creating",
+      "op": "assert",
       "stack_out": []
     },
     "881": {
@@ -1654,7 +1652,7 @@
       ]
     },
     "1018": {
-      "op": "pushint 2 // 2",
+      "op": "pushint 2",
       "defined_out": [
         "2",
         "aggregate%array_length%0#0",
@@ -1809,7 +1807,7 @@
       ]
     },
     "1030": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "funding_type#0",
@@ -1916,7 +1914,7 @@
       ]
     },
     "1039": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "stack_out": [
         "title#1",
         "category#0",
@@ -2812,7 +2810,7 @@
       ]
     },
     "1101": {
-      "op": "pushint 123 // 123",
+      "op": "pushint 123",
       "defined_out": [
         "123",
         "funding_type#0",
@@ -3048,7 +3046,7 @@
       ]
     },
     "1116": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "20",
         "funding_type#0",
@@ -7215,7 +7213,7 @@
       ]
     },
     "1598": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "aggregate%bitlen%0#0",
@@ -7578,7 +7576,7 @@
       ]
     },
     "1619": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "stack_out": [
         "title#1",
         "category#0",
@@ -7901,7 +7899,7 @@
       ]
     },
     "1644": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "20",
         "category#0"
@@ -8098,7 +8096,7 @@
       ]
     },
     "1711": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "20",
         "category#0"
@@ -8355,7 +8353,7 @@
       ]
     },
     "1792": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "max_requested_amount_medium#0",
         "requested_amount#1",
@@ -8394,7 +8392,7 @@
         "requested_amount#0",
         "focus#0"
       ],
-      "op": "pushint 30 // 30",
+      "op": "pushint 30",
       "defined_out": [
         "tmp%6#0"
       ],
@@ -8569,7 +8567,7 @@
       ]
     },
     "1821": {
-      "op": "pushint 2 // 2",
+      "op": "pushint 2",
       "defined_out": [
         "2",
         "aggregate%array_length%0#0",
@@ -10050,7 +10048,7 @@
       ]
     },
     "2027": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "0x737461747573",
         "20"
@@ -10188,7 +10186,7 @@
       ]
     },
     "2050": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "defined_out": [
         "40",
         "aggregate%array_length%0#0",
@@ -10221,7 +10219,7 @@
       ]
     },
     "2053": {
-      "op": "pushint 2 // 2",
+      "op": "pushint 2",
       "defined_out": [
         "2",
         "aggregate%array_length%0#0",
@@ -10389,7 +10387,7 @@
       ]
     },
     "2068": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "20",
         "aggregate%array_length%0#0",
@@ -10817,7 +10815,7 @@
       ]
     },
     "2126": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "defined_out": [
         "40",
         "aggregate%array_length%0#0",
@@ -10857,7 +10855,7 @@
       ]
     },
     "2129": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "stack_out": [
         "i#0",
         "tmp%2#0",
@@ -11792,7 +11790,7 @@
       ]
     },
     "2212": {
-      "op": "pushint 25 // 25",
+      "op": "pushint 25",
       "defined_out": [
         "0x737461747573",
         "25"
@@ -12748,7 +12746,7 @@
       ]
     },
     "2308": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "approvals#0",
@@ -12841,7 +12839,7 @@
       ]
     },
     "2317": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "stack_out": [
         "aggregate%encoded_value%3#0",
         "box_prefixed_key%0#1",
@@ -12998,7 +12996,7 @@
       ]
     },
     "2329": {
-      "op": "pushint 25 // 25",
+      "op": "pushint 25",
       "defined_out": [
         "25",
         "approvals#0",
@@ -16915,7 +16913,7 @@
       ]
     },
     "2697": {
-      "op": "pushint 25 // 25",
+      "op": "pushint 25",
       "defined_out": [
         "25",
         "maybe_value%0#1"
@@ -17103,7 +17101,7 @@
       ]
     },
     "2741": {
-      "op": "pushint 30 // 30",
+      "op": "pushint 30",
       "defined_out": [
         "0x737461747573",
         "30",
@@ -17345,7 +17343,7 @@
       ]
     },
     "2776": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "defined_out": [
         "0x737461747573",
         "40"
@@ -17734,7 +17732,7 @@
       ]
     },
     "2840": {
-      "op": "pushint 30 // 30",
+      "op": "pushint 30",
       "defined_out": [
         "30",
         "block#0",
@@ -17845,7 +17843,7 @@
       ]
     },
     "2855": {
-      "op": "pushint 60 // 60",
+      "op": "pushint 60",
       "defined_out": [
         "0x737461747573",
         "60",
@@ -18007,7 +18005,7 @@
       ]
     },
     "2882": {
-      "op": "pushint 45 // 45",
+      "op": "pushint 45",
       "defined_out": [
         "0x737461747573",
         "45"
@@ -18160,7 +18158,7 @@
       ]
     },
     "2905": {
-      "op": "pushint 45 // 45",
+      "op": "pushint 45",
       "defined_out": [
         "45",
         "maybe_value%0#0"
@@ -18380,7 +18378,7 @@
       ]
     },
     "2933": {
-      "op": "pushint 50 // 50",
+      "op": "pushint 50",
       "defined_out": [
         "0x737461747573",
         "50"
@@ -18601,7 +18599,7 @@
       ]
     },
     "2965": {
-      "op": "pushint 2 // 2",
+      "op": "pushint 2",
       "defined_out": [
         "2",
         "aggregate%array_length%0#0",
@@ -18773,7 +18771,7 @@
       ]
     },
     "2976": {
-      "op": "pushint 20 // 20",
+      "op": "pushint 20",
       "defined_out": [
         "20",
         "aggregate%array_length%0#0",
@@ -19885,7 +19883,7 @@
       ]
     },
     "3090": {
-      "op": "pushint 30 // 30",
+      "op": "pushint 30",
       "defined_out": [
         "30",
         "maybe_value%1#0"
@@ -19990,7 +19988,7 @@
       ]
     },
     "3100": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "defined_out": [
         "40",
         "maybe_value%2#0"
@@ -20446,7 +20444,7 @@
       ]
     },
     "3155": {
-      "op": "pushint 50 // 50",
+      "op": "pushint 50",
       "defined_out": [
         "50",
         "maybe_value%3#0"
@@ -20516,7 +20514,7 @@
       ]
     },
     "3165": {
-      "op": "pushint 60 // 60",
+      "op": "pushint 60",
       "defined_out": [
         "60",
         "maybe_value%4#0"
@@ -20586,7 +20584,7 @@
       ]
     },
     "3175": {
-      "op": "pushint 40 // 40",
+      "op": "pushint 40",
       "defined_out": [
         "40",
         "maybe_value%5#0"
@@ -22416,7 +22414,7 @@
       ]
     },
     "3416": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "aggregate%bitlen%0#0",
@@ -27017,7 +27015,7 @@
       ]
     },
     "3747": {
-      "op": "pushint 2 // 2"
+      "op": "pushint 2"
     },
     "3749": {
       "op": "swap",
@@ -27080,7 +27078,7 @@
       ]
     },
     "3755": {
-      "op": "pushint 3 // 3"
+      "op": "pushint 3"
     },
     "3757": {
       "op": "swap",

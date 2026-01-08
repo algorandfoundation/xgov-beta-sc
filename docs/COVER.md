@@ -22,8 +22,8 @@ on the Algorand public Ledger.
 The old xGov process (Alpha) has shown some weaknesses concerning the incentive
 alignment, the gamification risks of the voting system, and low-quality proposals.
 
-Moreover, the old grant proposal submission and funding mechanism were based on a
-per-quarter schedule, making the whole process slow and inflexible.
+Moreover, the old grant proposal submission and funding mechanism were based on
+a per-quarter schedule, making the whole process slow and inflexible.
 
 Therefore, a more robust process with a continuous stream of grant proposals, votes,
 and funding is desirable.
