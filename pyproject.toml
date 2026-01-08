@@ -17,7 +17,7 @@ algorand-python = "==3.3.0"
 poetry-core = "^2.2.1"
 types-hvac = "^2.4.0.20251115"
 hvac = "^2.4.0"
-urllib3 = "^2.6.2"
+urllib3 = "^2.6.3"
 pip = "^25.3"
 
 [tool.poetry.group.dev.dependencies]
