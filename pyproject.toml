@@ -11,26 +11,26 @@ documentation = "https://algorandfoundation.github.io/xgov-beta-sc/"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-algokit-utils = "^4.2.2"
+algokit-utils = "^4.2.3"
 python-dotenv = "^1.2.1"
-algorand-python = "==3.2.0"
+algorand-python = "==3.3.0"
 poetry-core = "^2.2.1"
 types-hvac = "^2.4.0.20251115"
 hvac = "^2.4.0"
-urllib3 = "^2.6.1"
+urllib3 = "^2.6.3"
 pip = "^25.3"
 
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^2.2.0"
-black = {extras = ["d"], version = "^25.9.0"}
-ruff = "^0.14.8"
-mypy = "^1.19.0"
+black = {extras = ["d"], version = "^25.12.0"}
+ruff = "^0.14.10"
+mypy = "^1.19.1"
 pytest = "^9.0.2"
 pytest-cov = "^7.0.0"
 pytest-sugar = "^1.1.1"
 pip-audit = "^2.10.0"
-pre-commit = "^4.5.0"
-puyapy = "==5.3.2"
+pre-commit = "^4.5.1"
+puyapy = "==5.6.0"
 
 [build-system]
 requires = ["poetry-core"]

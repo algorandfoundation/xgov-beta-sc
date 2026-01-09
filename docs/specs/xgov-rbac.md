@@ -53,8 +53,8 @@ on the xGov Registry (see [xGov Committee section](./xgov-committee.md#declarati
 
 The xGov Daemon is an Algorand Address controlled by the Algorand Foundation (back-end).
 
-The xGov Daemon **SHALL** assign the xGov Committee currently in charge (voters and
-their voting power) to open Proposals.
+The xGov Daemon **SHALL** assign the xGov Committee currently in charge (voters
+and their voting power) to open Proposals.
 
 The xGov Daemon **SHOULD** delete absentees (voters) after Proposals scrutiny.
 

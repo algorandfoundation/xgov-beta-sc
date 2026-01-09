@@ -223,8 +223,7 @@
       ]
     },
     "86": {
-      "error": "OnCompletion must be NoOp",
-      "op": "assert // OnCompletion must be NoOp",
+      "op": "assert",
       "stack_out": []
     },
     "87": {
@@ -375,8 +374,7 @@
       ]
     },
     "152": {
-      "error": "OnCompletion must be UpdateApplication && can only call when not creating",
-      "op": "assert // OnCompletion must be UpdateApplication && can only call when not creating",
+      "op": "assert",
       "stack_out": []
     },
     "153": {
@@ -418,7 +416,7 @@
       ]
     },
     "161": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "len%0#0",
@@ -1228,7 +1226,7 @@
       ]
     },
     "282": {
-      "op": "pushint 8 // 8",
+      "op": "pushint 8",
       "defined_out": [
         "8",
         "len%0#0",
@@ -2139,7 +2137,7 @@
       ]
     },
     "362": {
-      "op": "pushint 30 // 30",
+      "op": "pushint 30",
       "defined_out": [
         "30",
         "block#0",
@@ -3089,7 +3087,7 @@
       ]
     },
     "425": {
-      "op": "pushint 33 // 33",
+      "op": "pushint 33",
       "defined_out": [
         "33",
         "box%array_length%0#0",
@@ -3216,7 +3214,7 @@
       ]
     },
     "433": {
-      "op": "pushint 33 // 33",
+      "op": "pushint 33",
       "stack_out": [
         "approvals#0",
         "box%array_length%0#0",
@@ -3371,7 +3369,7 @@
       ]
     },
     "444": {
-      "op": "pushint 256 // 256",
+      "op": "pushint 256",
       "defined_out": [
         "256",
         "box%array_length%0#0",

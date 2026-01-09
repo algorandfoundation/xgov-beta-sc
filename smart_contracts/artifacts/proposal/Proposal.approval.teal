@@ -10,7 +10,7 @@ main:
     // smart_contracts/proposal/contract.py:48
     // Txn.global_num_byte_slice == prop_cfg.GLOBAL_BYTES
     txn GlobalNumByteSlice
-    pushint 3 // 3
+    pushint 3
     ==
     // smart_contracts/proposal/contract.py:46-49
     // # Preconditions
@@ -21,7 +21,7 @@ main:
     // smart_contracts/proposal/contract.py:50
     // assert Txn.global_num_uint == prop_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    pushint 26 // 26
+    pushint 26
     ==
     assert // Wrong Global UInts allocation
     // smart_contracts/proposal/contract.py:51
@@ -417,7 +417,7 @@ main_switch_case_next@5:
     // ):
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     bz main_create_NoOp@23
     pushbytess 0xedaeb9ca 0x7143994f 0x7371321a 0x34e613ca 0x0d9ab0d7 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x2ac19b05 0x802069b4 0xa8c6f80a 0x24615f90 0xea2363f4 0xdbd83dd9 // method "open(pay,string,uint64,uint64,uint8)void", method "upload_metadata(byte[],bool)void", method "drop()string", method "submit()void", method "assign_voters((address,uint64)[])void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "unassign_voters(address[])void", method "finalize()string", method "get_state()(address,uint64,string,uint64,uint64,uint64,uint64,bool,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64)", method "get_voter_box(address)(uint64,bool)", method "get_voting_state()(uint32,uint32,uint32,uint32,uint32,uint32,bool,bool,bool,bool)", method "op_up()void"
@@ -455,7 +455,7 @@ main_delete_route@4:
     ==
     txn ApplicationID
     &&
-    assert // OnCompletion must be DeleteApplication && can only call when not creating
+    assert
     b delete
 
 
@@ -623,7 +623,7 @@ open:
     dupn 2
     intc_0 // 0
     extract_uint16 // on error: invalid array length header
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
@@ -632,13 +632,13 @@ open:
     txna ApplicationArgs 2
     dup
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     dup
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 4
@@ -701,7 +701,7 @@ open_bool_merge@5:
     // assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
     dup
     len
-    pushint 123 // 123
+    pushint 123
     <=
     assert // Wrong Title length
     // smart_contracts/proposal/contract.py:383
@@ -720,7 +720,7 @@ open_bool_merge@5:
     // smart_contracts/proposal/contract.py:387
     // or funding_type == enm.FUNDING_RETROACTIVE
     dig 8
-    pushint 20 // 20
+    pushint 20
     ==
     // smart_contracts/proposal/contract.py:386-387
     // funding_type == enm.FUNDING_PROACTIVE
@@ -1140,7 +1140,7 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     itob
     dup
     bitlen
-    pushint 8 // 8
+    pushint 8
     <=
     assert // overflow
     extract 7 1
@@ -1160,7 +1160,7 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     itob
     dup
     bitlen
-    pushint 8 // 8
+    pushint 8
     <=
     assert // overflow
     extract 7 1
@@ -1195,7 +1195,7 @@ open_else_body@29:
     // smart_contracts/proposal/contract.py:328
     // elif category == enm.FUNDING_CATEGORY_MEDIUM:
     dig 9
-    pushint 20 // 20
+    pushint 20
     ==
     bz open_else_body@31
     // smart_contracts/proposal/contract.py:330
@@ -1231,7 +1231,7 @@ open_else_body@23:
     // smart_contracts/proposal/contract.py:313
     // elif category == enm.FUNDING_CATEGORY_MEDIUM:
     dig 9
-    pushint 20 // 20
+    pushint 20
     ==
     bz open_else_body@25
     // smart_contracts/proposal/contract.py:315
@@ -1272,7 +1272,7 @@ open_else_body@17:
     bz open_else_body@19
     // smart_contracts/proposal/contract.py:442
     // return UInt64(enm.FUNDING_CATEGORY_MEDIUM)
-    pushint 20 // 20
+    pushint 20
     // smart_contracts/proposal/contract.py:681
     // self.funding_category.value = self.get_category(requested_amount.as_uint64())
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_category@20
@@ -1280,7 +1280,7 @@ open_else_body@17:
 open_else_body@19:
     // smart_contracts/proposal/contract.py:444
     // return UInt64(enm.FUNDING_CATEGORY_LARGE)
-    pushint 30 // 30
+    pushint 30
     // smart_contracts/proposal/contract.py:681
     // self.funding_category.value = self.get_category(requested_amount.as_uint64())
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_category@20
@@ -1305,7 +1305,7 @@ upload_metadata:
     dup
     cover 3
     dup
-    pushint 2 // 2
+    pushint 2
     +
     uncover 2
     len
@@ -1565,7 +1565,7 @@ submit:
     // smart_contracts/proposal/contract.py:796
     // self.status.value = UInt64(enm.STATUS_SUBMITTED)
     bytec_0 // 0x737461747573
-    pushint 20 // 20
+    pushint 20
     app_global_put
     // smart_contracts/proposal/contract.py:797
     // self.submission_ts.value = Global.latest_timestamp
@@ -1590,9 +1590,9 @@ assign_voters:
     extract_uint16 // on error: invalid array length header
     dup
     cover 2
-    pushint 40 // 40
+    pushint 40
     *
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
@@ -1608,7 +1608,7 @@ assign_voters:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 20 // 20
+    pushint 20
     ==
     assert // Wrong Proposal Status or finalized
     // smart_contracts/proposal/contract.py:838
@@ -1664,9 +1664,9 @@ assign_voters_for_header@9:
     dig 4
     dup
     cover 2
-    pushint 40 // 40
+    pushint 40
     *
-    pushint 40 // 40
+    pushint 40
     extract3 // on error: index access is out of bounds
     dup
     extract 0 32
@@ -1752,7 +1752,7 @@ assign_voters_after_for@12:
     // smart_contracts/proposal/contract.py:855
     // self.status.value = UInt64(enm.STATUS_VOTING)
     bytec_0 // 0x737461747573
-    pushint 25 // 25
+    pushint 25
     app_global_put
     // smart_contracts/proposal/contract.py:856
     // self.vote_open_ts.value = Global.latest_timestamp
@@ -1875,13 +1875,13 @@ vote:
     txna ApplicationArgs 2
     dup
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     txna ApplicationArgs 3
     dup
     len
-    pushint 8 // 8
+    pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
     // smart_contracts/proposal/contract.py:259
@@ -1894,7 +1894,7 @@ vote:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 25 // 25
+    pushint 25
     !=
     bz vote_after_if_else@15
     // smart_contracts/proposal/contract.py:262
@@ -2213,7 +2213,7 @@ scrutiny:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 25 // 25
+    pushint 25
     ==
     assert // Wrong Proposal Status or finalized
     // smart_contracts/proposal/contract.py:291
@@ -2273,7 +2273,7 @@ scrutiny_bool_merge@16:
     // smart_contracts/proposal/contract.py:945
     // self.status.value = UInt64(enm.STATUS_APPROVED)
     bytec_0 // 0x737461747573
-    pushint 30 // 30
+    pushint 30
     app_global_put
 
 scrutiny_after_if_else@4:
@@ -2320,7 +2320,7 @@ scrutiny_else_body@3:
     // smart_contracts/proposal/contract.py:947
     // self.status.value = UInt64(enm.STATUS_REJECTED)
     bytec_0 // 0x737461747573
-    pushint 40 // 40
+    pushint 40
     app_global_put
     // smart_contracts/proposal/contract.py:949
     // receiver=self.proposer.value,
@@ -2383,7 +2383,7 @@ review:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 30 // 30
+    pushint 30
     ==
     assert // Wrong Proposal Status or finalized
     // smart_contracts/proposal/contract.py:975-976
@@ -2401,7 +2401,7 @@ review:
     // smart_contracts/proposal/contract.py:979
     // self.status.value = UInt64(enm.STATUS_BLOCKED)
     bytec_0 // 0x737461747573
-    pushint 60 // 60
+    pushint 60
     app_global_put
     // smart_contracts/proposal/contract.py:981-982
     // # slashing: send locked amount to the registry treasury
@@ -2436,7 +2436,7 @@ review_else_body@3:
     // smart_contracts/proposal/contract.py:988
     // self.status.value = UInt64(enm.STATUS_REVIEWED)
     bytec_0 // 0x737461747573
-    pushint 45 // 45
+    pushint 45
     app_global_put
     // smart_contracts/proposal/contract.py:992
     // receiver=self.proposer.value,
@@ -2467,7 +2467,7 @@ fund:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 45 // 45
+    pushint 45
     !=
     bz fund_after_if_else@7
     // smart_contracts/proposal/contract.py:223
@@ -2500,7 +2500,7 @@ fund_after_if_else@3:
     // smart_contracts/proposal/contract.py:1010
     // self.status.value = UInt64(enm.STATUS_FUNDED)
     bytec_0 // 0x737461747573
-    pushint 50 // 50
+    pushint 50
     app_global_put
     dig 1
     // smart_contracts/proposal/contract.py:997
@@ -2533,7 +2533,7 @@ unassign_voters:
     cover 2
     intc_2 // 32
     *
-    pushint 2 // 2
+    pushint 2
     +
     swap
     len
@@ -2545,7 +2545,7 @@ unassign_voters:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 20 // 20
+    pushint 20
     ==
     bz unassign_voters_else_body@17
     // smart_contracts/proposal/contract.py:230
@@ -2658,7 +2658,7 @@ unassign_voters_else_body@17:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 30 // 30
+    pushint 30
     ==
     // smart_contracts/proposal/contract.py:233-234
     // self.status.value == enm.STATUS_APPROVED
@@ -2670,7 +2670,7 @@ unassign_voters_else_body@17:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 40 // 40
+    pushint 40
     ==
     // smart_contracts/proposal/contract.py:233-234
     // self.status.value == enm.STATUS_APPROVED
@@ -2758,7 +2758,7 @@ finalize:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 50 // 50
+    pushint 50
     !=
     // smart_contracts/proposal/contract.py:242-246
     // self.status.value != enm.STATUS_EMPTY
@@ -2773,7 +2773,7 @@ finalize:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 60 // 60
+    pushint 60
     !=
     // smart_contracts/proposal/contract.py:242-246
     // self.status.value != enm.STATUS_EMPTY
@@ -2788,7 +2788,7 @@ finalize:
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    pushint 40 // 40
+    pushint 40
     !=
     // smart_contracts/proposal/contract.py:242-246
     // self.status.value != enm.STATUS_EMPTY
@@ -3045,7 +3045,7 @@ get_state:
     itob
     dup
     bitlen
-    pushint 8 // 8
+    pushint 8
     <=
     assert // overflow
     extract 7 1
@@ -3389,13 +3389,13 @@ get_voting_state:
     uncover 3
     intc_0 // 0
     getbit
-    pushint 2 // 2
+    pushint 2
     swap
     setbit
     uncover 2
     intc_0 // 0
     getbit
-    pushint 3 // 3
+    pushint 3
     swap
     setbit
     concat
