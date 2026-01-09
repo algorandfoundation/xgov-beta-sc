@@ -1213,7 +1213,7 @@ class XGovRegistry(
             err.INVALID_PROPOSAL: If the Proposal ID is not a Proposal contract
             err.PROPOSAL_IS_NOT_VOTING: If the Proposal is not in a voting session
             err.UNAUTHORIZED: If the xGov_address is not an xGov
-            err.MUST_BE_VOTING_ADDRESS: If the sender is not the voting_address
+            err.MUST_BE_XGOV_ORVOTING_ADDRESS: If the sender is not the xgov_address or the voting_address
             err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
@@ -1238,8 +1238,11 @@ class XGovRegistry(
             Global.latest_timestamp
         )
 
-        # Verify the caller is using their voting address
-        assert Txn.sender == xgov_box.voting_address.native, err.MUST_BE_VOTING_ADDRESS
+        # Verify the caller is eithre xgov address or its voting address
+        assert (
+            Txn.sender == xgov_address.native
+            or Txn.sender == xgov_box.voting_address.native
+        ), err.MUST_BE_XGOV_OR_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
         error, _tx = arc4.abi_call(
