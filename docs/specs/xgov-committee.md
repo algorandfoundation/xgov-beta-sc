@@ -166,8 +166,8 @@ JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representat
 
 ## Selection
 
-The xGov Committee selection procedure and the assignment of their voting power is
-performed by the Algorand Foundation.
+The xGov Committee selection procedure and the assignment of their voting power
+is performed by the Algorand Foundation.
 
 ## Declaration
 
