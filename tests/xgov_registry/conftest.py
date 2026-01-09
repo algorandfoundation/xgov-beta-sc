@@ -66,6 +66,8 @@ from tests.proposal.common import (
     upload_metadata,
 )
 from tests.xgov_registry.common import (
+    SHORT_COMMITTEE_GRACE_PERIOD,
+    SHORT_GOVERNANCE_PERIOD,
     TREASURY_AMOUNT,
     UNLIMITED_KYC_EXPIRATION,
     get_open_proposal_fee,
@@ -143,7 +145,11 @@ def xgov_registry_client_committee_not_declared(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer.address,
         compilation_params=AppClientCompilationParams(
-            deploy_time_params={"entropy": b""}
+            deploy_time_params={
+                "entropy": b"",
+                "governance_period": SHORT_GOVERNANCE_PERIOD,
+                "committee_grace_period": SHORT_COMMITTEE_GRACE_PERIOD,
+            }
         ),
     )
     client, _ = factory.send.create.create()

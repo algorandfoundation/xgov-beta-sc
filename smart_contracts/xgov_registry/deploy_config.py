@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+from typing import TypeAlias
 
 from algokit_utils import (
     AlgoAmount,
@@ -16,6 +17,10 @@ from algosdk import encoding
 from algosdk.transaction import Multisig
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
+from smart_contracts.xgov_registry.constants import (
+    COMMITTEE_GRACE_PERIOD,
+    GOVERNANCE_PERIOD,
+)
 from smart_contracts.xgov_registry.helpers import (
     load_proposal_contract_data_size_per_transaction,
 )
@@ -25,6 +30,8 @@ from smart_contracts.xgov_registry.vault_tx_signer import (
     _create_vault_auth_from_env,
     create_vault_multisig_signer_from_env,
 )
+
+DeployTimeParams: TypeAlias = dict[str, int | bytes]
 
 logger = logging.getLogger(__name__)
 
@@ -171,16 +178,19 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    template_values = {"entropy": b""}
+    template_values: DeployTimeParams = {
+        "entropy": b"",
+        "governance_period": GOVERNANCE_PERIOD,
+        "committee_grace_period": COMMITTEE_GRACE_PERIOD,
+    }
 
     signer = vault_signer if vault_signer else gh_deployer.signer
 
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
         logger.info("Fresh deployment requested")
-        template_values = {
-            "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
-        }
+        # trick to ensure a fresh deployment
+        template_values["entropy"] = random.randbytes(16)
         deployer_address = gh_deployer.address
         signer = gh_deployer.signer
 
