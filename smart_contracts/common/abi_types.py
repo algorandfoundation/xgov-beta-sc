@@ -75,6 +75,7 @@ class TypedGlobalState(arc4.Struct):
     committee_id: Bytes32
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
+    absence_tolerance: arc4.UInt64
 
 
 class XGovRegistryConfig(arc4.Struct):
@@ -89,6 +90,7 @@ class XGovRegistryConfig(arc4.Struct):
     voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
+    absence_tolerance: arc4.UInt64
 
 
 class XGovSubscribeRequestBoxValue(arc4.Struct):
@@ -105,7 +107,7 @@ class ProposerBoxValue(arc4.Struct):
 
 class XGovBoxValue(arc4.Struct):
     voting_address: arc4.Address
-    voted_proposals: arc4.UInt64  # Capped presence buffer for absenteeism
+    voted_proposals: arc4.UInt64  # Now used as tolerated absences
     last_vote_timestamp: arc4.UInt64
     subscription_round: arc4.UInt64
 
