@@ -206,7 +206,9 @@ def members_for_both_quorums(
     return max(proposal_registry_values.members_quorum, weighted_quorum_members)  # type: ignore
 
 
-def presence_counts(xgov_registry_client: XGovRegistryClient, xgovs: list[str]) -> dict:
+def absence_tolerance(
+    xgov_registry_client: XGovRegistryClient, xgovs: list[str]
+) -> dict:
     return {
         address: xgov_registry_client.state.box.xgov_box.get_value(
             address
