@@ -1,7 +1,5 @@
 import pytest
 from algokit_utils import (
-    AlgoAmount,
-    AlgorandClient,
     CommonAppCallParams,
     LogicError,
     SigningAccount,
@@ -14,24 +12,103 @@ from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client impo
 from smart_contracts.errors import std_errors as err
 from tests.common import DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import (
-    assert_approved_proposal_global_state,
-    assert_rejected_proposal_global_state,
     assert_submitted_proposal_global_state,
     assign_voters,
     unassign_voters,
 )
-from tests.utils import time_warp
-
-# TODO add tests for unassign on other statuses
 
 
-def test_unassign_empty_proposal(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
+def test_unassign_unauthorized_submitted(
+    no_role_account: SigningAccount,
+    submitted_proposal_client: ProposalClient,
+) -> None:
+    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+        composer = submitted_proposal_client.new_group()
+        unassign_voters(
+            composer,
+            [],
+            no_role_account,
+        )
+        composer.send()
+
+
+def test_unassign_no_voters(
+    proposer: SigningAccount,
     xgov_daemon: SigningAccount,
     xgov_registry_mock_client: XgovRegistryMockClient,
-    proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
+    composer = submitted_proposal_client.new_group()
+    unassign_voters(
+        composer,
+        [],
+        xgov_daemon,
+    )
+    composer.send()
+
+    assert_submitted_proposal_global_state(
+        submitted_proposal_client,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+    )
+
+
+def test_unassign_one_voter(
+    committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    submitted_proposal_client: ProposalClient,
+) -> None:
+    composer = submitted_proposal_client.new_group()
+    assign_voters(
+        composer,
+        committee[1:],
+        xgov_daemon,
+    )
+    composer.send()
+    old_assigned_members = submitted_proposal_client.state.global_state.assigned_members
+    assert old_assigned_members == len(committee) - 1
+
+    composer = submitted_proposal_client.new_group()
+    unassign_voters(
+        composer,
+        committee[1:2],
+        xgov_daemon,
+    )
+    composer.send()
+    unassigned_voters = (
+        old_assigned_members
+        - submitted_proposal_client.state.global_state.assigned_members
+    )
+    assert unassigned_voters == 1
+
+    assert_submitted_proposal_global_state(
+        submitted_proposal_client,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1 - unassigned_voters),
+        assigned_members=len(committee) - 1 - unassigned_voters,
+    )
+
+
+@pytest.mark.parametrize(
+    "proposal_client_fixture",
+    [
+        "proposal_client",
+        "approved_proposal_client",
+        "rejected_proposal_client",
+        "funded_proposal_client",
+        "blocked_proposal_client",
+    ],
+)
+def test_unassign_wrong_proposal_status(
+    committee: list[CommitteeMember],
+    xgov_daemon: SigningAccount,
+    proposal_client_fixture: str,
+    request: pytest.FixtureRequest,
+) -> None:
+    proposal_client: ProposalClient = request.getfixturevalue(proposal_client_fixture)
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
         composer = proposal_client.new_group()
         unassign_voters(
@@ -42,213 +119,9 @@ def test_unassign_empty_proposal(
         composer.send()
 
 
-def test_unassign_unauthorized(
-    algorand_client: AlgorandClient,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    submitted_proposal_client: ProposalClient,
-) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
-        composer = submitted_proposal_client.new_group()
-        unassign_voters(
-            composer,
-            [],
-            proposer,
-        )
-        composer.send()
-
-
-def test_unassign_no_voters(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
-    proposer: SigningAccount,
-    xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient,
-) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        [],
-        xgov_daemon,
-    )
-    old_assigned_members = rejected_proposal_client.state.global_state.assigned_members
-    composer.send()
-    unassigned_voters = (
-        old_assigned_members
-        - rejected_proposal_client.state.global_state.assigned_members
-    )
-
-    voted_members = rejected_proposal_client.state.global_state.voted_members
-    assert_rejected_proposal_global_state(
-        rejected_proposal_client,
-        proposer_address=proposer.address,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES
-        * (len(committee) - voted_members - unassigned_voters),
-        assigned_members=len(committee) - voted_members - unassigned_voters,
-    )
-
-
-def test_unassign_one_voter(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
-    proposer: SigningAccount,
-    xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient,
-) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee[:1],
-        xgov_daemon,
-    )
-    old_assigned_members = rejected_proposal_client.state.global_state.assigned_members
-    composer.send()
-    unassigned_voters = (
-        old_assigned_members
-        - rejected_proposal_client.state.global_state.assigned_members
-    )
-    assert unassigned_voters == 1
-
-    voted_members = rejected_proposal_client.state.global_state.voted_members
-    assert_rejected_proposal_global_state(
-        rejected_proposal_client,
-        proposer_address=proposer.address,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES
-        * (len(committee) - voted_members - unassigned_voters),
-        assigned_members=len(committee) - voted_members - unassigned_voters,
-    )
-
-
-def test_unassign_approved_not_daemon(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
-    no_role_account: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    approved_proposal_client: ProposalClient,
-) -> None:
-    composer = approved_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee[:1],
-        no_role_account,
-    )
-    old_assigned_members = approved_proposal_client.state.global_state.assigned_members
-    composer.send()
-    unassigned_voters = (
-        old_assigned_members
-        - approved_proposal_client.state.global_state.assigned_members
-    )
-
-    voted_members = approved_proposal_client.state.global_state.voted_members
-    assert_approved_proposal_global_state(
-        approved_proposal_client,
-        proposer.address,
-        xgov_registry_mock_client.app_id,
-        voted_members=voted_members,
-        approvals=DEFAULT_MEMBER_VOTES * voted_members,
-        assigned_members=len(committee) - voted_members - unassigned_voters,
-        assigned_votes=DEFAULT_MEMBER_VOTES
-        * (len(committee) - voted_members - unassigned_voters),
-    )
-
-
-def test_unassign_rejected_not_daemon(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
-    no_role_account: SigningAccount,
-    proposer: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient,
-) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee[:1],
-        no_role_account,
-    )
-    old_assigned_members = rejected_proposal_client.state.global_state.assigned_members
-    composer.send()
-    unassigned_voters = (
-        old_assigned_members
-        - rejected_proposal_client.state.global_state.assigned_members
-    )
-
-    voted_members = rejected_proposal_client.state.global_state.voted_members
-    assert_rejected_proposal_global_state(
-        rejected_proposal_client,
-        proposer_address=proposer.address,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=DEFAULT_MEMBER_VOTES
-        * (len(committee) - voted_members - unassigned_voters),
-        assigned_members=len(committee) - voted_members - unassigned_voters,
-    )
-
-
-def test_unassign_funded_not_daemon(
-    committee: list[CommitteeMember],
-    no_role_account: SigningAccount,
-    funded_proposal_client: ProposalClient,
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        composer = funded_proposal_client.new_group()
-        unassign_voters(
-            composer,
-            committee,
-            no_role_account,
-        )
-        composer.send()
-
-
-def test_unassign_blocked_not_daemon(
-    committee: list[CommitteeMember],
-    no_role_account: SigningAccount,
-    blocked_proposal_client: ProposalClient,
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        composer = blocked_proposal_client.new_group()
-        unassign_voters(
-            composer,
-            committee,
-            no_role_account,
-        )
-        composer.send()
-
-
-def test_unassign_all_voters(
-    algorand_client: AlgorandClient,
-    committee: list[CommitteeMember],
-    proposer: SigningAccount,
-    xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
-    rejected_proposal_client: ProposalClient,
-) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
-    composer.send()
-
-    assert_rejected_proposal_global_state(
-        rejected_proposal_client,
-        proposer_address=proposer.address,
-        registry_app_id=xgov_registry_mock_client.app_id,
-        assigned_votes=0,
-        assigned_members=0,
-    )
-
-
 def test_unassign_not_same_app(
-    min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
     alternative_submitted_proposal_client: ProposalClient,
 ) -> None:
@@ -256,7 +129,7 @@ def test_unassign_not_same_app(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee=committee,
+        committee=committee[1:],
     )
     composer.send()
 
@@ -264,34 +137,14 @@ def test_unassign_not_same_app(
     assign_voters(
         proposal_client_composer=composer,
         xgov_daemon=xgov_daemon,
-        committee=committee,
+        committee=committee[1:],
     )
     composer.send()
-
-    reg_gs = xgov_registry_mock_client.state.global_state
-
-    voting_duration = reg_gs.voting_duration_small
-    vote_open_ts = max(
-        submitted_proposal_client.state.global_state.vote_open_ts,
-        alternative_submitted_proposal_client.state.global_state.vote_open_ts,
-    )
-    time_warp(vote_open_ts + voting_duration + 1)
-
-    submitted_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=xgov_daemon.address, static_fee=min_fee_times_2
-        )
-    )
-    alternative_submitted_proposal_client.send.scrutiny(
-        params=CommonAppCallParams(
-            sender=xgov_daemon.address, static_fee=min_fee_times_2
-        )
-    )
 
     composer = submitted_proposal_client.new_group()
     unassign_voters(
         composer,
-        committee,
+        committee[1:],
         xgov_daemon,
     )
     composer.composer().build()
@@ -299,7 +152,7 @@ def test_unassign_not_same_app(
     alternative_composer = alternative_submitted_proposal_client.new_group()
     unassign_voters(
         alternative_composer,
-        committee,
+        committee[1:],
         xgov_daemon,
     )
     alternative_composer.composer().build()
@@ -318,9 +171,9 @@ def test_unassign_not_same_app(
 def test_unassign_not_same_method(
     committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
-    rejected_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
+    composer = submitted_proposal_client.new_group()
     composer.get_state(params=CommonAppCallParams(sender=xgov_daemon.address))
     unassign_voters(
         composer,
@@ -335,9 +188,9 @@ def test_unassign_not_same_method(
 def test_unassign_not_same_method_2(
     committee: list[CommitteeMember],
     xgov_daemon: SigningAccount,
-    rejected_proposal_client: ProposalClient,
+    submitted_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
+    composer = submitted_proposal_client.new_group()
     unassign_voters(
         composer,
         committee,
@@ -350,11 +203,9 @@ def test_unassign_not_same_method_2(
 
 
 def test_unassign_one_call_not_xgov_daemon(
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
-    xgov_registry_mock_client: XgovRegistryMockClient,
     submitted_proposal_client: ProposalClient,
 ) -> None:
     composer = submitted_proposal_client.new_group()
@@ -373,7 +224,6 @@ def test_unassign_one_call_not_xgov_daemon(
 
 
 def test_unassign_final_proposal(
-    algorand_client: AlgorandClient,
     committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_daemon: SigningAccount,
