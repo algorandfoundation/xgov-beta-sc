@@ -7,7 +7,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
 )
 from smart_contracts.errors import std_errors as err
 from tests.common import CommitteeMember
-from tests.proposal.common import presence_counts, unassign_absentees
+from tests.proposal.common import absence_tolerance, unassign_absentees
 
 
 @pytest.mark.parametrize(
@@ -22,13 +22,13 @@ def test_unassign(
 
     absentees = proposal_client.state.box.voters.get_map()
 
-    before = presence_counts(xgov_registry_client, absentees)
+    before = absence_tolerance(xgov_registry_client, absentees)
 
     composer = xgov_registry_client.new_group()
     unassign_absentees(composer, proposal_client.app_id, absentees, op_up_count=3)
     composer.send()
 
-    after = presence_counts(xgov_registry_client, absentees)
+    after = absence_tolerance(xgov_registry_client, absentees)
 
     assert after == {a: before[a] - 1 for a in absentees}
 
@@ -43,7 +43,7 @@ def test_unassign_with_unsubscribed_xgov(
     unsub_addr = next(iter(absentees))  # pick one absentee key
     kept_addrs = [a for a in absentees if a != unsub_addr]
 
-    before = presence_counts(xgov_registry_client, absentees)
+    before = absence_tolerance(xgov_registry_client, absentees)
 
     unsub_member = next(m for m in committee if m.account.address == unsub_addr)
     xgov_registry_client.send.unsubscribe_xgov(
@@ -56,7 +56,7 @@ def test_unassign_with_unsubscribed_xgov(
     )
     composer.send()
 
-    after = presence_counts(xgov_registry_client, kept_addrs)
+    after = absence_tolerance(xgov_registry_client, kept_addrs)
 
     assert after == {a: before[a] - 1 for a in kept_addrs}
 
