@@ -140,16 +140,16 @@ def test_finalize_rejected_proposal_not_xgov_daemon(
     min_fee_times_3: AlgoAmount,
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
-    rejected_unassigned_voters_proposal_client: ProposalClient,
+    rejected_unassigned_absentees_proposal_client: ProposalClient,
 ) -> None:
     proposer_address = (
-        rejected_unassigned_voters_proposal_client.state.global_state.proposer
+        rejected_unassigned_absentees_proposal_client.state.global_state.proposer
     )
     pending_proposals_before = xgov_registry_client.state.global_state.pending_proposals
 
     xgov_registry_client.send.finalize_proposal(
         args=FinalizeProposalArgs(
-            proposal_id=rejected_unassigned_voters_proposal_client.app_id
+            proposal_id=rejected_unassigned_absentees_proposal_client.app_id
         ),
         params=CommonAppCallParams(
             sender=no_role_account.address, static_fee=min_fee_times_3
@@ -157,7 +157,7 @@ def test_finalize_rejected_proposal_not_xgov_daemon(
     )
 
     assert_rejected_proposal_global_state(
-        rejected_unassigned_voters_proposal_client,
+        rejected_unassigned_absentees_proposal_client,
         proposer_address=proposer_address,
         registry_app_id=xgov_registry_client.app_id,
         finalized=True,
