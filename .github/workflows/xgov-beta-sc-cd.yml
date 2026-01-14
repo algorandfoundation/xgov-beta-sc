@@ -170,6 +170,7 @@ jobs:
           XGOV_CFG_VOTING_DURATION: ${{ vars.VOTING_DURATION || '3_600,3_600,3_600,3_600' }} # defaults: 1 (S), 1 (M), 1 (L), 1 (XL) hours in seconds
           XGOV_CFG_QUORUM: ${{ vars.QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps
           XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps
+          XGOV_CFG_ABSENCE_TOLERANCE: ${{ vars.ABSENCE_TOLERANCE || '3' }} # defaults: 3
 
   trigger-ts-client-canary:
     runs-on: ubuntu-latest
