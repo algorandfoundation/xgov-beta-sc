@@ -16,7 +16,7 @@ from tests.common import CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     finalize_proposal,
-    unassign_voters,
+    unassign_absentees,
 )
 
 
@@ -57,12 +57,8 @@ def test_delete_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee)
     composer.send()
 
     finalize_proposal(
@@ -90,12 +86,8 @@ def test_delete_not_xgov_daemon(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee)
     composer.send()
 
     finalize_proposal(
