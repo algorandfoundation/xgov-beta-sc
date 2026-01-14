@@ -1,3 +1,8 @@
+from __future__ import annotations
+
+import threading
+from collections.abc import Iterable, Sequence
+
 import pytest
 from algokit_utils import (
     AlgoAmount,
@@ -8,6 +13,7 @@ from algokit_utils import (
     SigningAccount,
 )
 from algokit_utils.config import config
+from algosdk.transaction import Transaction
 
 from smart_contracts.artifacts.proposal.proposal_client import (
     OpenArgs,
@@ -73,10 +79,176 @@ from tests.xgov_registry.common import (
     get_xgov_fee,
 )
 
+# ------------------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------------------
 
-@pytest.fixture(scope="function")  # type: ignore
-def xgov_registry_config_dict() -> dict:  # type: ignore
-    return {  # type: ignore
+_METADATA = b"METADATA"
+
+_DATA_SIZE_PER_TXN = load_proposal_contract_data_size_per_transaction()
+
+# Global cache for compiled proposal approval program chunks (immutable bytes).
+# This is safe to share across tests because it does NOT include any on-chain state.
+_PROPOSAL_PROGRAM_CACHE_LOCK = threading.Lock()
+_PROPOSAL_PROGRAM_LEN_AND_CHUNKS: tuple[int, tuple[tuple[int, bytes], ...]] | None = (
+    None
+)
+
+
+def _configure_algokit() -> None:
+    config.configure(
+        debug=False,
+        populate_app_call_resources=True,
+    )
+
+
+def _ensure_funded(
+    algorand_client: AlgorandClient,
+    account_to_fund: SigningAccount | str,
+    *,
+    min_spending_balance: AlgoAmount,
+    min_funding_increment: AlgoAmount | None = None,
+) -> None:
+    kwargs = {
+        "account_to_fund": account_to_fund,
+        "min_spending_balance": min_spending_balance,
+    }
+    if min_funding_increment is not None:
+        kwargs["min_funding_increment"] = min_funding_increment
+    algorand_client.account.ensure_funded_from_environment(**kwargs)
+
+
+def _payment(
+    algorand_client: AlgorandClient,
+    *,
+    sender: str,
+    receiver: str,
+    amount: AlgoAmount,
+) -> Transaction:
+    return algorand_client.create_transaction.payment(
+        PaymentParams(sender=sender, receiver=receiver, amount=amount)
+    )
+
+
+def _compile_proposal_program_chunks(
+    algorand_client: AlgorandClient,
+) -> tuple[int, tuple[tuple[int, bytes], ...]]:
+    """Compile once per process; reuse immutable bytes across tests."""
+    global _PROPOSAL_PROGRAM_LEN_AND_CHUNKS
+    if _PROPOSAL_PROGRAM_LEN_AND_CHUNKS is not None:
+        return _PROPOSAL_PROGRAM_LEN_AND_CHUNKS
+
+    with _PROPOSAL_PROGRAM_CACHE_LOCK:
+        if _PROPOSAL_PROGRAM_LEN_AND_CHUNKS is not None:
+            return _PROPOSAL_PROGRAM_LEN_AND_CHUNKS
+
+        proposal_factory = algorand_client.client.get_typed_app_factory(
+            typed_factory=ProposalFactory
+        )
+        compiled = proposal_factory.app_factory.compile()
+        approval = compiled.approval_program
+        program_len = len(approval)
+
+        chunks = tuple(
+            (offset, approval[offset : offset + _DATA_SIZE_PER_TXN])
+            for offset in range(0, program_len, _DATA_SIZE_PER_TXN)
+        )
+        _PROPOSAL_PROGRAM_LEN_AND_CHUNKS = (program_len, chunks)
+        return _PROPOSAL_PROGRAM_LEN_AND_CHUNKS
+
+
+def _requested_amount_exceeding_treasury(
+    xgov_registry_client: XGovRegistryClient,
+) -> AlgoAmount:
+    """Pick a requested amount that is both >= min_requested_amount and > treasury."""
+    reg_gs = xgov_registry_client.state.global_state
+    outstanding_funds = reg_gs.outstanding_funds
+    min_requested_amount = reg_gs.min_requested_amount
+
+    if outstanding_funds >= min_requested_amount:
+        return AlgoAmount(micro_algo=outstanding_funds + min_requested_amount)
+    return AlgoAmount(micro_algo=min_requested_amount * 2)
+
+
+def _open_and_upload_draft(
+    *,
+    algorand_client: AlgorandClient,
+    proposal_client: ProposalClient,
+    proposer: SigningAccount,
+    locked_amount: AlgoAmount,
+    requested_amount_micro_algo: int,
+    params: CommonAppCallParams | None = None,
+) -> None:
+    proposal_client.send.open(
+        args=OpenArgs(
+            payment=_payment(
+                algorand_client,
+                sender=proposer.address,
+                receiver=proposal_client.app_address,
+                amount=locked_amount,
+            ),
+            title=PROPOSAL_TITLE,
+            funding_type=enm.FUNDING_RETROACTIVE,
+            requested_amount=requested_amount_micro_algo,
+            focus=DEFAULT_FOCUS,
+        ),
+        params=params,
+    )
+
+    composer = proposal_client.new_group()
+    upload_metadata(composer, proposer, _METADATA)
+    composer.send()
+
+
+def _submit_and_assign(
+    *,
+    proposal_client: ProposalClient,
+    xgov_registry_client: XGovRegistryClient,
+    proposer: SigningAccount,
+    committee: Sequence[CommitteeMember],
+    xgov_daemon: SigningAccount,
+) -> None:
+    submit_proposal(
+        proposal_client=proposal_client,
+        xgov_registry_client=xgov_registry_client,
+        proposer=proposer,
+    )
+    composer = proposal_client.new_group()
+    assign_voters(composer, committee, xgov_daemon)
+    composer.send()
+
+
+def _vote_all_approve(
+    *,
+    xgov_registry_client: XGovRegistryClient,
+    committee: Iterable[CommitteeMember],
+    proposal_id: int,
+    static_fee: AlgoAmount,
+) -> None:
+    for cm in committee:
+        xgov_registry_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=proposal_id,
+                xgov_address=cm.account.address,
+                approval_votes=cm.votes,
+                rejection_votes=0,
+            ),
+            params=CommonAppCallParams(
+                sender=cm.account.address,
+                static_fee=static_fee,
+            ),
+        )
+
+
+# ------------------------------------------------------------------------------
+# Fixtures
+# ------------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="function")
+def xgov_registry_config_dict() -> dict:
+    # Keep this as a fresh dict each time to avoid cross-test mutation.
+    return {
         "xgov_fee": regcfg.XGOV_FEE,
         "proposer_fee": regcfg.PROPOSER_FEE,
         "open_proposal_fee": regcfg.OPEN_PROPOSAL_FEE,
@@ -113,9 +285,9 @@ def xgov_registry_config_dict() -> dict:  # type: ignore
     }
 
 
-@pytest.fixture(scope="function")  # type: ignore
-def xgov_registry_config(xgov_registry_config_dict: dict) -> XGovRegistryConfig:  # type: ignore
-    return XGovRegistryConfig(**xgov_registry_config_dict)  # type: ignore
+@pytest.fixture(scope="function")
+def xgov_registry_config(xgov_registry_config_dict: dict) -> XGovRegistryConfig:
+    return XGovRegistryConfig(**xgov_registry_config_dict)
 
 
 @pytest.fixture(scope="function")
@@ -130,12 +302,10 @@ def xgov_registry_client_committee_not_declared(
     kyc_provider: SigningAccount,
     xgov_registry_config: XGovRegistryConfig,
 ) -> XGovRegistryClient:
-    config.configure(
-        debug=False,
-        populate_app_call_resources=True,
-    )
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer,
+    _configure_algokit()
+    _ensure_funded(
+        algorand_client,
+        deployer,
         min_spending_balance=INITIAL_FUNDS,
     )
 
@@ -147,63 +317,43 @@ def xgov_registry_client_committee_not_declared(
         ),
     )
     client, _ = factory.send.create.create()
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=client.app_address,
+    _ensure_funded(
+        algorand_client,
+        client.app_address,
         min_spending_balance=INITIAL_FUNDS,
     )
 
+    # RBAC + config
     config_composer = client.new_group()
-
-    # Set xGov Registry Role-Based Access Control
     config_composer.set_committee_manager(
         args=SetCommitteeManagerArgs(manager=committee_manager.address),
     )
-
     config_composer.set_xgov_subscriber(
         args=SetXgovSubscriberArgs(subscriber=xgov_subscriber.address),
     )
-
     config_composer.set_payor(
         args=SetPayorArgs(payor=xgov_payor.address),
     )
-
     config_composer.set_xgov_daemon(
         args=SetXgovDaemonArgs(xgov_daemon=xgov_daemon.address),
     )
-
     config_composer.set_xgov_council(
         args=SetXgovCouncilArgs(council=xgov_council.address),
     )
-
     config_composer.set_kyc_provider(
         args=SetKycProviderArgs(provider=kyc_provider.address),
     )
-
-    # Configure xGov Registry
     config_composer.config_xgov_registry(
         args=ConfigXgovRegistryArgs(config=xgov_registry_config),
     )
-
     config_composer.send()
 
-    proposal_factory = algorand_client.client.get_typed_app_factory(
-        typed_factory=ProposalFactory,
-    )
-    compiled_proposal = proposal_factory.app_factory.compile()
-
+    # Load proposal contract once (program bytes are cached across tests)
+    program_len, chunks = _compile_proposal_program_chunks(algorand_client)
     proposal_program_composer = client.new_group()
-    proposal_program_composer.init_proposal_contract(
-        args=(len(compiled_proposal.approval_program),)
-    )
-    data_size_per_transaction = load_proposal_contract_data_size_per_transaction()
-    bulks = 1 + len(compiled_proposal.approval_program) // data_size_per_transaction
-    for i in range(bulks):
-        chunk = compiled_proposal.approval_program[
-            i * data_size_per_transaction : (i + 1) * data_size_per_transaction
-        ]
-        proposal_program_composer.load_proposal_contract(
-            args=(i * data_size_per_transaction, chunk),
-        )
+    proposal_program_composer.init_proposal_contract(args=(program_len,))
+    for offset, chunk in chunks:
+        proposal_program_composer.load_proposal_contract(args=(offset, chunk))
     proposal_program_composer.send()
 
     return client
@@ -232,20 +382,21 @@ def subscribed_committee(
     xgov_registry_client: XGovRegistryClient,
 ) -> list[CommitteeMember]:
     xgov_fee = get_xgov_fee(xgov_registry_client)
+    min_balance = AlgoAmount(algo=xgov_fee.algo * 2)
     for cm in committee:
-        algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=cm.account,
-            min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
+        _ensure_funded(
+            algorand_client,
+            cm.account,
+            min_spending_balance=min_balance,
             min_funding_increment=xgov_fee,
         )
         xgov_registry_client.send.subscribe_xgov(
             args=SubscribeXgovArgs(
-                payment=algorand_client.create_transaction.payment(
-                    PaymentParams(
-                        sender=cm.account.address,
-                        receiver=xgov_registry_client.app_address,
-                        amount=xgov_fee,
-                    )
+                payment=_payment(
+                    algorand_client,
+                    sender=cm.account.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=xgov_fee,
                 ),
                 voting_address=cm.account.address,
             ),
@@ -260,19 +411,19 @@ def funded_xgov_registry_client(
     deployer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> XGovRegistryClient:
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer,
+    _ensure_funded(
+        algorand_client,
+        deployer,
         min_spending_balance=TREASURY_AMOUNT,
         min_funding_increment=TREASURY_AMOUNT,
     )
     xgov_registry_client.send.deposit_funds(
         args=DepositFundsArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=deployer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=TREASURY_AMOUNT,
-                )
+            payment=_payment(
+                algorand_client,
+                sender=deployer.address,
+                receiver=xgov_registry_client.app_address,
+                amount=TREASURY_AMOUNT,
             )
         )
     )
@@ -285,20 +436,16 @@ def xgov(
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> SigningAccount:
     account = algorand_client.account.random()
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=account,
-        min_spending_balance=INITIAL_FUNDS,
-    )
+    _ensure_funded(algorand_client, account, min_spending_balance=INITIAL_FUNDS)
 
     xgov_registry_client_committee_not_declared.send.subscribe_xgov(
         args=SubscribeXgovArgs(
             voting_address=account.address,
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=account.address,
-                    receiver=xgov_registry_client_committee_not_declared.app_address,
-                    amount=get_xgov_fee(xgov_registry_client_committee_not_declared),
-                )
+            payment=_payment(
+                algorand_client,
+                sender=account.address,
+                receiver=xgov_registry_client_committee_not_declared.app_address,
+                amount=get_xgov_fee(xgov_registry_client_committee_not_declared),
             ),
         ),
         params=CommonAppCallParams(sender=account.address),
@@ -312,21 +459,15 @@ def proposer_no_kyc(
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> SigningAccount:
     account = algorand_client.account.random()
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=account,
-        min_spending_balance=INITIAL_FUNDS,
-    )
+    _ensure_funded(algorand_client, account, min_spending_balance=INITIAL_FUNDS)
 
     xgov_registry_client_committee_not_declared.send.subscribe_proposer(
         args=SubscribeProposerArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=account.address,
-                    receiver=xgov_registry_client_committee_not_declared.app_address,
-                    amount=get_proposer_fee(
-                        xgov_registry_client_committee_not_declared
-                    ),
-                )
+            payment=_payment(
+                algorand_client,
+                sender=account.address,
+                receiver=xgov_registry_client_committee_not_declared.app_address,
+                amount=get_proposer_fee(xgov_registry_client_committee_not_declared),
             )
         ),
         params=CommonAppCallParams(sender=account.address),
@@ -358,21 +499,15 @@ def alternative_proposer(
     xgov_registry_client_committee_not_declared: XGovRegistryClient,
 ) -> SigningAccount:
     account = algorand_client.account.random()
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=account,
-        min_spending_balance=INITIAL_FUNDS,
-    )
+    _ensure_funded(algorand_client, account, min_spending_balance=INITIAL_FUNDS)
 
     xgov_registry_client_committee_not_declared.send.subscribe_proposer(
         args=SubscribeProposerArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=account.address,
-                    receiver=xgov_registry_client_committee_not_declared.app_address,
-                    amount=get_proposer_fee(
-                        xgov_registry_client_committee_not_declared
-                    ),
-                )
+            payment=_payment(
+                algorand_client,
+                sender=account.address,
+                receiver=xgov_registry_client_committee_not_declared.app_address,
+                amount=get_proposer_fee(xgov_registry_client_committee_not_declared),
             )
         ),
         params=CommonAppCallParams(sender=account.address),
@@ -397,25 +532,23 @@ def proposal_client(
     xgov_registry_client: XGovRegistryClient,
 ) -> ProposalClient:
     open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=proposer,
+    _ensure_funded(
+        algorand_client,
+        proposer,
         min_spending_balance=AlgoAmount(algo=2 * open_proposal_fee.algo),
         min_funding_increment=open_proposal_fee,
     )
+
     proposal_app_id = xgov_registry_client.send.open_proposal(
         args=OpenProposalArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=open_proposal_fee,
-                )
+            payment=_payment(
+                algorand_client,
+                sender=proposer.address,
+                receiver=xgov_registry_client.app_address,
+                amount=open_proposal_fee,
             )
         ),
-        params=CommonAppCallParams(
-            sender=proposer.address,
-            static_fee=min_fee_times_3,
-        ),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     ).abi_return
 
     return ProposalClient(
@@ -432,31 +565,20 @@ def draft_proposal_client(
     proposal_client: ProposalClient,
 ) -> ProposalClient:
     locked_amount = get_locked_amount(REQUESTED_AMOUNT)
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=proposer,
+    _ensure_funded(
+        algorand_client,
+        proposer,
         min_spending_balance=locked_amount,
         min_funding_increment=locked_amount,
     )
-    proposal_client.send.open(
-        args=OpenArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=locked_amount,
-                )
-            ),
-            title=PROPOSAL_TITLE,
-            funding_type=enm.FUNDING_RETROACTIVE,
-            requested_amount=REQUESTED_AMOUNT.amount_in_micro_algo,
-            focus=DEFAULT_FOCUS,
-        )
+
+    _open_and_upload_draft(
+        algorand_client=algorand_client,
+        proposal_client=proposal_client,
+        proposer=proposer,
+        locked_amount=locked_amount,
+        requested_amount_micro_algo=REQUESTED_AMOUNT.amount_in_micro_algo,
     )
-
-    composer = proposal_client.new_group()
-    upload_metadata(composer, proposer, b"METADATA")
-    composer.send()
-
     return proposal_client
 
 
@@ -468,16 +590,13 @@ def voting_proposal_client(
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
 ) -> ProposalClient:
-
-    submit_proposal(
+    _submit_and_assign(
         proposal_client=draft_proposal_client,
         xgov_registry_client=xgov_registry_client,
         proposer=proposer,
+        committee=subscribed_committee,
+        xgov_daemon=xgov_daemon,
     )
-
-    composer = draft_proposal_client.new_group()
-    assign_voters(composer, subscribed_committee, xgov_daemon)
-    composer.send()
     return draft_proposal_client
 
 
@@ -491,58 +610,32 @@ def voting_proposal_client_requested_too_much(
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> ProposalClient:
-    reg_gs = xgov_registry_client.state.global_state
-    outstanding_funds = reg_gs.outstanding_funds
-    min_requested_amount = reg_gs.min_requested_amount
-
-    # Ensure requested amount exceeds treasury by a meaningful margin
-    # AND is at least the minimum required amount
-    if outstanding_funds >= min_requested_amount:
-        # Treasury has enough to cover minimum, so request more than available
-        requested_amount = AlgoAmount(
-            micro_algo=outstanding_funds + min_requested_amount
-        )
-    else:
-        # Treasury is below minimum, use minimum + a buffer
-        requested_amount = AlgoAmount(micro_algo=min_requested_amount * 2)
-
+    requested_amount = _requested_amount_exceeding_treasury(xgov_registry_client)
     locked_amount = get_locked_amount(requested_amount)
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=proposer,
+
+    _ensure_funded(
+        algorand_client,
+        proposer,
         min_spending_balance=AlgoAmount(algo=locked_amount.algo * 2),
         min_funding_increment=locked_amount,
     )
 
-    proposal_client.send.open(
-        args=OpenArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=locked_amount,
-                ),
-            ),
-            title=PROPOSAL_TITLE,
-            funding_type=enm.FUNDING_RETROACTIVE,
-            requested_amount=requested_amount.micro_algo,
-            focus=DEFAULT_FOCUS,
-        ),
+    _open_and_upload_draft(
+        algorand_client=algorand_client,
+        proposal_client=proposal_client,
+        proposer=proposer,
+        locked_amount=locked_amount,
+        requested_amount_micro_algo=requested_amount.micro_algo,
         params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
     )
 
-    composer = proposal_client.new_group()
-    upload_metadata(composer, proposer, b"METADATA")
-    composer.send()
-
-    submit_proposal(
+    _submit_and_assign(
         proposal_client=proposal_client,
         xgov_registry_client=xgov_registry_client,
         proposer=proposer,
+        committee=subscribed_committee,
+        xgov_daemon=xgov_daemon,
     )
-
-    composer = proposal_client.new_group()
-    assign_voters(composer, subscribed_committee, xgov_daemon)
-    composer.send()
     return proposal_client
 
 
@@ -564,7 +657,10 @@ def rejected_unassigned_absentees_proposal_client(
     absentees = rejected_proposal_client.state.box.voters.get_map()
     composer = xgov_registry_client.new_group()
     unassign_absentees(
-        composer, rejected_proposal_client.app_id, absentees, op_up_count=3
+        composer,
+        rejected_proposal_client.app_id,
+        absentees,
+        op_up_count=3,
     )
     composer.send()
     return rejected_proposal_client
@@ -578,20 +674,12 @@ def approved_proposal_client(
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    for cm in committee:
-        xgov_registry_client.send.vote_proposal(
-            args=VoteProposalArgs(
-                proposal_id=voting_proposal_client.app_id,
-                xgov_address=cm.account.address,
-                approval_votes=cm.votes,
-                rejection_votes=0,
-            ),
-            params=CommonAppCallParams(
-                sender=cm.account.address,
-                static_fee=min_fee_times_2,
-            ),
-        )
-
+    _vote_all_approve(
+        xgov_registry_client=xgov_registry_client,
+        committee=committee,
+        proposal_id=voting_proposal_client.app_id,
+        static_fee=min_fee_times_2,
+    )
     scrutinize_proposal(no_role_account, voting_proposal_client, min_fee_times_2)
     return voting_proposal_client
 
@@ -628,29 +716,22 @@ def blocked_proposal_client(
 
 @pytest.fixture(scope="function")
 def approved_proposal_client_requested_too_much(
-    algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
     no_role_account: SigningAccount,
     committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     voting_proposal_client_requested_too_much: ProposalClient,
 ) -> ProposalClient:
-    for cm in committee:
-        xgov_registry_client.send.vote_proposal(
-            args=VoteProposalArgs(
-                proposal_id=voting_proposal_client_requested_too_much.app_id,
-                xgov_address=cm.account.address,
-                approval_votes=cm.votes,
-                rejection_votes=0,
-            ),
-            params=CommonAppCallParams(
-                sender=cm.account.address,
-                static_fee=min_fee_times_2,
-            ),
-        )
-
+    _vote_all_approve(
+        xgov_registry_client=xgov_registry_client,
+        committee=committee,
+        proposal_id=voting_proposal_client_requested_too_much.app_id,
+        static_fee=min_fee_times_2,
+    )
     scrutinize_proposal(
-        no_role_account, voting_proposal_client_requested_too_much, min_fee_times_2
+        no_role_account,
+        voting_proposal_client_requested_too_much,
+        min_fee_times_2,
     )
     return voting_proposal_client_requested_too_much
 
@@ -663,9 +744,7 @@ def funded_proposal_client(
     reviewed_proposal_client: ProposalClient,
 ) -> ProposalClient:
     funded_xgov_registry_client.send.pay_grant_proposal(
-        args=PayGrantProposalArgs(
-            proposal_id=reviewed_proposal_client.app_id,
-        ),
+        args=PayGrantProposalArgs(proposal_id=reviewed_proposal_client.app_id),
         params=CommonAppCallParams(
             sender=xgov_payor.address, static_fee=min_fee_times_4
         ),
@@ -678,10 +757,7 @@ def xgov_subscriber_app(
     algorand_client: AlgorandClient,
     deployer: SigningAccount,
 ) -> XGovSubscriberAppMockClient:
-    config.configure(
-        debug=False,
-        populate_app_call_resources=True,
-    )
+    _configure_algokit()
 
     factory = algorand_client.client.get_typed_app_factory(
         XGovSubscriberAppMockFactory,
@@ -689,9 +765,8 @@ def xgov_subscriber_app(
         default_signer=deployer.signer,
     )
     client, _ = factory.send.create.bare()  # type: ignore
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=client.app_address,
-        min_spending_balance=INITIAL_FUNDS,
+    _ensure_funded(
+        algorand_client, client.app_address, min_spending_balance=INITIAL_FUNDS
     )
     return client
 
@@ -708,23 +783,20 @@ def app_xgov_subscribe_requested(
             xgov_address=xgov_subscriber_app.app_address,
             owner_address=no_role_account.address,
             relation_type=0,
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=no_role_account.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=get_xgov_fee(xgov_registry_client),
-                )
+            payment=_payment(
+                algorand_client,
+                sender=no_role_account.address,
+                receiver=xgov_registry_client.app_address,
+                amount=get_xgov_fee(xgov_registry_client),
             ),
         ),
         params=CommonAppCallParams(sender=no_role_account.address),
     )
-
     return xgov_subscriber_app
 
 
 @pytest.fixture(scope="function")
 def app_xgov_managed_subscription(
-    algorand_client: AlgorandClient,
     xgov_registry_client: XGovRegistryClient,
     app_xgov_subscribe_requested: XGovSubscriberAppMockClient,
     xgov_subscriber: SigningAccount,
@@ -735,7 +807,6 @@ def app_xgov_managed_subscription(
         ),
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
-
     return app_xgov_subscribe_requested
 
 
@@ -751,17 +822,15 @@ def app_xgov_unsubscribe_requested(
             xgov_address=app_xgov_managed_subscription.app_address,
             owner_address=no_role_account.address,
             relation_type=0,
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=no_role_account.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=get_xgov_fee(xgov_registry_client),
-                )
+            payment=_payment(
+                algorand_client,
+                sender=no_role_account.address,
+                receiver=xgov_registry_client.app_address,
+                amount=get_xgov_fee(xgov_registry_client),
             ),
         ),
         params=CommonAppCallParams(sender=no_role_account.address),
     )
-
     return app_xgov_managed_subscription
 
 
@@ -770,6 +839,8 @@ def absentee_committee(
     subscribed_committee: list[CommitteeMember],
     rejected_unassigned_absentees_proposal_client: ProposalClient,
 ) -> list[CommitteeMember]:
+    # Intentionally returns the subscribed committee, but depends on the rejection flow to
+    # preserve the fixture hierarchy used by the tests.
     return subscribed_committee
 
 
@@ -782,24 +853,12 @@ def alternative_voting_proposal_client(
     absentee_committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
 ) -> ProposalClient:
-    reg_gs = xgov_registry_client.state.global_state
-    outstanding_funds = reg_gs.outstanding_funds
-    min_requested_amount = reg_gs.min_requested_amount
-
-    # Ensure requested amount exceeds treasury by a meaningful margin
-    # AND is at least the minimum required amount
-    if outstanding_funds >= min_requested_amount:
-        # Treasury has enough to cover minimum, so request more than available
-        requested_amount = AlgoAmount(
-            micro_algo=outstanding_funds + min_requested_amount
-        )
-    else:
-        # Treasury is below minimum, use minimum + a buffer
-        requested_amount = AlgoAmount(micro_algo=min_requested_amount * 2)
-
+    requested_amount = _requested_amount_exceeding_treasury(xgov_registry_client)
     locked_amount = get_locked_amount(requested_amount)
-    algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=alternative_proposer,
+
+    _ensure_funded(
+        algorand_client,
+        alternative_proposer,
         min_spending_balance=AlgoAmount(algo=locked_amount.algo * 2),
         min_funding_increment=locked_amount,
     )
@@ -807,12 +866,11 @@ def alternative_voting_proposal_client(
     open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
     proposal_app_id = xgov_registry_client.send.open_proposal(
         args=OpenProposalArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=alternative_proposer.address,
-                    receiver=xgov_registry_client.app_address,
-                    amount=open_proposal_fee,
-                )
+            payment=_payment(
+                algorand_client,
+                sender=alternative_proposer.address,
+                receiver=xgov_registry_client.app_address,
+                amount=open_proposal_fee,
             )
         ),
         params=CommonAppCallParams(
@@ -827,36 +885,23 @@ def alternative_voting_proposal_client(
         default_sender=alternative_proposer.address,
     )
 
-    proposal_client.send.open(
-        args=OpenArgs(
-            payment=algorand_client.create_transaction.payment(
-                PaymentParams(
-                    sender=alternative_proposer.address,
-                    receiver=proposal_client.app_address,
-                    amount=locked_amount,
-                ),
-            ),
-            title=PROPOSAL_TITLE,
-            funding_type=enm.FUNDING_RETROACTIVE,
-            requested_amount=requested_amount.micro_algo,
-            focus=DEFAULT_FOCUS,
-        ),
+    _open_and_upload_draft(
+        algorand_client=algorand_client,
+        proposal_client=proposal_client,
+        proposer=alternative_proposer,
+        locked_amount=locked_amount,
+        requested_amount_micro_algo=requested_amount.micro_algo,
         params=CommonAppCallParams(
-            sender=alternative_proposer.address, static_fee=min_fee_times_3
+            sender=alternative_proposer.address,
+            static_fee=min_fee_times_3,
         ),
     )
 
-    composer = proposal_client.new_group()
-    upload_metadata(composer, alternative_proposer, b"METADATA")
-    composer.send()
-
-    submit_proposal(
+    _submit_and_assign(
         proposal_client=proposal_client,
         xgov_registry_client=xgov_registry_client,
         proposer=alternative_proposer,
+        committee=absentee_committee,
+        xgov_daemon=xgov_daemon,
     )
-
-    composer = proposal_client.new_group()
-    assign_voters(composer, absentee_committee, xgov_daemon)
-    composer.send()
     return proposal_client
