@@ -39,7 +39,6 @@ from .constants import (
     MAX_MBR_PER_BOX,
     PER_BOX_MBR,
     PER_BYTE_IN_BOX_MBR,
-    PRESENCE_BUFFER,
     PROPOSAL_APPROVAL_PAGES,
 )
 
@@ -196,6 +195,9 @@ class XGovRegistry(
             key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
+        # New Variables (introduced after MainNet deployment)
+        self.absence_tolerance = GlobalState(UInt64, key=cfg.GS_KEY_ABSENCE_TOLERANCE)
+
     @subroutine
     def entropy(self) -> Bytes:
         return TemplateVar[Bytes]("entropy")  # trick to allow fresh deployment
@@ -342,7 +344,7 @@ class XGovRegistry(
         """
         return typ.XGovBoxValue(
             voting_address=voting_address,
-            voted_proposals=arc4.UInt64(PRESENCE_BUFFER),
+            voted_proposals=arc4.UInt64(self.absence_tolerance.value),
             last_vote_timestamp=arc4.UInt64(0),
             subscription_round=arc4.UInt64(Global.round),
         )
@@ -706,6 +708,8 @@ class XGovRegistry(
         self.weighted_quorum_small.value = config.weighted_quorum[0].as_uint64()
         self.weighted_quorum_medium.value = UInt64(0)  # No longer used
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
+
+        self.absence_tolerance.value = config.absence_tolerance.as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
@@ -1258,9 +1262,9 @@ class XGovRegistry(
         exists = xgov_address.native in self.xgov_box
         assert exists, err.UNAUTHORIZED
         xgov_box = self.xgov_box[xgov_address.native].copy()
-        # Upon vote the presence buffer is reset
+        # Upon vote the absence tolerance is reset
         self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
-            PRESENCE_BUFFER
+            self.absence_tolerance.value
         )
         self.xgov_box[xgov_address.native].last_vote_timestamp = arc4.UInt64(
             Global.latest_timestamp
@@ -1610,6 +1614,7 @@ class XGovRegistry(
             committee_id=self.committee_id.value.copy(),
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
+            absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
         )
 
     @arc4.abimethod(readonly=True)

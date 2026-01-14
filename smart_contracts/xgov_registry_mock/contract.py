@@ -143,6 +143,11 @@ class XgovRegistryMock(XGovRegistryInterface):
             key=reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE,
         )
 
+        # New Variables (introduced after MainNet deployment)
+        self.absence_tolerance = GlobalState(
+            UInt64(reg_cfg.ABSENCE_TOLERANCE), key=reg_cfg.GS_KEY_ABSENCE_TOLERANCE
+        )
+
     @arc4.abimethod(create="require")
     def create(self) -> None:
         pass
@@ -472,6 +477,7 @@ class XgovRegistryMock(XGovRegistryInterface):
             committee_id=self.committee_id.value.copy(),
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
+            absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
         )
 
     @arc4.abimethod(readonly=True)
