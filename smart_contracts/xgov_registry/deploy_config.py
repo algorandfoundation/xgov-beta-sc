@@ -373,6 +373,7 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
                 weighted_quorums[1],
                 weighted_quorums[2],
             ),
+            absence_tolerance=int(os.environ["XGOV_CFG_ABSENCE_TOLERANCE"]),
         )
         app_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
@@ -653,6 +654,9 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
             weighted_quorums[0],
             weighted_quorums[1],
             weighted_quorums[2],
+        ),
+        absence_tolerance=parse_int(
+            "XGOV_CFG_ABSENCE_TOLERANCE", current_state.absence_tolerance
         ),
     )
 
