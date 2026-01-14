@@ -10,12 +10,10 @@ from algokit_utils import (
 from algokit_utils.config import config
 
 from smart_contracts.artifacts.proposal.proposal_client import (
-    AssignVotersArgs,
     OpenArgs,
     ProposalClient,
     ProposalFactory,
     ReviewArgs,
-    UnassignVotersArgs,
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     ApproveSubscribeXgovArgs,
@@ -60,9 +58,11 @@ from tests.proposal.common import (
     DEFAULT_FOCUS,
     PROPOSAL_TITLE,
     REQUESTED_AMOUNT,
+    assign_voters,
     get_locked_amount,
     scrutinize_proposal,
     submit_proposal,
+    unassign_absentees,
     upload_metadata,
 )
 from tests.xgov_registry.common import (
@@ -223,6 +223,35 @@ def xgov_registry_client(
         params=CommonAppCallParams(sender=committee_manager.address),
     )
     return xgov_registry_client_committee_not_declared
+
+
+@pytest.fixture(scope="function")
+def subscribed_committee(
+    algorand_client: AlgorandClient,
+    committee: list[CommitteeMember],
+    xgov_registry_client: XGovRegistryClient,
+) -> list[CommitteeMember]:
+    xgov_fee = get_xgov_fee(xgov_registry_client)
+    for cm in committee:
+        algorand_client.account.ensure_funded_from_environment(
+            account_to_fund=cm.account,
+            min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
+            min_funding_increment=xgov_fee,
+        )
+        xgov_registry_client.send.subscribe_xgov(
+            args=SubscribeXgovArgs(
+                payment=algorand_client.create_transaction.payment(
+                    PaymentParams(
+                        sender=cm.account.address,
+                        receiver=xgov_registry_client.app_address,
+                        amount=xgov_fee,
+                    )
+                ),
+                voting_address=cm.account.address,
+            ),
+            params=CommonAppCallParams(sender=cm.account.address),
+        )
+    return committee
 
 
 @pytest.fixture(scope="function")
@@ -395,46 +424,22 @@ def draft_proposal_client(
 
 @pytest.fixture(scope="function")
 def voting_proposal_client(
-    algorand_client: AlgorandClient,
     xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+    subscribed_committee: list[CommitteeMember],
     proposer: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
     draft_proposal_client: ProposalClient,
 ) -> ProposalClient:
 
-    xgov_fee = get_xgov_fee(xgov_registry_client)
     submit_proposal(
         proposal_client=draft_proposal_client,
         xgov_registry_client=xgov_registry_client,
         proposer=proposer,
     )
-    for cm in committee:
-        algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=cm.account,
-            min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
-            min_funding_increment=xgov_fee,
-        )
-        xgov_registry_client.send.subscribe_xgov(
-            args=SubscribeXgovArgs(
-                payment=algorand_client.create_transaction.payment(
-                    PaymentParams(
-                        sender=cm.account.address,
-                        receiver=xgov_registry_client.app_address,
-                        amount=xgov_fee,
-                    )
-                ),
-                voting_address=cm.account.address,
-            ),
-            params=CommonAppCallParams(sender=cm.account.address),
-        )
 
-        draft_proposal_client.send.assign_voters(
-            args=AssignVotersArgs(
-                voters=[(cm.account.address, cm.votes)],
-            ),
-            params=CommonAppCallParams(sender=xgov_daemon.address),
-        )
+    composer = draft_proposal_client.new_group()
+    assign_voters(composer, subscribed_committee, xgov_daemon)
+    composer.send()
     return draft_proposal_client
 
 
@@ -444,7 +449,7 @@ def voting_proposal_client_requested_too_much(
     min_fee_times_3: AlgoAmount,
     xgov_daemon: SigningAccount,
     proposer: SigningAccount,
-    committee: list[CommitteeMember],
+    subscribed_committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
     proposal_client: ProposalClient,
 ) -> ProposalClient:
@@ -497,31 +502,9 @@ def voting_proposal_client_requested_too_much(
         proposer=proposer,
     )
 
-    xgov_fee = get_xgov_fee(xgov_registry_client)
-    for cm in committee:
-        algorand_client.account.ensure_funded_from_environment(
-            account_to_fund=cm.account,
-            min_spending_balance=AlgoAmount(algo=xgov_fee.algo * 2),
-            min_funding_increment=xgov_fee,
-        )
-        xgov_registry_client.send.subscribe_xgov(
-            args=SubscribeXgovArgs(
-                payment=algorand_client.create_transaction.payment(
-                    PaymentParams(
-                        sender=cm.account.address,
-                        receiver=xgov_registry_client.app_address,
-                        amount=xgov_fee,
-                    )
-                ),
-                voting_address=cm.account.address,
-            ),
-            params=CommonAppCallParams(sender=cm.account.address),
-        )
-
-        proposal_client.send.assign_voters(
-            args=AssignVotersArgs(voters=[(cm.account.address, cm.votes)]),
-            params=CommonAppCallParams(sender=xgov_daemon.address),
-        )
+    composer = proposal_client.new_group()
+    assign_voters(composer, subscribed_committee, xgov_daemon)
+    composer.send()
     return proposal_client
 
 
@@ -536,22 +519,16 @@ def rejected_proposal_client(
 
 
 @pytest.fixture(scope="function")
-def rejected_unassigned_voters_proposal_client(
-    xgov_daemon: SigningAccount,
-    committee: list[CommitteeMember],
+def rejected_unassigned_absentees_proposal_client(
+    xgov_registry_client: XGovRegistryClient,
     rejected_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    bulks = 6
-
-    for i in range(1 + len(committee) // bulks):
-        rejected_proposal_client.send.unassign_voters(
-            args=UnassignVotersArgs(
-                voters=[
-                    cm.account.address for cm in committee[i * bulks : (i + 1) * bulks]
-                ]
-            ),
-            params=CommonAppCallParams(sender=xgov_daemon.address),
-        )
+    absentees = rejected_proposal_client.state.box.voters.get_map()
+    composer = xgov_registry_client.new_group()
+    unassign_absentees(
+        composer, rejected_proposal_client.app_id, absentees, op_up_count=3
+    )
+    composer.send()
     return rejected_proposal_client
 
 
