@@ -105,7 +105,7 @@ class ProposerBoxValue(arc4.Struct):
 
 class XGovBoxValue(arc4.Struct):
     voting_address: arc4.Address
-    voted_proposals: arc4.UInt64
+    voted_proposals: arc4.UInt64  # Capped presence buffer for absenteeism
     last_vote_timestamp: arc4.UInt64
     subscription_round: arc4.UInt64
 
