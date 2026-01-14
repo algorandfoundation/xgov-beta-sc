@@ -282,6 +282,7 @@ def xgov_registry_config_dict() -> dict:
             regcfg.WEIGHTED_QUORUM_MEDIUM,
             regcfg.WEIGHTED_QUORUM_LARGE,
         ),
+        "absence_tolerance": 1,
     }
 
 
