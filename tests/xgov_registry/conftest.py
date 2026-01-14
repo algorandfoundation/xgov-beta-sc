@@ -352,6 +352,44 @@ def proposer(
 
 
 @pytest.fixture(scope="function")
+def alternative_proposer(
+    algorand_client: AlgorandClient,
+    kyc_provider: SigningAccount,
+    xgov_registry_client_committee_not_declared: XGovRegistryClient,
+) -> SigningAccount:
+    account = algorand_client.account.random()
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=account,
+        min_spending_balance=INITIAL_FUNDS,
+    )
+
+    xgov_registry_client_committee_not_declared.send.subscribe_proposer(
+        args=SubscribeProposerArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=account.address,
+                    receiver=xgov_registry_client_committee_not_declared.app_address,
+                    amount=get_proposer_fee(
+                        xgov_registry_client_committee_not_declared
+                    ),
+                )
+            )
+        ),
+        params=CommonAppCallParams(sender=account.address),
+    )
+
+    xgov_registry_client_committee_not_declared.send.set_proposer_kyc(
+        args=SetProposerKycArgs(
+            proposer=account.address,
+            kyc_status=True,
+            kyc_expiring=UNLIMITED_KYC_EXPIRATION,
+        ),
+        params=CommonAppCallParams(sender=kyc_provider.address),
+    )
+    return account
+
+
+@pytest.fixture(scope="function")
 def proposal_client(
     algorand_client: AlgorandClient,
     min_fee_times_3: AlgoAmount,
@@ -725,3 +763,100 @@ def app_xgov_unsubscribe_requested(
     )
 
     return app_xgov_managed_subscription
+
+
+@pytest.fixture(scope="function")
+def absentee_committee(
+    subscribed_committee: list[CommitteeMember],
+    rejected_unassigned_absentees_proposal_client: ProposalClient,
+) -> list[CommitteeMember]:
+    return subscribed_committee
+
+
+@pytest.fixture(scope="function")
+def alternative_voting_proposal_client(
+    algorand_client: AlgorandClient,
+    min_fee_times_3: AlgoAmount,
+    xgov_daemon: SigningAccount,
+    alternative_proposer: SigningAccount,
+    absentee_committee: list[CommitteeMember],
+    xgov_registry_client: XGovRegistryClient,
+) -> ProposalClient:
+    reg_gs = xgov_registry_client.state.global_state
+    outstanding_funds = reg_gs.outstanding_funds
+    min_requested_amount = reg_gs.min_requested_amount
+
+    # Ensure requested amount exceeds treasury by a meaningful margin
+    # AND is at least the minimum required amount
+    if outstanding_funds >= min_requested_amount:
+        # Treasury has enough to cover minimum, so request more than available
+        requested_amount = AlgoAmount(
+            micro_algo=outstanding_funds + min_requested_amount
+        )
+    else:
+        # Treasury is below minimum, use minimum + a buffer
+        requested_amount = AlgoAmount(micro_algo=min_requested_amount * 2)
+
+    locked_amount = get_locked_amount(requested_amount)
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=alternative_proposer,
+        min_spending_balance=AlgoAmount(algo=locked_amount.algo * 2),
+        min_funding_increment=locked_amount,
+    )
+
+    open_proposal_fee = get_open_proposal_fee(xgov_registry_client)
+    proposal_app_id = xgov_registry_client.send.open_proposal(
+        args=OpenProposalArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=alternative_proposer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=open_proposal_fee,
+                )
+            )
+        ),
+        params=CommonAppCallParams(
+            sender=alternative_proposer.address,
+            static_fee=min_fee_times_3,
+        ),
+    ).abi_return
+
+    proposal_client = ProposalClient(
+        algorand=algorand_client,
+        app_id=proposal_app_id,  # type: ignore
+        default_sender=alternative_proposer.address,
+    )
+
+    proposal_client.send.open(
+        args=OpenArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=alternative_proposer.address,
+                    receiver=proposal_client.app_address,
+                    amount=locked_amount,
+                ),
+            ),
+            title=PROPOSAL_TITLE,
+            funding_type=enm.FUNDING_RETROACTIVE,
+            requested_amount=requested_amount.micro_algo,
+            focus=DEFAULT_FOCUS,
+        ),
+        params=CommonAppCallParams(
+            sender=alternative_proposer.address, static_fee=min_fee_times_3
+        ),
+    )
+
+    composer = proposal_client.new_group()
+    upload_metadata(composer, alternative_proposer, b"METADATA")
+    composer.send()
+
+    submit_proposal(
+        proposal_client=proposal_client,
+        xgov_registry_client=xgov_registry_client,
+        proposer=alternative_proposer,
+    )
+
+    composer = proposal_client.new_group()
+    assign_voters(composer, absentee_committee, xgov_daemon)
+    composer.send()
+    return proposal_client
