@@ -19,6 +19,7 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
+from smart_contracts.xgov_registry.constants import PRESENCE_BUFFER
 from tests.common import DEFAULT_COMMITTEE_VOTES, DEFAULT_MEMBER_VOTES, CommitteeMember
 from tests.proposal.common import submit_proposal
 from tests.xgov_registry.common import get_xgov_fee
@@ -50,6 +51,12 @@ def test_vote_proposal_success(
         )
         sender = voting_address
 
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        committee[0].account.address
+    )
+    assert xgov_box.voted_proposals == PRESENCE_BUFFER
+    assert xgov_box.last_vote_timestamp == 0
+
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
             proposal_id=voting_proposal_client.app_id,
@@ -67,7 +74,7 @@ def test_vote_proposal_success(
         committee[0].account.address
     )
 
-    assert xgov_box.voted_proposals == 1  # type: ignore
+    assert xgov_box.voted_proposals == PRESENCE_BUFFER
     assert xgov_box.last_vote_timestamp > 0  # type: ignore
 
     # Tear down test
