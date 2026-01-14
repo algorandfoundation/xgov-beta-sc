@@ -222,6 +222,10 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
+    def unsubscribe_absentee(self, *, xgov_address: arc4.Address) -> None:
+        pass
+
+    @arc4.abimethod()
     def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
         pass
 
@@ -328,6 +332,28 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, err.VOTING_PERIOD_EXPIRED  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
+
+    @arc4.abimethod()
+    def unassign_absentee_from_proposal(
+        self, *, proposal_id: arc4.UInt64, absentees: arc4.DynamicArray[arc4.Address]
+    ) -> None:
+        error, _tx = arc4.abi_call(
+            Proposal.unassign_absentees,
+            absentees,
+            app_id=proposal_id.as_uint64(),
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.VOTER_NOT_FOUND:
+                    assert False, err.VOTER_NOT_FOUND  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
 
     @arc4.abimethod()
     def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
@@ -529,3 +555,7 @@ class XgovRegistryMock(XGovRegistryInterface):
         ).submit()
 
         return res.created_app.id
+
+    @arc4.abimethod()
+    def op_up(self) -> None:
+        pass
