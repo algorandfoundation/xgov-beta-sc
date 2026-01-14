@@ -226,13 +226,22 @@ class Proposal(
 
     @subroutine
     def unassign_voters_check_authorization(self) -> None:
-        if self.status.value == enm.STATUS_SUBMITTED:
-            assert self.is_xgov_daemon(), err.UNAUTHORIZED
-        else:
-            assert (
+        assert self.is_xgov_daemon(), err.UNAUTHORIZED
+        assert self.status.value == enm.STATUS_SUBMITTED, err.WRONG_PROPOSAL_STATUS
+
+    @subroutine
+    def unassign_absentees_check_authorization(self) -> typ.Error:
+        assert self.is_registry_call(), err.UNAUTHORIZED
+        if not (
+            (
                 self.status.value == enm.STATUS_APPROVED
                 or self.status.value == enm.STATUS_REJECTED
-            ) and not self.finalized.value, err.WRONG_PROPOSAL_STATUS
+            )
+            and not self.finalized.value
+        ):
+            return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+
+        return typ.Error("")
 
     @subroutine
     def finalize_check_authorization(self) -> typ.Error:
@@ -957,6 +966,34 @@ class Proposal(
         )
 
     @arc4.abimethod()
+    def unassign_absentees(
+        self, *, absentees: arc4.DynamicArray[arc4.Address]
+    ) -> typ.Error:
+        """
+        Unassign absentees from the scrutinized proposal.
+
+        Args:
+            absentees: List of absentees to be unassigned
+
+        Raises:
+            err.UNAUTHORIZED: If the sender is not the registry contract
+            err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
+            err.VOTER_NOT_FOUND: If the absentee was already unassigned from the proposal
+        """
+        error = self.unassign_absentees_check_authorization()
+        if error != typ.Error(""):
+            return error
+
+        # remove absentee
+        for absentee in absentees:
+            if absentee.native not in self.voters:
+                return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
+            votes = self.voters[absentee.native]
+            self._unassign_voter(absentee.native, votes)
+
+        return typ.Error("")
+
+    @arc4.abimethod()
     def review(self, *, block: bool) -> None:
         """Review the proposal.
 
@@ -1013,7 +1050,8 @@ class Proposal(
 
     @arc4.abimethod()
     def unassign_voters(self, *, voters: arc4.DynamicArray[arc4.Address]) -> None:
-        """Unassign voters from the proposal.
+        """Unassign voters from the submitted proposal. This method is an admin method
+        to rollback and fix wrong committee assignments.
 
         Args:
             voters: List of voters to be unassigned
@@ -1021,7 +1059,6 @@ class Proposal(
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Daemon
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not as expected
-            err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_APP_ID: If the app ID is not as expected
             err.WRONG_METHOD_CALL: If the method call is not as expected
 
