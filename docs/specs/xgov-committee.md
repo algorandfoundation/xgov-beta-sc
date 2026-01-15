@@ -169,6 +169,9 @@ JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representat
 The xGov Committee selection and the assignment of their voting power is performed
 by the Algorand Foundation.
 
+> See the selected [Committees](https://github.com/algorandfoundation/xgov-committees)
+> published by the Algorand Foundation.
+
 ## Declaration
 
 The xGov Committee Manager **SHALL** declare on the xGov Registry:
