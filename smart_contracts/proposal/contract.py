@@ -166,6 +166,10 @@ class Proposal(
             UInt64(),
             key=prop_cfg.GS_KEY_VOTED_MEMBERS,
         )
+        self.boycotted_members = GlobalState(
+            UInt64(),
+            key=prop_cfg.GS_KEY_BOYCOTTED_MEMBERS,
+        )
         self.approvals = GlobalState(
             UInt64(),
             key=prop_cfg.GS_KEY_APPROVALS,
@@ -276,7 +280,7 @@ class Proposal(
         votes = self.voters[voter]
 
         if approvals + rejections > votes:
-            return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
+            return typ.Error(err.ARC_65_PREFIX + err.VOTE_BOYCOTTED)
 
         return typ.Error("")
 
@@ -560,10 +564,11 @@ class Proposal(
     def is_quorum_voters_reached(self) -> bool:
         # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
         # Null votes affect this quorum.
+        # Boycott votes, i.e. invalid, do not affect this quorum.
         quorum_defined = self.quorum_threshold.value > 0
         return (
-            self.voted_members.value >= self.quorum_threshold.value and quorum_defined
-        )
+            self.voted_members.value - self.boycotted_members.value
+        ) >= self.quorum_threshold.value and quorum_defined
 
     @subroutine
     def is_weighted_quorum_votes_reached(self) -> bool:
@@ -883,7 +888,6 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
             err.VOTER_ALREADY_VOTED: If the voter has already voted
-            err.VOTES_EXCEEDED: If the total votes exceed the assigned voting power
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
@@ -897,25 +901,38 @@ class Proposal(
         error = self.vote_input_validation(
             voter.native, approvals.as_uint64(), rejections.as_uint64()
         )
-        if error != typ.Error(""):
+        if error == typ.Error(""):
+            votes = self.voters[voter.native]
+
+            self.voted_members.value += 1
+            boycotted = False
+
+            nulls = votes - approvals.as_uint64() - rejections.as_uint64()
+
+            self.approvals.value += approvals.as_uint64()
+            self.rejections.value += rejections.as_uint64()
+            self.nulls.value += nulls
+        elif error == typ.Error(err.ARC_65_PREFIX + err.VOTE_BOYCOTTED):
+            votes = self.voters[voter.native]
+
+            self.voted_members.value += 1
+            self.boycotted_members.value += 1
+            boycotted = True
+            nulls = UInt64(0)
+        else:
             return error
-
-        votes = self.voters[voter.native]
-
-        self.voted_members.value += 1
-
-        nulls = votes - approvals.as_uint64() - rejections.as_uint64()
-
-        self.approvals.value += approvals.as_uint64()
-        self.rejections.value += rejections.as_uint64()
-        self.nulls.value += nulls
 
         self._unassign_voter(voter.native, votes)
 
         arc4.emit(
             typ.Vote(
                 xgov=arc4.Address(self.voters.box(voter.native).key[1:]),
+                approvals=arc4.UInt32(approvals.as_uint64()),
+                rejections=arc4.UInt32(rejections.as_uint64()),
+                nulls=arc4.UInt32(nulls),
+                boycotted=arc4.Bool(boycotted),
                 total_voters=arc4.UInt32(self.voted_members.value),
+                total_boycott=arc4.UInt32(self.boycotted_members.value),
                 total_approvals=arc4.UInt32(self.approvals.value),
                 total_rejections=arc4.UInt32(self.rejections.value),
                 total_nulls=arc4.UInt32(self.nulls.value),
@@ -1124,6 +1141,7 @@ class Proposal(
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
             voted_members=arc4.UInt64(self.voted_members.value),
+            boycotted_members=arc4.UInt64(self.boycotted_members.value),
             approvals=arc4.UInt64(self.approvals.value),
             rejections=arc4.UInt64(self.rejections.value),
             nulls=arc4.UInt64(self.nulls.value),
@@ -1158,6 +1176,7 @@ class Proposal(
             quorum_voters (UInt32): The number of voters to reach the quorum
             weighted_quorum_votes (UInt32): The number of voters to reach the weighted quorum
             total_voters (UInt32): The total number of voters so far
+            total_boycott (UInt32): The total number of boycotters so far
             total_approvals (UInt32): The total number of approval votes so far
             total_rejections (UInt32): The total number of rejection votes so far
             total_nulls (UInt32): The total number of null votes so far
@@ -1171,6 +1190,7 @@ class Proposal(
             quorum_voters=arc4.UInt32(self.quorum_threshold.value),
             weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_threshold.value),
             total_voters=arc4.UInt32(self.voted_members.value),
+            total_boycott=arc4.UInt32(self.boycotted_members.value),
             total_approvals=arc4.UInt32(self.approvals.value),
             total_rejections=arc4.UInt32(self.rejections.value),
             total_nulls=arc4.UInt32(self.nulls.value),
