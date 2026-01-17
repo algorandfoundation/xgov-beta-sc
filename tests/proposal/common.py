@@ -227,6 +227,7 @@ def assert_proposal_global_state(
     open_proposal_fee: int = 0,
     daemon_ops_funding_bps: int = 0,
     voted_members: int = 0,
+    boycotted_members: int = 0,
     approvals: int = 0,
     rejections: int = 0,
     nulls: int = 0,
@@ -254,6 +255,7 @@ def assert_proposal_global_state(
     assert global_state.open_proposal_fee == open_proposal_fee
     assert global_state.daemon_ops_funding_bps == daemon_ops_funding_bps
     assert global_state.voted_members == voted_members
+    assert global_state.boycotted_members == boycotted_members
     assert global_state.approvals == approvals
     assert global_state.rejections == rejections
     assert global_state.nulls == nulls
