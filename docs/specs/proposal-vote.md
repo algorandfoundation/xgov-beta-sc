@@ -1,6 +1,6 @@
 # Votes
 
-xGovs vote **MUST BE** either _“Approve”_, _“Reject”_, or _“Null”_.
+xGovs vote **MUST BE** either _“Approve”_, _“Reject”_, _“Null”_, or _“Boycott”_.
 
 xGovs **MAY** abstain from voting.
 
@@ -10,7 +10,9 @@ and _“Null”_ votes **MUST** be simultaneous.
 Vote usage **MAY** be partial. Unused votes are default _“Null”_.
 
 The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes of each xGov **MUST** equal
-to the xGov voting power.
+to the xGov voting power for the vote to be valid.
+
+An invalid vote is a _“Boycott”_ vote.
 
 Vote **SHALL NOT** be modified.
 
@@ -27,13 +29,13 @@ Vote **MUST BE** sent either by the xGov Address or the Voting Address.
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
 
 - A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached. _“Null”_
-votes **affect** this quorum.
+votes **affect** this quorum. _“Boycott”_ votes **do not affect** this quorum.
 
 - A _weighted quorum_ of all xGov Committee voting power is reached. _“Null”_ votes
-**affect** this quorum.
+**affect** this quorum. _“Boycott”_ votes **do not affect** this quorum.
 
 - The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached. _“Null”_
-votes **do not affect** the relative majority.
+votes **do not affect** the relative majority. _“Boycott”_ votes **do not affect** the relative majority.
 
 And it is Rejected otherwise.
 
