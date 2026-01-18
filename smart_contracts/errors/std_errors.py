@@ -64,7 +64,7 @@ VOTING_ONGOING = "Voting Ongoing"
 
 VOTER_NOT_FOUND = "Voter not found"
 VOTER_ALREADY_VOTED = "Voter already voted"
-VOTE_BOYCOTTED = "Vote boycotted"
+VOTES_INVALID = "Votes invalid"
 VOTERS_ASSIGNED = "There are voters assigned to this proposal"
 
 EMPTY_PAYLOAD = "Empty payload"

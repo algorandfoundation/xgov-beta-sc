@@ -279,8 +279,10 @@ class Proposal(
 
         votes = self.voters[voter]
 
-        if approvals + rejections > votes:
-            return typ.Error(err.ARC_65_PREFIX + err.VOTE_BOYCOTTED)
+        if (approvals + rejections > votes) and not (
+            approvals == votes and rejections == votes
+        ):
+            return typ.Error(err.ARC_65_PREFIX + err.VOTES_INVALID)
 
         return typ.Error("")
 
@@ -888,6 +890,7 @@ class Proposal(
             err.UNAUTHORIZED: If the sender is not the registry contract
             err.VOTER_NOT_FOUND: If the voter is not assigned to the proposal
             err.VOTER_ALREADY_VOTED: If the voter has already voted
+            err.VOTES_INVALID: If the votes are invalid
             err.MISSING_CONFIG: If one of the required configuration values is missing
             err.WRONG_PROPOSAL_STATUS: If the proposal status is not STATUS_VOTING
             err.VOTING_PERIOD_EXPIRED: If the voting period has expired
@@ -905,20 +908,19 @@ class Proposal(
             votes = self.voters[voter.native]
 
             self.voted_members.value += 1
-            boycotted = False
+            if approvals == votes and rejections == votes:
+                self.boycotted_members.value += 1
+                boycotted = True
 
-            nulls = votes - approvals.as_uint64() - rejections.as_uint64()
+                nulls = UInt64(0)
+            else:
+                boycotted = False
 
-            self.approvals.value += approvals.as_uint64()
-            self.rejections.value += rejections.as_uint64()
-            self.nulls.value += nulls
-        elif error == typ.Error(err.ARC_65_PREFIX + err.VOTE_BOYCOTTED):
-            votes = self.voters[voter.native]
+                nulls = votes - approvals.as_uint64() - rejections.as_uint64()
 
-            self.voted_members.value += 1
-            self.boycotted_members.value += 1
-            boycotted = True
-            nulls = UInt64(0)
+                self.approvals.value += approvals.as_uint64()
+                self.rejections.value += rejections.as_uint64()
+                self.nulls.value += nulls
         else:
             return error
 
