@@ -439,6 +439,45 @@ def test_vote_mixed_same_vote_call(
     assert not exists
 
 
+def test_vote_invalid(
+    algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
+) -> None:
+    with pytest.raises(LogicError, match=err.VOTES_INVALID):
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=voting_proposal_client.app_id,
+                xgov_address=committee[0].account.address,
+                approval_votes=6,
+                rejection_votes=5,
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
+        )
+
+    assert_voting_proposal_global_state(
+        voting_proposal_client,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        assigned_members=len(committee),
+        assigned_votes=DEFAULT_MEMBER_VOTES * len(committee),
+    )
+
+    assert_boxes(
+        algorand_client=algorand_client,
+        app_id=voting_proposal_client.app_id,
+        expected_boxes=[
+            (
+                get_voter_box_key(committee[0].account.address),
+                "AAAAAAAAAAo=",
+            )
+        ],
+    )
+
+
 def test_vote_boycotted(
     algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
@@ -451,8 +490,8 @@ def test_vote_boycotted(
         args=VoteProposalArgs(
             proposal_id=voting_proposal_client.app_id,
             xgov_address=committee[0].account.address,
-            approval_votes=6,
-            rejection_votes=5,
+            approval_votes=DEFAULT_MEMBER_VOTES,
+            rejection_votes=DEFAULT_MEMBER_VOTES,
         ),
         params=CommonAppCallParams(static_fee=min_fee_times_2),
     )
