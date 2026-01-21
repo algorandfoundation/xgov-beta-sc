@@ -51,6 +51,10 @@ GS_KEY_COMMITTEE_MEMBERS: Final[bytes] = b"committee_members"
 GS_KEY_COMMITTEE_VOTES: Final[bytes] = b"committee_votes"
 GS_KEY_MAX_COMMITTEE_SIZE: Final[bytes] = b"max_committee_size"
 
+# Global state keys initialized after MainNet deployment
+GS_KEY_ABSENCE_TOLERANCE: Final[bytes] = b"absence_tolerance"
+
+# Box key prefixes
 PROPOSAL_APPROVAL_PROGRAM_BOX: Final[bytes] = b"pa"
 XGOV_BOX_MAP_PREFIX: Final[bytes] = b"x"
 REQUEST_BOX_MAP_PREFIX: Final[bytes] = b"r"
@@ -94,3 +98,6 @@ QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
 WEIGHTED_QUORUM_SMALL: Final[int] = 50 * PERC_TO_BPS  # 50%
 WEIGHTED_QUORUM_MEDIUM: Final[int] = 0  # No longer used
 WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
+
+## Absenteeism
+ABSENCE_TOLERANCE: Final[int] = 3

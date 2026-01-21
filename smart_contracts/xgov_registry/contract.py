@@ -195,6 +195,9 @@ class XGovRegistry(
             key_prefix=pcfg.VOTER_BOX_KEY_PREFIX,
         )
 
+        # New Variables (introduced after MainNet deployment)
+        self.absence_tolerance = GlobalState(UInt64, key=cfg.GS_KEY_ABSENCE_TOLERANCE)
+
     @subroutine
     def entropy(self) -> Bytes:
         return TemplateVar[Bytes]("entropy")  # trick to allow fresh deployment
@@ -341,7 +344,7 @@ class XGovRegistry(
         """
         return typ.XGovBoxValue(
             voting_address=voting_address,
-            voted_proposals=arc4.UInt64(0),
+            tolerated_absences=arc4.UInt64(self.absence_tolerance.value),
             last_vote_timestamp=arc4.UInt64(0),
             subscription_round=arc4.UInt64(Global.round),
         )
@@ -706,6 +709,8 @@ class XGovRegistry(
         self.weighted_quorum_medium.value = UInt64(0)  # No longer used
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
+        self.absence_tolerance.value = config.absence_tolerance.as_uint64()
+
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
         """
@@ -769,6 +774,31 @@ class XGovRegistry(
         self.xgovs.value -= 1
 
         arc4.emit(typ.XGovUnsubscribed(xgov=arc4.Address(Txn.sender)))
+
+    @arc4.abimethod()
+    def unsubscribe_absentee(self, *, xgov_address: arc4.Address) -> None:
+        """
+        Unsubscribes an absentee xGov.
+
+        Args:
+            xgov_address: (arc4.Address): The address of the absentee xGov to unsubscribe
+
+        Raises:
+            err.UNAUTHORIZED: If the address is not an absentee xGov
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the address is not an xGov
+        """
+
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+        assert xgov_address.native in self.xgov_box, err.NOT_XGOV
+        assert (
+            self.xgov_box[xgov_address.native].tolerated_absences == 0
+        ), err.UNAUTHORIZED
+
+        del self.xgov_box[xgov_address.native]
+        self.xgovs.value -= 1
+
+        arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address))
 
     @arc4.abimethod()
     def request_subscribe_xgov(
@@ -1148,13 +1178,16 @@ class XGovRegistry(
             self.proposal_approval_program.length - (total_pages - 1) * bytes_per_page
         )
         page_1 = self.proposal_approval_program.extract(
-            0 * bytes_per_page, bytes_last_page
+            0 * bytes_per_page, bytes_per_page
+        )
+        page_2 = self.proposal_approval_program.extract(
+            1 * bytes_per_page, bytes_last_page
         )
 
         error, tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
-            approval_program=page_1,
+            approval_program=(page_1, page_2),
             clear_state_program=compiled_clear_state_1,
             global_num_uint=pcfg.GLOBAL_UINTS,
             global_num_bytes=pcfg.GLOBAL_BYTES,
@@ -1211,9 +1244,9 @@ class XGovRegistry(
 
         Raises:
             err.INVALID_PROPOSAL: If the Proposal ID is not a Proposal contract
-            err.PROPOSAL_IS_NOT_VOTING: If the Proposal is not in a voting session
+            err.WRONG_PROPOSAL_STATUS: If the Proposal is not in a voting session
             err.UNAUTHORIZED: If the xGov_address is not an xGov
-            err.MUST_BE_XGOV_ORVOTING_ADDRESS: If the sender is not the xgov_address or the voting_address
+            err.MUST_BE_XGOV_OR_VOTING_ADDRESS: If the sender is not the xgov_address or the voting_address
             err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
@@ -1231,14 +1264,15 @@ class XGovRegistry(
         exists = xgov_address.native in self.xgov_box
         assert exists, err.UNAUTHORIZED
         xgov_box = self.xgov_box[xgov_address.native].copy()
-        self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
-            xgov_box.voted_proposals.as_uint64() + UInt64(1)
+        # Upon vote the absence tolerance is reset
+        self.xgov_box[xgov_address.native].tolerated_absences = arc4.UInt64(
+            self.absence_tolerance.value
         )
         self.xgov_box[xgov_address.native].last_vote_timestamp = arc4.UInt64(
             Global.latest_timestamp
         )
 
-        # Verify the caller is eithre xgov address or its voting address
+        # Verify the caller is either xgov address or its voting address
         assert (
             Txn.sender == xgov_address.native
             or Txn.sender == xgov_box.voting_address.native
@@ -1264,6 +1298,58 @@ class XGovRegistry(
                     assert False, err.VOTES_EXCEEDED  # noqa
                 case err.VOTING_PERIOD_EXPIRED:
                     assert False, err.VOTING_PERIOD_EXPIRED  # noqa
+                case _:
+                    assert False, "Unknown error"  # noqa
+        else:
+            assert error.native == "", "Unknown error"
+
+    @arc4.abimethod()
+    def unassign_absentee_from_proposal(
+        self, *, proposal_id: arc4.UInt64, absentees: arc4.DynamicArray[arc4.Address]
+    ) -> None:
+        """
+        Unassign absentees from a scrutinized Proposal.
+
+        Args:
+            proposal_id (arc4.UInt64): The application ID of the scrutinized Proposal
+            absentees (arc4.DynamicArray[arc4.Address]): List of absentees to be unassigned
+
+        Raises:
+            err.PAUSED_REGISTRY: If the xGov Registry is paused
+            err.INVALID_PROPOSAL: If the Proposal ID is not a Proposal contract
+            err.WRONG_PROPOSAL_STATUS: If the Proposal is not scrutinized
+        """
+
+        assert not self.paused_registry.value, err.PAUSED_REGISTRY
+
+        # Verify proposal_id is a genuine proposal created by this registry
+        assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
+
+        # The later ABI call to the Proposal panics if any absentee is duplicated,
+        # multiple non-idempotent effects are rejected after.
+        for absentee in absentees:
+            exists = (
+                absentee.native in self.xgov_box
+            )  # the xgov might have unsubscribed
+            if exists and self.xgov_box[absentee.native].tolerated_absences > 0:
+                self.xgov_box[absentee.native].tolerated_absences = arc4.UInt64(
+                    self.xgov_box[absentee.native].tolerated_absences.as_uint64()
+                    - UInt64(1)
+                )
+
+        error, _tx = arc4.abi_call(
+            proposal_contract.Proposal.unassign_absentees,
+            absentees,
+            app_id=proposal_id.as_uint64(),
+        )
+
+        if error.native.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.native.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    assert False, err.WRONG_PROPOSAL_STATUS  # noqa
+                case err.VOTER_NOT_FOUND:
+                    assert False, err.VOTER_NOT_FOUND  # noqa
                 case _:
                     assert False, "Unknown error"  # noqa
         else:
@@ -1530,6 +1616,7 @@ class XGovRegistry(
             committee_id=self.committee_id.value.copy(),
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
+            absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
         )
 
     @arc4.abimethod(readonly=True)
@@ -1552,7 +1639,7 @@ class XGovRegistry(
         else:
             val = typ.XGovBoxValue(
                 voting_address=arc4.Address(),
-                voted_proposals=arc4.UInt64(0),
+                tolerated_absences=arc4.UInt64(0),
                 last_vote_timestamp=arc4.UInt64(0),
                 subscription_round=arc4.UInt64(0),
             )
@@ -1644,3 +1731,7 @@ class XGovRegistry(
     @arc4.abimethod()
     def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         assert self._is_proposal(proposal_id.as_uint64()), err.INVALID_PROPOSAL
+
+    @arc4.abimethod()
+    def op_up(self) -> None:
+        return

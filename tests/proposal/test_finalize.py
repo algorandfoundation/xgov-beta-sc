@@ -22,7 +22,7 @@ from tests.proposal.common import (
     assert_funded_proposal_global_state,
     assert_rejected_proposal_global_state,
     finalize_proposal,
-    unassign_voters,
+    unassign_absentees,
 )
 
 # TODO add tests for finalize on other statuses
@@ -147,8 +147,8 @@ def test_finalize_success_rejected_proposal(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(composer, committee, xgov_daemon)
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee)
     composer.send()
 
     finalize_proposal(
@@ -225,10 +225,11 @@ def test_finalize_not_registry(
     committee: list[CommitteeMember],
     no_role_account: SigningAccount,
     xgov_daemon: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(composer, committee[:-1], xgov_daemon)
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee[:-1])
     composer.send()
 
     with pytest.raises(LogicError, match=err.UNAUTHORIZED):
@@ -244,8 +245,8 @@ def test_finalize_wrong_box_ref(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(composer, committee[:-1], xgov_daemon)
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee[:-1])
     composer.send()
 
     with pytest.raises(LogicError, match=err.VOTERS_ASSIGNED):

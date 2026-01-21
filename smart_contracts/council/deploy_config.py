@@ -1,7 +1,12 @@
 import logging
 import os
 
-from algokit_utils import AlgoAmount, AlgorandClient, OnSchemaBreak, OnUpdate
+from algokit_utils import (
+    AlgoAmount,
+    AlgorandClient,
+    OnSchemaBreak,
+    OnUpdate,
+)
 
 from smart_contracts.artifacts.council.council_client import (
     CouncilMethodCallCreateParams,
@@ -33,11 +38,14 @@ def deploy() -> None:
     )
 
     # Get the registry app ID from environment
-    registry_app_id = int(os.environ.get("XGOV_REGISTRY_APP_ID", "0"))
-    if registry_app_id == 0:
-        raise ValueError("XGOV_REGISTRY_APP_ID must be set")
+    if not algorand_client.client.is_localnet():
+        registry_app_id = int(os.environ.get("XGOV_REGISTRY_APP_ID", "0"))
+        if registry_app_id == 0:
+            raise ValueError("XGOV_REGISTRY_APP_ID must be set")
+    else:
+        registry_app_id = 42  # LocalNet mock registry app ID
 
-    logger.info(f"Using registry app ID: {registry_app_id}")
+    logger.info(f"Using xGov Registry App ID: {registry_app_id} for Council")
 
     # Get admin address (defaults to deployer)
     admin_address = os.environ.get("COUNCIL_ADMIN", deployer_address)
