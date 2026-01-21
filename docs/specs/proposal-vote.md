@@ -11,7 +11,10 @@ Vote usage **MAY** be partial. Unused votes are default _“Null”_.
 
 Vote is a _“Boycott”_ vote when the number of _“Approve”_ votes equals the xGov voting power and the number of _“Reject”_ votes equals the xGov voting power.
 
-Vote is invalid and rejected by the xGov Registry if the sum of _“Approve”_, _“Reject”_, and _“Null”_ votes is not equal to the xGov voting power and the vote is not a _“Boycott”_.
+Vote is _invalid and rejected_ by the xGov Registry if:
+
+- The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes is _not equal_ to the xGov voting power, and
+- The vote is not a _“Boycott”_.
 
 Vote **SHALL NOT** be modified.
 
