@@ -212,7 +212,7 @@ def absence_tolerance(
     return {
         address: xgov_registry_client.state.box.xgov_box.get_value(
             address
-        ).voted_proposals
+        ).tolerated_absences
         for address in xgovs
     }
 

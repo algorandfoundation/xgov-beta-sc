@@ -71,15 +71,11 @@ An xGov Box has the following ABI schema:
 ```json
 {
     "voting_addr": "address",
-    "voted_proposals": "uint64",
+    "tolerated_absences": "uint64",
     "last_vote_timestamp": "uint64",
     "subscription_round": "uint64"
 }
 ```
-
-> [!IMPORTANT]
-> The `voted_proposals` field has been repurposed to store the consecutive absences
-> of votes tolerated.
 
 The xGov Fee **MUST NOT** be lower than the xGov Box MBR.
 

@@ -344,7 +344,7 @@ class XGovRegistry(
         """
         return typ.XGovBoxValue(
             voting_address=voting_address,
-            voted_proposals=arc4.UInt64(self.absence_tolerance.value),
+            tolerated_absences=arc4.UInt64(self.absence_tolerance.value),
             last_vote_timestamp=arc4.UInt64(0),
             subscription_round=arc4.UInt64(Global.round),
         )
@@ -791,7 +791,9 @@ class XGovRegistry(
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
         assert xgov_address.native in self.xgov_box, err.NOT_XGOV
-        assert self.xgov_box[xgov_address.native].voted_proposals == 0, err.UNAUTHORIZED
+        assert (
+            self.xgov_box[xgov_address.native].tolerated_absences == 0
+        ), err.UNAUTHORIZED
 
         del self.xgov_box[xgov_address.native]
         self.xgovs.value -= 1
@@ -1263,7 +1265,7 @@ class XGovRegistry(
         assert exists, err.UNAUTHORIZED
         xgov_box = self.xgov_box[xgov_address.native].copy()
         # Upon vote the absence tolerance is reset
-        self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
+        self.xgov_box[xgov_address.native].tolerated_absences = arc4.UInt64(
             self.absence_tolerance.value
         )
         self.xgov_box[xgov_address.native].last_vote_timestamp = arc4.UInt64(
@@ -1329,9 +1331,9 @@ class XGovRegistry(
             exists = (
                 absentee.native in self.xgov_box
             )  # the xgov might have unsubscribed
-            if exists and self.xgov_box[absentee.native].voted_proposals > 0:
-                self.xgov_box[absentee.native].voted_proposals = arc4.UInt64(
-                    self.xgov_box[absentee.native].voted_proposals.as_uint64()
+            if exists and self.xgov_box[absentee.native].tolerated_absences > 0:
+                self.xgov_box[absentee.native].tolerated_absences = arc4.UInt64(
+                    self.xgov_box[absentee.native].tolerated_absences.as_uint64()
                     - UInt64(1)
                 )
 
@@ -1637,7 +1639,7 @@ class XGovRegistry(
         else:
             val = typ.XGovBoxValue(
                 voting_address=arc4.Address(),
-                voted_proposals=arc4.UInt64(0),
+                tolerated_absences=arc4.UInt64(0),
                 last_vote_timestamp=arc4.UInt64(0),
                 subscription_round=arc4.UInt64(0),
             )

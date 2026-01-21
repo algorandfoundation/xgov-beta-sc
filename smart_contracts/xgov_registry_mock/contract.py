@@ -487,7 +487,7 @@ class XgovRegistryMock(XGovRegistryInterface):
         return (
             typ.XGovBoxValue(
                 voting_address=arc4.Address(),
-                voted_proposals=arc4.UInt64(0),
+                tolerated_absences=arc4.UInt64(0),
                 last_vote_timestamp=arc4.UInt64(0),
                 subscription_round=arc4.UInt64(0),
             ),

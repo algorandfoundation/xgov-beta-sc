@@ -61,9 +61,9 @@ def test_vote_proposal_success(
     )
     absence_tolerance = xgov_registry_client.state.global_state.absence_tolerance
     if voting_proposal == "voting_proposal_client":
-        assert xgov_box.voted_proposals == absence_tolerance
+        assert xgov_box.tolerated_absences == absence_tolerance
     else:
-        assert xgov_box.voted_proposals == absence_tolerance - 1
+        assert xgov_box.tolerated_absences == absence_tolerance - 1
     assert xgov_box.last_vote_timestamp == 0
 
     xgov_registry_client.send.vote_proposal(
@@ -83,7 +83,7 @@ def test_vote_proposal_success(
         committee[0].account.address
     )
 
-    assert xgov_box.voted_proposals == absence_tolerance
+    assert xgov_box.tolerated_absences == absence_tolerance
     assert xgov_box.last_vote_timestamp > 0  # type: ignore
 
     # Tear down test
