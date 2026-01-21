@@ -1618,7 +1618,7 @@ unsubscribe_absentee:
     bury 1
     assert // Not an xGov
     // smart_contracts/xgov_registry/contract.py:794
-    // assert self.xgov_box[xgov_address.native].voted_proposals == 0, err.UNAUTHORIZED
+    // assert self.xgov_box[xgov_address.native].tolerated_absences == 0, err.UNAUTHORIZED
     dup
     box_get
     pop
@@ -2957,7 +2957,7 @@ vote_proposal:
     assert // check self.absence_tolerance exists
     // smart_contracts/xgov_registry/contract.py:1265-1268
     // # Upon vote the absence tolerance is reset
-    // self.xgov_box[xgov_address.native].voted_proposals = arc4.UInt64(
+    // self.xgov_box[xgov_address.native].tolerated_absences = arc4.UInt64(
     //     self.absence_tolerance.value
     // )
     itob
@@ -3227,7 +3227,7 @@ unassign_absentee_from_proposal_for_header@2:
     box_len
     bury 1
     // smart_contracts/xgov_registry/contract.py:1332
-    // if exists and self.xgov_box[absentee.native].voted_proposals > 0:
+    // if exists and self.xgov_box[absentee.native].tolerated_absences > 0:
     bz unassign_absentee_from_proposal_after_if_else@6
     dig 5
     box_get
@@ -3237,7 +3237,7 @@ unassign_absentee_from_proposal_for_header@2:
     b>
     bz unassign_absentee_from_proposal_after_if_else@6
     // smart_contracts/xgov_registry/contract.py:1334
-    // self.xgov_box[absentee.native].voted_proposals.as_uint64()
+    // self.xgov_box[absentee.native].tolerated_absences.as_uint64()
     dig 5
     dup
     box_get
@@ -3248,12 +3248,12 @@ unassign_absentee_from_proposal_for_header@2:
     // - UInt64(1)
     intc_1 // 1
     // smart_contracts/xgov_registry/contract.py:1334-1335
-    // self.xgov_box[absentee.native].voted_proposals.as_uint64()
+    // self.xgov_box[absentee.native].tolerated_absences.as_uint64()
     // - UInt64(1)
     -
     // smart_contracts/xgov_registry/contract.py:1333-1336
-    // self.xgov_box[absentee.native].voted_proposals = arc4.UInt64(
-    //     self.xgov_box[absentee.native].voted_proposals.as_uint64()
+    // self.xgov_box[absentee.native].tolerated_absences = arc4.UInt64(
+    //     self.xgov_box[absentee.native].tolerated_absences.as_uint64()
     //     - UInt64(1)
     // )
     itob
@@ -4600,7 +4600,7 @@ get_xgov_box_else_body@3:
     // smart_contracts/xgov_registry/contract.py:1638-1643
     // val = typ.XGovBoxValue(
     //     voting_address=arc4.Address(),
-    //     voted_proposals=arc4.UInt64(0),
+    //     tolerated_absences=arc4.UInt64(0),
     //     last_vote_timestamp=arc4.UInt64(0),
     //     subscription_round=arc4.UInt64(0),
     // )
@@ -5028,7 +5028,7 @@ make_xgov_box:
     // def make_xgov_box(self, voting_address: arc4.Address) -> typ.XGovBoxValue:
     proto 1 1
     // smart_contracts/xgov_registry/contract.py:347
-    // voted_proposals=arc4.UInt64(self.absence_tolerance.value),
+    // tolerated_absences=arc4.UInt64(self.absence_tolerance.value),
     intc_0 // 0
     bytec 22 // 0x616273656e63655f746f6c6572616e6365
     app_global_get_ex
@@ -5041,7 +5041,7 @@ make_xgov_box:
     // smart_contracts/xgov_registry/contract.py:345-350
     // return typ.XGovBoxValue(
     //     voting_address=voting_address,
-    //     voted_proposals=arc4.UInt64(self.absence_tolerance.value),
+    //     tolerated_absences=arc4.UInt64(self.absence_tolerance.value),
     //     last_vote_timestamp=arc4.UInt64(0),
     //     subscription_round=arc4.UInt64(Global.round),
     // )
@@ -5054,7 +5054,7 @@ make_xgov_box:
     // smart_contracts/xgov_registry/contract.py:345-350
     // return typ.XGovBoxValue(
     //     voting_address=voting_address,
-    //     voted_proposals=arc4.UInt64(self.absence_tolerance.value),
+    //     tolerated_absences=arc4.UInt64(self.absence_tolerance.value),
     //     last_vote_timestamp=arc4.UInt64(0),
     //     subscription_round=arc4.UInt64(Global.round),
     // )
