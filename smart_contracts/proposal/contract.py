@@ -271,6 +271,10 @@ class Proposal(
         return typ.Error("")
 
     @subroutine
+    def is_boycott(self, votes: UInt64, approvals: UInt64, rejections: UInt64) -> bool:
+        return approvals == votes and rejections == votes
+
+    @subroutine
     def vote_input_validation(
         self, voter: Account, approvals: UInt64, rejections: UInt64
     ) -> typ.Error:
@@ -279,8 +283,8 @@ class Proposal(
 
         votes = self.voters[voter]
 
-        if (approvals + rejections > votes) and not (
-            approvals == votes and rejections == votes
+        if (approvals + rejections > votes) and not self.is_boycott(
+            votes, approvals, rejections
         ):
             return typ.Error(err.ARC_65_PREFIX + err.VOTES_INVALID)
 
@@ -908,7 +912,7 @@ class Proposal(
             votes = self.voters[voter.native]
 
             self.voted_members.value += 1
-            if approvals == votes and rejections == votes:
+            if self.is_boycott(votes, approvals.as_uint64(), rejections.as_uint64()):
                 self.boycotted_members.value += 1
                 boycotted = True
 
