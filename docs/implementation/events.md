@@ -22,7 +22,7 @@ An xGov subscribed (either through self-onboarding or managed onboarding).
 
 ### `XGovUnsubscribed`
 
-An xGov unsubscribed (either through self-onboarding or managed onboarding).
+An xGov unsubscribed (either through self-onboarding, managed onboarding, or abseenteism).
 
 | ARGUMENT  |   TYPE    | DESCRIPTION                          |
 |:----------|:---------:|:-------------------------------------|

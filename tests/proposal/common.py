@@ -21,10 +21,13 @@ from smart_contracts.artifacts.proposal.proposal_client import (
 )
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
+    XGovRegistryComposer,
 )
 from smart_contracts.artifacts.xgov_registry_mock.xgov_registry_mock_client import (
     FinalizeProposalArgs,
+    UnassignAbsenteeFromProposalArgs,
     XgovRegistryMockClient,
+    XgovRegistryMockComposer,
 )
 from smart_contracts.proposal.config import (
     GLOBAL_BYTES,
@@ -201,6 +204,17 @@ def members_for_both_quorums(
         proposal_registry_values.votes_quorum // DEFAULT_MEMBER_VOTES  # type: ignore
     )
     return max(proposal_registry_values.members_quorum, weighted_quorum_members)  # type: ignore
+
+
+def absence_tolerance(
+    xgov_registry_client: XGovRegistryClient, xgovs: list[str]
+) -> dict:
+    return {
+        address: xgov_registry_client.state.box.xgov_box.get_value(
+            address
+        ).tolerated_absences
+        for address in xgovs
+    }
 
 
 def assert_proposal_global_state(
@@ -628,6 +642,56 @@ def unassign_voters(
                 signer=xgov_daemon.signer,
                 note=i.to_bytes(4, "big"),
             ),
+        )
+
+
+def unassign_absentees(
+    xgov_registry_client_composer: XgovRegistryMockComposer | XGovRegistryComposer,
+    proposal_app_id: int,
+    absentees: list[CommitteeMember] | list[str] | dict[str, int],
+    *,
+    bulks: int = 8,
+    static_fee: AlgoAmount = AlgoAmount(micro_algo=MIN_TXN_FEE * 2),  # noqa: B008
+    caller: SigningAccount = None,
+    op_up_count: int = 0,
+) -> None:
+    if isinstance(absentees, dict):
+        absentee_addresses = list(absentees.keys())
+    else:
+        if absentees and isinstance(absentees[0], CommitteeMember):
+            absentee_addresses = [cm.account.address for cm in absentees]
+        else:
+            absentee_addresses = absentees
+
+    xgov_registry_client_composer.unassign_absentee_from_proposal(
+        args=UnassignAbsenteeFromProposalArgs(
+            proposal_id=proposal_app_id,
+            absentees=absentee_addresses[: bulks - 1],
+        ),
+        params=CommonAppCallParams(
+            static_fee=static_fee,
+            sender=caller.address if caller is not None else None,
+            signer=caller.signer if caller is not None else None,
+        ),
+    )
+    rest_of_absentees = absentee_addresses[bulks - 1 :]
+    for i in range(1 + len(rest_of_absentees) // bulks):
+        xgov_registry_client_composer.unassign_absentee_from_proposal(
+            args=UnassignAbsenteeFromProposalArgs(
+                proposal_id=proposal_app_id,
+                absentees=rest_of_absentees[i * bulks : (i + 1) * bulks],
+            ),
+            params=CommonAppCallParams(
+                static_fee=static_fee,
+                sender=caller.address if caller is not None else None,
+                signer=caller.signer if caller is not None else None,
+                note=i.to_bytes(4, "big"),
+            ),
+        )
+
+    for i in range(op_up_count):
+        xgov_registry_client_composer.op_up(
+            params=CommonAppCallParams(note=i.to_bytes(8, "big"))
         )
 
 

@@ -29,6 +29,10 @@ Vote **SHALL NOT** be modified.
 
 Vote **MUST BE** sent either by the xGov Address or the Voting Address.
 
+The Voter Box **MUST** be deleted after the vote.
+
+The xGov absence tolerance **MUST** be reset.
+
 ## Scrutiny
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
@@ -48,9 +52,11 @@ The Commitment Lock **MUST** be returned to the Proposer if the Proposal is Reje
 
 The xGov Daemon **SHALL** delete Voter Boxes of absentees xGovs.
 
-## Review
+All (absentee) Voter Box **MUST** be deleted before the Council reviews the Proposal.
 
-All Voter Box **MUST** be deleted before reviewing the Proposal.
+The absence tolerance of the absentee xGov **MUST** be decremented by one.
+
+## Review
 
 The xGov Council **MUST** review Approved Proposals.
 

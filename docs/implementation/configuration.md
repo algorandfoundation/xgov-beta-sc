@@ -21,3 +21,4 @@
 | Quorum Max                      |    \\( 70 \\)     |           %            |        \\( 7{,}000 \\)        |    bps    |
 | Weighted Quorum Min             |    \\( 50 \\)     |           %            |        \\( 5{,}000 \\)        |    bps    |
 | Weighted Quorum Max             |    \\( 70 \\)     |           %            |        \\( 7{,}000 \\)        |    bps    |
+| Absence Tolerance               |     \\( 3 \\)     |                        |           \\( 3 \\)           |           |

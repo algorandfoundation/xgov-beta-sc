@@ -107,6 +107,11 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
+    def unsubscribe_absentee(self, *, xgov_address: arc4.Address) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
     def request_subscribe_xgov(
         self,
         *,
@@ -198,6 +203,13 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
+    def unassign_absentee_from_proposal(
+        self, *, proposal_id: arc4.UInt64, absentees: arc4.DynamicArray[arc4.Address]
+    ) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
     def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
         pass
 
@@ -262,4 +274,9 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     @abstractmethod
     @arc4.abimethod()
     def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
+    def op_up(self) -> None:
         pass

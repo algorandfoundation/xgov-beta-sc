@@ -71,7 +71,7 @@ An xGov Box has the following ABI schema:
 ```json
 {
     "voting_addr": "address",
-    "voted_proposals": "uint64",
+    "tolerated_absences": "uint64",
     "last_vote_timestamp": "uint64",
     "subscription_round": "uint64"
 }
@@ -134,3 +134,14 @@ If the Algorand Foundation approves the unsubscription request:
 1. The xGov Unsubscription Request Box **MUST** be destroyed;
 
 1. The xGov Box of the xGov address **MUST** be destroyed.
+
+## Absenteeism
+
+The xGov Registry tolerates absenteeism of \\( n \\) consecutive votes.
+
+If an xGov is absent for \\( n \\) consecutive votes, the xGov **MUST** be unsubscribed
+from the xGov Registry (losing the xGov status).
+
+{{#include ../_include/styles.md:note}}
+> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> for the absence tolerance value.
