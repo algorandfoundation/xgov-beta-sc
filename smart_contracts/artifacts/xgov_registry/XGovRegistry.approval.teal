@@ -2649,7 +2649,7 @@ open_proposal:
     itxn_field GlobalNumByteSlice
     // smart_contracts/xgov_registry/contract.py:1192
     // global_num_uint=pcfg.GLOBAL_UINTS,
-    pushint 26
+    pushint 27
     itxn_field GlobalNumUint
     // smart_contracts/xgov_registry/contract.py:1161-1165
     // # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
@@ -3093,16 +3093,16 @@ vote_proposal_ternary_merge@9:
     // case err.VOTER_NOT_FOUND:
     bytec 54 // "Voter not found"
     // smart_contracts/xgov_registry/contract.py:1297
-    // case err.VOTES_EXCEEDED:
-    pushbytess "Votes exceeded" "Voting Period Expired"
+    // case err.VOTES_INVALID:
+    pushbytess "Votes invalid" "Voting Period Expired"
     // smart_contracts/xgov_registry/contract.py:1292-1302
     // match error_without_prefix:
     //     case err.WRONG_PROPOSAL_STATUS:
     //         assert False, err.WRONG_PROPOSAL_STATUS  # noqa
     //     case err.VOTER_NOT_FOUND:
     //         assert False, err.VOTER_NOT_FOUND  # noqa
-    //     case err.VOTES_EXCEEDED:
-    //         assert False, err.VOTES_EXCEEDED  # noqa
+    //     case err.VOTES_INVALID:
+    //         assert False, err.VOTES_INVALID  # noqa
     //     case err.VOTING_PERIOD_EXPIRED:
     //         assert False, err.VOTING_PERIOD_EXPIRED  # noqa
     //     case _:
@@ -3120,8 +3120,8 @@ vote_proposal_switch_case_3@14:
 
 vote_proposal_switch_case_2@13:
     // smart_contracts/xgov_registry/contract.py:1298
-    // assert False, err.VOTES_EXCEEDED  # noqa
-    err // Votes exceeded
+    // assert False, err.VOTES_INVALID  # noqa
+    err // Votes invalid
 
 vote_proposal_switch_case_1@12:
     // smart_contracts/xgov_registry/contract.py:1296

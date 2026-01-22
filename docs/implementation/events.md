@@ -94,7 +94,12 @@ A vote has been cast on the Proposal.
 | ARGUMENT         |   TYPE    | DESCRIPTION                          |
 |:-----------------|:---------:|:-------------------------------------|
 | xGov             | `address` | xGov address that expressed the vote |
+| Approvals        | `uint32`  | Number of approvals in the vote      |
+| Rejections       | `uint32`  | Number of rejections in the vote     |
+| Nulls            | `uint32`  | Number of bulls in the vote          |
+| Boycotted        |  `bool`   | The vote has been a boycott          |
 | Total Voters     | `uint32`  | Voters so far                        |
+| Total Boycott    | `uint32`  | Boycotts so far                      |
 | Total Approvals  | `uint32`  | Approval votes so far                |
 | Total Rejections | `uint32`  | Rejections votes so far              |
 | Total Nulls      | `uint32`  | Null votes so far                    |

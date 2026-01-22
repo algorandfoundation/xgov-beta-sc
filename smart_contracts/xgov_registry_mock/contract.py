@@ -327,8 +327,8 @@ class XgovRegistryMock(XGovRegistryInterface):
                     assert False, err.VOTER_NOT_FOUND  # noqa
                 case err.VOTER_ALREADY_VOTED:
                     assert False, err.VOTER_ALREADY_VOTED  # noqa
-                case err.VOTES_EXCEEDED:
-                    assert False, err.VOTES_EXCEEDED  # noqa
+                case err.VOTES_INVALID:
+                    assert False, err.VOTES_INVALID  # noqa
                 case err.MISSING_CONFIG:
                     assert False, err.MISSING_CONFIG  # noqa
                 case err.WRONG_PROPOSAL_STATUS:

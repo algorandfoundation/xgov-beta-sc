@@ -28,6 +28,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
     voted_members: arc4.UInt64
+    boycotted_members: arc4.UInt64
     approvals: arc4.UInt64
     rejections: arc4.UInt64
     nulls: arc4.UInt64
@@ -118,6 +119,7 @@ class VotingState(arc4.Struct, kw_only=True):
     quorum_voters: arc4.UInt32
     weighted_quorum_votes: arc4.UInt32
     total_voters: arc4.UInt32
+    total_boycott: arc4.UInt32
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32
@@ -195,7 +197,12 @@ class Vote(arc4.Struct, kw_only=True):
     """A vote has been cast on the Proposal"""
 
     xgov: arc4.Address
+    approvals: arc4.UInt32
+    rejections: arc4.UInt32
+    nulls: arc4.UInt32
+    boycotted: arc4.Bool
     total_voters: arc4.UInt32
+    total_boycott: arc4.UInt32
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32

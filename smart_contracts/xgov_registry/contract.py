@@ -1251,7 +1251,7 @@ class XGovRegistry(
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
             err.VOTER_ALREADY_VOTED: If the xGov has already voted on this Proposal
-            err.VOTES_EXCEEDED: If the total votes exceed the maximum allowed
+            err.VOTES_INVALID: If the votes are invalid
             err.VOTING_PERIOD_EXPIRED: If the voting period for the Proposal has expired
         """
 
@@ -1294,8 +1294,8 @@ class XGovRegistry(
                     assert False, err.WRONG_PROPOSAL_STATUS  # noqa
                 case err.VOTER_NOT_FOUND:
                     assert False, err.VOTER_NOT_FOUND  # noqa
-                case err.VOTES_EXCEEDED:
-                    assert False, err.VOTES_EXCEEDED  # noqa
+                case err.VOTES_INVALID:
+                    assert False, err.VOTES_INVALID  # noqa
                 case err.VOTING_PERIOD_EXPIRED:
                     assert False, err.VOTING_PERIOD_EXPIRED  # noqa
                 case _:
