@@ -16,7 +16,8 @@ Vote is a _“Boycott”_ when:
 
 Vote is _invalid and rejected_ by the xGov Registry if:
 
-- The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes is _not equal_ to the xGov voting power, and
+- The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes is _not equal_ to the xGov
+voting power, and
 - The vote is not a _“Boycott”_.
 
 Vote **SHALL NOT** be modified.
@@ -37,14 +38,17 @@ The xGov absence tolerance **MUST** be reset.
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
 
-- A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached. _“Null”_
-votes **affect** this quorum. _“Boycott”_ votes **do not affect** this quorum.
+- A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached.
+_“Null”_ votes **affect** this quorum.
+_“Boycott”_ votes **do not affect** this quorum.
 
-- A _weighted quorum_ of all xGov Committee voting power is reached. _“Null”_ votes
-**affect** this quorum. _“Boycott”_ votes **do not affect** this quorum.
+- A _weighted quorum_ of all xGov Committee voting power is reached.
+_“Null”_ votes **affect** this quorum.
+_“Boycott”_ votes **do not affect** this quorum.
 
-- The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached. _“Null”_
-votes **do not affect** the relative majority. _“Boycott”_ votes **do not affect** the relative majority.
+- The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached.
+_“Null”_ votes **do not affect** the relative majority.
+_“Boycott”_ votes **do not affect** the relative majority.
 
 And it is Rejected otherwise.
 
