@@ -66,6 +66,13 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
+    def unassign_absentees(
+        self, *, absentees: arc4.DynamicArray[arc4.Address]
+    ) -> typ.Error:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
     def review(self, *, block: bool) -> None:
         pass
 

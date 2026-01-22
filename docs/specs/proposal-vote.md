@@ -1,6 +1,6 @@
 # Votes
 
-xGovs vote **MUST BE** either _“Approve”_, _“Reject”_, or _“Null”_.
+xGovs vote **MUST BE** either _“Approve”_, _“Reject”_, _“Null”_, or _“Boycott”_.
 
 xGovs **MAY** abstain from voting.
 
@@ -9,8 +9,16 @@ and _“Null”_ votes **MUST** be simultaneous.
 
 Vote usage **MAY** be partial. Unused votes are default _“Null”_.
 
-The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes of each xGov **MUST** equal
-to the xGov voting power.
+Vote is a _“Boycott”_ when:
+
+- The number of _“Approve”_ votes equals the xGov voting power, and
+- The number of _“Reject”_ votes equals the xGov voting power.
+
+Vote is _invalid and rejected_ by the xGov Registry if:
+
+- The sum of _“Approve”_, _“Reject”_, and _“Null”_ votes is _not equal_ to the xGov
+voting power, and
+- The vote is not a _“Boycott”_.
 
 Vote **SHALL NOT** be modified.
 
@@ -22,18 +30,25 @@ Vote **SHALL NOT** be modified.
 
 Vote **MUST BE** sent either by the xGov Address or the Voting Address.
 
+The Voter Box **MUST** be deleted after the vote.
+
+The xGov absence tolerance **MUST** be reset.
+
 ## Scrutiny
 
 A Submitted Proposal is Approved _if and only if_ all the following conditions hold:
 
-- A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached. _“Null”_
-votes **affect** this quorum.
+- A _democratic quorum_ of all xGov Committee (one xGov, one vote) is reached.
+_“Null”_ votes **affect** this quorum.
+_“Boycott”_ votes **do not affect** this quorum.
 
-- A _weighted quorum_ of all xGov Committee voting power is reached. _“Null”_ votes
-**affect** this quorum.
+- A _weighted quorum_ of all xGov Committee voting power is reached.
+_“Null”_ votes **affect** this quorum.
+_“Boycott”_ votes **do not affect** this quorum.
 
-- The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached. _“Null”_
-votes **do not affect** the relative majority.
+- The _relative majority_ of _“Approve”_ over _“Reject”_ votes is reached.
+_“Null”_ votes **do not affect** the relative majority.
+_“Boycott”_ votes **do not affect** the relative majority.
 
 And it is Rejected otherwise.
 
@@ -41,9 +56,11 @@ The Commitment Lock **MUST** be returned to the Proposer if the Proposal is Reje
 
 The xGov Daemon **SHALL** delete Voter Boxes of absentees xGovs.
 
-## Review
+All (absentee) Voter Box **MUST** be deleted before the Council reviews the Proposal.
 
-All Voter Box **MUST** be deleted before reviewing the Proposal.
+The absence tolerance of the absentee xGov **MUST** be decremented by one.
+
+## Review
 
 The xGov Council **MUST** review Approved Proposals.
 

@@ -31,6 +31,7 @@ def cast_votes(
     committee: list[CommitteeMember],
     num_approvals: int,
     num_rejections: int,
+    num_boycott: int,
     min_fee_times_2: AlgoAmount,
 ) -> None:
     """Cast approval, rejection, and abstention votes for committee members."""
@@ -58,8 +59,22 @@ def cast_votes(
             params=CommonAppCallParams(static_fee=min_fee_times_2),
         )
 
+    # Boycotts
+    for cm in committee[
+        num_approvals + num_rejections : num_approvals + num_rejections + num_boycott
+    ]:
+        xgov_registry_mock_client.send.vote_proposal(
+            args=VoteProposalArgs(
+                proposal_id=proposal_id,
+                xgov_address=cm.account.address,
+                approval_votes=cm.votes,
+                rejection_votes=cm.votes,
+            ),
+            params=CommonAppCallParams(static_fee=min_fee_times_2),
+        )
+
     # Abstentions
-    for cm in committee[num_approvals + num_rejections :]:
+    for cm in committee[num_approvals + num_rejections + num_boycott :]:
         xgov_registry_mock_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=proposal_id,
@@ -134,6 +149,7 @@ def test_scrutiny_twice(
         committee,
         len(committee),
         0,
+        0,
         min_fee_times_2,
     )
 
@@ -159,16 +175,19 @@ def test_scrutiny_twice(
 
 
 @pytest.mark.parametrize(
-    "num_approvals,num_rejections",
+    "num_approvals,num_rejections,num_boycotts",
     [
-        (1, 0),  # 1 approves, rest abstain
-        (2, 1),  # 2 approve, 1 rejects, rest abstain
-        (11, 9),  # 11 approve, 9 reject
+        (1, 0, 0),  # 1 approves, rest abstain
+        (1, 0, 1),  # 1 approves, rest abstain but one boycotts
+        (2, 1, 0),  # 2 approve, 1 rejects, rest abstain
+        (2, 1, 2),  # 2 approve, 1 rejects, rest abstain but two boycott
+        (11, 9, 0),  # 11 approve, 9 reject
     ],
 )
 def test_scrutiny_all_voted_approved(
     num_approvals: int,
     num_rejections: int,
+    num_boycotts: int,
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     no_role_account: SigningAccount,
@@ -183,6 +202,7 @@ def test_scrutiny_all_voted_approved(
         committee,
         num_approvals,
         num_rejections,
+        num_boycotts,
         min_fee_times_2,
     )
 
@@ -196,9 +216,10 @@ def test_scrutiny_all_voted_approved(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(committee),
+        boycotted_members=num_boycotts,
         approvals=DEFAULT_MEMBER_VOTES * num_approvals,
         rejections=DEFAULT_MEMBER_VOTES * num_rejections,
-        nulls=DEFAULT_MEMBER_VOTES * num_nulls,
+        nulls=DEFAULT_MEMBER_VOTES * max(num_nulls - num_boycotts, 0),
     )
 
 
@@ -206,18 +227,22 @@ def test_scrutiny_all_voted_approved(
 
 
 @pytest.mark.parametrize(
-    "num_approvals,num_rejections",
+    "num_approvals,num_rejections,num_boycotts",
     [
-        (0, 0),  # All abstain
-        (0, 1),  # 1 rejects, rest abstain
-        (1, 1),  # 1 approves, 1 rejects, rest abstain (tie)
-        (1, 2),  # 1 approves, 2 reject, rest abstain
-        (10, 10),  # 10 approve, 10 reject (tie)
+        (0, 0, 0),  # All abstain
+        (0, 0, 1),  # All abstain but one boycotts
+        (0, 1, 0),  # 1 rejects, rest abstain
+        (0, 1, 2),  # 1 rejects, rest abstain but two boycott
+        (1, 1, 0),  # 1 approves, 1 rejects, rest abstain (tie)
+        (1, 1, 3),  # 1 approves, 1 rejects, rest abstain (tie) but three boycott
+        (1, 2, 4),  # 1 approves, 2 reject, rest abstain but four boycott
+        (10, 10, 0),  # 10 approve, 10 reject (tie)
     ],
 )
 def test_scrutiny_all_voted_rejected(
     num_approvals: int,
     num_rejections: int,
+    num_boycotts: int,
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
     no_role_account: SigningAccount,
@@ -232,6 +257,7 @@ def test_scrutiny_all_voted_rejected(
         committee,
         num_approvals,
         num_rejections,
+        num_boycotts,
         min_fee_times_2,
     )
 
@@ -247,9 +273,10 @@ def test_scrutiny_all_voted_rejected(
         proposer_address=proposer.address,
         registry_app_id=xgov_registry_mock_client.app_id,
         voted_members=len(committee),
+        boycotted_members=num_boycotts,
         approvals=DEFAULT_MEMBER_VOTES * num_approvals,
         rejections=DEFAULT_MEMBER_VOTES * num_rejections,
-        nulls=DEFAULT_MEMBER_VOTES * num_nulls,
+        nulls=DEFAULT_MEMBER_VOTES * max(num_nulls - num_boycotts, 0),
     )
 
 

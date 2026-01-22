@@ -29,7 +29,7 @@ MAX_MBR_PER_BOX: Final[int] = (
 
 BYTES_PER_APP_PAGE: Final[int] = 2048  # 2 KiB in bytes
 
-PROPOSAL_APPROVAL_PAGES: Final[int] = 1
+PROPOSAL_APPROVAL_PAGES: Final[int] = 2
 MAX_APP_TOTAL_ARG_LEN: Final[int] = 2048
 METHOD_SELECTOR_LENGTH: Final[int] = 4
 UINT64_LENGTH: Final[int] = 8

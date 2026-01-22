@@ -28,6 +28,7 @@ class ProposalTypedGlobalState(arc4.Struct):
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
     voted_members: arc4.UInt64
+    boycotted_members: arc4.UInt64
     approvals: arc4.UInt64
     rejections: arc4.UInt64
     nulls: arc4.UInt64
@@ -75,6 +76,7 @@ class TypedGlobalState(arc4.Struct):
     committee_id: Bytes32
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
+    absence_tolerance: arc4.UInt64
 
 
 class XGovRegistryConfig(arc4.Struct):
@@ -89,6 +91,7 @@ class XGovRegistryConfig(arc4.Struct):
     voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
+    absence_tolerance: arc4.UInt64
 
 
 class XGovSubscribeRequestBoxValue(arc4.Struct):
@@ -105,7 +108,7 @@ class ProposerBoxValue(arc4.Struct):
 
 class XGovBoxValue(arc4.Struct):
     voting_address: arc4.Address
-    voted_proposals: arc4.UInt64
+    tolerated_absences: arc4.UInt64
     last_vote_timestamp: arc4.UInt64
     subscription_round: arc4.UInt64
 
@@ -116,6 +119,7 @@ class VotingState(arc4.Struct, kw_only=True):
     quorum_voters: arc4.UInt32
     weighted_quorum_votes: arc4.UInt32
     total_voters: arc4.UInt32
+    total_boycott: arc4.UInt32
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32
@@ -193,7 +197,12 @@ class Vote(arc4.Struct, kw_only=True):
     """A vote has been cast on the Proposal"""
 
     xgov: arc4.Address
+    approvals: arc4.UInt32
+    rejections: arc4.UInt32
+    nulls: arc4.UInt32
+    boycotted: arc4.Bool
     total_voters: arc4.UInt32
+    total_boycott: arc4.UInt32
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32

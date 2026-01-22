@@ -4,7 +4,7 @@
 // algopy.arc4.ARC4Contract.approval_program() -> uint64:
 main:
     intcblock 0 1 32 10 10000
-    bytecblock 0x737461747573 0x0000 0x66696e616c697a6564 0x70726f706f736572 0x72656769737472795f6170705f6964 0x00 0x61737369676e65645f6d656d62657273 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 0x151f7c75 "M" 0x636f6d6d69747465655f6d656d62657273 0x7265717565737465645f616d6f756e74 0x6e756c6c73 0x636f6d6d69747465655f766f746573 0x66756e64696e675f63617465676f7279 0x61737369676e65645f766f746573 0x636f6d6d69747465655f6964 0x6c6f636b65645f616d6f756e74 0x71756f72756d5f7468726573686f6c64 0x77656967687465645f71756f72756d5f7468726573686f6c64 "V" 0x6f70656e5f70726f706f73616c5f666565 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x6f70656e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x66756e64696e675f74797065 0x766f74696e675f6475726174696f6e 0x7061757365645f7265676973747279 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564 0x7375626d697373696f6e5f74696d657374616d70 0x6d657461646174615f75706c6f61646564 0x7469746c65 0x666f637573 0x64697363757373696f6e5f6475726174696f6e 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x78676f765f6461656d6f6e
+    bytecblock 0x737461747573 0x0000 0x 0x66696e616c697a6564 0x00 0x70726f706f736572 0x72656769737472795f6170705f6964 0x151f7c75 0x61737369676e65645f6d656d62657273 0x766f7465645f6d656d62657273 0x617070726f76616c73 0x72656a656374696f6e73 "M" 0x636f6d6d69747465655f6d656d62657273 0x7265717565737465645f616d6f756e74 0x626f79636f747465645f6d656d62657273 0x6e756c6c73 0x636f6d6d69747465655f766f746573 0x66756e64696e675f63617465676f7279 0x61737369676e65645f766f746573 "V" 0x636f6d6d69747465655f6964 0x6c6f636b65645f616d6f756e74 0x71756f72756d5f7468726573686f6c64 0x77656967687465645f71756f72756d5f7468726573686f6c64 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564 0x6f70656e5f70726f706f73616c5f666565 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x6f70656e5f74696d657374616d70 0x766f74655f6f70656e696e675f74696d657374616d70 0x66756e64696e675f74797065 0x766f74696e675f6475726174696f6e 0x7061757365645f7265676973747279 0x7375626d697373696f6e5f74696d657374616d70 0x6d657461646174615f75706c6f61646564 0x7469746c65 0x666f637573 0x64697363757373696f6e5f6475726174696f6e 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x78676f765f6461656d6f6e 0x00134552523a566f746572206e6f7420666f756e64
     txn ApplicationID
     bnz main_after_if_else@2
     // smart_contracts/proposal/contract.py:48
@@ -21,7 +21,7 @@ main:
     // smart_contracts/proposal/contract.py:50
     // assert Txn.global_num_uint == prop_cfg.GLOBAL_UINTS, err.WRONG_GLOBAL_UINTS
     txn GlobalNumUint
-    pushint 26
+    pushint 27
     ==
     assert // Wrong Global UInts allocation
     // smart_contracts/proposal/contract.py:51
@@ -36,7 +36,7 @@ main:
     assert // Wrong Local UInts allocation
     // smart_contracts/proposal/contract.py:57
     // key=prop_cfg.GS_KEY_PROPOSER,
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     // smart_contracts/proposal/contract.py:56
     // Account(),
     global ZeroAddress
@@ -49,7 +49,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:61
     // key=prop_cfg.GS_KEY_REGISTRY_APP_ID,
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     // smart_contracts/proposal/contract.py:60
     // UInt64(),
     intc_0 // 0
@@ -61,10 +61,10 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:67
     // key=reg_cfg.GS_KEY_COMMITTEE_ID,
-    bytec 18 // 0x636f6d6d69747465655f6964
+    bytec 21 // 0x636f6d6d69747465655f6964
     // smart_contracts/proposal/contract.py:66
     // typ.Bytes32.from_bytes(b""),
-    pushbytes 0x
+    bytec_2 // 0x
     // smart_contracts/proposal/contract.py:64-68
     // # From xGov Registry
     // self.committee_id = GlobalState(
@@ -74,7 +74,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:71
     // key=reg_cfg.GS_KEY_COMMITTEE_MEMBERS,
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
     // smart_contracts/proposal/contract.py:70
     // UInt64(),
     intc_0 // 0
@@ -86,7 +86,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:75
     // key=reg_cfg.GS_KEY_COMMITTEE_VOTES,
-    bytec 15 // 0x636f6d6d69747465655f766f746573
+    bytec 17 // 0x636f6d6d69747465655f766f746573
     // smart_contracts/proposal/contract.py:74
     // UInt64(),
     intc_0 // 0
@@ -98,7 +98,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:79
     // key=reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE,
-    bytec 23 // 0x6f70656e5f70726f706f73616c5f666565
+    bytec 26 // 0x6f70656e5f70726f706f73616c5f666565
     // smart_contracts/proposal/contract.py:78
     // UInt64(),
     intc_0 // 0
@@ -110,7 +110,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:83
     // key=reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS,
-    bytec 24 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
+    bytec 27 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
     // smart_contracts/proposal/contract.py:82
     // UInt64(),
     intc_0 // 0
@@ -122,7 +122,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:89
     // key=prop_cfg.GS_KEY_OPEN_TS,
-    bytec 25 // 0x6f70656e5f74696d657374616d70
+    bytec 28 // 0x6f70656e5f74696d657374616d70
     // smart_contracts/proposal/contract.py:88
     // UInt64(),
     intc_0 // 0
@@ -135,7 +135,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:93
     // key=prop_cfg.GS_KEY_SUBMISSION_TS,
-    bytec 31 // 0x7375626d697373696f6e5f74696d657374616d70
+    bytec 33 // 0x7375626d697373696f6e5f74696d657374616d70
     // smart_contracts/proposal/contract.py:92
     // UInt64(),
     intc_0 // 0
@@ -147,7 +147,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:97
     // key=prop_cfg.GS_KEY_VOTE_OPEN_TS,
-    bytec 26 // 0x766f74655f6f70656e696e675f74696d657374616d70
+    bytec 29 // 0x766f74655f6f70656e696e675f74696d657374616d70
     // smart_contracts/proposal/contract.py:96
     // UInt64(),
     intc_0 // 0
@@ -172,7 +172,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:107
     // key=prop_cfg.GS_KEY_FINALIZED,
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     // smart_contracts/proposal/contract.py:106
     // False,  # noqa: FBT003
     intc_0 // 0
@@ -184,7 +184,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:111
     // key=prop_cfg.GS_KEY_METADATA_UPLOADED,
-    bytec 32 // 0x6d657461646174615f75706c6f61646564
+    bytec 34 // 0x6d657461646174615f75706c6f61646564
     // smart_contracts/proposal/contract.py:110
     // False,  # noqa: FBT003
     intc_0 // 0
@@ -196,10 +196,10 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:117
     // key=prop_cfg.GS_KEY_TITLE,
-    bytec 33 // 0x7469746c65
+    bytec 35 // 0x7469746c65
     // smart_contracts/proposal/contract.py:116
     // String(),
-    pushbytes ""
+    bytec_2 // ""
     // smart_contracts/proposal/contract.py:114-118
     // # Proposal Configuration
     // self.title = GlobalState(
@@ -209,7 +209,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:121
     // key=prop_cfg.GS_KEY_FUNDING_CATEGORY,
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     // smart_contracts/proposal/contract.py:120
     // UInt64(enm.FUNDING_CATEGORY_NULL),
     intc_0 // 0
@@ -221,7 +221,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:125
     // key=prop_cfg.GS_KEY_FOCUS,
-    bytec 34 // 0x666f637573
+    bytec 36 // 0x666f637573
     // smart_contracts/proposal/contract.py:124
     // UInt64(enm.FOCUS_NULL),
     intc_0 // 0
@@ -233,7 +233,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:129
     // key=prop_cfg.GS_KEY_FUNDING_TYPE,
-    bytec 27 // 0x66756e64696e675f74797065
+    bytec 30 // 0x66756e64696e675f74797065
     // smart_contracts/proposal/contract.py:128
     // UInt64(enm.FUNDING_NULL),
     intc_0 // 0
@@ -245,7 +245,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:133
     // key=prop_cfg.GS_KEY_REQUESTED_AMOUNT,
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     // smart_contracts/proposal/contract.py:132
     // UInt64(),
     intc_0 // 0
@@ -257,7 +257,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:137
     // key=prop_cfg.GS_KEY_LOCKED_AMOUNT,
-    bytec 19 // 0x6c6f636b65645f616d6f756e74
+    bytec 22 // 0x6c6f636b65645f616d6f756e74
     // smart_contracts/proposal/contract.py:136
     // UInt64(),
     intc_0 // 0
@@ -269,7 +269,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:141
     // key=prop_cfg.GS_KEY_DISCUSSION_DURATION,
-    bytec 35 // 0x64697363757373696f6e5f6475726174696f6e
+    bytec 37 // 0x64697363757373696f6e5f6475726174696f6e
     // smart_contracts/proposal/contract.py:140
     // UInt64(),
     intc_0 // 0
@@ -281,7 +281,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:145
     // key=prop_cfg.GS_KEY_VOTING_DURATION,
-    bytec 28 // 0x766f74696e675f6475726174696f6e
+    bytec 31 // 0x766f74696e675f6475726174696f6e
     // smart_contracts/proposal/contract.py:144
     // UInt64(),
     intc_0 // 0
@@ -293,7 +293,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:149
     // key=prop_cfg.GS_KEY_QUORUM_THRESHOLD,
-    bytec 20 // 0x71756f72756d5f7468726573686f6c64
+    bytec 23 // 0x71756f72756d5f7468726573686f6c64
     // smart_contracts/proposal/contract.py:148
     // UInt64(),
     intc_0 // 0
@@ -305,7 +305,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:153
     // key=prop_cfg.GS_KEY_WEIGHTED_QUORUM_THRESHOLD,
-    bytec 21 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
+    bytec 24 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
     // smart_contracts/proposal/contract.py:152
     // UInt64(),
     intc_0 // 0
@@ -317,7 +317,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:159
     // key=prop_cfg.GS_KEY_ASSIGNED_MEMBERS,
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     // smart_contracts/proposal/contract.py:158
     // UInt64(0),
     intc_0 // 0
@@ -330,7 +330,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:163
     // key=prop_cfg.GS_KEY_ASSIGNED_VOTES,
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     // smart_contracts/proposal/contract.py:162
     // UInt64(0),
     intc_0 // 0
@@ -342,7 +342,7 @@ main:
     app_global_put
     // smart_contracts/proposal/contract.py:167
     // key=prop_cfg.GS_KEY_VOTED_MEMBERS,
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     // smart_contracts/proposal/contract.py:166
     // UInt64(),
     intc_0 // 0
@@ -353,36 +353,48 @@ main:
     // )
     app_global_put
     // smart_contracts/proposal/contract.py:171
-    // key=prop_cfg.GS_KEY_APPROVALS,
-    bytec 8 // 0x617070726f76616c73
+    // key=prop_cfg.GS_KEY_BOYCOTTED_MEMBERS,
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
     // smart_contracts/proposal/contract.py:170
     // UInt64(),
     intc_0 // 0
     // smart_contracts/proposal/contract.py:169-172
+    // self.boycotted_members = GlobalState(
+    //     UInt64(),
+    //     key=prop_cfg.GS_KEY_BOYCOTTED_MEMBERS,
+    // )
+    app_global_put
+    // smart_contracts/proposal/contract.py:175
+    // key=prop_cfg.GS_KEY_APPROVALS,
+    bytec 10 // 0x617070726f76616c73
+    // smart_contracts/proposal/contract.py:174
+    // UInt64(),
+    intc_0 // 0
+    // smart_contracts/proposal/contract.py:173-176
     // self.approvals = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_APPROVALS,
     // )
     app_global_put
-    // smart_contracts/proposal/contract.py:175
+    // smart_contracts/proposal/contract.py:179
     // key=prop_cfg.GS_KEY_REJECTIONS,
-    bytec 9 // 0x72656a656374696f6e73
-    // smart_contracts/proposal/contract.py:174
+    bytec 11 // 0x72656a656374696f6e73
+    // smart_contracts/proposal/contract.py:178
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal/contract.py:173-176
+    // smart_contracts/proposal/contract.py:177-180
     // self.rejections = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_REJECTIONS,
     // )
     app_global_put
-    // smart_contracts/proposal/contract.py:179
+    // smart_contracts/proposal/contract.py:183
     // key=prop_cfg.GS_KEY_NULLS,
-    bytec 14 // 0x6e756c6c73
-    // smart_contracts/proposal/contract.py:178
+    bytec 16 // 0x6e756c6c73
+    // smart_contracts/proposal/contract.py:182
     // UInt64(),
     intc_0 // 0
-    // smart_contracts/proposal/contract.py:177-180
+    // smart_contracts/proposal/contract.py:181-184
     // self.nulls = GlobalState(
     //     UInt64(),
     //     key=prop_cfg.GS_KEY_NULLS,
@@ -419,19 +431,19 @@ main_switch_case_next@5:
     !
     assert
     txn ApplicationID
-    bz main_create_NoOp@23
-    pushbytess 0xedaeb9ca 0x7143994f 0x7371321a 0x34e613ca 0x0d9ab0d7 0x1841a0d2 0x734dbecc 0x212d9f07 0x8a5e4c80 0x2ac19b05 0x802069b4 0xa8c6f80a 0x24615f90 0xea2363f4 0xdbd83dd9 // method "open(pay,string,uint64,uint64,uint8)void", method "upload_metadata(byte[],bool)void", method "drop()string", method "submit()void", method "assign_voters((address,uint64)[])void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "review(bool)void", method "fund()string", method "unassign_voters(address[])void", method "finalize()string", method "get_state()(address,uint64,string,uint64,uint64,uint64,uint64,bool,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64)", method "get_voter_box(address)(uint64,bool)", method "get_voting_state()(uint32,uint32,uint32,uint32,uint32,uint32,bool,bool,bool,bool)", method "op_up()void"
+    bz main_create_NoOp@24
+    pushbytess 0xedaeb9ca 0x7143994f 0x7371321a 0x34e613ca 0x0d9ab0d7 0x1841a0d2 0x734dbecc 0x76ff4c70 0x212d9f07 0x8a5e4c80 0x2ac19b05 0x802069b4 0xb649e874 0x24615f90 0x369c42ba 0xdbd83dd9 // method "open(pay,string,uint64,uint64,uint8)void", method "upload_metadata(byte[],bool)void", method "drop()string", method "submit()void", method "assign_voters((address,uint64)[])void", method "vote(address,uint64,uint64)string", method "scrutiny()void", method "unassign_absentees(address[])string", method "review(bool)void", method "fund()string", method "unassign_voters(address[])void", method "finalize()string", method "get_state()(address,uint64,string,uint64,uint64,uint64,uint64,bool,uint64,uint8,uint64,uint64,uint64,byte[32],uint64,uint64,uint64,uint64,uint64,uint64,uint64)", method "get_voter_box(address)(uint64,bool)", method "get_voting_state()(uint32,uint32,uint32,uint32,uint32,uint32,uint32,bool,bool,bool,bool)", method "op_up()void"
     txna ApplicationArgs 0
-    match open upload_metadata drop submit assign_voters vote scrutiny review fund unassign_voters finalize get_state get_voter_box get_voting_state main_op_up_route@21
+    match open upload_metadata drop submit assign_voters vote scrutiny unassign_absentees review fund unassign_voters finalize get_state get_voter_box get_voting_state main_op_up_route@22
     err
 
-main_op_up_route@21:
-    // smart_contracts/proposal/contract.py:1183
+main_op_up_route@22:
+    // smart_contracts/proposal/contract.py:1246
     // @arc4.abimethod()
     intc_1 // 1
     return
 
-main_create_NoOp@23:
+main_create_NoOp@24:
     // smart_contracts/proposal/contract.py:34-42
     // class Proposal(
     //     ProposalInterface,
@@ -448,7 +460,7 @@ main_create_NoOp@23:
     err
 
 main_delete_route@4:
-    // smart_contracts/proposal/contract.py:1080
+    // smart_contracts/proposal/contract.py:1140
     // @arc4.abimethod(allow_actions=("DeleteApplication",))
     txn OnCompletion
     pushint 5 // DeleteApplication
@@ -461,7 +473,7 @@ main_delete_route@4:
 
 // smart_contracts.proposal.contract.Proposal.create[routing]() -> void:
 create:
-    // smart_contracts/proposal/contract.py:593
+    // smart_contracts/proposal/contract.py:613
     // @arc4.abimethod(create="require")
     txna ApplicationArgs 1
     dup
@@ -469,126 +481,126 @@ create:
     intc_2 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/proposal/contract.py:606
+    // smart_contracts/proposal/contract.py:626
     // Global.caller_application_id != 0
     global CallerApplicationID
-    // smart_contracts/proposal/contract.py:605-607
+    // smart_contracts/proposal/contract.py:625-627
     // assert (
     //     Global.caller_application_id != 0
     // ), err.UNAUTHORIZED  # Only callable by another contract
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:609-610
+    // smart_contracts/proposal/contract.py:629-630
     // # Set Proposal Base State
     // self.proposer.value = proposer.native
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:611
+    // smart_contracts/proposal/contract.py:631
     // self.registry_app_id.value = Global.caller_application_id
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     global CallerApplicationID
     app_global_put
-    // smart_contracts/proposal/contract.py:615
+    // smart_contracts/proposal/contract.py:635
     // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
-    bytec 18 // 0x636f6d6d69747465655f6964
+    bytec 21 // 0x636f6d6d69747465655f6964
     callsub get_bytes_from_registry_config
-    // smart_contracts/proposal/contract.py:613-614
+    // smart_contracts/proposal/contract.py:633-634
     // # Set values from xGov Registry
     // self.committee_id.value = typ.Bytes32.from_bytes(
-    bytec 18 // 0x636f6d6d69747465655f6964
-    // smart_contracts/proposal/contract.py:613-616
+    bytec 21 // 0x636f6d6d69747465655f6964
+    // smart_contracts/proposal/contract.py:633-636
     // # Set values from xGov Registry
     // self.committee_id.value = typ.Bytes32.from_bytes(
     //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:618
+    // smart_contracts/proposal/contract.py:638
     // Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
-    // smart_contracts/proposal/contract.py:617-619
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
+    // smart_contracts/proposal/contract.py:637-639
     // self.committee_members.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:617
+    // smart_contracts/proposal/contract.py:637
     // self.committee_members.value = self.get_uint_from_registry_config(
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
-    // smart_contracts/proposal/contract.py:617-619
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
+    // smart_contracts/proposal/contract.py:637-639
     // self.committee_members.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:621
+    // smart_contracts/proposal/contract.py:641
     // Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
-    bytec 15 // 0x636f6d6d69747465655f766f746573
-    // smart_contracts/proposal/contract.py:620-622
+    bytec 17 // 0x636f6d6d69747465655f766f746573
+    // smart_contracts/proposal/contract.py:640-642
     // self.committee_votes.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:620
+    // smart_contracts/proposal/contract.py:640
     // self.committee_votes.value = self.get_uint_from_registry_config(
-    bytec 15 // 0x636f6d6d69747465655f766f746573
-    // smart_contracts/proposal/contract.py:620-622
+    bytec 17 // 0x636f6d6d69747465655f766f746573
+    // smart_contracts/proposal/contract.py:640-642
     // self.committee_votes.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_COMMITTEE_VOTES)
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:624
+    // smart_contracts/proposal/contract.py:644
     // Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
-    bytec 23 // 0x6f70656e5f70726f706f73616c5f666565
-    // smart_contracts/proposal/contract.py:623-625
+    bytec 26 // 0x6f70656e5f70726f706f73616c5f666565
+    // smart_contracts/proposal/contract.py:643-645
     // self.open_proposal_fee.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:623
+    // smart_contracts/proposal/contract.py:643
     // self.open_proposal_fee.value = self.get_uint_from_registry_config(
-    bytec 23 // 0x6f70656e5f70726f706f73616c5f666565
-    // smart_contracts/proposal/contract.py:623-625
+    bytec 26 // 0x6f70656e5f70726f706f73616c5f666565
+    // smart_contracts/proposal/contract.py:643-645
     // self.open_proposal_fee.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_OPEN_PROPOSAL_FEE)
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:627
+    // smart_contracts/proposal/contract.py:647
     // Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
-    bytec 24 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
-    // smart_contracts/proposal/contract.py:626-628
+    bytec 27 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
+    // smart_contracts/proposal/contract.py:646-648
     // self.daemon_ops_funding_bps.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:626
+    // smart_contracts/proposal/contract.py:646
     // self.daemon_ops_funding_bps.value = self.get_uint_from_registry_config(
-    bytec 24 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
-    // smart_contracts/proposal/contract.py:626-628
+    bytec 27 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
+    // smart_contracts/proposal/contract.py:646-648
     // self.daemon_ops_funding_bps.value = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:630-631
+    // smart_contracts/proposal/contract.py:650-651
     // # Post validation
     // if self.committee_id.value == typ.Bytes32.from_bytes(b""):
     intc_0 // 0
-    bytec 18 // 0x636f6d6d69747465655f6964
+    bytec 21 // 0x636f6d6d69747465655f6964
     app_global_get_ex
     assert // check self.committee_id exists
-    pushbytes 0x
+    bytec_2 // 0x
     ==
     bz create_after_if_else@3
-    // smart_contracts/proposal/contract.py:632
+    // smart_contracts/proposal/contract.py:652
     // return typ.Error(err.ARC_65_PREFIX + err.EMPTY_COMMITTEE_ID)
     pushbytes 0x00164552523a456d70747920436f6d6d6974746565204944
 
 create_after_inlined_smart_contracts.proposal.contract.Proposal.create@4:
-    // smart_contracts/proposal/contract.py:593
+    // smart_contracts/proposal/contract.py:613
     // @arc4.abimethod(create="require")
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -596,10 +608,10 @@ create_after_inlined_smart_contracts.proposal.contract.Proposal.create@4:
     return
 
 create_after_if_else@3:
-    // smart_contracts/proposal/contract.py:634
+    // smart_contracts/proposal/contract.py:654
     // return typ.Error("")
     bytec_1 // 0x0000
-    // smart_contracts/proposal/contract.py:593
+    // smart_contracts/proposal/contract.py:613
     // @arc4.abimethod(create="require")
     b create_after_inlined_smart_contracts.proposal.contract.Proposal.create@4
 
@@ -607,9 +619,9 @@ create_after_if_else@3:
 // smart_contracts.proposal.contract.Proposal.open[routing]() -> void:
 open:
     intc_0 // 0
-    pushbytes ""
+    bytec_2 // ""
     dupn 4
-    // smart_contracts/proposal/contract.py:636
+    // smart_contracts/proposal/contract.py:656
     // @arc4.abimethod()
     txn GroupIndex
     intc_1 // 1
@@ -647,23 +659,23 @@ open:
     intc_1 // 1
     ==
     assert // invalid number of bytes for arc4.uint8
-    // smart_contracts/proposal/contract.py:449
+    // smart_contracts/proposal/contract.py:468
     // Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
-    bytec 29 // 0x7061757365645f7265676973747279
-    // smart_contracts/proposal/contract.py:448-450
+    bytec 32 // 0x7061757365645f7265676973747279
+    // smart_contracts/proposal/contract.py:467-469
     // registry_paused = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:451
+    // smart_contracts/proposal/contract.py:470
     // assert not registry_paused, err.PAUSED_REGISTRY
     !
     assert // Registry's non-admin methods are paused
-    // smart_contracts/proposal/contract.py:369
+    // smart_contracts/proposal/contract.py:388
     // assert self.is_proposer(), err.UNAUTHORIZED
     callsub is_proposer
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:371
+    // smart_contracts/proposal/contract.py:390
     // self.status.value == enm.STATUS_EMPTY and not self.finalized.value
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -671,19 +683,19 @@ open:
     assert // check self.status exists
     bnz open_bool_false@4
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
     bnz open_bool_false@4
     intc_1 // 1
 
 open_bool_merge@5:
-    // smart_contracts/proposal/contract.py:370-372
+    // smart_contracts/proposal/contract.py:389-391
     // assert (
     //     self.status.value == enm.STATUS_EMPTY and not self.finalized.value
     // ), err.WRONG_PROPOSAL_STATUS
     assert // Wrong Proposal Status or finalized
-    // smart_contracts/proposal/contract.py:675
+    // smart_contracts/proposal/contract.py:695
     // title.native, funding_type.as_uint64(), requested_amount.as_uint64()
     dig 3
     extract 2 0
@@ -697,32 +709,32 @@ open_bool_merge@5:
     dig 3
     btoi
     bury 9
-    // smart_contracts/proposal/contract.py:382
+    // smart_contracts/proposal/contract.py:401
     // assert title.bytes.length <= const.TITLE_MAX_BYTES, err.WRONG_TITLE_LENGTH
     dup
     len
     pushint 123
     <=
     assert // Wrong Title length
-    // smart_contracts/proposal/contract.py:383
+    // smart_contracts/proposal/contract.py:402
     // assert title != "", err.WRONG_TITLE_LENGTH
-    pushbytes ""
+    bytec_2 // ""
     !=
     assert // Wrong Title length
-    // smart_contracts/proposal/contract.py:386
+    // smart_contracts/proposal/contract.py:405
     // funding_type == enm.FUNDING_PROACTIVE
     intc_3 // 10
     ==
-    // smart_contracts/proposal/contract.py:386-387
+    // smart_contracts/proposal/contract.py:405-406
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
     bnz open_bool_true@9
-    // smart_contracts/proposal/contract.py:387
+    // smart_contracts/proposal/contract.py:406
     // or funding_type == enm.FUNDING_RETROACTIVE
     dig 8
     pushint 20
     ==
-    // smart_contracts/proposal/contract.py:386-387
+    // smart_contracts/proposal/contract.py:405-406
     // funding_type == enm.FUNDING_PROACTIVE
     // or funding_type == enm.FUNDING_RETROACTIVE
     bz open_bool_false@10
@@ -731,29 +743,29 @@ open_bool_true@9:
     intc_1 // 1
 
 open_bool_merge@11:
-    // smart_contracts/proposal/contract.py:385-388
+    // smart_contracts/proposal/contract.py:404-407
     // assert (
     //     funding_type == enm.FUNDING_PROACTIVE
     //     or funding_type == enm.FUNDING_RETROACTIVE
     // ), err.WRONG_FUNDING_TYPE
     assert // Wrong Funding Type
-    // smart_contracts/proposal/contract.py:391
+    // smart_contracts/proposal/contract.py:410
     // Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
-    bytec 36 // 0x6d696e5f7265717565737465645f616d6f756e74
-    // smart_contracts/proposal/contract.py:390-392
+    bytec 38 // 0x6d696e5f7265717565737465645f616d6f756e74
+    // smart_contracts/proposal/contract.py:409-411
     // min_requested_amount = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:395
+    // smart_contracts/proposal/contract.py:414
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
-    bytec 37 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
-    // smart_contracts/proposal/contract.py:394-396
+    bytec 39 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
+    // smart_contracts/proposal/contract.py:413-415
     // max_requested_amount_large = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:398
+    // smart_contracts/proposal/contract.py:417
     // assert requested_amount >= min_requested_amount, err.WRONG_MIN_REQUESTED_AMOUNT
     dig 8
     dup
@@ -761,380 +773,380 @@ open_bool_merge@11:
     uncover 3
     >=
     assert // Requested amount is less than the minimum requested amount
-    // smart_contracts/proposal/contract.py:400
+    // smart_contracts/proposal/contract.py:419
     // requested_amount <= max_requested_amount_large
     dig 1
     >=
-    // smart_contracts/proposal/contract.py:399-401
+    // smart_contracts/proposal/contract.py:418-420
     // assert (
     //     requested_amount <= max_requested_amount_large
     // ), err.WRONG_MAX_REQUESTED_AMOUNT
     assert // Requested amount is more than the maximum requested amount
-    // smart_contracts/proposal/contract.py:412
+    // smart_contracts/proposal/contract.py:431
     // Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
     pushbytes 0x70726f706f73616c5f636f6d6d69746d656e745f627073
-    // smart_contracts/proposal/contract.py:411-413
+    // smart_contracts/proposal/contract.py:430-432
     // proposal_commitment_bps = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PROPOSAL_COMMITMENT_BPS)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:407
+    // smart_contracts/proposal/contract.py:426
     // return amount * fraction_in_bps // const.BPS
     dig 1
     *
     intc 4 // 10000
     /
-    // smart_contracts/proposal/contract.py:425
+    // smart_contracts/proposal/contract.py:444
     // assert payment.sender == self.proposer.value, err.WRONG_SENDER
     dig 6
     dup
     gtxns Sender
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
     ==
     assert // Wrong Sender
-    // smart_contracts/proposal/contract.py:427
+    // smart_contracts/proposal/contract.py:446
     // payment.receiver == Global.current_application_address
     dup
     gtxns Receiver
     global CurrentApplicationAddress
     ==
-    // smart_contracts/proposal/contract.py:426-428
+    // smart_contracts/proposal/contract.py:445-447
     // assert (
     //     payment.receiver == Global.current_application_address
     // ), err.WRONG_RECEIVER
     assert // Wrong Receiver
-    // smart_contracts/proposal/contract.py:429
+    // smart_contracts/proposal/contract.py:448
     // assert payment.amount == expected_lock_amount, err.WRONG_LOCKED_AMOUNT
     gtxns Amount
     dup
     bury 9
     ==
     assert // Locked amount is incorrect
-    // smart_contracts/proposal/contract.py:679-680
+    // smart_contracts/proposal/contract.py:699-700
     // # Configure Proposal
     // self.title.value = title.native
-    bytec 33 // 0x7469746c65
+    bytec 35 // 0x7469746c65
     dig 12
     app_global_put
-    // smart_contracts/proposal/contract.py:434
+    // smart_contracts/proposal/contract.py:453
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
     pushbytes 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c
-    // smart_contracts/proposal/contract.py:433-435
+    // smart_contracts/proposal/contract.py:452-454
     // max_requested_amount_small = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_SMALL)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:437
+    // smart_contracts/proposal/contract.py:456
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
     pushbytes 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d
-    // smart_contracts/proposal/contract.py:436-438
+    // smart_contracts/proposal/contract.py:455-457
     // max_requested_amount_medium = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_MEDIUM)
     // )
     callsub get_uint_from_registry_config
     bury 10
-    // smart_contracts/proposal/contract.py:439
+    // smart_contracts/proposal/contract.py:458
     // if requested_amount <= max_requested_amount_small:
     <=
     bz open_else_body@17
-    // smart_contracts/proposal/contract.py:440
+    // smart_contracts/proposal/contract.py:459
     // return UInt64(enm.FUNDING_CATEGORY_SMALL)
     intc_3 // 10
 
 open_after_inlined_smart_contracts.proposal.contract.Proposal.get_category@20:
-    // smart_contracts/proposal/contract.py:681
+    // smart_contracts/proposal/contract.py:701
     // self.funding_category.value = self.get_category(requested_amount.as_uint64())
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:682
+    // smart_contracts/proposal/contract.py:702
     // self.funding_type.value = funding_type.as_uint64()
-    bytec 27 // 0x66756e64696e675f74797065
+    bytec 30 // 0x66756e64696e675f74797065
     dig 9
     app_global_put
-    // smart_contracts/proposal/contract.py:683
+    // smart_contracts/proposal/contract.py:703
     // self.requested_amount.value = requested_amount.as_uint64()
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     dig 7
     app_global_put
-    // smart_contracts/proposal/contract.py:684
+    // smart_contracts/proposal/contract.py:704
     // self.focus.value = focus.as_uint64()
     dup
     btoi
-    bytec 34 // 0x666f637573
+    bytec 36 // 0x666f637573
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:685
+    // smart_contracts/proposal/contract.py:705
     // self.locked_amount.value = payment.amount  # The amount is validated
-    bytec 19 // 0x6c6f636b65645f616d6f756e74
+    bytec 22 // 0x6c6f636b65645f616d6f756e74
     dig 6
     app_global_put
-    // smart_contracts/proposal/contract.py:689
+    // smart_contracts/proposal/contract.py:709
     // self.funding_category.value != enm.FUNDING_CATEGORY_NULL
     intc_0 // 0
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     app_global_get_ex
     swap
     dup
     cover 2
     bury 12
     assert // check self.funding_category exists
-    // smart_contracts/proposal/contract.py:687-690
+    // smart_contracts/proposal/contract.py:707-710
     // # Configure category dependent values
     // assert (
     //     self.funding_category.value != enm.FUNDING_CATEGORY_NULL
     // ), err.MISSING_CONFIG
     dup
     assert // Missing Config
-    // smart_contracts/proposal/contract.py:691
+    // smart_contracts/proposal/contract.py:711
     // assert self.requested_amount.value != 0, err.MISSING_CONFIG
     intc_0 // 0
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.requested_amount exists
     assert // Missing Config
-    // smart_contracts/proposal/contract.py:309
+    // smart_contracts/proposal/contract.py:328
     // if category == enm.FUNDING_CATEGORY_SMALL:
     intc_3 // 10
     ==
     bz open_else_body@23
-    // smart_contracts/proposal/contract.py:311
+    // smart_contracts/proposal/contract.py:330
     // Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
     pushbytes 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c
-    // smart_contracts/proposal/contract.py:310-312
+    // smart_contracts/proposal/contract.py:329-331
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_SMALL)
     // )
     callsub get_uint_from_registry_config
 
 open_after_inlined_smart_contracts.proposal.contract.Proposal.get_discussion_duration@26:
-    // smart_contracts/proposal/contract.py:692
+    // smart_contracts/proposal/contract.py:712
     // self.discussion_duration.value = self.get_discussion_duration(
-    bytec 35 // 0x64697363757373696f6e5f6475726174696f6e
-    // smart_contracts/proposal/contract.py:692-694
+    bytec 37 // 0x64697363757373696f6e5f6475726174696f6e
+    // smart_contracts/proposal/contract.py:712-714
     // self.discussion_duration.value = self.get_discussion_duration(
     //     self.funding_category.value
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:696
+    // smart_contracts/proposal/contract.py:716
     // self.funding_category.value
     intc_0 // 0
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     app_global_get_ex
     swap
     dup
     cover 2
     bury 12
     assert // check self.funding_category exists
-    // smart_contracts/proposal/contract.py:324
+    // smart_contracts/proposal/contract.py:343
     // if category == enm.FUNDING_CATEGORY_SMALL:
     intc_3 // 10
     ==
     bz open_else_body@29
-    // smart_contracts/proposal/contract.py:326
+    // smart_contracts/proposal/contract.py:345
     // Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
     pushbytes 0x766f74696e675f6475726174696f6e5f736d616c6c
-    // smart_contracts/proposal/contract.py:325-327
+    // smart_contracts/proposal/contract.py:344-346
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_VOTING_DURATION_SMALL)
     // )
     callsub get_uint_from_registry_config
 
 open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duration@32:
-    // smart_contracts/proposal/contract.py:695
+    // smart_contracts/proposal/contract.py:715
     // self.voting_duration.value = self.get_voting_duration(
-    bytec 28 // 0x766f74696e675f6475726174696f6e
-    // smart_contracts/proposal/contract.py:695-697
+    bytec 31 // 0x766f74696e675f6475726174696f6e
+    // smart_contracts/proposal/contract.py:715-717
     // self.voting_duration.value = self.get_voting_duration(
     //     self.funding_category.value
     // )
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:502
+    // smart_contracts/proposal/contract.py:521
     // Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
     pushbytes 0x71756f72756d5f736d616c6c
-    // smart_contracts/proposal/contract.py:501-503
+    // smart_contracts/proposal/contract.py:520-522
     // quorum_min_bps = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_QUORUM_SMALL)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:505
+    // smart_contracts/proposal/contract.py:524
     // Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
     pushbytes 0x71756f72756d5f6c61726765
-    // smart_contracts/proposal/contract.py:504-506
+    // smart_contracts/proposal/contract.py:523-525
     // quorum_max_bps = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_QUORUM_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:507-508
+    // smart_contracts/proposal/contract.py:526-527
     // # The xGov Registry ensures quorum_max_bps > quorum_min_bps
     // delta_quorum_bps = quorum_max_bps - quorum_min_bps
     dig 1
     -
-    // smart_contracts/proposal/contract.py:511
+    // smart_contracts/proposal/contract.py:530
     // Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
-    bytec 36 // 0x6d696e5f7265717565737465645f616d6f756e74
-    // smart_contracts/proposal/contract.py:510-512
+    bytec 38 // 0x6d696e5f7265717565737465645f616d6f756e74
+    // smart_contracts/proposal/contract.py:529-531
     // amount_min = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:514
+    // smart_contracts/proposal/contract.py:533
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
-    bytec 37 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
-    // smart_contracts/proposal/contract.py:513-515
+    bytec 39 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
+    // smart_contracts/proposal/contract.py:532-534
     // amount_max = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:516-517
+    // smart_contracts/proposal/contract.py:535-536
     // # The xGov Registry ensures amount_max > amount_min
     // delta_amount = amount_max - amount_min
     dig 1
     -
-    // smart_contracts/proposal/contract.py:522
+    // smart_contracts/proposal/contract.py:541
     // * (self.requested_amount.value - amount_min)
     intc_0 // 0
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.requested_amount exists
     uncover 2
     -
-    // smart_contracts/proposal/contract.py:521-522
+    // smart_contracts/proposal/contract.py:540-541
     // + delta_quorum_bps
     // * (self.requested_amount.value - amount_min)
     uncover 2
     *
-    // smart_contracts/proposal/contract.py:521-523
+    // smart_contracts/proposal/contract.py:540-542
     // + delta_quorum_bps
     // * (self.requested_amount.value - amount_min)
     // // delta_amount
     swap
     /
-    // smart_contracts/proposal/contract.py:520-523
+    // smart_contracts/proposal/contract.py:539-542
     // quorum_min_bps
     // + delta_quorum_bps
     // * (self.requested_amount.value - amount_min)
     // // delta_amount
     +
-    // smart_contracts/proposal/contract.py:526
+    // smart_contracts/proposal/contract.py:545
     // self.committee_members.value, quorum_bps
     intc_0 // 0
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
     app_global_get_ex
     assert // check self.committee_members exists
-    // smart_contracts/proposal/contract.py:407
+    // smart_contracts/proposal/contract.py:426
     // return amount * fraction_in_bps // const.BPS
     *
     intc 4 // 10000
     /
-    // smart_contracts/proposal/contract.py:698
+    // smart_contracts/proposal/contract.py:718
     // self.quorum_threshold.value = self.compute_quorum_threshold()
-    bytec 20 // 0x71756f72756d5f7468726573686f6c64
+    bytec 23 // 0x71756f72756d5f7468726573686f6c64
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:532
+    // smart_contracts/proposal/contract.py:551
     // Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
     pushbytes 0x77656967687465645f71756f72756d5f736d616c6c
-    // smart_contracts/proposal/contract.py:531-533
+    // smart_contracts/proposal/contract.py:550-552
     // weighted_quorum_min_bps = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_SMALL)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:535
+    // smart_contracts/proposal/contract.py:554
     // Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
     pushbytes 0x77656967687465645f71756f72756d5f6c61726765
-    // smart_contracts/proposal/contract.py:534-536
+    // smart_contracts/proposal/contract.py:553-555
     // weighted_quorum_max_bps = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_WEIGHTED_QUORUM_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:537-538
+    // smart_contracts/proposal/contract.py:556-557
     // # The xGov Registry ensures weighted_quorum_max_bps > weighted_quorum_min_bps
     // delta_weighted_quorum_bps = weighted_quorum_max_bps - weighted_quorum_min_bps
     dig 1
     -
-    // smart_contracts/proposal/contract.py:541
+    // smart_contracts/proposal/contract.py:560
     // Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
-    bytec 36 // 0x6d696e5f7265717565737465645f616d6f756e74
-    // smart_contracts/proposal/contract.py:540-542
+    bytec 38 // 0x6d696e5f7265717565737465645f616d6f756e74
+    // smart_contracts/proposal/contract.py:559-561
     // amount_min = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MIN_REQUESTED_AMOUNT)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:544
+    // smart_contracts/proposal/contract.py:563
     // Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
-    bytec 37 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
-    // smart_contracts/proposal/contract.py:543-545
+    bytec 39 // 0x6d61785f7265717565737465645f616d6f756e745f6c61726765
+    // smart_contracts/proposal/contract.py:562-564
     // amount_max = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_MAX_REQUESTED_AMOUNT_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:546-547
+    // smart_contracts/proposal/contract.py:565-566
     // # The xGov Registry ensures amount_max > amount_min
     // delta_amount = amount_max - amount_min
     dig 1
     -
-    // smart_contracts/proposal/contract.py:552
+    // smart_contracts/proposal/contract.py:571
     // * (self.requested_amount.value - amount_min)
     intc_0 // 0
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.requested_amount exists
     uncover 2
     -
-    // smart_contracts/proposal/contract.py:551-552
+    // smart_contracts/proposal/contract.py:570-571
     // + delta_weighted_quorum_bps
     // * (self.requested_amount.value - amount_min)
     uncover 2
     *
-    // smart_contracts/proposal/contract.py:551-553
+    // smart_contracts/proposal/contract.py:570-572
     // + delta_weighted_quorum_bps
     // * (self.requested_amount.value - amount_min)
     // // delta_amount
     swap
     /
-    // smart_contracts/proposal/contract.py:550-553
+    // smart_contracts/proposal/contract.py:569-572
     // weighted_quorum_min_bps
     // + delta_weighted_quorum_bps
     // * (self.requested_amount.value - amount_min)
     // // delta_amount
     +
-    // smart_contracts/proposal/contract.py:556
+    // smart_contracts/proposal/contract.py:575
     // self.committee_votes.value, weighted_quorum_bps
     intc_0 // 0
-    bytec 15 // 0x636f6d6d69747465655f766f746573
+    bytec 17 // 0x636f6d6d69747465655f766f746573
     app_global_get_ex
     assert // check self.committee_votes exists
-    // smart_contracts/proposal/contract.py:407
+    // smart_contracts/proposal/contract.py:426
     // return amount * fraction_in_bps // const.BPS
     *
     intc 4 // 10000
     /
-    // smart_contracts/proposal/contract.py:699
+    // smart_contracts/proposal/contract.py:719
     // self.weighted_quorum_threshold.value = self.compute_weighted_quorum_threshold()
-    bytec 21 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
+    bytec 24 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:701-702
+    // smart_contracts/proposal/contract.py:721-722
     // # Update Proposal State and time anchors
     // self.status.value = UInt64(enm.STATUS_DRAFT)
     bytec_0 // 0x737461747573
     intc_3 // 10
     app_global_put
-    // smart_contracts/proposal/contract.py:703
+    // smart_contracts/proposal/contract.py:723
     // self.open_ts.value = Global.latest_timestamp
-    bytec 25 // 0x6f70656e5f74696d657374616d70
+    bytec 28 // 0x6f70656e5f74696d657374616d70
     global LatestTimestamp
     app_global_put
-    // smart_contracts/proposal/contract.py:707
+    // smart_contracts/proposal/contract.py:727
     // funding_type=arc4.UInt8(self.funding_type.value),
     intc_0 // 0
-    bytec 27 // 0x66756e64696e675f74797065
+    bytec 30 // 0x66756e64696e675f74797065
     app_global_get_ex
     assert // check self.funding_type exists
     itob
@@ -1144,17 +1156,17 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     <=
     assert // overflow
     extract 7 1
-    // smart_contracts/proposal/contract.py:708
+    // smart_contracts/proposal/contract.py:728
     // requested_amount=arc4.UInt64(self.requested_amount.value),
     intc_0 // 0
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.requested_amount exists
     itob
-    // smart_contracts/proposal/contract.py:709
+    // smart_contracts/proposal/contract.py:729
     // category=arc4.UInt8(self.funding_category.value),
     intc_0 // 0
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     app_global_get_ex
     assert // check self.funding_category exists
     itob
@@ -1164,7 +1176,7 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     <=
     assert // overflow
     extract 7 1
-    // smart_contracts/proposal/contract.py:706-710
+    // smart_contracts/proposal/contract.py:726-730
     // typ.Opened(
     //     funding_type=arc4.UInt8(self.funding_type.value),
     //     requested_amount=arc4.UInt64(self.requested_amount.value),
@@ -1174,7 +1186,7 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     concat
     swap
     concat
-    // smart_contracts/proposal/contract.py:705-711
+    // smart_contracts/proposal/contract.py:725-731
     // arc4.emit(
     //     typ.Opened(
     //         funding_type=arc4.UInt8(self.funding_type.value),
@@ -1186,102 +1198,102 @@ open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duratio
     swap
     concat
     log
-    // smart_contracts/proposal/contract.py:636
+    // smart_contracts/proposal/contract.py:656
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 open_else_body@29:
-    // smart_contracts/proposal/contract.py:328
+    // smart_contracts/proposal/contract.py:347
     // elif category == enm.FUNDING_CATEGORY_MEDIUM:
     dig 9
     pushint 20
     ==
     bz open_else_body@31
-    // smart_contracts/proposal/contract.py:330
+    // smart_contracts/proposal/contract.py:349
     // Bytes(reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM)
     pushbytes 0x766f74696e675f6475726174696f6e5f6d656469756d
-    // smart_contracts/proposal/contract.py:329-331
+    // smart_contracts/proposal/contract.py:348-350
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_VOTING_DURATION_MEDIUM)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:695-697
+    // smart_contracts/proposal/contract.py:715-717
     // self.voting_duration.value = self.get_voting_duration(
     //     self.funding_category.value
     // )
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duration@32
 
 open_else_body@31:
-    // smart_contracts/proposal/contract.py:334
+    // smart_contracts/proposal/contract.py:353
     // Bytes(reg_cfg.GS_KEY_VOTING_DURATION_LARGE)
     pushbytes 0x766f74696e675f6475726174696f6e5f6c61726765
-    // smart_contracts/proposal/contract.py:333-335
+    // smart_contracts/proposal/contract.py:352-354
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_VOTING_DURATION_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:695-697
+    // smart_contracts/proposal/contract.py:715-717
     // self.voting_duration.value = self.get_voting_duration(
     //     self.funding_category.value
     // )
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_voting_duration@32
 
 open_else_body@23:
-    // smart_contracts/proposal/contract.py:313
+    // smart_contracts/proposal/contract.py:332
     // elif category == enm.FUNDING_CATEGORY_MEDIUM:
     dig 9
     pushint 20
     ==
     bz open_else_body@25
-    // smart_contracts/proposal/contract.py:315
+    // smart_contracts/proposal/contract.py:334
     // Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
     pushbytes 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d
-    // smart_contracts/proposal/contract.py:314-316
+    // smart_contracts/proposal/contract.py:333-335
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_MEDIUM)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:692-694
+    // smart_contracts/proposal/contract.py:712-714
     // self.discussion_duration.value = self.get_discussion_duration(
     //     self.funding_category.value
     // )
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_discussion_duration@26
 
 open_else_body@25:
-    // smart_contracts/proposal/contract.py:319
+    // smart_contracts/proposal/contract.py:338
     // Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
     pushbytes 0x64697363757373696f6e5f6475726174696f6e5f6c61726765
-    // smart_contracts/proposal/contract.py:318-320
+    // smart_contracts/proposal/contract.py:337-339
     // return self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_DISCUSSION_DURATION_LARGE)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:692-694
+    // smart_contracts/proposal/contract.py:712-714
     // self.discussion_duration.value = self.get_discussion_duration(
     //     self.funding_category.value
     // )
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_discussion_duration@26
 
 open_else_body@17:
-    // smart_contracts/proposal/contract.py:441
+    // smart_contracts/proposal/contract.py:460
     // elif requested_amount <= max_requested_amount_medium:
     dig 6
     dig 8
     <=
     bz open_else_body@19
-    // smart_contracts/proposal/contract.py:442
+    // smart_contracts/proposal/contract.py:461
     // return UInt64(enm.FUNDING_CATEGORY_MEDIUM)
     pushint 20
-    // smart_contracts/proposal/contract.py:681
+    // smart_contracts/proposal/contract.py:701
     // self.funding_category.value = self.get_category(requested_amount.as_uint64())
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_category@20
 
 open_else_body@19:
-    // smart_contracts/proposal/contract.py:444
+    // smart_contracts/proposal/contract.py:463
     // return UInt64(enm.FUNDING_CATEGORY_LARGE)
     pushint 30
-    // smart_contracts/proposal/contract.py:681
+    // smart_contracts/proposal/contract.py:701
     // self.funding_category.value = self.get_category(requested_amount.as_uint64())
     b open_after_inlined_smart_contracts.proposal.contract.Proposal.get_category@20
 
@@ -1296,7 +1308,7 @@ open_bool_false@4:
 
 // smart_contracts.proposal.contract.Proposal.upload_metadata[routing]() -> void:
 upload_metadata:
-    // smart_contracts/proposal/contract.py:713
+    // smart_contracts/proposal/contract.py:733
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dupn 2
@@ -1317,77 +1329,77 @@ upload_metadata:
     intc_1 // 1
     ==
     assert // invalid number of bytes for arc4.bool
-    // smart_contracts/proposal/contract.py:449
+    // smart_contracts/proposal/contract.py:468
     // Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
-    bytec 29 // 0x7061757365645f7265676973747279
-    // smart_contracts/proposal/contract.py:448-450
+    bytec 32 // 0x7061757365645f7265676973747279
+    // smart_contracts/proposal/contract.py:467-469
     // registry_paused = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:451
+    // smart_contracts/proposal/contract.py:470
     // assert not registry_paused, err.PAUSED_REGISTRY
     !
     assert // Registry's non-admin methods are paused
-    // smart_contracts/proposal/contract.py:361
+    // smart_contracts/proposal/contract.py:380
     // self.assert_draft_and_proposer()
     callsub assert_draft_and_proposer
-    // smart_contracts/proposal/contract.py:365
+    // smart_contracts/proposal/contract.py:384
     // assert payload.length > 0, err.EMPTY_PAYLOAD
     swap
     assert // Empty payload
-    // smart_contracts/proposal/contract.py:735
+    // smart_contracts/proposal/contract.py:755
     // self.metadata_uploaded.value = True
-    bytec 32 // 0x6d657461646174615f75706c6f61646564
+    bytec 34 // 0x6d657461646174615f75706c6f61646564
     intc_1 // 1
     app_global_put
-    // smart_contracts/proposal/contract.py:737
+    // smart_contracts/proposal/contract.py:757
     // if is_first_in_group:
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     !=
     bz upload_metadata_else_body@3
-    // smart_contracts/proposal/contract.py:738-739
+    // smart_contracts/proposal/contract.py:758-759
     // # clear and write the metadata to the box
     // del self.metadata.value
-    bytec 11 // "M"
+    bytec 12 // "M"
     box_del
     pop
-    // smart_contracts/proposal/contract.py:740
+    // smart_contracts/proposal/contract.py:760
     // self.metadata.value = payload.native
     extract 2 0
-    bytec 11 // "M"
+    bytec 12 // "M"
     box_del
     pop
-    bytec 11 // "M"
+    bytec 12 // "M"
     swap
     box_put
 
 upload_metadata_after_if_else@4:
-    // smart_contracts/proposal/contract.py:713
+    // smart_contracts/proposal/contract.py:733
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 upload_metadata_else_body@3:
-    // smart_contracts/proposal/contract.py:742-743
+    // smart_contracts/proposal/contract.py:762-763
     // # append the metadata to the box
     // old_size = self.metadata.length
-    bytec 11 // "M"
+    bytec 12 // "M"
     box_len
     assert // check self.metadata exists
-    // smart_contracts/proposal/contract.py:744
+    // smart_contracts/proposal/contract.py:764
     // self.metadata.resize(self.metadata.length + payload.length)
     dup
     dig 3
     +
-    bytec 11 // "M"
+    bytec 12 // "M"
     swap
     box_resize
-    // smart_contracts/proposal/contract.py:745
+    // smart_contracts/proposal/contract.py:765
     // self.metadata.replace(old_size, payload.native)
     swap
     extract 2 0
-    bytec 11 // "M"
+    bytec 12 // "M"
     cover 2
     box_replace
     b upload_metadata_after_if_else@4
@@ -1397,11 +1409,11 @@ upload_metadata_else_body@3:
 drop:
     intc_0 // 0
     dup
-    // smart_contracts/proposal/contract.py:354
+    // smart_contracts/proposal/contract.py:373
     // assert self.is_registry_call(), err.UNAUTHORIZED
     callsub is_registry_call
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:355
+    // smart_contracts/proposal/contract.py:374
     // if self.status.value != enm.STATUS_DRAFT or self.finalized.value:
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -1411,19 +1423,19 @@ drop:
     !=
     bnz drop_if_body@7
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
     bz drop_after_if_else@8
 
 drop_if_body@7:
-    // smart_contracts/proposal/contract.py:356
+    // smart_contracts/proposal/contract.py:375
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 30 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
+    bytec 25 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
     bury 1
 
 drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop_check_authorization@9:
-    // smart_contracts/proposal/contract.py:758
+    // smart_contracts/proposal/contract.py:778
     // if error != typ.Error(""):
     bytec_1 // 0x0000
     bury 2
@@ -1434,9 +1446,9 @@ drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop_check_authori
     dup
 
 drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop@4:
-    // smart_contracts/proposal/contract.py:747
+    // smart_contracts/proposal/contract.py:767
     // @arc4.abimethod()
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -1444,91 +1456,91 @@ drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop@4:
     return
 
 drop_after_if_else@3:
-    // smart_contracts/proposal/contract.py:762
+    // smart_contracts/proposal/contract.py:782
     // receiver=self.proposer.value,
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:761-763
+    // smart_contracts/proposal/contract.py:781-783
     // self.transfer_locked_amount(
     //     receiver=self.proposer.value,
     // )
     callsub transfer_locked_amount
-    // smart_contracts/proposal/contract.py:765
+    // smart_contracts/proposal/contract.py:785
     // del self.metadata.value
-    bytec 11 // "M"
+    bytec 12 // "M"
     box_del
     pop
-    // smart_contracts/proposal/contract.py:766
+    // smart_contracts/proposal/contract.py:786
     // self.finalized.value = True
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     intc_1 // 1
     app_global_put
     dig 1
-    // smart_contracts/proposal/contract.py:747
+    // smart_contracts/proposal/contract.py:767
     // @arc4.abimethod()
     b drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop@4
 
 drop_after_if_else@8:
-    // smart_contracts/proposal/contract.py:357
+    // smart_contracts/proposal/contract.py:376
     // return typ.Error("")
     bytec_1 // 0x0000
     bury 1
-    // smart_contracts/proposal/contract.py:757
+    // smart_contracts/proposal/contract.py:777
     // error = self.drop_check_authorization()
     b drop_after_inlined_smart_contracts.proposal.contract.Proposal.drop_check_authorization@9
 
 
 // smart_contracts.proposal.contract.Proposal.submit[routing]() -> void:
 submit:
-    // smart_contracts/proposal/contract.py:449
+    // smart_contracts/proposal/contract.py:468
     // Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
-    bytec 29 // 0x7061757365645f7265676973747279
-    // smart_contracts/proposal/contract.py:448-450
+    bytec 32 // 0x7061757365645f7265676973747279
+    // smart_contracts/proposal/contract.py:467-469
     // registry_paused = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:451
+    // smart_contracts/proposal/contract.py:470
     // assert not registry_paused, err.PAUSED_REGISTRY
     !
     assert // Registry's non-admin methods are paused
-    // smart_contracts/proposal/contract.py:346
+    // smart_contracts/proposal/contract.py:365
     // self.assert_draft_and_proposer()
     callsub assert_draft_and_proposer
-    // smart_contracts/proposal/contract.py:347
+    // smart_contracts/proposal/contract.py:366
     // elapsed_discussion_duration = Global.latest_timestamp - self.open_ts.value
     global LatestTimestamp
     intc_0 // 0
-    bytec 25 // 0x6f70656e5f74696d657374616d70
+    bytec 28 // 0x6f70656e5f74696d657374616d70
     app_global_get_ex
     assert // check self.open_ts exists
     -
-    // smart_contracts/proposal/contract.py:349
+    // smart_contracts/proposal/contract.py:368
     // elapsed_discussion_duration >= self.discussion_duration.value
     intc_0 // 0
-    bytec 35 // 0x64697363757373696f6e5f6475726174696f6e
+    bytec 37 // 0x64697363757373696f6e5f6475726174696f6e
     app_global_get_ex
     assert // check self.discussion_duration exists
     >=
-    // smart_contracts/proposal/contract.py:348-350
+    // smart_contracts/proposal/contract.py:367-369
     // assert (
     //     elapsed_discussion_duration >= self.discussion_duration.value
     // ), err.TOO_EARLY
     assert // Too early
-    // smart_contracts/proposal/contract.py:786
+    // smart_contracts/proposal/contract.py:806
     // assert self.metadata_uploaded.value, err.MISSING_METADATA
     intc_0 // 0
-    bytec 32 // 0x6d657461646174615f75706c6f61646564
+    bytec 34 // 0x6d657461646174615f75706c6f61646564
     app_global_get_ex
     assert // check self.metadata_uploaded exists
     assert // Missing Metadata
-    // smart_contracts/proposal/contract.py:790
+    // smart_contracts/proposal/contract.py:810
     // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
-    bytec 38 // 0x78676f765f6461656d6f6e
+    bytec 40 // 0x78676f765f6461656d6f6e
     callsub get_bytes_from_registry_config
-    // smart_contracts/proposal/contract.py:789-791
+    // smart_contracts/proposal/contract.py:809-811
     // receiver=Account(
     //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
     // ),
@@ -1537,22 +1549,22 @@ submit:
     intc_2 // 32
     ==
     assert // Address length is 32 bytes
-    // smart_contracts/proposal/contract.py:793
+    // smart_contracts/proposal/contract.py:813
     // self.open_proposal_fee.value, self.daemon_ops_funding_bps.value
     intc_0 // 0
-    bytec 23 // 0x6f70656e5f70726f706f73616c5f666565
+    bytec 26 // 0x6f70656e5f70726f706f73616c5f666565
     app_global_get_ex
     assert // check self.open_proposal_fee exists
     intc_0 // 0
-    bytec 24 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
+    bytec 27 // 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073
     app_global_get_ex
     assert // check self.daemon_ops_funding_bps exists
-    // smart_contracts/proposal/contract.py:407
+    // smart_contracts/proposal/contract.py:426
     // return amount * fraction_in_bps // const.BPS
     *
     intc 4 // 10000
     /
-    // smart_contracts/proposal/contract.py:788-795
+    // smart_contracts/proposal/contract.py:808-815
     // self.pay(
     //     receiver=Account(
     //         self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
@@ -1562,17 +1574,17 @@ submit:
     //     ),
     // )
     callsub pay
-    // smart_contracts/proposal/contract.py:796
+    // smart_contracts/proposal/contract.py:816
     // self.status.value = UInt64(enm.STATUS_SUBMITTED)
     bytec_0 // 0x737461747573
     pushint 20
     app_global_put
-    // smart_contracts/proposal/contract.py:797
+    // smart_contracts/proposal/contract.py:817
     // self.submission_ts.value = Global.latest_timestamp
-    bytec 31 // 0x7375626d697373696f6e5f74696d657374616d70
+    bytec 33 // 0x7375626d697373696f6e5f74696d657374616d70
     global LatestTimestamp
     app_global_put
-    // smart_contracts/proposal/contract.py:770
+    // smart_contracts/proposal/contract.py:790
     // @arc4.abimethod()
     intc_1 // 1
     return
@@ -1580,9 +1592,9 @@ submit:
 
 // smart_contracts.proposal.contract.Proposal.assign_voters[routing]() -> void:
 assign_voters:
-    pushbytes ""
+    bytec_2 // ""
     dup
-    // smart_contracts/proposal/contract.py:813
+    // smart_contracts/proposal/contract.py:833
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dupn 2
@@ -1598,11 +1610,11 @@ assign_voters:
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<smart_contracts.common.abi_types.CommitteeMember>
-    // smart_contracts/proposal/contract.py:297
+    // smart_contracts/proposal/contract.py:316
     // assert self.is_xgov_daemon(), err.UNAUTHORIZED
     callsub is_xgov_daemon
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:298
+    // smart_contracts/proposal/contract.py:317
     // assert self.status.value == enm.STATUS_SUBMITTED, err.WRONG_PROPOSAL_STATUS
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -1611,11 +1623,11 @@ assign_voters:
     pushint 20
     ==
     assert // Wrong Proposal Status or finalized
-    // smart_contracts/proposal/contract.py:838
+    // smart_contracts/proposal/contract.py:858
     // if Txn.group_index == 0:
     txn GroupIndex
     bnz assign_voters_else_body@7
-    // smart_contracts/proposal/contract.py:839-840
+    // smart_contracts/proposal/contract.py:859-860
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     global GroupSize
@@ -1624,19 +1636,19 @@ assign_voters:
     bury 4
 
 assign_voters_for_header@3:
-    // smart_contracts/proposal/contract.py:839-840
+    // smart_contracts/proposal/contract.py:859-860
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     dig 3
     dig 3
     <
     bz assign_voters_after_if_else@8
-    // smart_contracts/proposal/contract.py:841
+    // smart_contracts/proposal/contract.py:861
     // self.assert_same_app_and_method(i)
     dig 3
     dup
     callsub assert_same_app_and_method
-    // smart_contracts/proposal/contract.py:839-840
+    // smart_contracts/proposal/contract.py:859-860
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     intc_1 // 1
@@ -1645,19 +1657,19 @@ assign_voters_for_header@3:
     b assign_voters_for_header@3
 
 assign_voters_after_if_else@8:
-    // smart_contracts/proposal/contract.py:846
+    // smart_contracts/proposal/contract.py:866
     // for i in urange(voters.length):
     intc_0 // 0
     bury 4
 
 assign_voters_for_header@9:
-    // smart_contracts/proposal/contract.py:846
+    // smart_contracts/proposal/contract.py:866
     // for i in urange(voters.length):
     dig 3
     dig 1
     <
     bz assign_voters_after_for@12
-    // smart_contracts/proposal/contract.py:848
+    // smart_contracts/proposal/contract.py:868
     // voters[i].address.native, voters[i].voting_power.as_uint64()
     dig 1
     extract 2 0
@@ -1673,9 +1685,9 @@ assign_voters_for_header@9:
     swap
     intc_2 // 32
     extract_uint64
-    // smart_contracts/proposal/contract.py:304
+    // smart_contracts/proposal/contract.py:323
     // assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
-    bytec 22 // "V"
+    bytec 20 // "V"
     uncover 2
     concat
     dup
@@ -1683,37 +1695,37 @@ assign_voters_for_header@9:
     bury 1
     !
     assert // Voter Already Assigned
-    // smart_contracts/proposal/contract.py:305
+    // smart_contracts/proposal/contract.py:324
     // assert voting_power > 0, err.INVALID_VOTING_POWER
     dig 1
     assert // Invalid Voting Power
-    // smart_contracts/proposal/contract.py:803
+    // smart_contracts/proposal/contract.py:823
     // self.voters[voter] = voting_power
     dig 1
     itob
     box_put
-    // smart_contracts/proposal/contract.py:804
+    // smart_contracts/proposal/contract.py:824
     // self.assigned_members.value += 1
     intc_0 // 0
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     app_global_get_ex
     assert // check self.assigned_members exists
     intc_1 // 1
     +
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:805
+    // smart_contracts/proposal/contract.py:825
     // self.assigned_votes.value += voting_power
     intc_0 // 0
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     app_global_get_ex
     assert // check self.assigned_votes exists
     +
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:846
+    // smart_contracts/proposal/contract.py:866
     // for i in urange(voters.length):
     intc_1 // 1
     +
@@ -1721,66 +1733,66 @@ assign_voters_for_header@9:
     b assign_voters_for_header@9
 
 assign_voters_after_for@12:
-    // smart_contracts/proposal/contract.py:851
+    // smart_contracts/proposal/contract.py:871
     // if self.assigned_members.value == self.committee_members.value:
     intc_0 // 0
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     app_global_get_ex
     assert // check self.assigned_members exists
     intc_0 // 0
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
     app_global_get_ex
     assert // check self.committee_members exists
     ==
     bz assign_voters_after_if_else@14
-    // smart_contracts/proposal/contract.py:853
+    // smart_contracts/proposal/contract.py:873
     // self.assigned_votes.value == self.committee_votes.value
     intc_0 // 0
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     app_global_get_ex
     assert // check self.assigned_votes exists
     intc_0 // 0
-    bytec 15 // 0x636f6d6d69747465655f766f746573
+    bytec 17 // 0x636f6d6d69747465655f766f746573
     app_global_get_ex
     assert // check self.committee_votes exists
     ==
-    // smart_contracts/proposal/contract.py:852-854
+    // smart_contracts/proposal/contract.py:872-874
     // assert (
     //     self.assigned_votes.value == self.committee_votes.value
     // ), err.VOTING_POWER_MISMATCH
     assert // Voting Power Mismatch
-    // smart_contracts/proposal/contract.py:855
+    // smart_contracts/proposal/contract.py:875
     // self.status.value = UInt64(enm.STATUS_VOTING)
     bytec_0 // 0x737461747573
     pushint 25
     app_global_put
-    // smart_contracts/proposal/contract.py:856
+    // smart_contracts/proposal/contract.py:876
     // self.vote_open_ts.value = Global.latest_timestamp
     global LatestTimestamp
-    bytec 26 // 0x766f74655f6f70656e696e675f74696d657374616d70
+    bytec 29 // 0x766f74655f6f70656e696e675f74696d657374616d70
     dig 1
     app_global_put
-    // smart_contracts/proposal/contract.py:860
+    // smart_contracts/proposal/contract.py:880
     // vote_opening=arc4.UInt64(self.vote_open_ts.value),
     dup
     itob
-    // smart_contracts/proposal/contract.py:862
+    // smart_contracts/proposal/contract.py:882
     // self.vote_open_ts.value + self.voting_duration.value
     intc_0 // 0
-    bytec 28 // 0x766f74696e675f6475726174696f6e
+    bytec 31 // 0x766f74696e675f6475726174696f6e
     app_global_get_ex
     assert // check self.voting_duration exists
     uncover 2
     +
-    // smart_contracts/proposal/contract.py:861-863
+    // smart_contracts/proposal/contract.py:881-883
     // vote_closing=arc4.UInt64(
     //     self.vote_open_ts.value + self.voting_duration.value
     // ),
     itob
-    // smart_contracts/proposal/contract.py:864
+    // smart_contracts/proposal/contract.py:884
     // quorum_voters=arc4.UInt32(self.quorum_threshold.value),
     intc_0 // 0
-    bytec 20 // 0x71756f72756d5f7468726573686f6c64
+    bytec 23 // 0x71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.quorum_threshold exists
     itob
@@ -1790,13 +1802,13 @@ assign_voters_after_for@12:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:866
+    // smart_contracts/proposal/contract.py:886
     // self.weighted_quorum_threshold.value
     intc_0 // 0
-    bytec 21 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
+    bytec 24 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.weighted_quorum_threshold exists
-    // smart_contracts/proposal/contract.py:865-867
+    // smart_contracts/proposal/contract.py:885-887
     // weighted_quorum_votes=arc4.UInt32(
     //     self.weighted_quorum_threshold.value
     // ),
@@ -1807,7 +1819,7 @@ assign_voters_after_for@12:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:859-868
+    // smart_contracts/proposal/contract.py:879-888
     // typ.Submitted(
     //     vote_opening=arc4.UInt64(self.vote_open_ts.value),
     //     vote_closing=arc4.UInt64(
@@ -1825,7 +1837,7 @@ assign_voters_after_for@12:
     concat
     swap
     concat
-    // smart_contracts/proposal/contract.py:858-869
+    // smart_contracts/proposal/contract.py:878-889
     // arc4.emit(
     //     typ.Submitted(
     //         vote_opening=arc4.UInt64(self.vote_open_ts.value),
@@ -1844,13 +1856,13 @@ assign_voters_after_for@12:
     log
 
 assign_voters_after_if_else@14:
-    // smart_contracts/proposal/contract.py:813
+    // smart_contracts/proposal/contract.py:833
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 assign_voters_else_body@7:
-    // smart_contracts/proposal/contract.py:843-844
+    // smart_contracts/proposal/contract.py:863-864
     // # Check that the first transaction in the group calls the same app and method
     // self.assert_same_app_and_method(UInt64(0))
     intc_0 // 0
@@ -1862,9 +1874,9 @@ assign_voters_else_body@7:
 vote:
     intc_0 // 0
     dupn 2
-    pushbytes ""
-    dup
-    // smart_contracts/proposal/contract.py:871
+    bytec_2 // ""
+    dupn 2
+    // smart_contracts/proposal/contract.py:891
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dup
@@ -1884,11 +1896,11 @@ vote:
     pushint 8
     ==
     assert // invalid number of bytes for arc4.uint64
-    // smart_contracts/proposal/contract.py:259
+    // smart_contracts/proposal/contract.py:272
     // assert self.is_registry_call(), err.UNAUTHORIZED
     callsub is_registry_call
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:261
+    // smart_contracts/proposal/contract.py:274
     // if self.status.value != enm.STATUS_VOTING:
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -1896,27 +1908,27 @@ vote:
     assert // check self.status exists
     pushint 25
     !=
-    bz vote_after_if_else@15
-    // smart_contracts/proposal/contract.py:262
+    bz vote_after_if_else@20
+    // smart_contracts/proposal/contract.py:275
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 30 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
-    bury 6
+    bytec 25 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
+    bury 7
 
-vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@18:
-    // smart_contracts/proposal/contract.py:894
+vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@23:
+    // smart_contracts/proposal/contract.py:914
     // if error != typ.Error(""):
     bytec_1 // 0x0000
-    bury 8
-    dig 5
+    bury 9
+    dig 6
     bytec_1 // 0x0000
     !=
     bz vote_after_if_else@3
-    dig 5
+    dig 6
 
-vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@6:
-    // smart_contracts/proposal/contract.py:871
+vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@10:
+    // smart_contracts/proposal/contract.py:891
     // @arc4.abimethod()
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -1924,114 +1936,92 @@ vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@6:
     return
 
 vote_after_if_else@3:
-    // smart_contracts/proposal/contract.py:898
+    // smart_contracts/proposal/contract.py:918
     // voter.native, approvals.as_uint64(), rejections.as_uint64()
     dig 1
     btoi
-    bury 5
+    bury 6
     dup
     btoi
-    bury 4
-    // smart_contracts/proposal/contract.py:273
+    bury 5
+    // smart_contracts/proposal/contract.py:290
     // if voter not in self.voters:
-    bytec 22 // "V"
+    bytec 20 // "V"
     dig 3
     concat
     dup
-    bury 8
+    bury 9
     box_len
     bury 1
-    bnz vote_after_if_else@9
-    // smart_contracts/proposal/contract.py:274
+    bnz vote_after_if_else@13
+    // smart_contracts/proposal/contract.py:291
     // return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
-    pushbytes 0x00134552523a566f746572206e6f7420666f756e64
-    bury 6
+    bytec 41 // 0x00134552523a566f746572206e6f7420666f756e64
+    bury 7
 
-vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@12:
-    // smart_contracts/proposal/contract.py:900
-    // if error != typ.Error(""):
-    dig 5
-    // smart_contracts/proposal/contract.py:894
+vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@17:
+    // smart_contracts/proposal/contract.py:920
+    // if error == typ.Error(""):
+    dig 6
+    // smart_contracts/proposal/contract.py:914
     // if error != typ.Error(""):
     bytec_1 // 0x0000
-    // smart_contracts/proposal/contract.py:900
-    // if error != typ.Error(""):
-    !=
-    bz vote_after_if_else@5
-    dig 5
-    // smart_contracts/proposal/contract.py:871
-    // @arc4.abimethod()
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@6
-
-vote_after_if_else@5:
-    // smart_contracts/proposal/contract.py:903
+    // smart_contracts/proposal/contract.py:920
+    // if error == typ.Error(""):
+    ==
+    bz vote_else_body@8
+    // smart_contracts/proposal/contract.py:921
     // votes = self.voters[voter.native]
-    dig 6
-    dup
+    dig 7
     box_get
     assert // check self.voters entry exists
     btoi
-    // smart_contracts/proposal/contract.py:905
+    dup
+    bury 5
+    // smart_contracts/proposal/contract.py:923
     // self.voted_members.value += 1
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
     intc_1 // 1
     +
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:907
-    // nulls = votes - approvals.as_uint64() - rejections.as_uint64()
-    dup
-    dig 7
-    dup
-    cover 2
-    -
-    dig 7
-    dup
-    cover 3
-    -
-    // smart_contracts/proposal/contract.py:909
-    // self.approvals.value += approvals.as_uint64()
+    // smart_contracts/proposal/contract.py:924
+    // if self.is_boycott(votes, approvals.as_uint64(), rejections.as_uint64()):
+    dig 6
+    dig 6
+    callsub is_boycott
+    bz vote_else_body@6
+    // smart_contracts/proposal/contract.py:925
+    // self.boycotted_members.value += 1
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
     app_global_get_ex
-    assert // check self.approvals exists
-    uncover 2
+    assert // check self.boycotted_members exists
+    intc_1 // 1
     +
-    bytec 8 // 0x617070726f76616c73
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:910
-    // self.rejections.value += rejections.as_uint64()
+    // smart_contracts/proposal/contract.py:928
+    // nulls = UInt64(0)
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
-    app_global_get_ex
-    assert // check self.rejections exists
-    uncover 2
-    +
-    bytec 9 // 0x72656a656374696f6e73
-    swap
-    app_global_put
-    // smart_contracts/proposal/contract.py:911
-    // self.nulls.value += nulls
-    intc_0 // 0
-    bytec 14 // 0x6e756c6c73
-    app_global_get_ex
-    assert // check self.nulls exists
-    +
-    bytec 14 // 0x6e756c6c73
-    swap
-    app_global_put
-    // smart_contracts/proposal/contract.py:913
+    // smart_contracts/proposal/contract.py:926
+    // boycotted = True
+    intc_1 // 1
+
+vote_after_if_else@7:
+    // smart_contracts/proposal/contract.py:940
     // self._unassign_voter(voter.native, votes)
     dig 4
-    swap
+    dig 6
     callsub _unassign_voter
-    // smart_contracts/proposal/contract.py:917
+    // smart_contracts/proposal/contract.py:944
     // xgov=arc4.Address(self.voters.box(voter.native).key[1:]),
+    dig 9
     dup
     len
     intc_1 // 1
@@ -2048,10 +2038,46 @@ vote_after_if_else@5:
     intc_2 // 32
     ==
     assert // Address length is 32 bytes
-    // smart_contracts/proposal/contract.py:918
+    // smart_contracts/proposal/contract.py:945
+    // approvals=arc4.UInt32(approvals.as_uint64()),
+    dig 8
+    itob
+    dup
+    bitlen
+    intc_2 // 32
+    <=
+    assert // overflow
+    extract 4 4
+    // smart_contracts/proposal/contract.py:946
+    // rejections=arc4.UInt32(rejections.as_uint64()),
+    dig 8
+    itob
+    dup
+    bitlen
+    intc_2 // 32
+    <=
+    assert // overflow
+    extract 4 4
+    // smart_contracts/proposal/contract.py:947
+    // nulls=arc4.UInt32(nulls),
+    uncover 4
+    itob
+    dup
+    bitlen
+    intc_2 // 32
+    <=
+    assert // overflow
+    extract 4 4
+    // smart_contracts/proposal/contract.py:948
+    // boycotted=arc4.Bool(boycotted),
+    bytec 4 // 0x00
+    intc_0 // 0
+    uncover 6
+    setbit
+    // smart_contracts/proposal/contract.py:949
     // total_voters=arc4.UInt32(self.voted_members.value),
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
     itob
@@ -2061,10 +2087,23 @@ vote_after_if_else@5:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:919
+    // smart_contracts/proposal/contract.py:950
+    // total_boycott=arc4.UInt32(self.boycotted_members.value),
+    intc_0 // 0
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
+    app_global_get_ex
+    assert // check self.boycotted_members exists
+    itob
+    dup
+    bitlen
+    intc_2 // 32
+    <=
+    assert // overflow
+    extract 4 4
+    // smart_contracts/proposal/contract.py:951
     // total_approvals=arc4.UInt32(self.approvals.value),
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 10 // 0x617070726f76616c73
     app_global_get_ex
     assert // check self.approvals exists
     itob
@@ -2074,10 +2113,10 @@ vote_after_if_else@5:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:920
+    // smart_contracts/proposal/contract.py:952
     // total_rejections=arc4.UInt32(self.rejections.value),
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
+    bytec 11 // 0x72656a656374696f6e73
     app_global_get_ex
     assert // check self.rejections exists
     itob
@@ -2087,10 +2126,10 @@ vote_after_if_else@5:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:921
+    // smart_contracts/proposal/contract.py:953
     // total_nulls=arc4.UInt32(self.nulls.value),
     intc_0 // 0
-    bytec 14 // 0x6e756c6c73
+    bytec 16 // 0x6e756c6c73
     app_global_get_ex
     assert // check self.nulls exists
     itob
@@ -2100,15 +2139,30 @@ vote_after_if_else@5:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:916-922
+    // smart_contracts/proposal/contract.py:943-954
     // typ.Vote(
     //     xgov=arc4.Address(self.voters.box(voter.native).key[1:]),
+    //     approvals=arc4.UInt32(approvals.as_uint64()),
+    //     rejections=arc4.UInt32(rejections.as_uint64()),
+    //     nulls=arc4.UInt32(nulls),
+    //     boycotted=arc4.Bool(boycotted),
     //     total_voters=arc4.UInt32(self.voted_members.value),
+    //     total_boycott=arc4.UInt32(self.boycotted_members.value),
     //     total_approvals=arc4.UInt32(self.approvals.value),
     //     total_rejections=arc4.UInt32(self.rejections.value),
     //     total_nulls=arc4.UInt32(self.nulls.value),
     // )
-    uncover 4
+    uncover 9
+    uncover 9
+    concat
+    uncover 8
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
     uncover 4
     concat
     uncover 3
@@ -2117,97 +2171,169 @@ vote_after_if_else@5:
     concat
     swap
     concat
-    // smart_contracts/proposal/contract.py:915-923
+    // smart_contracts/proposal/contract.py:942-955
     // arc4.emit(
     //     typ.Vote(
     //         xgov=arc4.Address(self.voters.box(voter.native).key[1:]),
+    //         approvals=arc4.UInt32(approvals.as_uint64()),
+    //         rejections=arc4.UInt32(rejections.as_uint64()),
+    //         nulls=arc4.UInt32(nulls),
+    //         boycotted=arc4.Bool(boycotted),
     //         total_voters=arc4.UInt32(self.voted_members.value),
+    //         total_boycott=arc4.UInt32(self.boycotted_members.value),
     //         total_approvals=arc4.UInt32(self.approvals.value),
     //         total_rejections=arc4.UInt32(self.rejections.value),
     //         total_nulls=arc4.UInt32(self.nulls.value),
     //     )
     // )
-    pushbytes 0x1577f6e7 // method "Vote(address,uint32,uint32,uint32,uint32)"
+    pushbytes 0x5ef0d3f1 // method "Vote(address,uint32,uint32,uint32,bool,uint32,uint32,uint32,uint32,uint32)"
     swap
     concat
     log
-    dig 7
-    // smart_contracts/proposal/contract.py:871
+    dig 8
+    // smart_contracts/proposal/contract.py:891
     // @arc4.abimethod()
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@6
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@10
 
-vote_after_if_else@9:
-    // smart_contracts/proposal/contract.py:276
-    // votes = self.voters[voter]
+vote_else_body@6:
+    // smart_contracts/proposal/contract.py:930
+    // boycotted = False
+    intc_0 // 0
+    // smart_contracts/proposal/contract.py:932
+    // nulls = votes - approvals.as_uint64() - rejections.as_uint64()
+    dig 4
+    dig 7
+    dup
+    cover 2
+    -
+    dig 7
+    dup
+    cover 3
+    -
+    dup
+    cover 3
+    cover 4
+    // smart_contracts/proposal/contract.py:934
+    // self.approvals.value += approvals.as_uint64()
+    intc_0 // 0
+    bytec 10 // 0x617070726f76616c73
+    app_global_get_ex
+    assert // check self.approvals exists
+    +
+    bytec 10 // 0x617070726f76616c73
+    swap
+    app_global_put
+    // smart_contracts/proposal/contract.py:935
+    // self.rejections.value += rejections.as_uint64()
+    intc_0 // 0
+    bytec 11 // 0x72656a656374696f6e73
+    app_global_get_ex
+    assert // check self.rejections exists
+    +
+    bytec 11 // 0x72656a656374696f6e73
+    swap
+    app_global_put
+    // smart_contracts/proposal/contract.py:936
+    // self.nulls.value += nulls
+    intc_0 // 0
+    bytec 16 // 0x6e756c6c73
+    app_global_get_ex
+    assert // check self.nulls exists
+    +
+    bytec 16 // 0x6e756c6c73
+    swap
+    app_global_put
+    b vote_after_if_else@7
+
+vote_else_body@8:
     dig 6
+    // smart_contracts/proposal/contract.py:891
+    // @arc4.abimethod()
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote@10
+
+vote_after_if_else@13:
+    // smart_contracts/proposal/contract.py:293
+    // votes = self.voters[voter]
+    dig 7
     box_get
     assert // check self.voters entry exists
     btoi
-    // smart_contracts/proposal/contract.py:278
-    // if approvals + rejections > votes:
-    dig 5
-    dig 5
+    dup
+    bury 5
+    // smart_contracts/proposal/contract.py:295
+    // if (approvals + rejections > votes) and not self.is_boycott(
+    dig 6
+    dig 6
     +
     <
-    bz vote_after_if_else@11
-    // smart_contracts/proposal/contract.py:279
-    // return typ.Error(err.ARC_65_PREFIX + err.VOTES_EXCEEDED)
-    pushbytes 0x00124552523a566f746573206578636565646564
-    bury 6
-    // smart_contracts/proposal/contract.py:897-899
+    // smart_contracts/proposal/contract.py:295-297
+    // if (approvals + rejections > votes) and not self.is_boycott(
+    //     votes, approvals, rejections
+    // ):
+    bz vote_after_if_else@16
+    dig 3
+    dig 6
+    dig 6
+    callsub is_boycott
+    bnz vote_after_if_else@16
+    // smart_contracts/proposal/contract.py:298
+    // return typ.Error(err.ARC_65_PREFIX + err.VOTES_INVALID)
+    pushbytes 0x00114552523a566f74657320696e76616c6964
+    bury 7
+    // smart_contracts/proposal/contract.py:917-919
     // error = self.vote_input_validation(
     //     voter.native, approvals.as_uint64(), rejections.as_uint64()
     // )
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@12
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@17
 
-vote_after_if_else@11:
-    dig 7
-    bury 6
-    // smart_contracts/proposal/contract.py:897-899
+vote_after_if_else@16:
+    dig 8
+    bury 7
+    // smart_contracts/proposal/contract.py:917-919
     // error = self.vote_input_validation(
     //     voter.native, approvals.as_uint64(), rejections.as_uint64()
     // )
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@12
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_input_validation@17
 
-vote_after_if_else@15:
-    // smart_contracts/proposal/contract.py:264
+vote_after_if_else@20:
+    // smart_contracts/proposal/contract.py:277
     // if not self.is_voting_open():
     callsub is_voting_open
-    bnz vote_after_if_else@17
-    // smart_contracts/proposal/contract.py:265
+    bnz vote_after_if_else@22
+    // smart_contracts/proposal/contract.py:278
     // return typ.Error(err.ARC_65_PREFIX + err.VOTING_PERIOD_EXPIRED)
     pushbytes 0x00194552523a566f74696e6720506572696f642045787069726564
-    bury 6
-    // smart_contracts/proposal/contract.py:893
+    bury 7
+    // smart_contracts/proposal/contract.py:913
     // error = self.vote_check_authorization()
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@18
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@23
 
-vote_after_if_else@17:
-    // smart_contracts/proposal/contract.py:267
+vote_after_if_else@22:
+    // smart_contracts/proposal/contract.py:280
     // return typ.Error("")
     bytec_1 // 0x0000
-    bury 6
-    // smart_contracts/proposal/contract.py:893
+    bury 7
+    // smart_contracts/proposal/contract.py:913
     // error = self.vote_check_authorization()
-    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@18
+    b vote_after_inlined_smart_contracts.proposal.contract.Proposal.vote_check_authorization@23
 
 
 // smart_contracts.proposal.contract.Proposal.scrutiny[routing]() -> void:
 scrutiny:
-    pushbytes ""
-    // smart_contracts/proposal/contract.py:449
+    bytec_2 // ""
+    // smart_contracts/proposal/contract.py:468
     // Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
-    bytec 29 // 0x7061757365645f7265676973747279
-    // smart_contracts/proposal/contract.py:448-450
+    bytec 32 // 0x7061757365645f7265676973747279
+    // smart_contracts/proposal/contract.py:467-469
     // registry_paused = self.get_uint_from_registry_config(
     //     Bytes(reg_cfg.GS_KEY_PAUSED_REGISTRY)
     // )
     callsub get_uint_from_registry_config
-    // smart_contracts/proposal/contract.py:451
+    // smart_contracts/proposal/contract.py:470
     // assert not registry_paused, err.PAUSED_REGISTRY
     !
     assert // Registry's non-admin methods are paused
-    // smart_contracts/proposal/contract.py:289
+    // smart_contracts/proposal/contract.py:308
     // assert self.status.value == enm.STATUS_VOTING, err.WRONG_PROPOSAL_STATUS
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -2216,14 +2342,14 @@ scrutiny:
     pushint 25
     ==
     assert // Wrong Proposal Status or finalized
-    // smart_contracts/proposal/contract.py:291
+    // smart_contracts/proposal/contract.py:310
     // not self.is_voting_open()  # voting period has ended
     callsub is_voting_open
     bz scrutiny_bool_true@7
-    // smart_contracts/proposal/contract.py:292
+    // smart_contracts/proposal/contract.py:311
     // or self.is_plebiscite()  # all committee members already voted
     callsub is_plebiscite
-    // smart_contracts/proposal/contract.py:291-292
+    // smart_contracts/proposal/contract.py:310-311
     // not self.is_voting_open()  # voting period has ended
     // or self.is_plebiscite()  # all committee members already voted
     bz scrutiny_bool_false@8
@@ -2232,32 +2358,32 @@ scrutiny_bool_true@7:
     intc_1 // 1
 
 scrutiny_bool_merge@9:
-    // smart_contracts/proposal/contract.py:290-293
+    // smart_contracts/proposal/contract.py:309-312
     // assert (
     //     not self.is_voting_open()  # voting period has ended
     //     or self.is_plebiscite()  # all committee members already voted
     // ), err.VOTING_ONGOING
     assert // Voting Ongoing
-    // smart_contracts/proposal/contract.py:588
+    // smart_contracts/proposal/contract.py:608
     // self.is_quorum_voters_reached()
     callsub is_quorum_voters_reached
-    // smart_contracts/proposal/contract.py:588-590
+    // smart_contracts/proposal/contract.py:608-610
     // self.is_quorum_voters_reached()
     // and self.is_weighted_quorum_votes_reached()
     // and self.has_majority_approved()
     bz scrutiny_bool_false@15
-    // smart_contracts/proposal/contract.py:589
+    // smart_contracts/proposal/contract.py:609
     // and self.is_weighted_quorum_votes_reached()
     callsub is_weighted_quorum_votes_reached
-    // smart_contracts/proposal/contract.py:588-590
+    // smart_contracts/proposal/contract.py:608-610
     // self.is_quorum_voters_reached()
     // and self.is_weighted_quorum_votes_reached()
     // and self.has_majority_approved()
     bz scrutiny_bool_false@15
-    // smart_contracts/proposal/contract.py:590
+    // smart_contracts/proposal/contract.py:610
     // and self.has_majority_approved()
     callsub has_majority_approved
-    // smart_contracts/proposal/contract.py:588-590
+    // smart_contracts/proposal/contract.py:608-610
     // self.is_quorum_voters_reached()
     // and self.is_weighted_quorum_votes_reached()
     // and self.has_majority_approved()
@@ -2266,31 +2392,31 @@ scrutiny_bool_merge@9:
     bury 1
 
 scrutiny_bool_merge@16:
-    // smart_contracts/proposal/contract.py:944
+    // smart_contracts/proposal/contract.py:976
     // if is_approved:
     dup
     bz scrutiny_else_body@3
-    // smart_contracts/proposal/contract.py:945
+    // smart_contracts/proposal/contract.py:977
     // self.status.value = UInt64(enm.STATUS_APPROVED)
     bytec_0 // 0x737461747573
     pushint 30
     app_global_put
 
 scrutiny_after_if_else@4:
-    // smart_contracts/proposal/contract.py:954
+    // smart_contracts/proposal/contract.py:986
     // approved=arc4.Bool(is_approved),
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     dig 2
     setbit
-    // smart_contracts/proposal/contract.py:955
+    // smart_contracts/proposal/contract.py:987
     // plebiscite=arc4.Bool(self.is_plebiscite()),
     callsub is_plebiscite
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:953-956
+    // smart_contracts/proposal/contract.py:985-988
     // typ.Scrutiny(
     //     approved=arc4.Bool(is_approved),
     //     plebiscite=arc4.Bool(self.is_plebiscite()),
@@ -2300,7 +2426,7 @@ scrutiny_after_if_else@4:
     intc_1 // 1
     swap
     setbit
-    // smart_contracts/proposal/contract.py:952-957
+    // smart_contracts/proposal/contract.py:984-989
     // arc4.emit(
     //     typ.Scrutiny(
     //         approved=arc4.Bool(is_approved),
@@ -2311,24 +2437,24 @@ scrutiny_after_if_else@4:
     swap
     concat
     log
-    // smart_contracts/proposal/contract.py:927
+    // smart_contracts/proposal/contract.py:959
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 scrutiny_else_body@3:
-    // smart_contracts/proposal/contract.py:947
+    // smart_contracts/proposal/contract.py:979
     // self.status.value = UInt64(enm.STATUS_REJECTED)
     bytec_0 // 0x737461747573
     pushint 40
     app_global_put
-    // smart_contracts/proposal/contract.py:949
+    // smart_contracts/proposal/contract.py:981
     // receiver=self.proposer.value,
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:948-950
+    // smart_contracts/proposal/contract.py:980-982
     // self.transfer_locked_amount(
     //     receiver=self.proposer.value,
     // )
@@ -2345,185 +2471,12 @@ scrutiny_bool_false@8:
     b scrutiny_bool_merge@9
 
 
-// smart_contracts.proposal.contract.Proposal.review[routing]() -> void:
-review:
-    // smart_contracts/proposal/contract.py:959
-    // @arc4.abimethod()
-    txna ApplicationArgs 1
-    dupn 2
-    len
-    intc_1 // 1
-    ==
-    assert // invalid number of bytes for arc4.bool
+// smart_contracts.proposal.contract.Proposal.unassign_absentees[routing]() -> void:
+unassign_absentees:
     intc_0 // 0
-    getbit
-    // smart_contracts/proposal/contract.py:463
-    // return Txn.sender == Account(
-    txn Sender
-    // smart_contracts/proposal/contract.py:464
-    // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
-    pushbytes 0x78676f765f636f756e63696c
-    callsub get_bytes_from_registry_config
-    // smart_contracts/proposal/contract.py:463-465
-    // return Txn.sender == Account(
-    //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
-    // )
-    dup
-    len
-    intc_2 // 32
-    ==
-    assert // Address length is 32 bytes
-    ==
-    // smart_contracts/proposal/contract.py:216
-    // assert self.is_council(), err.UNAUTHORIZED
-    assert // Unauthorized
-    // smart_contracts/proposal/contract.py:217
-    // assert self.status.value == enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
-    intc_0 // 0
-    bytec_0 // 0x737461747573
-    app_global_get_ex
-    assert // check self.status exists
-    pushint 30
-    ==
-    assert // Wrong Proposal Status or finalized
-    // smart_contracts/proposal/contract.py:975-976
-    // # check no assigned voters
-    // assert self.assigned_members.value == 0, err.VOTERS_ASSIGNED
-    intc_0 // 0
-    bytec 6 // 0x61737369676e65645f6d656d62657273
-    app_global_get_ex
-    assert // check self.assigned_members exists
-    !
-    assert // There are voters assigned to this proposal
-    // smart_contracts/proposal/contract.py:978
-    // if block:
-    bz review_else_body@3
-    // smart_contracts/proposal/contract.py:979
-    // self.status.value = UInt64(enm.STATUS_BLOCKED)
-    bytec_0 // 0x737461747573
-    pushint 60
-    app_global_put
-    // smart_contracts/proposal/contract.py:981-982
-    // # slashing: send locked amount to the registry treasury
-    // reg_app = Application(self.registry_app_id.value)
-    intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
-    app_global_get_ex
-    assert // check self.registry_app_id exists
-    // smart_contracts/proposal/contract.py:984
-    // receiver=reg_app.address,
-    app_params_get AppAddress
-    assert // application exists
-    // smart_contracts/proposal/contract.py:983-985
-    // self.transfer_locked_amount(
-    //     receiver=reg_app.address,
-    // )
-    callsub transfer_locked_amount
-
-review_after_if_else@4:
-    // smart_contracts/proposal/contract.py:995
-    // arc4.emit(typ.Review(veto=arc4.Bool(block)))
-    pushbytes 0xd9939644 // method "Review(bool)"
-    dig 1
-    concat
-    log
-    // smart_contracts/proposal/contract.py:959
-    // @arc4.abimethod()
-    intc_1 // 1
-    return
-
-review_else_body@3:
-    // smart_contracts/proposal/contract.py:988
-    // self.status.value = UInt64(enm.STATUS_REVIEWED)
-    bytec_0 // 0x737461747573
-    pushint 45
-    app_global_put
-    // smart_contracts/proposal/contract.py:992
-    // receiver=self.proposer.value,
-    intc_0 // 0
-    bytec_3 // 0x70726f706f736572
-    app_global_get_ex
-    assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:990-993
-    // # refund the locked amount to the proposer
-    // self.transfer_locked_amount(
-    //     receiver=self.proposer.value,
-    // )
-    callsub transfer_locked_amount
-    b review_after_if_else@4
-
-
-// smart_contracts.proposal.contract.Proposal.fund[routing]() -> void:
-fund:
-    intc_0 // 0
-    dup
-    // smart_contracts/proposal/contract.py:221
-    // assert self.is_registry_call(), err.UNAUTHORIZED
-    callsub is_registry_call
-    assert // Unauthorized
-    // smart_contracts/proposal/contract.py:222
-    // if self.status.value != enm.STATUS_REVIEWED:
-    intc_0 // 0
-    bytec_0 // 0x737461747573
-    app_global_get_ex
-    assert // check self.status exists
-    pushint 45
-    !=
-    bz fund_after_if_else@7
-    // smart_contracts/proposal/contract.py:223
-    // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 30 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
-    bury 1
-
-fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8:
-    // smart_contracts/proposal/contract.py:1007
-    // if error != typ.Error(""):
-    bytec_1 // 0x0000
-    bury 2
-    dup
-    bytec_1 // 0x0000
-    !=
-    bz fund_after_if_else@3
-    dup
-
-fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4:
-    // smart_contracts/proposal/contract.py:997
-    // @arc4.abimethod()
-    bytec 10 // 0x151f7c75
-    swap
-    concat
-    log
-    intc_1 // 1
-    return
-
-fund_after_if_else@3:
-    // smart_contracts/proposal/contract.py:1010
-    // self.status.value = UInt64(enm.STATUS_FUNDED)
-    bytec_0 // 0x737461747573
-    pushint 50
-    app_global_put
-    dig 1
-    // smart_contracts/proposal/contract.py:997
-    // @arc4.abimethod()
-    b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4
-
-fund_after_if_else@7:
-    // smart_contracts/proposal/contract.py:225
-    // return typ.Error("")
-    bytec_1 // 0x0000
-    bury 1
-    // smart_contracts/proposal/contract.py:1006
-    // error = self.fund_check_authorization()
-    b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8
-
-
-// smart_contracts.proposal.contract.Proposal.unassign_voters[routing]() -> void:
-unassign_voters:
-    intc_0 // 0
-    dup
-    pushbytes ""
-    dupn 2
-    // smart_contracts/proposal/contract.py:1014
+    dupn 3
+    bytec_2 // ""
+    // smart_contracts/proposal/contract.py:991
     // @arc4.abimethod()
     txna ApplicationArgs 1
     dupn 2
@@ -2539,26 +2492,355 @@ unassign_voters:
     len
     ==
     assert // invalid number of bytes for arc4.dynamic_array<arc4.static_array<arc4.uint8, 32>>
+    // smart_contracts/proposal/contract.py:238
+    // assert self.is_registry_call(), err.UNAUTHORIZED
+    callsub is_registry_call
+    assert // Unauthorized
+    // smart_contracts/proposal/contract.py:241
+    // self.status.value == enm.STATUS_APPROVED
+    intc_0 // 0
+    bytec_0 // 0x737461747573
+    app_global_get_ex
+    assert // check self.status exists
+    pushint 30
+    ==
+    // smart_contracts/proposal/contract.py:241-242
+    // self.status.value == enm.STATUS_APPROVED
+    // or self.status.value == enm.STATUS_REJECTED
+    bnz unassign_absentees_and_contd@13
+    // smart_contracts/proposal/contract.py:242
+    // or self.status.value == enm.STATUS_REJECTED
+    intc_0 // 0
+    bytec_0 // 0x737461747573
+    app_global_get_ex
+    assert // check self.status exists
+    pushint 40
+    ==
+    // smart_contracts/proposal/contract.py:241-242
+    // self.status.value == enm.STATUS_APPROVED
+    // or self.status.value == enm.STATUS_REJECTED
+    bz unassign_absentees_if_body@14
+
+unassign_absentees_and_contd@13:
+    // smart_contracts/proposal/contract.py:244
+    // and not self.finalized.value
+    intc_0 // 0
+    bytec_3 // 0x66696e616c697a6564
+    app_global_get_ex
+    assert // check self.finalized exists
+    bz unassign_absentees_after_if_else@15
+
+unassign_absentees_if_body@14:
+    // smart_contracts/proposal/contract.py:246
+    // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+    bytec 25 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
+    bury 4
+
+unassign_absentees_after_inlined_smart_contracts.proposal.contract.Proposal.unassign_absentees_check_authorization@16:
+    // smart_contracts/proposal/contract.py:1007
+    // if error != typ.Error(""):
+    bytec_1 // 0x0000
+    bury 6
+    dig 3
+    bytec_1 // 0x0000
+    !=
+    bz unassign_absentees_after_if_else@3
+    dig 3
+
+unassign_absentees_after_inlined_smart_contracts.proposal.contract.Proposal.unassign_absentees@10:
+    // smart_contracts/proposal/contract.py:991
+    // @arc4.abimethod()
+    bytec 7 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+unassign_absentees_after_if_else@3:
+    intc_0 // 0
+    bury 3
+
+unassign_absentees_for_header@4:
+    // smart_contracts/proposal/contract.py:1010-1011
+    // # remove absentee
+    // for absentee in absentees:
+    dig 2
+    dig 1
+    <
+    bz unassign_absentees_after_for@9
+    dig 1
+    extract 2 0
+    dig 3
+    intc_2 // 32
+    *
+    intc_2 // 32
+    extract3 // on error: index access is out of bounds
+    dup
+    bury 8
+    // smart_contracts/proposal/contract.py:1012
+    // if absentee.native not in self.voters:
+    bytec 20 // "V"
+    swap
+    concat
+    dup
+    bury 6
+    box_len
+    bury 1
+    bnz unassign_absentees_after_if_else@7
+    // smart_contracts/proposal/contract.py:1013
+    // return typ.Error(err.ARC_65_PREFIX + err.VOTER_NOT_FOUND)
+    bytec 41 // 0x00134552523a566f746572206e6f7420666f756e64
+    // smart_contracts/proposal/contract.py:991
+    // @arc4.abimethod()
+    b unassign_absentees_after_inlined_smart_contracts.proposal.contract.Proposal.unassign_absentees@10
+
+unassign_absentees_after_if_else@7:
+    // smart_contracts/proposal/contract.py:1014
+    // votes = self.voters[absentee.native]
+    dig 4
+    box_get
+    assert // check self.voters entry exists
+    btoi
+    // smart_contracts/proposal/contract.py:1015
+    // self._unassign_voter(absentee.native, votes)
+    dig 7
+    swap
+    callsub _unassign_voter
+    dig 2
+    intc_1 // 1
+    +
+    bury 3
+    b unassign_absentees_for_header@4
+
+unassign_absentees_after_for@9:
+    dig 5
+    // smart_contracts/proposal/contract.py:991
+    // @arc4.abimethod()
+    b unassign_absentees_after_inlined_smart_contracts.proposal.contract.Proposal.unassign_absentees@10
+
+unassign_absentees_after_if_else@15:
+    // smart_contracts/proposal/contract.py:248
+    // return typ.Error("")
+    bytec_1 // 0x0000
+    bury 4
+    // smart_contracts/proposal/contract.py:1006
+    // error = self.unassign_absentees_check_authorization()
+    b unassign_absentees_after_inlined_smart_contracts.proposal.contract.Proposal.unassign_absentees_check_authorization@16
+
+
+// smart_contracts.proposal.contract.Proposal.review[routing]() -> void:
+review:
+    // smart_contracts/proposal/contract.py:1019
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dupn 2
+    len
+    intc_1 // 1
+    ==
+    assert // invalid number of bytes for arc4.bool
+    intc_0 // 0
+    getbit
+    // smart_contracts/proposal/contract.py:482
+    // return Txn.sender == Account(
+    txn Sender
+    // smart_contracts/proposal/contract.py:483
+    // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
+    pushbytes 0x78676f765f636f756e63696c
+    callsub get_bytes_from_registry_config
+    // smart_contracts/proposal/contract.py:482-484
+    // return Txn.sender == Account(
+    //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_COUNCIL))
+    // )
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // Address length is 32 bytes
+    ==
+    // smart_contracts/proposal/contract.py:220
+    // assert self.is_council(), err.UNAUTHORIZED
+    assert // Unauthorized
+    // smart_contracts/proposal/contract.py:221
+    // assert self.status.value == enm.STATUS_APPROVED, err.WRONG_PROPOSAL_STATUS
+    intc_0 // 0
+    bytec_0 // 0x737461747573
+    app_global_get_ex
+    assert // check self.status exists
+    pushint 30
+    ==
+    assert // Wrong Proposal Status or finalized
+    // smart_contracts/proposal/contract.py:1035-1036
+    // # check no assigned voters
+    // assert self.assigned_members.value == 0, err.VOTERS_ASSIGNED
+    intc_0 // 0
+    bytec 8 // 0x61737369676e65645f6d656d62657273
+    app_global_get_ex
+    assert // check self.assigned_members exists
+    !
+    assert // There are voters assigned to this proposal
+    // smart_contracts/proposal/contract.py:1038
+    // if block:
+    bz review_else_body@3
+    // smart_contracts/proposal/contract.py:1039
+    // self.status.value = UInt64(enm.STATUS_BLOCKED)
+    bytec_0 // 0x737461747573
+    pushint 60
+    app_global_put
+    // smart_contracts/proposal/contract.py:1041-1042
+    // # slashing: send locked amount to the registry treasury
+    // reg_app = Application(self.registry_app_id.value)
+    intc_0 // 0
+    bytec 6 // 0x72656769737472795f6170705f6964
+    app_global_get_ex
+    assert // check self.registry_app_id exists
+    // smart_contracts/proposal/contract.py:1044
+    // receiver=reg_app.address,
+    app_params_get AppAddress
+    assert // application exists
+    // smart_contracts/proposal/contract.py:1043-1045
+    // self.transfer_locked_amount(
+    //     receiver=reg_app.address,
+    // )
+    callsub transfer_locked_amount
+
+review_after_if_else@4:
+    // smart_contracts/proposal/contract.py:1055
+    // arc4.emit(typ.Review(veto=arc4.Bool(block)))
+    pushbytes 0xd9939644 // method "Review(bool)"
+    dig 1
+    concat
+    log
+    // smart_contracts/proposal/contract.py:1019
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+review_else_body@3:
+    // smart_contracts/proposal/contract.py:1048
+    // self.status.value = UInt64(enm.STATUS_REVIEWED)
+    bytec_0 // 0x737461747573
+    pushint 45
+    app_global_put
+    // smart_contracts/proposal/contract.py:1052
+    // receiver=self.proposer.value,
+    intc_0 // 0
+    bytec 5 // 0x70726f706f736572
+    app_global_get_ex
+    assert // check self.proposer exists
+    // smart_contracts/proposal/contract.py:1050-1053
+    // # refund the locked amount to the proposer
+    // self.transfer_locked_amount(
+    //     receiver=self.proposer.value,
+    // )
+    callsub transfer_locked_amount
+    b review_after_if_else@4
+
+
+// smart_contracts.proposal.contract.Proposal.fund[routing]() -> void:
+fund:
+    intc_0 // 0
+    dup
+    // smart_contracts/proposal/contract.py:225
+    // assert self.is_registry_call(), err.UNAUTHORIZED
+    callsub is_registry_call
+    assert // Unauthorized
+    // smart_contracts/proposal/contract.py:226
+    // if self.status.value != enm.STATUS_REVIEWED:
+    intc_0 // 0
+    bytec_0 // 0x737461747573
+    app_global_get_ex
+    assert // check self.status exists
+    pushint 45
+    !=
+    bz fund_after_if_else@7
+    // smart_contracts/proposal/contract.py:227
+    // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
+    bytec 25 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
+    bury 1
+
+fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8:
+    // smart_contracts/proposal/contract.py:1067
+    // if error != typ.Error(""):
+    bytec_1 // 0x0000
+    bury 2
+    dup
+    bytec_1 // 0x0000
+    !=
+    bz fund_after_if_else@3
+    dup
+
+fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4:
+    // smart_contracts/proposal/contract.py:1057
+    // @arc4.abimethod()
+    bytec 7 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+fund_after_if_else@3:
+    // smart_contracts/proposal/contract.py:1070
+    // self.status.value = UInt64(enm.STATUS_FUNDED)
+    bytec_0 // 0x737461747573
+    pushint 50
+    app_global_put
+    dig 1
+    // smart_contracts/proposal/contract.py:1057
+    // @arc4.abimethod()
+    b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund@4
+
+fund_after_if_else@7:
     // smart_contracts/proposal/contract.py:229
-    // if self.status.value == enm.STATUS_SUBMITTED:
+    // return typ.Error("")
+    bytec_1 // 0x0000
+    bury 1
+    // smart_contracts/proposal/contract.py:1066
+    // error = self.fund_check_authorization()
+    b fund_after_inlined_smart_contracts.proposal.contract.Proposal.fund_check_authorization@8
+
+
+// smart_contracts.proposal.contract.Proposal.unassign_voters[routing]() -> void:
+unassign_voters:
+    intc_0 // 0
+    dup
+    bytec_2 // ""
+    dupn 2
+    // smart_contracts/proposal/contract.py:1074
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dupn 2
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    dup
+    cover 2
+    intc_2 // 32
+    *
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.static_array<arc4.uint8, 32>>
+    // smart_contracts/proposal/contract.py:233
+    // assert self.is_xgov_daemon(), err.UNAUTHORIZED
+    callsub is_xgov_daemon
+    assert // Unauthorized
+    // smart_contracts/proposal/contract.py:234
+    // assert self.status.value == enm.STATUS_SUBMITTED, err.WRONG_PROPOSAL_STATUS
     intc_0 // 0
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
     pushint 20
     ==
-    bz unassign_voters_else_body@17
-    // smart_contracts/proposal/contract.py:230
-    // assert self.is_xgov_daemon(), err.UNAUTHORIZED
-    callsub is_xgov_daemon
-    assert // Unauthorized
-
-unassign_voters_after_if_else@23:
-    // smart_contracts/proposal/contract.py:1030
+    assert // Wrong Proposal Status or finalized
+    // smart_contracts/proposal/contract.py:1090
     // if Txn.group_index == 0:
     txn GroupIndex
     bnz unassign_voters_else_body@7
-    // smart_contracts/proposal/contract.py:1031-1032
+    // smart_contracts/proposal/contract.py:1091-1092
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     global GroupSize
@@ -2567,19 +2849,19 @@ unassign_voters_after_if_else@23:
     bury 5
 
 unassign_voters_for_header@3:
-    // smart_contracts/proposal/contract.py:1031-1032
+    // smart_contracts/proposal/contract.py:1091-1092
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     dig 4
     dig 3
     <
     bz unassign_voters_after_if_else@8
-    // smart_contracts/proposal/contract.py:1033
+    // smart_contracts/proposal/contract.py:1093
     // self.assert_same_app_and_method(i)
     dig 4
     dup
     callsub assert_same_app_and_method
-    // smart_contracts/proposal/contract.py:1031-1032
+    // smart_contracts/proposal/contract.py:1091-1092
     // # Check that the entire group calls the same app and method
     // for i in urange(1, Global.group_size):
     intc_1 // 1
@@ -2592,7 +2874,7 @@ unassign_voters_after_if_else@8:
     bury 4
 
 unassign_voters_for_header@9:
-    // smart_contracts/proposal/contract.py:1038-1039
+    // smart_contracts/proposal/contract.py:1098-1099
     // # remove voters
     // for voter in voters:
     dig 3
@@ -2608,9 +2890,9 @@ unassign_voters_for_header@9:
     extract3 // on error: index access is out of bounds
     dup
     bury 7
-    // smart_contracts/proposal/contract.py:1040
+    // smart_contracts/proposal/contract.py:1100
     // if voter.native in self.voters:
-    bytec 22 // "V"
+    bytec 20 // "V"
     swap
     concat
     dup
@@ -2618,13 +2900,13 @@ unassign_voters_for_header@9:
     box_len
     bury 1
     bz unassign_voters_after_if_else@12
-    // smart_contracts/proposal/contract.py:1041
+    // smart_contracts/proposal/contract.py:1101
     // votes = self.voters[voter.native]
     dig 6
     box_get
     assert // check self.voters entry exists
     btoi
-    // smart_contracts/proposal/contract.py:1042
+    // smart_contracts/proposal/contract.py:1102
     // self._unassign_voter(voter.native, votes)
     dig 6
     swap
@@ -2638,84 +2920,35 @@ unassign_voters_after_if_else@12:
     b unassign_voters_for_header@9
 
 unassign_voters_after_for@14:
-    // smart_contracts/proposal/contract.py:1014
+    // smart_contracts/proposal/contract.py:1074
     // @arc4.abimethod()
     intc_1 // 1
     return
 
 unassign_voters_else_body@7:
-    // smart_contracts/proposal/contract.py:1035-1036
+    // smart_contracts/proposal/contract.py:1095-1096
     // # Check that the first transaction in the group calls the same app and method
     // self.assert_same_app_and_method(UInt64(0))
     intc_0 // 0
     callsub assert_same_app_and_method
     b unassign_voters_after_if_else@8
 
-unassign_voters_else_body@17:
-    // smart_contracts/proposal/contract.py:233
-    // self.status.value == enm.STATUS_APPROVED
-    intc_0 // 0
-    bytec_0 // 0x737461747573
-    app_global_get_ex
-    assert // check self.status exists
-    pushint 30
-    ==
-    // smart_contracts/proposal/contract.py:233-234
-    // self.status.value == enm.STATUS_APPROVED
-    // or self.status.value == enm.STATUS_REJECTED
-    bnz unassign_voters_and_contd@19
-    // smart_contracts/proposal/contract.py:234
-    // or self.status.value == enm.STATUS_REJECTED
-    intc_0 // 0
-    bytec_0 // 0x737461747573
-    app_global_get_ex
-    assert // check self.status exists
-    pushint 40
-    ==
-    // smart_contracts/proposal/contract.py:233-234
-    // self.status.value == enm.STATUS_APPROVED
-    // or self.status.value == enm.STATUS_REJECTED
-    bz unassign_voters_bool_false@21
-
-unassign_voters_and_contd@19:
-    // smart_contracts/proposal/contract.py:235
-    // ) and not self.finalized.value, err.WRONG_PROPOSAL_STATUS
-    intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
-    app_global_get_ex
-    assert // check self.finalized exists
-    bnz unassign_voters_bool_false@21
-    intc_1 // 1
-
-unassign_voters_bool_merge@22:
-    // smart_contracts/proposal/contract.py:232-235
-    // assert (
-    //     self.status.value == enm.STATUS_APPROVED
-    //     or self.status.value == enm.STATUS_REJECTED
-    // ) and not self.finalized.value, err.WRONG_PROPOSAL_STATUS
-    assert // Wrong Proposal Status or finalized
-    b unassign_voters_after_if_else@23
-
-unassign_voters_bool_false@21:
-    intc_0 // 0
-    b unassign_voters_bool_merge@22
-
 
 // smart_contracts.proposal.contract.Proposal.finalize[routing]() -> void:
 finalize:
     intc_0 // 0
     dup
-    // smart_contracts/proposal/contract.py:239
+    // smart_contracts/proposal/contract.py:252
     // assert self.is_registry_call(), err.UNAUTHORIZED
     callsub is_registry_call
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:241
+    // smart_contracts/proposal/contract.py:254
     // if self.finalized.value or (
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
-    // smart_contracts/proposal/contract.py:241-247
+    // smart_contracts/proposal/contract.py:254-260
     // if self.finalized.value or (
     //     self.status.value != enm.STATUS_EMPTY
     //     and self.status.value != enm.STATUS_DRAFT
@@ -2724,20 +2957,20 @@ finalize:
     //     and self.status.value != enm.STATUS_REJECTED
     // ):
     bnz finalize_if_body@15
-    // smart_contracts/proposal/contract.py:242
+    // smart_contracts/proposal/contract.py:255
     // self.status.value != enm.STATUS_EMPTY
     intc_0 // 0
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
-    // smart_contracts/proposal/contract.py:242-246
+    // smart_contracts/proposal/contract.py:255-259
     // self.status.value != enm.STATUS_EMPTY
     // and self.status.value != enm.STATUS_DRAFT
     // and self.status.value != enm.STATUS_FUNDED
     // and self.status.value != enm.STATUS_BLOCKED
     // and self.status.value != enm.STATUS_REJECTED
     bz finalize_after_if_else@16
-    // smart_contracts/proposal/contract.py:243
+    // smart_contracts/proposal/contract.py:256
     // and self.status.value != enm.STATUS_DRAFT
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -2745,14 +2978,14 @@ finalize:
     assert // check self.status exists
     intc_3 // 10
     !=
-    // smart_contracts/proposal/contract.py:242-246
+    // smart_contracts/proposal/contract.py:255-259
     // self.status.value != enm.STATUS_EMPTY
     // and self.status.value != enm.STATUS_DRAFT
     // and self.status.value != enm.STATUS_FUNDED
     // and self.status.value != enm.STATUS_BLOCKED
     // and self.status.value != enm.STATUS_REJECTED
     bz finalize_after_if_else@16
-    // smart_contracts/proposal/contract.py:244
+    // smart_contracts/proposal/contract.py:257
     // and self.status.value != enm.STATUS_FUNDED
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -2760,14 +2993,14 @@ finalize:
     assert // check self.status exists
     pushint 50
     !=
-    // smart_contracts/proposal/contract.py:242-246
+    // smart_contracts/proposal/contract.py:255-259
     // self.status.value != enm.STATUS_EMPTY
     // and self.status.value != enm.STATUS_DRAFT
     // and self.status.value != enm.STATUS_FUNDED
     // and self.status.value != enm.STATUS_BLOCKED
     // and self.status.value != enm.STATUS_REJECTED
     bz finalize_after_if_else@16
-    // smart_contracts/proposal/contract.py:245
+    // smart_contracts/proposal/contract.py:258
     // and self.status.value != enm.STATUS_BLOCKED
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -2775,14 +3008,14 @@ finalize:
     assert // check self.status exists
     pushint 60
     !=
-    // smart_contracts/proposal/contract.py:242-246
+    // smart_contracts/proposal/contract.py:255-259
     // self.status.value != enm.STATUS_EMPTY
     // and self.status.value != enm.STATUS_DRAFT
     // and self.status.value != enm.STATUS_FUNDED
     // and self.status.value != enm.STATUS_BLOCKED
     // and self.status.value != enm.STATUS_REJECTED
     bz finalize_after_if_else@16
-    // smart_contracts/proposal/contract.py:246
+    // smart_contracts/proposal/contract.py:259
     // and self.status.value != enm.STATUS_REJECTED
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -2790,7 +3023,7 @@ finalize:
     assert // check self.status exists
     pushint 40
     !=
-    // smart_contracts/proposal/contract.py:242-246
+    // smart_contracts/proposal/contract.py:255-259
     // self.status.value != enm.STATUS_EMPTY
     // and self.status.value != enm.STATUS_DRAFT
     // and self.status.value != enm.STATUS_FUNDED
@@ -2799,13 +3032,13 @@ finalize:
     bz finalize_after_if_else@16
 
 finalize_if_body@15:
-    // smart_contracts/proposal/contract.py:248
+    // smart_contracts/proposal/contract.py:261
     // return typ.Error(err.ARC_65_PREFIX + err.WRONG_PROPOSAL_STATUS)
-    bytec 30 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
+    bytec 25 // 0x00264552523a57726f6e672050726f706f73616c20537461747573206f722066696e616c697a6564
     bury 1
 
 finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize_check_authorization@17:
-    // smart_contracts/proposal/contract.py:1056
+    // smart_contracts/proposal/contract.py:1116
     // if error != typ.Error(""):
     bytec_1 // 0x0000
     bury 2
@@ -2816,9 +3049,9 @@ finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize_check
     dup
 
 finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize@8:
-    // smart_contracts/proposal/contract.py:1044
+    // smart_contracts/proposal/contract.py:1104
     // @arc4.abimethod()
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -2826,23 +3059,23 @@ finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize@8:
     return
 
 finalize_after_if_else@3:
-    // smart_contracts/proposal/contract.py:1059-1060
+    // smart_contracts/proposal/contract.py:1119-1120
     // # check no assigned voters
     // if self.assigned_members.value > 0:
     intc_0 // 0
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     app_global_get_ex
     assert // check self.assigned_members exists
     bz finalize_after_if_else@5
-    // smart_contracts/proposal/contract.py:1061
+    // smart_contracts/proposal/contract.py:1121
     // return typ.Error(err.ARC_65_PREFIX + err.VOTERS_ASSIGNED)
     pushbytes 0x002e4552523a54686572652061726520766f746572732061737369676e656420746f20746869732070726f706f73616c
-    // smart_contracts/proposal/contract.py:1044
+    // smart_contracts/proposal/contract.py:1104
     // @arc4.abimethod()
     b finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize@8
 
 finalize_after_if_else@5:
-    // smart_contracts/proposal/contract.py:1063-1066
+    // smart_contracts/proposal/contract.py:1123-1126
     // # refund the locked amount for DRAFT proposals
     // # for REJECTED proposals, the locked amount is already refunded in the scrutiny method
     // # for EMPTY, FUNDED, or BLOCKED proposals, the locked amount is not refundable
@@ -2854,111 +3087,111 @@ finalize_after_if_else@5:
     intc_3 // 10
     ==
     bz finalize_after_if_else@7
-    // smart_contracts/proposal/contract.py:1068
+    // smart_contracts/proposal/contract.py:1128
     // receiver=self.proposer.value,
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:1067-1069
+    // smart_contracts/proposal/contract.py:1127-1129
     // self.transfer_locked_amount(
     //     receiver=self.proposer.value,
     // )
     callsub transfer_locked_amount
 
 finalize_after_if_else@7:
-    // smart_contracts/proposal/contract.py:1070
+    // smart_contracts/proposal/contract.py:1130
     // reg_app = Application(self.registry_app_id.value)
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
-    // smart_contracts/proposal/contract.py:1072
+    // smart_contracts/proposal/contract.py:1132
     // receiver=reg_app.address,
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/proposal/contract.py:1073
+    // smart_contracts/proposal/contract.py:1133
     // amount=Global.current_application_address.balance
     global CurrentApplicationAddress
     acct_params_get AcctBalance
     assert // account funded
-    // smart_contracts/proposal/contract.py:1074
+    // smart_contracts/proposal/contract.py:1134
     // - Global.current_application_address.min_balance,
     global CurrentApplicationAddress
     acct_params_get AcctMinBalance
     assert // account funded
-    // smart_contracts/proposal/contract.py:1073-1074
+    // smart_contracts/proposal/contract.py:1133-1134
     // amount=Global.current_application_address.balance
     // - Global.current_application_address.min_balance,
     -
-    // smart_contracts/proposal/contract.py:1071-1075
+    // smart_contracts/proposal/contract.py:1131-1135
     // self.pay(
     //     receiver=reg_app.address,
     //     amount=Global.current_application_address.balance
     //     - Global.current_application_address.min_balance,
     // )
     callsub pay
-    // smart_contracts/proposal/contract.py:1076
+    // smart_contracts/proposal/contract.py:1136
     // self.finalized.value = True
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     intc_1 // 1
     app_global_put
     dig 1
-    // smart_contracts/proposal/contract.py:1044
+    // smart_contracts/proposal/contract.py:1104
     // @arc4.abimethod()
     b finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize@8
 
 finalize_after_if_else@16:
-    // smart_contracts/proposal/contract.py:250
+    // smart_contracts/proposal/contract.py:263
     // return typ.Error("")
     bytec_1 // 0x0000
     bury 1
-    // smart_contracts/proposal/contract.py:1055
+    // smart_contracts/proposal/contract.py:1115
     // error = self.finalize_check_authorization()
     b finalize_after_inlined_smart_contracts.proposal.contract.Proposal.finalize_check_authorization@17
 
 
 // smart_contracts.proposal.contract.Proposal.delete[routing]() -> void:
 delete:
-    // smart_contracts/proposal/contract.py:254
+    // smart_contracts/proposal/contract.py:267
     // assert self.is_xgov_daemon(), err.UNAUTHORIZED
     callsub is_xgov_daemon
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:255
+    // smart_contracts/proposal/contract.py:268
     // assert self.finalized.value, err.WRONG_PROPOSAL_STATUS
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
     assert // Wrong Proposal Status or finalized
-    // smart_contracts/proposal/contract.py:1092-1093
+    // smart_contracts/proposal/contract.py:1152-1153
     // # delete metadata box if it exists
     // del self.metadata.value
-    bytec 11 // "M"
+    bytec 12 // "M"
     box_del
     pop
-    // smart_contracts/proposal/contract.py:1095
+    // smart_contracts/proposal/contract.py:1155
     // reg_app = Application(self.registry_app_id.value)
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
-    // smart_contracts/proposal/contract.py:1097
+    // smart_contracts/proposal/contract.py:1157
     // receiver=reg_app.address,
     app_params_get AppAddress
     assert // application exists
-    // smart_contracts/proposal/contract.py:1098
+    // smart_contracts/proposal/contract.py:1158
     // amount=Global.current_application_address.balance,
     global CurrentApplicationAddress
     acct_params_get AcctBalance
     assert // account funded
-    // smart_contracts/proposal/contract.py:1096-1099
+    // smart_contracts/proposal/contract.py:1156-1159
     // self.pay(
     //     receiver=reg_app.address,
     //     amount=Global.current_application_address.balance,
     // )
     callsub pay
-    // smart_contracts/proposal/contract.py:1080
+    // smart_contracts/proposal/contract.py:1140
     // @arc4.abimethod(allow_actions=("DeleteApplication",))
     intc_1 // 1
     return
@@ -2966,23 +3199,23 @@ delete:
 
 // smart_contracts.proposal.contract.Proposal.get_state[routing]() -> void:
 get_state:
-    // smart_contracts/proposal/contract.py:1110
+    // smart_contracts/proposal/contract.py:1170
     // proposer=arc4.Address(self.proposer.value),
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
-    // smart_contracts/proposal/contract.py:1111
+    // smart_contracts/proposal/contract.py:1171
     // registry_app_id=arc4.UInt64(self.registry_app_id.value),
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
     itob
-    // smart_contracts/proposal/contract.py:1112
+    // smart_contracts/proposal/contract.py:1172
     // title=arc4.String(self.title.value),
     intc_0 // 0
-    bytec 33 // 0x7469746c65
+    bytec 35 // 0x7469746c65
     app_global_get_ex
     assert // check self.title exists
     dup
@@ -2991,55 +3224,55 @@ get_state:
     extract 6 2
     swap
     concat
-    // smart_contracts/proposal/contract.py:1113
+    // smart_contracts/proposal/contract.py:1173
     // open_ts=arc4.UInt64(self.open_ts.value),
     intc_0 // 0
-    bytec 25 // 0x6f70656e5f74696d657374616d70
+    bytec 28 // 0x6f70656e5f74696d657374616d70
     app_global_get_ex
     assert // check self.open_ts exists
     itob
-    // smart_contracts/proposal/contract.py:1114
+    // smart_contracts/proposal/contract.py:1174
     // submission_ts=arc4.UInt64(self.submission_ts.value),
     intc_0 // 0
-    bytec 31 // 0x7375626d697373696f6e5f74696d657374616d70
+    bytec 33 // 0x7375626d697373696f6e5f74696d657374616d70
     app_global_get_ex
     assert // check self.submission_ts exists
     itob
-    // smart_contracts/proposal/contract.py:1115
+    // smart_contracts/proposal/contract.py:1175
     // vote_open_ts=arc4.UInt64(self.vote_open_ts.value),
     intc_0 // 0
-    bytec 26 // 0x766f74655f6f70656e696e675f74696d657374616d70
+    bytec 29 // 0x766f74655f6f70656e696e675f74696d657374616d70
     app_global_get_ex
     assert // check self.vote_open_ts exists
     itob
-    // smart_contracts/proposal/contract.py:1116
+    // smart_contracts/proposal/contract.py:1176
     // status=arc4.UInt64(self.status.value),
     intc_0 // 0
     bytec_0 // 0x737461747573
     app_global_get_ex
     assert // check self.status exists
     itob
-    // smart_contracts/proposal/contract.py:1117
+    // smart_contracts/proposal/contract.py:1177
     // finalized=arc4.Bool(self.finalized.value),
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:1118
+    // smart_contracts/proposal/contract.py:1178
     // funding_category=arc4.UInt64(self.funding_category.value),
     intc_0 // 0
-    bytec 16 // 0x66756e64696e675f63617465676f7279
+    bytec 18 // 0x66756e64696e675f63617465676f7279
     app_global_get_ex
     assert // check self.funding_category exists
     itob
-    // smart_contracts/proposal/contract.py:1119
+    // smart_contracts/proposal/contract.py:1179
     // focus=arc4.UInt8(self.focus.value),
     intc_0 // 0
-    bytec 34 // 0x666f637573
+    bytec 36 // 0x666f637573
     app_global_get_ex
     assert // check self.focus exists
     itob
@@ -3049,76 +3282,83 @@ get_state:
     <=
     assert // overflow
     extract 7 1
-    // smart_contracts/proposal/contract.py:1120
+    // smart_contracts/proposal/contract.py:1180
     // funding_type=arc4.UInt64(self.funding_type.value),
     intc_0 // 0
-    bytec 27 // 0x66756e64696e675f74797065
+    bytec 30 // 0x66756e64696e675f74797065
     app_global_get_ex
     assert // check self.funding_type exists
     itob
-    // smart_contracts/proposal/contract.py:1121
+    // smart_contracts/proposal/contract.py:1181
     // requested_amount=arc4.UInt64(self.requested_amount.value),
     intc_0 // 0
-    bytec 13 // 0x7265717565737465645f616d6f756e74
+    bytec 14 // 0x7265717565737465645f616d6f756e74
     app_global_get_ex
     assert // check self.requested_amount exists
     itob
-    // smart_contracts/proposal/contract.py:1122
+    // smart_contracts/proposal/contract.py:1182
     // locked_amount=arc4.UInt64(self.locked_amount.value),
     intc_0 // 0
-    bytec 19 // 0x6c6f636b65645f616d6f756e74
+    bytec 22 // 0x6c6f636b65645f616d6f756e74
     app_global_get_ex
     assert // check self.locked_amount exists
     itob
-    // smart_contracts/proposal/contract.py:1123
+    // smart_contracts/proposal/contract.py:1183
     // committee_id=self.committee_id.value.copy(),
     intc_0 // 0
-    bytec 18 // 0x636f6d6d69747465655f6964
+    bytec 21 // 0x636f6d6d69747465655f6964
     app_global_get_ex
     assert // check self.committee_id exists
-    // smart_contracts/proposal/contract.py:1124
+    // smart_contracts/proposal/contract.py:1184
     // committee_members=arc4.UInt64(self.committee_members.value),
     intc_0 // 0
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
     app_global_get_ex
     assert // check self.committee_members exists
     itob
-    // smart_contracts/proposal/contract.py:1125
+    // smart_contracts/proposal/contract.py:1185
     // committee_votes=arc4.UInt64(self.committee_votes.value),
     intc_0 // 0
-    bytec 15 // 0x636f6d6d69747465655f766f746573
+    bytec 17 // 0x636f6d6d69747465655f766f746573
     app_global_get_ex
     assert // check self.committee_votes exists
     itob
-    // smart_contracts/proposal/contract.py:1126
+    // smart_contracts/proposal/contract.py:1186
     // voted_members=arc4.UInt64(self.voted_members.value),
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
     itob
-    // smart_contracts/proposal/contract.py:1127
+    // smart_contracts/proposal/contract.py:1187
+    // boycotted_members=arc4.UInt64(self.boycotted_members.value),
+    intc_0 // 0
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
+    app_global_get_ex
+    assert // check self.boycotted_members exists
+    itob
+    // smart_contracts/proposal/contract.py:1188
     // approvals=arc4.UInt64(self.approvals.value),
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 10 // 0x617070726f76616c73
     app_global_get_ex
     assert // check self.approvals exists
     itob
-    // smart_contracts/proposal/contract.py:1128
+    // smart_contracts/proposal/contract.py:1189
     // rejections=arc4.UInt64(self.rejections.value),
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
+    bytec 11 // 0x72656a656374696f6e73
     app_global_get_ex
     assert // check self.rejections exists
     itob
-    // smart_contracts/proposal/contract.py:1129
+    // smart_contracts/proposal/contract.py:1190
     // nulls=arc4.UInt64(self.nulls.value),
     intc_0 // 0
-    bytec 14 // 0x6e756c6c73
+    bytec 16 // 0x6e756c6c73
     app_global_get_ex
     assert // check self.nulls exists
     itob
-    // smart_contracts/proposal/contract.py:1109-1130
+    // smart_contracts/proposal/contract.py:1169-1191
     // return typ.ProposalTypedGlobalState(
     //     proposer=arc4.Address(self.proposer.value),
     //     registry_app_id=arc4.UInt64(self.registry_app_id.value),
@@ -3137,14 +3377,17 @@ get_state:
     //     committee_members=arc4.UInt64(self.committee_members.value),
     //     committee_votes=arc4.UInt64(self.committee_votes.value),
     //     voted_members=arc4.UInt64(self.voted_members.value),
+    //     boycotted_members=arc4.UInt64(self.boycotted_members.value),
     //     approvals=arc4.UInt64(self.approvals.value),
     //     rejections=arc4.UInt64(self.rejections.value),
     //     nulls=arc4.UInt64(self.nulls.value),
     // )
-    uncover 19
-    uncover 19
+    uncover 20
+    uncover 20
     concat
-    pushbytes 0x00bc
+    pushbytes 0x00c4
+    concat
+    uncover 18
     concat
     uncover 17
     concat
@@ -3182,9 +3425,9 @@ get_state:
     concat
     swap
     concat
-    // smart_contracts/proposal/contract.py:1101
+    // smart_contracts/proposal/contract.py:1161
     // @arc4.abimethod(readonly=True)
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -3194,7 +3437,7 @@ get_state:
 
 // smart_contracts.proposal.contract.Proposal.get_voter_box[routing]() -> void:
 get_voter_box:
-    // smart_contracts/proposal/contract.py:1132
+    // smart_contracts/proposal/contract.py:1193
     // @arc4.abimethod(readonly=True)
     txna ApplicationArgs 1
     dup
@@ -3202,9 +3445,9 @@ get_voter_box:
     intc_2 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/proposal/contract.py:1144
+    // smart_contracts/proposal/contract.py:1205
     // exists = voter_address.native in self.voters
-    bytec 22 // "V"
+    bytec 20 // "V"
     swap
     concat
     dup
@@ -3212,10 +3455,10 @@ get_voter_box:
     dup
     uncover 2
     pop
-    // smart_contracts/proposal/contract.py:1145
+    // smart_contracts/proposal/contract.py:1206
     // if exists:
     bz get_voter_box_else_body@3
-    // smart_contracts/proposal/contract.py:1146
+    // smart_contracts/proposal/contract.py:1207
     // votes = self.voters[voter_address.native]
     dig 1
     box_get
@@ -3223,17 +3466,17 @@ get_voter_box:
     btoi
 
 get_voter_box_after_if_else@4:
-    // smart_contracts/proposal/contract.py:1150
+    // smart_contracts/proposal/contract.py:1211
     // return arc4.UInt64(votes), exists
     itob
-    // smart_contracts/proposal/contract.py:1132
+    // smart_contracts/proposal/contract.py:1193
     // @arc4.abimethod(readonly=True)
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     dig 3
     setbit
     concat
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -3241,7 +3484,7 @@ get_voter_box_after_if_else@4:
     return
 
 get_voter_box_else_body@3:
-    // smart_contracts/proposal/contract.py:1148
+    // smart_contracts/proposal/contract.py:1209
     // votes = UInt64(0)
     intc_0 // 0
     b get_voter_box_after_if_else@4
@@ -3249,10 +3492,10 @@ get_voter_box_else_body@3:
 
 // smart_contracts.proposal.contract.Proposal.get_voting_state[routing]() -> void:
 get_voting_state:
-    // smart_contracts/proposal/contract.py:1171
+    // smart_contracts/proposal/contract.py:1233
     // quorum_voters=arc4.UInt32(self.quorum_threshold.value),
     intc_0 // 0
-    bytec 20 // 0x71756f72756d5f7468726573686f6c64
+    bytec 23 // 0x71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.quorum_threshold exists
     itob
@@ -3262,10 +3505,10 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1172
+    // smart_contracts/proposal/contract.py:1234
     // weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_threshold.value),
     intc_0 // 0
-    bytec 21 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
+    bytec 24 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.weighted_quorum_threshold exists
     itob
@@ -3275,10 +3518,10 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1173
+    // smart_contracts/proposal/contract.py:1235
     // total_voters=arc4.UInt32(self.voted_members.value),
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
     itob
@@ -3288,10 +3531,23 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1174
+    // smart_contracts/proposal/contract.py:1236
+    // total_boycott=arc4.UInt32(self.boycotted_members.value),
+    intc_0 // 0
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
+    app_global_get_ex
+    assert // check self.boycotted_members exists
+    itob
+    dup
+    bitlen
+    intc_2 // 32
+    <=
+    assert // overflow
+    extract 4 4
+    // smart_contracts/proposal/contract.py:1237
     // total_approvals=arc4.UInt32(self.approvals.value),
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 10 // 0x617070726f76616c73
     app_global_get_ex
     assert // check self.approvals exists
     itob
@@ -3301,10 +3557,10 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1175
+    // smart_contracts/proposal/contract.py:1238
     // total_rejections=arc4.UInt32(self.rejections.value),
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
+    bytec 11 // 0x72656a656374696f6e73
     app_global_get_ex
     assert // check self.rejections exists
     itob
@@ -3314,10 +3570,10 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1176
+    // smart_contracts/proposal/contract.py:1239
     // total_nulls=arc4.UInt32(self.nulls.value),
     intc_0 // 0
-    bytec 14 // 0x6e756c6c73
+    bytec 16 // 0x6e756c6c73
     app_global_get_ex
     assert // check self.nulls exists
     itob
@@ -3327,39 +3583,40 @@ get_voting_state:
     <=
     assert // overflow
     extract 4 4
-    // smart_contracts/proposal/contract.py:1177
+    // smart_contracts/proposal/contract.py:1240
     // quorum_reached=arc4.Bool(self.is_quorum_voters_reached()),
     callsub is_quorum_voters_reached
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:1178
+    // smart_contracts/proposal/contract.py:1241
     // weighted_quorum_reached=arc4.Bool(self.is_weighted_quorum_votes_reached()),
     callsub is_weighted_quorum_votes_reached
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:1179
+    // smart_contracts/proposal/contract.py:1242
     // majority_approved=arc4.Bool(self.has_majority_approved()),
     callsub has_majority_approved
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:1180
+    // smart_contracts/proposal/contract.py:1243
     // plebiscite=arc4.Bool(self.is_plebiscite()),
     callsub is_plebiscite
-    bytec 5 // 0x00
+    bytec 4 // 0x00
     intc_0 // 0
     uncover 2
     setbit
-    // smart_contracts/proposal/contract.py:1170-1181
+    // smart_contracts/proposal/contract.py:1232-1244
     // return typ.VotingState(
     //     quorum_voters=arc4.UInt32(self.quorum_threshold.value),
     //     weighted_quorum_votes=arc4.UInt32(self.weighted_quorum_threshold.value),
     //     total_voters=arc4.UInt32(self.voted_members.value),
+    //     total_boycott=arc4.UInt32(self.boycotted_members.value),
     //     total_approvals=arc4.UInt32(self.approvals.value),
     //     total_rejections=arc4.UInt32(self.rejections.value),
     //     total_nulls=arc4.UInt32(self.nulls.value),
@@ -3368,7 +3625,9 @@ get_voting_state:
     //     majority_approved=arc4.Bool(self.has_majority_approved()),
     //     plebiscite=arc4.Bool(self.is_plebiscite()),
     // )
-    uncover 9
+    uncover 10
+    uncover 10
+    concat
     uncover 9
     concat
     uncover 8
@@ -3399,9 +3658,9 @@ get_voting_state:
     swap
     setbit
     concat
-    // smart_contracts/proposal/contract.py:1152
+    // smart_contracts/proposal/contract.py:1213
     // @arc4.abimethod(readonly=True)
-    bytec 10 // 0x151f7c75
+    bytec 7 // 0x151f7c75
     swap
     concat
     log
@@ -3411,86 +3670,112 @@ get_voting_state:
 
 // smart_contracts.proposal.contract.Proposal.get_uint_from_registry_config(global_state_key: bytes) -> uint64:
 get_uint_from_registry_config:
-    // smart_contracts/proposal/contract.py:193-194
+    // smart_contracts/proposal/contract.py:197-198
     // @subroutine
     // def get_uint_from_registry_config(self, global_state_key: Bytes) -> UInt64:
     proto 1 1
-    // smart_contracts/proposal/contract.py:196
+    // smart_contracts/proposal/contract.py:200
     // self.registry_app_id.value, global_state_key
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
-    // smart_contracts/proposal/contract.py:195-197
+    // smart_contracts/proposal/contract.py:199-201
     // value, exists = AppGlobal.get_ex_uint64(
     //     self.registry_app_id.value, global_state_key
     // )
     frame_dig -1
     app_global_get_ex
-    // smart_contracts/proposal/contract.py:198
+    // smart_contracts/proposal/contract.py:202
     // assert exists, err.MISSING_CONFIG
     assert // Missing Config
-    // smart_contracts/proposal/contract.py:199
+    // smart_contracts/proposal/contract.py:203
     // return value
     retsub
 
 
 // smart_contracts.proposal.contract.Proposal.get_bytes_from_registry_config(global_state_key: bytes) -> bytes:
 get_bytes_from_registry_config:
-    // smart_contracts/proposal/contract.py:201-202
+    // smart_contracts/proposal/contract.py:205-206
     // @subroutine
     // def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
     proto 1 1
-    // smart_contracts/proposal/contract.py:204
+    // smart_contracts/proposal/contract.py:208
     // self.registry_app_id.value, global_state_key
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
-    // smart_contracts/proposal/contract.py:203-205
+    // smart_contracts/proposal/contract.py:207-209
     // value, exists = AppGlobal.get_ex_bytes(
     //     self.registry_app_id.value, global_state_key
     // )
     frame_dig -1
     app_global_get_ex
-    // smart_contracts/proposal/contract.py:206
+    // smart_contracts/proposal/contract.py:210
     // assert exists, err.MISSING_CONFIG
     assert // Missing Config
-    // smart_contracts/proposal/contract.py:207
+    // smart_contracts/proposal/contract.py:211
     // return value
     retsub
 
 
 // smart_contracts.proposal.contract.Proposal.is_voting_open() -> uint64:
 is_voting_open:
-    // smart_contracts/proposal/contract.py:211
+    // smart_contracts/proposal/contract.py:215
     // elapsed_voting_duration = Global.latest_timestamp - self.vote_open_ts.value
     global LatestTimestamp
     intc_0 // 0
-    bytec 26 // 0x766f74655f6f70656e696e675f74696d657374616d70
+    bytec 29 // 0x766f74655f6f70656e696e675f74696d657374616d70
     app_global_get_ex
     assert // check self.vote_open_ts exists
     -
-    // smart_contracts/proposal/contract.py:212
+    // smart_contracts/proposal/contract.py:216
     // return elapsed_voting_duration <= self.voting_duration.value
     intc_0 // 0
-    bytec 28 // 0x766f74696e675f6475726174696f6e
+    bytec 31 // 0x766f74696e675f6475726174696f6e
     app_global_get_ex
     assert // check self.voting_duration exists
     <=
     retsub
 
 
+// smart_contracts.proposal.contract.Proposal.is_boycott(votes: uint64, approvals: uint64, rejections: uint64) -> uint64:
+is_boycott:
+    // smart_contracts/proposal/contract.py:282-283
+    // @subroutine
+    // def is_boycott(self, votes: UInt64, approvals: UInt64, rejections: UInt64) -> bool:
+    proto 3 1
+    // smart_contracts/proposal/contract.py:284
+    // return approvals == votes and rejections == votes
+    frame_dig -2
+    frame_dig -3
+    ==
+    bz is_boycott_bool_false@3
+    frame_dig -1
+    frame_dig -3
+    ==
+    bz is_boycott_bool_false@3
+    intc_1 // 1
+    retsub
+
+is_boycott_bool_false@3:
+    intc_0 // 0
+    // smart_contracts/proposal/contract.py:284
+    // return approvals == votes and rejections == votes
+    retsub
+
+
 // smart_contracts.proposal.contract.Proposal.is_plebiscite() -> uint64:
 is_plebiscite:
-    // smart_contracts/proposal/contract.py:285
+    // smart_contracts/proposal/contract.py:304
     // return self.voted_members.value == self.committee_members.value
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
     intc_0 // 0
-    bytec 12 // 0x636f6d6d69747465655f6d656d62657273
+    bytec 13 // 0x636f6d6d69747465655f6d656d62657273
     app_global_get_ex
     assert // check self.committee_members exists
     ==
@@ -3499,11 +3784,11 @@ is_plebiscite:
 
 // smart_contracts.proposal.contract.Proposal.assert_draft_and_proposer() -> void:
 assert_draft_and_proposer:
-    // smart_contracts/proposal/contract.py:339
+    // smart_contracts/proposal/contract.py:358
     // assert self.is_proposer(), err.UNAUTHORIZED
     callsub is_proposer
     assert // Unauthorized
-    // smart_contracts/proposal/contract.py:341
+    // smart_contracts/proposal/contract.py:360
     // self.status.value == enm.STATUS_DRAFT and not self.finalized.value
     intc_0 // 0
     bytec_0 // 0x737461747573
@@ -3513,14 +3798,14 @@ assert_draft_and_proposer:
     ==
     bz assert_draft_and_proposer_bool_false@3
     intc_0 // 0
-    bytec_2 // 0x66696e616c697a6564
+    bytec_3 // 0x66696e616c697a6564
     app_global_get_ex
     assert // check self.finalized exists
     bnz assert_draft_and_proposer_bool_false@3
     intc_1 // 1
 
 assert_draft_and_proposer_bool_merge@4:
-    // smart_contracts/proposal/contract.py:340-342
+    // smart_contracts/proposal/contract.py:359-361
     // assert (
     //     self.status.value == enm.STATUS_DRAFT and not self.finalized.value
     // ), err.WRONG_PROPOSAL_STATUS
@@ -3534,11 +3819,11 @@ assert_draft_and_proposer_bool_false@3:
 
 // smart_contracts.proposal.contract.Proposal.is_proposer() -> uint64:
 is_proposer:
-    // smart_contracts/proposal/contract.py:459
+    // smart_contracts/proposal/contract.py:478
     // return Txn.sender == self.proposer.value
     txn Sender
     intc_0 // 0
-    bytec_3 // 0x70726f706f736572
+    bytec 5 // 0x70726f706f736572
     app_global_get_ex
     assert // check self.proposer exists
     ==
@@ -3547,14 +3832,14 @@ is_proposer:
 
 // smart_contracts.proposal.contract.Proposal.is_xgov_daemon() -> uint64:
 is_xgov_daemon:
-    // smart_contracts/proposal/contract.py:469
+    // smart_contracts/proposal/contract.py:488
     // return Txn.sender == Account(
     txn Sender
-    // smart_contracts/proposal/contract.py:470
+    // smart_contracts/proposal/contract.py:489
     // self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
-    bytec 38 // 0x78676f765f6461656d6f6e
+    bytec 40 // 0x78676f765f6461656d6f6e
     callsub get_bytes_from_registry_config
-    // smart_contracts/proposal/contract.py:469-471
+    // smart_contracts/proposal/contract.py:488-490
     // return Txn.sender == Account(
     //     self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_DAEMON))
     // )
@@ -3569,11 +3854,11 @@ is_xgov_daemon:
 
 // smart_contracts.proposal.contract.Proposal.is_registry_call() -> uint64:
 is_registry_call:
-    // smart_contracts/proposal/contract.py:475
+    // smart_contracts/proposal/contract.py:494
     // return Global.caller_application_id == self.registry_app_id.value
     global CallerApplicationID
     intc_0 // 0
-    bytec 4 // 0x72656769737472795f6170705f6964
+    bytec 6 // 0x72656769737472795f6170705f6964
     app_global_get_ex
     assert // check self.registry_app_id exists
     ==
@@ -3582,11 +3867,11 @@ is_registry_call:
 
 // smart_contracts.proposal.contract.Proposal.pay(receiver: bytes, amount: uint64) -> void:
 pay:
-    // smart_contracts/proposal/contract.py:477-478
+    // smart_contracts/proposal/contract.py:496-497
     // @subroutine
     // def pay(self, receiver: Account, amount: UInt64) -> None:
     proto 2 0
-    // smart_contracts/proposal/contract.py:479-483
+    // smart_contracts/proposal/contract.py:498-502
     // itxn.Payment(
     //     receiver=receiver,
     //     amount=amount,
@@ -3597,15 +3882,15 @@ pay:
     itxn_field Amount
     frame_dig -2
     itxn_field Receiver
-    // smart_contracts/proposal/contract.py:479
+    // smart_contracts/proposal/contract.py:498
     // itxn.Payment(
     intc_1 // pay
     itxn_field TypeEnum
-    // smart_contracts/proposal/contract.py:482
+    // smart_contracts/proposal/contract.py:501
     // fee=UInt64(0),  # enforces the sender to pay the fee
     intc_0 // 0
     itxn_field Fee
-    // smart_contracts/proposal/contract.py:479-483
+    // smart_contracts/proposal/contract.py:498-502
     // itxn.Payment(
     //     receiver=receiver,
     //     amount=amount,
@@ -3617,22 +3902,22 @@ pay:
 
 // smart_contracts.proposal.contract.Proposal.transfer_locked_amount(receiver: bytes) -> void:
 transfer_locked_amount:
-    // smart_contracts/proposal/contract.py:485-486
+    // smart_contracts/proposal/contract.py:504-505
     // @subroutine
     // def transfer_locked_amount(self, receiver: Account) -> None:
     proto 1 0
-    // smart_contracts/proposal/contract.py:487
+    // smart_contracts/proposal/contract.py:506
     // self.pay(receiver, self.locked_amount.value)
     intc_0 // 0
-    bytec 19 // 0x6c6f636b65645f616d6f756e74
+    bytec 22 // 0x6c6f636b65645f616d6f756e74
     app_global_get_ex
     assert // check self.locked_amount exists
     frame_dig -1
     swap
     callsub pay
-    // smart_contracts/proposal/contract.py:488
+    // smart_contracts/proposal/contract.py:507
     // self.locked_amount.value = UInt64(0)
-    bytec 19 // 0x6c6f636b65645f616d6f756e74
+    bytec 22 // 0x6c6f636b65645f616d6f756e74
     intc_0 // 0
     app_global_put
     retsub
@@ -3640,26 +3925,26 @@ transfer_locked_amount:
 
 // smart_contracts.proposal.contract.Proposal.assert_same_app_and_method(group_index: uint64) -> void:
 assert_same_app_and_method:
-    // smart_contracts/proposal/contract.py:490-491
+    // smart_contracts/proposal/contract.py:509-510
     // @subroutine
     // def assert_same_app_and_method(self, group_index: UInt64) -> None:
     proto 1 0
-    // smart_contracts/proposal/contract.py:493
+    // smart_contracts/proposal/contract.py:512
     // GTxn.application_id(group_index) == Global.current_application_id
     frame_dig -1
     gtxns ApplicationID
     global CurrentApplicationID
     ==
-    // smart_contracts/proposal/contract.py:492-494
+    // smart_contracts/proposal/contract.py:511-513
     // assert (
     //     GTxn.application_id(group_index) == Global.current_application_id
     // ), err.WRONG_APP_ID
     assert // Wrong App ID
-    // smart_contracts/proposal/contract.py:495
+    // smart_contracts/proposal/contract.py:514
     // assert GTxn.application_args(group_index, 0) == Txn.application_args(
     frame_dig -1
     gtxnsa ApplicationArgs 0
-    // smart_contracts/proposal/contract.py:495-497
+    // smart_contracts/proposal/contract.py:514-516
     // assert GTxn.application_args(group_index, 0) == Txn.application_args(
     //     0
     // ), err.WRONG_METHOD_CALL
@@ -3671,65 +3956,74 @@ assert_same_app_and_method:
 
 // smart_contracts.proposal.contract.Proposal.is_quorum_voters_reached() -> uint64:
 is_quorum_voters_reached:
-    // smart_contracts/proposal/contract.py:561-563
+    // smart_contracts/proposal/contract.py:580-583
     // # A category dependent quorum of all xGov Voting Committee (1 xGov, 1 vote) is reached.
     // # Null votes affect this quorum.
+    // # Boycott votes, i.e. invalid, do not affect this quorum.
     // quorum_defined = self.quorum_threshold.value > 0
     intc_0 // 0
-    bytec 20 // 0x71756f72756d5f7468726573686f6c64
+    bytec 23 // 0x71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.quorum_threshold exists
-    // smart_contracts/proposal/contract.py:565
-    // self.voted_members.value >= self.quorum_threshold.value and quorum_defined
+    // smart_contracts/proposal/contract.py:585
+    // self.voted_members.value - self.boycotted_members.value
     intc_0 // 0
-    bytec 7 // 0x766f7465645f6d656d62657273
+    bytec 9 // 0x766f7465645f6d656d62657273
     app_global_get_ex
     assert // check self.voted_members exists
+    intc_0 // 0
+    bytec 15 // 0x626f79636f747465645f6d656d62657273
+    app_global_get_ex
+    assert // check self.boycotted_members exists
+    -
+    // smart_contracts/proposal/contract.py:585-586
+    //     self.voted_members.value - self.boycotted_members.value
+    // ) >= self.quorum_threshold.value and quorum_defined
     dig 1
     >=
-    &&
-    // smart_contracts/proposal/contract.py:564-566
+    // smart_contracts/proposal/contract.py:584-586
     // return (
-    //     self.voted_members.value >= self.quorum_threshold.value and quorum_defined
-    // )
+    //     self.voted_members.value - self.boycotted_members.value
+    // ) >= self.quorum_threshold.value and quorum_defined
+    &&
     retsub
 
 
 // smart_contracts.proposal.contract.Proposal.is_weighted_quorum_votes_reached() -> uint64:
 is_weighted_quorum_votes_reached:
-    // smart_contracts/proposal/contract.py:570-572
+    // smart_contracts/proposal/contract.py:590-592
     // # A category dependent weighted quorum of all xGov Voting Committee voting power (1 vote) is reached.
     // # Null votes affect this quorum.
     // weighted_quorum_defined = self.weighted_quorum_threshold.value > 0
     intc_0 // 0
-    bytec 21 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
+    bytec 24 // 0x77656967687465645f71756f72756d5f7468726573686f6c64
     app_global_get_ex
     assert // check self.weighted_quorum_threshold exists
-    // smart_contracts/proposal/contract.py:573
+    // smart_contracts/proposal/contract.py:593
     // total_votes = self.approvals.value + self.rejections.value + self.nulls.value
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 10 // 0x617070726f76616c73
     app_global_get_ex
     assert // check self.approvals exists
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
+    bytec 11 // 0x72656a656374696f6e73
     app_global_get_ex
     assert // check self.rejections exists
     +
     intc_0 // 0
-    bytec 14 // 0x6e756c6c73
+    bytec 16 // 0x6e756c6c73
     app_global_get_ex
     assert // check self.nulls exists
     +
-    // smart_contracts/proposal/contract.py:575
+    // smart_contracts/proposal/contract.py:595
     // total_votes >= self.weighted_quorum_threshold.value
     dig 1
     >=
-    // smart_contracts/proposal/contract.py:575-576
+    // smart_contracts/proposal/contract.py:595-596
     // total_votes >= self.weighted_quorum_threshold.value
     // and weighted_quorum_defined
     &&
-    // smart_contracts/proposal/contract.py:574-577
+    // smart_contracts/proposal/contract.py:594-597
     // return (
     //     total_votes >= self.weighted_quorum_threshold.value
     //     and weighted_quorum_defined
@@ -3739,16 +4033,16 @@ is_weighted_quorum_votes_reached:
 
 // smart_contracts.proposal.contract.Proposal.has_majority_approved() -> uint64:
 has_majority_approved:
-    // smart_contracts/proposal/contract.py:581-583
+    // smart_contracts/proposal/contract.py:601-603
     // # The relative majority of Approved over Rejected votes is reached.
     // # Null votes do not affect the relative majority.
     // return self.approvals.value > self.rejections.value
     intc_0 // 0
-    bytec 8 // 0x617070726f76616c73
+    bytec 10 // 0x617070726f76616c73
     app_global_get_ex
     assert // check self.approvals exists
     intc_0 // 0
-    bytec 9 // 0x72656a656374696f6e73
+    bytec 11 // 0x72656a656374696f6e73
     app_global_get_ex
     assert // check self.rejections exists
     >
@@ -3757,35 +4051,35 @@ has_majority_approved:
 
 // smart_contracts.proposal.contract.Proposal._unassign_voter(voter: bytes, voting_power: uint64) -> void:
 _unassign_voter:
-    // smart_contracts/proposal/contract.py:807-808
+    // smart_contracts/proposal/contract.py:827-828
     // @subroutine
     // def _unassign_voter(self, voter: Account, voting_power: UInt64) -> None:
     proto 2 0
-    // smart_contracts/proposal/contract.py:809
+    // smart_contracts/proposal/contract.py:829
     // self.assigned_members.value -= 1
     intc_0 // 0
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     app_global_get_ex
     assert // check self.assigned_members exists
     intc_1 // 1
     -
-    bytec 6 // 0x61737369676e65645f6d656d62657273
+    bytec 8 // 0x61737369676e65645f6d656d62657273
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:810
+    // smart_contracts/proposal/contract.py:830
     // self.assigned_votes.value -= voting_power
     intc_0 // 0
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     app_global_get_ex
     assert // check self.assigned_votes exists
     frame_dig -1
     -
-    bytec 17 // 0x61737369676e65645f766f746573
+    bytec 19 // 0x61737369676e65645f766f746573
     swap
     app_global_put
-    // smart_contracts/proposal/contract.py:811
+    // smart_contracts/proposal/contract.py:831
     // del self.voters[voter]
-    bytec 22 // "V"
+    bytec 20 // "V"
     frame_dig -2
     concat
     box_del

@@ -28,14 +28,20 @@ from tests.xgov_registry.common import get_xgov_fee
     "account_role",
     ["xgov_address", "voting_address"],
 )
+@pytest.mark.parametrize(
+    "voting_proposal", ["voting_proposal_client", "alternative_voting_proposal_client"]
+)
 def test_vote_proposal_success(
     min_fee_times_2: AlgoAmount,
+    no_role_account: SigningAccount,
     committee: list[CommitteeMember],
-    voting_proposal_client: ProposalClient,
     xgov_registry_client: XGovRegistryClient,
     account_role: str,
-    no_role_account: SigningAccount,
+    voting_proposal: str,
+    request: pytest.FixtureRequest,
 ) -> None:
+    proposal_client: ProposalClient = request.getfixturevalue(voting_proposal)
+
     xgov = committee[0].account
     if account_role == "xgov_address":
         sender = xgov.address
@@ -50,9 +56,19 @@ def test_vote_proposal_success(
         )
         sender = voting_address
 
+    xgov_box = xgov_registry_client.state.box.xgov_box.get_value(
+        committee[0].account.address
+    )
+    absence_tolerance = xgov_registry_client.state.global_state.absence_tolerance
+    if voting_proposal == "voting_proposal_client":
+        assert xgov_box.tolerated_absences == absence_tolerance
+    else:
+        assert xgov_box.tolerated_absences == absence_tolerance - 1
+    assert xgov_box.last_vote_timestamp == 0
+
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
-            proposal_id=voting_proposal_client.app_id,
+            proposal_id=proposal_client.app_id,
             xgov_address=committee[0].account.address,
             approval_votes=committee[0].votes,
             rejection_votes=0,
@@ -67,7 +83,7 @@ def test_vote_proposal_success(
         committee[0].account.address
     )
 
-    assert xgov_box.voted_proposals == 1  # type: ignore
+    assert xgov_box.tolerated_absences == absence_tolerance
     assert xgov_box.last_vote_timestamp > 0  # type: ignore
 
     # Tear down test
