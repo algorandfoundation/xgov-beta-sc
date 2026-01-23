@@ -1,0 +1,87 @@
+#pragma version 10
+#pragma typetrack false
+main:
+    intcblock 1 8 0 6
+    txn NumAppArgs
+    bz main___algopy_default_create@9
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    assert
+    pushbytess 0x42317b4f 0x5a2a3f16
+    txna ApplicationArgs 0
+    match subscribe_xgov unsubscribe_xgov
+    err
+main___algopy_default_create@9:
+    txn OnCompletion
+    !
+    txn ApplicationID
+    !
+    &&
+    return
+subscribe_xgov:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_1
+    ==
+    assert
+    btoi
+    txna ApplicationArgs 2
+    dup
+    len
+    pushint 32
+    ==
+    assert
+    dig 1
+    pushbytes 0x78676f765f666565
+    app_global_get_ex
+    pop
+    swap
+    dig 2
+    app_params_get AppAddress
+    assert
+    itxn_begin
+    uncover 2
+    itxn_field Amount
+    itxn_field Receiver
+    intc_0
+    itxn_field TypeEnum
+    intc_2
+    itxn_field Fee
+    itxn_next
+    swap
+    itxn_field ApplicationID
+    pushbytes 0xa082cef8
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    intc_3
+    itxn_field TypeEnum
+    intc_2
+    itxn_field Fee
+    itxn_submit
+    intc_0
+    return
+unsubscribe_xgov:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_1
+    ==
+    assert
+    btoi
+    itxn_begin
+    global MinTxnFee
+    pushint 2
+    *
+    swap
+    itxn_field ApplicationID
+    pushbytes 0xdf39fdb9
+    itxn_field ApplicationArgs
+    intc_3
+    itxn_field TypeEnum
+    itxn_field Fee
+    itxn_submit
+    intc_0
+    return

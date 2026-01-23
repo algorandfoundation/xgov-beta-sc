@@ -1,0 +1,1258 @@
+#pragma version 10
+#pragma typetrack false
+main:
+    intcblock 0 1 8 32 1814400 604800
+    bytecblock 0x151f7c75 "Wrong Proposal Status or finalized" "ERR:" 0x7061757365645f7265676973747279 0x7061757365645f70726f706f73616c73 0x78676f765f636f756e63696c 0x78676f765f6461656d6f6e 0x6f70656e5f70726f706f73616c5f666565 0x636f6d6d69747465655f6964 0x636f6d6d69747465655f6d656d62657273 0x636f6d6d69747465655f766f746573 0x6461656d6f6e5f6f7065726174696f6e5f66756e64696e675f627073 0x70726f706f73616c5f636f6d6d69746d656e745f627073 0x6d696e5f7265717565737465645f616d6f756e74 0x6d61785f7265717565737465645f616d6f756e745f736d616c6c 0x6d61785f7265717565737465645f616d6f756e745f6d656469756d 0x6d61785f7265717565737465645f616d6f756e745f6c61726765 0x64697363757373696f6e5f6475726174696f6e5f736d616c6c 0x64697363757373696f6e5f6475726174696f6e5f6d656469756d 0x64697363757373696f6e5f6475726174696f6e5f6c61726765 0x766f74696e675f6475726174696f6e5f736d616c6c 0x766f74696e675f6475726174696f6e5f6d656469756d 0x766f74696e675f6475726174696f6e5f6c61726765 0x71756f72756d5f736d616c6c 0x71756f72756d5f6d656469756d 0x71756f72756d5f6c61726765 0x77656967687465645f71756f72756d5f736d616c6c 0x77656967687465645f71756f72756d5f6d656469756d 0x77656967687465645f71756f72756d5f6c61726765 0x616273656e63655f746f6c6572616e6365 0x676f7665726e616e63655f706572696f64 0x636f6d6d69747465655f67726163655f706572696f64 0x636f6d6d69747465655f6c6173745f616e63686f72 "Unauthorized" "Voter not found" "Missing Config" 0x0000000000000000 0x00000000000000000000000000000000 base32(CUPXY5IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+    txn ApplicationID
+    bnz main_after_if_else@2
+    bytec 5
+    global ZeroAddress
+    app_global_put
+    bytec 6
+    global ZeroAddress
+    app_global_put
+    bytec_3
+    intc_0
+    app_global_put
+    bytec 4
+    intc_0
+    app_global_put
+    bytec 7
+    pushint 100000000
+    app_global_put
+    bytec 11
+    pushint 500
+    app_global_put
+    bytec 12
+    pushint 300
+    app_global_put
+    bytec 13
+    pushint 2500000000
+    app_global_put
+    bytec 14
+    pushint 25000000000
+    app_global_put
+    bytec 15
+    pushint 100000000000
+    app_global_put
+    bytec 16
+    pushint 200000000000
+    app_global_put
+    bytec 17
+    intc 4
+    app_global_put
+    bytec 18
+    intc 4
+    app_global_put
+    bytec 19
+    intc 4
+    app_global_put
+    bytec 20
+    intc 5
+    app_global_put
+    bytec 21
+    intc 5
+    app_global_put
+    bytec 22
+    pushint 1209600
+    app_global_put
+    bytec 8
+    pushbytes 0x3030303030303030303030303030303030303030303030303030303030303030
+    app_global_put
+    bytec 9
+    intc_0
+    app_global_put
+    bytec 10
+    intc_0
+    app_global_put
+    bytec 23
+    pushint 3000
+    app_global_put
+    bytec 24
+    intc_0
+    app_global_put
+    bytec 25
+    pushint 7000
+    app_global_put
+    bytec 26
+    pushint 5000
+    app_global_put
+    bytec 27
+    intc_0
+    app_global_put
+    bytec 28
+    pushint 7000
+    app_global_put
+    bytec 29
+    pushint 3
+    app_global_put
+    bytec 30
+    pushint 1000000
+    app_global_put
+    bytec 31
+    pushint 10000
+    app_global_put
+    bytec 32
+    intc_0
+    app_global_put
+main_after_if_else@2:
+    pushbytes 0x4956c1ab
+    txna ApplicationArgs 0
+    match main_update_xgov_registry_route@4
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@53
+    pushbytess 0x959c4762 0x6c1f564d 0xe10a512e 0x86f7e0e6 0x39e26d8a 0x98352e86 0xfa4ed6e2 0xd6c9cc1a 0x5c484055 0x37d6adf1 0xd4216b6e 0xba8520f2 0x1677b30e 0x84b7d268 0xaf7f1860 0xa082cef8 0xdf39fdb9 0xca0f6a3a 0x3c31bc02 0x0d2c7891 0x45077390 0x93facdba 0xce8b3a1c 0xfaea081f 0x0da27885 0x7a4fee43 0x52dd10d7 0xd4d37a64 0x34349dcc 0x158f8dd6 0x5fe25935 0xdb27b9af 0xf5910756 0x65610a9f 0xfdc695c2 0xba90ab54 0xb3b58482 0x6ae5eb46 0x27630d65 0x824f98bc 0x49548ba0 0x826784f6 0x26983200 0xc386b03f 0xdbd83dd9
+    txna ApplicationArgs 0
+    match init_proposal_contract load_proposal_contract main_delete_proposal_contract_box_route@9 main_pause_registry_route@10 main_pause_proposals_route@11 main_resume_registry_route@12 main_resume_proposals_route@13 set_xgov_manager set_payor set_xgov_council set_xgov_subscriber set_kyc_provider set_committee_manager set_xgov_daemon config_xgov_registry subscribe_xgov main_unsubscribe_xgov_route@23 unsubscribe_absentee approve_subscribe_xgov reject_subscribe_xgov request_subscribe_xgov request_unsubscribe_xgov approve_unsubscribe_xgov reject_unsubscribe_xgov set_voting_account subscribe_proposer set_proposer_kyc declare_committee open_proposal vote_proposal unassign_absentee_from_proposal pay_grant_proposal finalize_proposal drop_proposal deposit_funds withdraw_funds main_withdraw_balance_route@43 get_state get_xgov_box get_proposer_box get_request_box get_request_unsubscribe_box is_proposal create_empty_proposal main_op_up_route@51
+    err
+main_op_up_route@51:
+    intc_1
+    return
+main_withdraw_balance_route@43:
+    intc_1
+    return
+main_unsubscribe_xgov_route@23:
+    intc_1
+    return
+main_resume_proposals_route@13:
+    bytec 4
+    intc_0
+    app_global_put
+    intc_1
+    return
+main_resume_registry_route@12:
+    bytec_3
+    intc_0
+    app_global_put
+    intc_1
+    return
+main_pause_proposals_route@11:
+    bytec 4
+    intc_1
+    app_global_put
+    intc_1
+    return
+main_pause_registry_route@10:
+    bytec_3
+    intc_1
+    app_global_put
+    intc_1
+    return
+main_delete_proposal_contract_box_route@9:
+    intc_1
+    return
+main_create_NoOp@53:
+    pushbytes 0x4c5c61ba
+    txna ApplicationArgs 0
+    match main_create_route@54
+    err
+main_create_route@54:
+    intc_1
+    return
+main_update_xgov_registry_route@4:
+    txn OnCompletion
+    pushint 4
+    ==
+    txn ApplicationID
+    &&
+    return
+init_proposal_contract:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+load_proposal_contract:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    intc_1
+    return
+set_xgov_manager:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+set_payor:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+set_xgov_council:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3
+    ==
+    assert
+    bytec 5
+    swap
+    app_global_put
+    intc_1
+    return
+set_xgov_subscriber:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+set_kyc_provider:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+set_committee_manager:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+set_xgov_daemon:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3
+    ==
+    assert
+    bytec 6
+    swap
+    app_global_put
+    intc_1
+    return
+config_xgov_registry:
+    txna ApplicationArgs 1
+    len
+    pushint 208
+    ==
+    assert
+    intc_1
+    return
+subscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    intc_1
+    return
+unsubscribe_absentee:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+approve_subscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+reject_subscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+request_subscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 2
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 3
+    len
+    intc_2
+    ==
+    assert
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    intc_1
+    return
+request_unsubscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 2
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 3
+    len
+    intc_2
+    ==
+    assert
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    intc_1
+    return
+approve_unsubscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+reject_unsubscribe_xgov:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+set_voting_account:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 2
+    len
+    intc_3
+    ==
+    assert
+    intc_1
+    return
+subscribe_proposer:
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    intc_1
+    return
+set_proposer_kyc:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 2
+    len
+    intc_1
+    ==
+    assert
+    txna ApplicationArgs 3
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+declare_committee:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2
+    ==
+    assert
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2
+    ==
+    assert
+    bytec 8
+    uncover 3
+    app_global_put
+    swap
+    btoi
+    bytec 9
+    swap
+    app_global_put
+    btoi
+    bytec 10
+    swap
+    app_global_put
+    intc_1
+    return
+open_proposal:
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    pushbytes 0x151f7c750000000000000000
+    log
+    intc_1
+    return
+vote_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3
+    ==
+    assert
+    txna ApplicationArgs 3
+    dup
+    len
+    intc_2
+    ==
+    assert
+    txna ApplicationArgs 4
+    dup
+    len
+    intc_2
+    ==
+    assert
+    itxn_begin
+    uncover 3
+    btoi
+    itxn_field ApplicationID
+    pushbytes 0x1841a0d2
+    itxn_field ApplicationArgs
+    uncover 2
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dupn 2
+    extract 0 4
+    bytec_0
+    ==
+    assert
+    dup
+    extract 4 0
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    extract 6 0
+    dup
+    len
+    dup
+    pushint 4
+    <
+    bz vote_proposal_ternary_false@4
+    intc_0
+vote_proposal_ternary_merge@5:
+    bz vote_proposal_after_if_else@15
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    bytec 33
+    bytec 34
+    pushbytess "Voter already voted" "Votes invalid"
+    bytec 35
+    bytec_1
+    pushbytes "Voting Period Expired"
+    uncover 7
+    match vote_proposal_switch_case_0@7 vote_proposal_switch_case_1@8 vote_proposal_switch_case_2@9 vote_proposal_switch_case_3@10 vote_proposal_switch_case_4@11 vote_proposal_switch_case_5@12 vote_proposal_switch_case_6@13
+    err
+vote_proposal_switch_case_6@13:
+    err
+vote_proposal_switch_case_5@12:
+    err
+vote_proposal_switch_case_4@11:
+    err
+vote_proposal_switch_case_3@10:
+    err
+vote_proposal_switch_case_2@9:
+    err
+vote_proposal_switch_case_1@8:
+    err
+vote_proposal_switch_case_0@7:
+    err
+vote_proposal_after_if_else@15:
+    intc_1
+    return
+vote_proposal_ternary_false@4:
+    dig 2
+    extract 6 4
+    bytec_2
+    ==
+    b vote_proposal_ternary_merge@5
+unassign_absentee_from_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2
+    ==
+    assert
+    txna ApplicationArgs 2
+    dup
+    intc_0
+    extract_uint16
+    intc_3
+    *
+    pushint 2
+    +
+    dig 1
+    len
+    ==
+    assert
+    itxn_begin
+    swap
+    btoi
+    itxn_field ApplicationID
+    pushbytes 0x76ff4c70
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dupn 2
+    extract 0 4
+    bytec_0
+    ==
+    assert
+    dup
+    extract 4 0
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    extract 6 0
+    dup
+    len
+    dup
+    pushint 4
+    <
+    bz unassign_absentee_from_proposal_ternary_false@4
+    intc_0
+unassign_absentee_from_proposal_ternary_merge@5:
+    bz unassign_absentee_from_proposal_else_body@10
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    bytec_1
+    bytec 34
+    uncover 2
+    match unassign_absentee_from_proposal_switch_case_0@7 unassign_absentee_from_proposal_switch_case_1@8
+    err
+unassign_absentee_from_proposal_switch_case_1@8:
+    err
+unassign_absentee_from_proposal_switch_case_0@7:
+    err
+unassign_absentee_from_proposal_else_body@10:
+    dig 1
+    pushbytes ""
+    ==
+    assert
+    intc_1
+    return
+unassign_absentee_from_proposal_ternary_false@4:
+    dig 2
+    extract 6 4
+    bytec_2
+    ==
+    b unassign_absentee_from_proposal_ternary_merge@5
+pay_grant_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2
+    ==
+    assert
+    itxn_begin
+    btoi
+    itxn_field ApplicationID
+    pushbytes 0x8a5e4c80
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dupn 2
+    extract 0 4
+    bytec_0
+    ==
+    assert
+    dup
+    extract 4 0
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    extract 6 0
+    dup
+    len
+    dup
+    pushint 4
+    <
+    bz pay_grant_proposal_ternary_false@4
+    intc_0
+pay_grant_proposal_ternary_merge@5:
+    bz pay_grant_proposal_after_if_else@10
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    bytec 33
+    bytec_1
+    uncover 2
+    match pay_grant_proposal_switch_case_0@7 pay_grant_proposal_switch_case_1@8
+    err
+pay_grant_proposal_switch_case_1@8:
+    err
+pay_grant_proposal_switch_case_0@7:
+    err
+pay_grant_proposal_after_if_else@10:
+    intc_1
+    return
+pay_grant_proposal_ternary_false@4:
+    dig 2
+    extract 6 4
+    bytec_2
+    ==
+    b pay_grant_proposal_ternary_merge@5
+finalize_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2
+    ==
+    assert
+    itxn_begin
+    btoi
+    itxn_field ApplicationID
+    pushbytes 0x802069b4
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dupn 2
+    extract 0 4
+    bytec_0
+    ==
+    assert
+    dup
+    extract 4 0
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    extract 6 0
+    dup
+    len
+    dup
+    pushint 4
+    <
+    bz finalize_proposal_ternary_false@4
+    intc_0
+finalize_proposal_ternary_merge@5:
+    bz finalize_proposal_after_if_else@11
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    bytec_1
+    bytec 35
+    pushbytes "There are voters assigned to this proposal"
+    uncover 3
+    match finalize_proposal_switch_case_0@7 finalize_proposal_switch_case_1@8 finalize_proposal_switch_case_2@9
+    err
+finalize_proposal_switch_case_2@9:
+    err
+finalize_proposal_switch_case_1@8:
+    err
+finalize_proposal_switch_case_0@7:
+    err
+finalize_proposal_after_if_else@11:
+    intc_1
+    return
+finalize_proposal_ternary_false@4:
+    dig 2
+    extract 6 4
+    bytec_2
+    ==
+    b finalize_proposal_ternary_merge@5
+drop_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2
+    ==
+    assert
+    itxn_begin
+    btoi
+    itxn_field ApplicationID
+    pushbytes 0x7371321a
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn LastLog
+    dupn 2
+    extract 0 4
+    bytec_0
+    ==
+    assert
+    dup
+    extract 4 0
+    dup
+    intc_0
+    extract_uint16
+    pushint 2
+    +
+    swap
+    len
+    ==
+    assert
+    extract 6 0
+    dup
+    len
+    dup
+    pushint 4
+    <
+    bz drop_proposal_ternary_false@4
+    intc_0
+drop_proposal_ternary_merge@5:
+    bz drop_proposal_after_if_else@9
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    bytec_1
+    swap
+    match drop_proposal_switch_case_0@7
+    err
+drop_proposal_switch_case_0@7:
+    err
+drop_proposal_after_if_else@9:
+    intc_1
+    return
+drop_proposal_ternary_false@4:
+    dig 2
+    extract 6 4
+    bytec_2
+    ==
+    b drop_proposal_ternary_merge@5
+deposit_funds:
+    txn GroupIndex
+    intc_1
+    -
+    gtxns TypeEnum
+    intc_1
+    ==
+    assert
+    intc_1
+    return
+withdraw_funds:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+get_state:
+    intc_0
+    bytec_3
+    app_global_get_ex
+    assert
+    intc_0
+    !=
+    pushbytes 0x00
+    intc_0
+    uncover 2
+    setbit
+    intc_0
+    bytec 4
+    app_global_get_ex
+    assert
+    intc_0
+    !=
+    pushbytes 0x00
+    intc_0
+    uncover 2
+    setbit
+    global ZeroAddress
+    dup
+    intc_0
+    bytec 5
+    app_global_get_ex
+    assert
+    global ZeroAddress
+    dupn 2
+    intc_0
+    bytec 6
+    app_global_get_ex
+    assert
+    intc_0
+    bytec 7
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 11
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 12
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 13
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 14
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 15
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 16
+    app_global_get_ex
+    assert
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    intc_0
+    bytec 17
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 18
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 19
+    app_global_get_ex
+    assert
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    bytec 36
+    concat
+    intc_0
+    bytec 20
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 21
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 22
+    app_global_get_ex
+    assert
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    bytec 36
+    concat
+    intc_0
+    bytec 23
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 24
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 25
+    app_global_get_ex
+    assert
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    intc_0
+    bytec 26
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 27
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 28
+    app_global_get_ex
+    assert
+    itob
+    cover 2
+    concat
+    swap
+    concat
+    intc_0
+    bytec 8
+    app_global_get_ex
+    assert
+    intc_0
+    bytec 9
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 10
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 29
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 30
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 31
+    app_global_get_ex
+    assert
+    itob
+    intc_0
+    bytec 32
+    app_global_get_ex
+    assert
+    itob
+    uncover 23
+    intc_0
+    getbit
+    uncover 24
+    intc_1
+    uncover 2
+    setbit
+    uncover 23
+    concat
+    uncover 22
+    concat
+    uncover 21
+    concat
+    uncover 20
+    concat
+    uncover 19
+    concat
+    uncover 18
+    concat
+    uncover 17
+    concat
+    bytec 37
+    concat
+    uncover 16
+    concat
+    uncover 15
+    concat
+    uncover 14
+    concat
+    uncover 13
+    concat
+    uncover 12
+    concat
+    uncover 11
+    concat
+    uncover 10
+    concat
+    uncover 9
+    concat
+    uncover 8
+    concat
+    bytec 37
+    concat
+    uncover 7
+    concat
+    uncover 6
+    concat
+    uncover 5
+    concat
+    uncover 4
+    concat
+    uncover 3
+    concat
+    uncover 2
+    concat
+    swap
+    concat
+    bytec_0
+    swap
+    concat
+    log
+    intc_1
+    return
+get_xgov_box:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    pushbytes base32(CUPXY5IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA)
+    log
+    intc_1
+    return
+get_proposer_box:
+    txna ApplicationArgs 1
+    len
+    intc_3
+    ==
+    assert
+    pushbytes 0x151f7c7500000000000000000000
+    log
+    intc_1
+    return
+get_request_box:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    bytec 38
+    log
+    intc_1
+    return
+get_request_unsubscribe_box:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    bytec 38
+    log
+    intc_1
+    return
+is_proposal:
+    txna ApplicationArgs 1
+    len
+    intc_2
+    ==
+    assert
+    intc_1
+    return
+create_empty_proposal:
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3
+    ==
+    assert
+    global CurrentApplicationAddress
+    acct_params_get AcctMinBalance
+    assert
+    itxn_begin
+    pushint 27
+    itxn_field GlobalNumUint
+    pushint 3
+    itxn_field GlobalNumByteSlice
+    pushint 2
+    itxn_field ExtraProgramPages
+    pushbytes base64(CoEBQw==)
+    itxn_field ClearStateProgramPages
+    pushbytes base64(CiAFAAEgCpBOJikGc3RhdHVzAgAACWZpbmFsaXplZAEACHByb3Bvc2VyD3JlZ2lzdHJ5X2FwcF9pZBBhc3NpZ25lZF9tZW1iZXJzDXZvdGVkX21lbWJlcnMJYXBwcm92YWxzCnJlamVjdGlvbnMBTQQVH3x1EWNvbW1pdHRlZV9tZW1iZXJzEHJlcXVlc3RlZF9hbW91bnQRYm95Y290dGVkX21lbWJlcnMFbnVsbHMPY29tbWl0dGVlX3ZvdGVzEGZ1bmRpbmdfY2F0ZWdvcnkOYXNzaWduZWRfdm90ZXMBVg1sb2NrZWRfYW1vdW50EHF1b3J1bV90aHJlc2hvbGQZd2VpZ2h0ZWRfcXVvcnVtX3RocmVzaG9sZCgAJkVSUjpXcm9uZyBQcm9wb3NhbCBTdGF0dXMgb3IgZmluYWxpemVkDGNvbW1pdHRlZV9pZBFvcGVuX3Byb3Bvc2FsX2ZlZRxkYWVtb25fb3BlcmF0aW9uX2Z1bmRpbmdfYnBzDm9wZW5fdGltZXN0YW1wFnZvdGVfb3BlbmluZ190aW1lc3RhbXAMZnVuZGluZ190eXBlD3ZvdGluZ19kdXJhdGlvbg9wYXVzZWRfcmVnaXN0cnkUc3VibWlzc2lvbl90aW1lc3RhbXARbWV0YWRhdGFfdXBsb2FkZWQFdGl0bGUFZm9jdXMTZGlzY3Vzc2lvbl9kdXJhdGlvbhRtaW5fcmVxdWVzdGVkX2Ftb3VudBptYXhfcmVxdWVzdGVkX2Ftb3VudF9sYXJnZQt4Z292X2RhZW1vbhUAE0VSUjpWb3RlciBub3QgZm91bmQxGEAAjTE1gQMSRDE0gRsSRDE3FEQxNhREJwQyA2cnBSJnJxiAAGcnDCJnJxAiZycZImcnGiJnJxsiZycgImcnHCJnKCJnKiJnJyEiZycigABnJxEiZycjImcnHSJnJw0iZycUImcnJCJnJx4iZycVImcnFiJnJwYiZycSImcnByJnJw4iZycIImcnCSJnJw8iZ4AEJDeNPDYaAI4BAJExGRREMRhBAHqCEATtrrnKBHFDmU8Ec3EyGgQ05hPKBA2asNcEGEGg0gRzTb7MBHb/THAEIS2fBwSKXkyABCrBmwUEgCBptAS2Seh0BCRhX5AENpxCugTb2D3ZNhoAjhAAYAOPA+gELQRyBW4HWAfKCGIIwwj3CYAK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)
+    itxn_field ApprovalProgramPages
+    pushbytes base64(KmVEQAADI0SJIkL/+jEAIicEZUQSiTEAJyeI/5ZJFSQSRBKJMg0iJwVlRBKJigIAsYv/sgiL/rIHI7IQIrIBs4mKAQAiJxRlRIv/TIj/3icUImeJigEAi/84GDIIEkSL/zkaADYaABJEiSInFWVEIicHZUQiJw5lRAlLAQ8QiSInFmVEIicIZUQiJwllRAgiJw9lRAhLAQ8QiSInCGVEIicJZUQNiYoCACInBmVEIwknBkxnIicSZUSL/wknEkxnJxOL/lC8SIk=)
+    itxn_field ApprovalProgramPages
+    pushbytes 0xcc694eaa
+    itxn_field ApplicationArgs
+    swap
+    itxn_field ApplicationArgs
+    pushint 6
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itxn CreatedApplicationID
+    global CurrentApplicationAddress
+    acct_params_get AcctMinBalance
+    assert
+    itxn_begin
+    dig 1
+    app_params_get AppAddress
+    assert
+    intc_0
+    bytec 7
+    app_global_get_ex
+    assert
+    uncover 2
+    uncover 4
+    -
+    -
+    itxn_field Amount
+    itxn_field Receiver
+    intc_1
+    itxn_field TypeEnum
+    intc_0
+    itxn_field Fee
+    itxn_submit
+    itob
+    bytec_0
+    swap
+    concat
+    log
+    intc_1
+    return
