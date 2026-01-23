@@ -77,6 +77,9 @@ class TypedGlobalState(arc4.Struct):
     committee_members: arc4.UInt64
     committee_votes: arc4.UInt64
     absence_tolerance: arc4.UInt64
+    governance_period: arc4.UInt64
+    committee_grace_period: arc4.UInt64
+    committee_last_anchor: arc4.UInt64
 
 
 class XGovRegistryConfig(arc4.Struct):
@@ -92,6 +95,8 @@ class XGovRegistryConfig(arc4.Struct):
     quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
     absence_tolerance: arc4.UInt64
+    governance_period: arc4.UInt64
+    committee_grace_period: arc4.UInt64
 
 
 class XGovSubscribeRequestBoxValue(arc4.Struct):
