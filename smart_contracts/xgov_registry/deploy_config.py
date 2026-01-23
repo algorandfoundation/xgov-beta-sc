@@ -17,10 +17,6 @@ from algosdk import encoding
 from algosdk.transaction import Multisig
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
-from smart_contracts.xgov_registry.constants import (
-    COMMITTEE_GRACE_PERIOD,
-    GOVERNANCE_PERIOD,
-)
 from smart_contracts.xgov_registry.helpers import (
     load_proposal_contract_data_size_per_transaction,
 )
@@ -178,11 +174,7 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    template_values: DeployTimeParams = {
-        "entropy": b"",
-        "governance_period": GOVERNANCE_PERIOD,
-        "committee_grace_period": COMMITTEE_GRACE_PERIOD,
-    }
+    template_values: DeployTimeParams = {"entropy": b""}
 
     signer = vault_signer if vault_signer else gh_deployer.signer
 
@@ -384,6 +376,8 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
                 weighted_quorums[2],
             ),
             absence_tolerance=int(os.environ["XGOV_CFG_ABSENCE_TOLERANCE"]),
+            governance_period=int(os.environ["XGOV_CFG_GOVERNANCE_PERIOD"]),
+            committee_grace_period=int(os.environ["XGOV_CFG_COMMITTEE_GRACE_PERIOD"]),
         )
         app_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
@@ -667,6 +661,12 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
         ),
         absence_tolerance=parse_int(
             "XGOV_CFG_ABSENCE_TOLERANCE", current_state.absence_tolerance
+        ),
+        governance_period=parse_int(
+            "GS_KEY_GOVERNANCE_PERIOD", current_state.governance_period
+        ),
+        committee_grace_period=parse_int(
+            "GS_KEY_COMMITTEE_GRACE_PERIOD", current_state.committee_grace_period
         ),
     )
 
