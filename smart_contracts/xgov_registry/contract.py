@@ -1212,7 +1212,7 @@ class XGovRegistry(
             1 * bytes_per_page, bytes_last_page
         )
 
-        error, tx = arc4.abi_call(
+        tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
             approval_program=(page_1, page_2),
@@ -1221,18 +1221,6 @@ class XGovRegistry(
             global_num_bytes=pcfg.GLOBAL_BYTES,
             extra_program_pages=total_pages,
         )
-
-        # WARNING: The following error now is shadowed COMMITTEE_STALE. We can remove
-        # this error condition on the Proposal in a future major update.
-        if error.native.startswith(err.ARC_65_PREFIX):
-            error_without_prefix = String.from_bytes(error.native.bytes[4:])
-            match error_without_prefix:
-                case err.EMPTY_COMMITTEE_ID:
-                    assert False, err.EMPTY_COMMITTEE_ID  # noqa
-                case _:
-                    assert False, "Unknown error"  # noqa
-        else:
-            assert error.native == "", "Unknown error"
 
         mbr_after = Global.current_application_address.balance
 
