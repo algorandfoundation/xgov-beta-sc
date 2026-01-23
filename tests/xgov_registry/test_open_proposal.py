@@ -279,32 +279,6 @@ def test_open_proposal_paused_proposal_error(
     )
 
 
-@pytest.mark.skip("This error is now shadowed by COMMITTEE_STALE")
-def test_open_proposal_no_committee_declared(
-    algorand_client: AlgorandClient,
-    min_fee_times_3: AlgoAmount,
-    proposer: SigningAccount,
-    xgov_registry_client_committee_not_declared: XGovRegistryClient,
-) -> None:
-    with pytest.raises(LogicError, match=err.EMPTY_COMMITTEE_ID):
-        xgov_registry_client_committee_not_declared.send.open_proposal(
-            args=OpenProposalArgs(
-                payment=algorand_client.create_transaction.payment(
-                    PaymentParams(
-                        sender=proposer.address,
-                        receiver=xgov_registry_client_committee_not_declared.app_address,
-                        amount=get_open_proposal_fee(
-                            xgov_registry_client_committee_not_declared
-                        ),
-                    )
-                )
-            ),
-            params=CommonAppCallParams(
-                sender=proposer.address, static_fee=min_fee_times_3
-            ),
-        )
-
-
 def test_open_proposal_committee_stale(
     algorand_client: AlgorandClient,
     min_fee_times_3: AlgoAmount,
