@@ -197,6 +197,15 @@ class XGovRegistry(
 
         # New Variables (introduced after MainNet deployment)
         self.absence_tolerance = GlobalState(UInt64, key=cfg.GS_KEY_ABSENCE_TOLERANCE)
+        self.governance_period = GlobalState(UInt64, key=cfg.GS_KEY_GOVERNANCE_PERIOD)
+        self.committee_grace_period = GlobalState(
+            UInt64, key=cfg.GS_KEY_COMMITTEE_GRACE_PERIOD
+        )
+        self.committee_last_anchor = GlobalState(
+            UInt64, key=cfg.GS_KEY_COMMITTEE_LAST_ANCHOR
+        )
+        # ⚠️ No more Global UInt64 available in the State Schema, further additional
+        # integers must be encoded as Global Bytes.
 
     @subroutine
     def entropy(self) -> Bytes:
@@ -289,6 +298,11 @@ class XGovRegistry(
         return (
             key_prefix_length + key_type_size + value_type_size
         ) * PER_BYTE_IN_BOX_MBR + PER_BOX_MBR
+
+    @subroutine
+    def get_committee_anchor(self) -> UInt64:
+        r = Global.round
+        return r - (r % self.governance_period.value)
 
     @subroutine
     def set_max_committee_size(
@@ -710,6 +724,8 @@ class XGovRegistry(
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
         self.absence_tolerance.value = config.absence_tolerance.as_uint64()
+        self.governance_period.value = config.governance_period.as_uint64()
+        self.committee_grace_period.value = config.committee_grace_period.as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
@@ -1108,6 +1124,7 @@ class XGovRegistry(
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
+        self.committee_last_anchor.value = self.get_committee_anchor()
 
         arc4.emit(
             typ.NewCommittee(
@@ -1126,16 +1143,27 @@ class XGovRegistry(
             payment (gtxn.PaymentTransaction): payment for covering the proposal fee (includes child contract MBR)
 
         Raises:
+            err.PAUSED_REGISTRY: If the xGov Registry is paused
+            err.PAUSED_PROPOSALS: If new proposals are paused
+            err.COMMITTEE_STALE: If the xGov Committee is stale (or not declared)
             err.UNAUTHORIZED: If the sender is not a Proposer
             err.ALREADY_ACTIVE_PROPOSAL: If the proposer already has an active proposal
             err.INVALID_KYC: If the Proposer does not have valid KYC
             err.INSUFFICIENT_FEE: If the fee for the current transaction doesn't cover the inner transaction fees
             err.WRONG_RECEIVER: If the payment receiver is not the xGov Registry address
             err.WRONG_PAYMENT_AMOUNT: If the payment amount is not equal to the open_proposal_fee global state key
+            err.MISSING_PROPOSAL_APPROVAL_PROGRAM: If the Proposal Approval Program contract is not set
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
         assert not self.paused_proposals.value, err.PAUSED_PROPOSALS
+
+        committee_anchor = self.get_committee_anchor()
+        committee_delay = Global.round - committee_anchor
+        assert (
+            committee_anchor == self.committee_last_anchor.value
+            or committee_delay <= self.committee_grace_period.value
+        ), err.COMMITTEE_STALE
 
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
@@ -1184,7 +1212,7 @@ class XGovRegistry(
             1 * bytes_per_page, bytes_last_page
         )
 
-        error, tx = arc4.abi_call(
+        tx = arc4.abi_call(
             proposal_contract.Proposal.create,
             Txn.sender,
             approval_program=(page_1, page_2),
@@ -1193,16 +1221,6 @@ class XGovRegistry(
             global_num_bytes=pcfg.GLOBAL_BYTES,
             extra_program_pages=total_pages,
         )
-
-        if error.native.startswith(err.ARC_65_PREFIX):
-            error_without_prefix = String.from_bytes(error.native.bytes[4:])
-            match error_without_prefix:
-                case err.EMPTY_COMMITTEE_ID:
-                    assert False, err.EMPTY_COMMITTEE_ID  # noqa
-                case _:
-                    assert False, "Unknown error"  # noqa
-        else:
-            assert error.native == "", "Unknown error"
 
         mbr_after = Global.current_application_address.balance
 
@@ -1617,6 +1635,9 @@ class XGovRegistry(
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
             absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
+            governance_period=arc4.UInt64(self.governance_period.value),
+            committee_grace_period=arc4.UInt64(self.committee_grace_period.value),
+            committee_last_anchor=arc4.UInt64(self.committee_last_anchor.value),
         )
 
     @arc4.abimethod(readonly=True)

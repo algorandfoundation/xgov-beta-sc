@@ -53,6 +53,9 @@ GS_KEY_MAX_COMMITTEE_SIZE: Final[bytes] = b"max_committee_size"
 
 # Global state keys initialized after MainNet deployment
 GS_KEY_ABSENCE_TOLERANCE: Final[bytes] = b"absence_tolerance"
+GS_KEY_GOVERNANCE_PERIOD: Final[bytes] = b"governance_period"
+GS_KEY_COMMITTEE_GRACE_PERIOD: Final[bytes] = b"committee_grace_period"
+GS_KEY_COMMITTEE_LAST_ANCHOR: Final[bytes] = b"committee_last_anchor"
 
 # Box key prefixes
 PROPOSAL_APPROVAL_PROGRAM_BOX: Final[bytes] = b"pa"
@@ -101,3 +104,7 @@ WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
 
 ## Absenteeism
 ABSENCE_TOLERANCE: Final[int] = 3
+
+## Committee
+GOVERNANCE_PERIOD: Final[int] = 1_000_000  # blocks
+COMMITTEE_GRACE_PERIOD: Final[int] = 10_000  # blocks

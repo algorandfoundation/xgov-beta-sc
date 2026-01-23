@@ -24,6 +24,8 @@ on:
             "proposal_commitment_bps": "300",
             "min_requested_amount": "1_000_000",
             "absence_tolerance": "3"
+            "governance_period": "1_000_000",
+            "committee_grace_period": "10_000",
           }
         required: true
         default: "{}"
@@ -67,6 +69,8 @@ jobs:
           echo "proposal_commitment_bps=$(echo "$CONFIG" | jq -r '.proposal_commitment_bps // ""')" >> $GITHUB_OUTPUT
           echo "min_requested_amount=$(echo "$CONFIG" | jq -r '.min_requested_amount // ""')" >> $GITHUB_OUTPUT
           echo "absence_tolerance=$(echo "$CONFIG" | jq -r '.absence_tolerance // ""')" >> $GITHUB_OUTPUT
+          echo "governance_period=$(echo "$CONFIG" | jq -r '.governance_period // ""')" >> $GITHUB_OUTPUT
+          echo "committee_grace_period=$(echo "$CONFIG" | jq -r '.committee_grace_period // ""')" >> $GITHUB_OUTPUT
 
       - name: Configure xgov-beta-sc registry
         run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
@@ -97,3 +101,5 @@ jobs:
           XGOV_CFG_PROPOSAL_COMMITMENT_BPS: ${{ steps.parse-config.outputs.proposal_commitment_bps }}
           XGOV_CFG_MIN_REQUESTED_AMOUNT: ${{ steps.parse-config.outputs.min_requested_amount }}
           XGOV_CFG_ABSENCE_TOLERANCE: ${{ steps.parse-config.outputs.absence_tolerance }}
+          XGOV_CFG_GOVERNANCE_PERIOD: ${{ steps.parse-config.outputs.governance_period }}
+          XGOV_CFG_COMMITTEE_GRACE_PERIOD: ${{ steps.parse-config.outputs.committee_grace_period }}

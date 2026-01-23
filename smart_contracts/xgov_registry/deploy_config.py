@@ -374,6 +374,8 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
                 weighted_quorums[2],
             ),
             absence_tolerance=int(os.environ["XGOV_CFG_ABSENCE_TOLERANCE"]),
+            governance_period=int(os.environ["XGOV_CFG_GOVERNANCE_PERIOD"]),
+            committee_grace_period=int(os.environ["XGOV_CFG_COMMITTEE_GRACE_PERIOD"]),
         )
         app_client.send.config_xgov_registry(
             args=ConfigXgovRegistryArgs(
@@ -657,6 +659,12 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
         ),
         absence_tolerance=parse_int(
             "XGOV_CFG_ABSENCE_TOLERANCE", current_state.absence_tolerance
+        ),
+        governance_period=parse_int(
+            "GS_KEY_GOVERNANCE_PERIOD", current_state.governance_period
+        ),
+        committee_grace_period=parse_int(
+            "GS_KEY_COMMITTEE_GRACE_PERIOD", current_state.committee_grace_period
         ),
     )
 

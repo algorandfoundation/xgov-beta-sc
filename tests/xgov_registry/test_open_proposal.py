@@ -13,7 +13,12 @@ from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     XGovRegistryClient,
 )
 from smart_contracts.errors import std_errors as err
-from tests.xgov_registry.common import get_open_proposal_fee
+from tests.utils import get_last_round, round_warp
+from tests.xgov_registry.common import (
+    SHORT_COMMITTEE_GRACE_PERIOD,
+    SHORT_GOVERNANCE_PERIOD,
+    get_open_proposal_fee,
+)
 
 
 def test_open_proposal_success(
@@ -40,6 +45,29 @@ def test_open_proposal_success(
 
     final_pending_proposals = xgov_registry_client.state.global_state.pending_proposals
     assert final_pending_proposals == initial_pending_proposals + 1
+
+
+def test_open_proposal_in_committee_grace_period(
+    algorand_client: AlgorandClient,
+    min_fee_times_3: AlgoAmount,
+    proposer: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    r = get_last_round(algorand_client.client.algod)
+    next_anchor = r - (r % SHORT_GOVERNANCE_PERIOD) + SHORT_GOVERNANCE_PERIOD
+    round_warp(next_anchor + SHORT_COMMITTEE_GRACE_PERIOD - 1)
+    xgov_registry_client.send.open_proposal(
+        args=OpenProposalArgs(
+            payment=algorand_client.create_transaction.payment(
+                PaymentParams(
+                    sender=proposer.address,
+                    receiver=xgov_registry_client.app_address,
+                    amount=get_open_proposal_fee(xgov_registry_client),
+                )
+            )
+        ),
+        params=CommonAppCallParams(sender=proposer.address, static_fee=min_fee_times_3),
+    )
 
 
 def test_open_proposal_not_a_proposer(
@@ -251,24 +279,23 @@ def test_open_proposal_paused_proposal_error(
     )
 
 
-def test_open_proposal_no_committee_declared(
+def test_open_proposal_committee_stale(
     algorand_client: AlgorandClient,
     min_fee_times_3: AlgoAmount,
     proposer: SigningAccount,
-    xgov_registry_client_committee_not_declared: XGovRegistryClient,
+    xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(
-        LogicError
-    ):  # TODO: match=err.EMPTY_COMMITTEE_ID on the Registry handles errors
-        xgov_registry_client_committee_not_declared.send.open_proposal(
+    r = get_last_round(algorand_client.client.algod)
+    next_anchor = r - (r % SHORT_GOVERNANCE_PERIOD) + SHORT_GOVERNANCE_PERIOD
+    round_warp(next_anchor + SHORT_COMMITTEE_GRACE_PERIOD + 1)
+    with pytest.raises(LogicError, match=err.COMMITTEE_STALE):
+        xgov_registry_client.send.open_proposal(
             args=OpenProposalArgs(
                 payment=algorand_client.create_transaction.payment(
                     PaymentParams(
                         sender=proposer.address,
-                        receiver=xgov_registry_client_committee_not_declared.app_address,
-                        amount=get_open_proposal_fee(
-                            xgov_registry_client_committee_not_declared
-                        ),
+                        receiver=xgov_registry_client.app_address,
+                        amount=get_open_proposal_fee(xgov_registry_client),
                     )
                 )
             ),

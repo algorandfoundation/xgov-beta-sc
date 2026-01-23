@@ -12,7 +12,10 @@ The Proposer **MUST** provide the following **REQUIRED** data to open a Proposal
 
 - **Requested Amount** (in 𝜇ALGO).
 
-A Proposer **MUST NOT** have more than one active proposal at any time.
+A Proposer **MUST NOT** have more than one active Proposal at any time.
+
+A Proposer **MUST NOT** open a Proposal if the xGov Committee is _stale_ (see [xGov
+Committee declaration section](./xgov-committee.md#declaration)).
 
 The Proposer creates a Proposal Application from the xGov Registry.
 

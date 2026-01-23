@@ -611,7 +611,7 @@ class Proposal(
         )
 
     @arc4.abimethod(create="require")
-    def create(self, *, proposer: arc4.Address) -> typ.Error:
+    def create(self, *, proposer: arc4.Address) -> None:
         """Create a new proposal. MUST BE CALLED BY THE REGISTRY CONTRACT.
 
         Args:
@@ -633,7 +633,7 @@ class Proposal(
         # Set values from xGov Registry
         self.committee_id.value = typ.Bytes32.from_bytes(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_ID))
-        )
+        )  # The xGov Registry COMMITTEE_STALE error ensures the Committee is available
         self.committee_members.value = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_COMMITTEE_MEMBERS)
         )
@@ -646,12 +646,6 @@ class Proposal(
         self.daemon_ops_funding_bps.value = self.get_uint_from_registry_config(
             Bytes(reg_cfg.GS_KEY_DAEMON_OPS_FUNDING_BPS)
         )
-
-        # Post validation
-        if self.committee_id.value == typ.Bytes32.from_bytes(b""):
-            return typ.Error(err.ARC_65_PREFIX + err.EMPTY_COMMITTEE_ID)
-
-        return typ.Error("")
 
     @arc4.abimethod()
     def open(

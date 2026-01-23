@@ -10,7 +10,7 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod(create="require")
-    def create(self, *, proposer: arc4.Address) -> typ.Error:
+    def create(self, *, proposer: arc4.Address) -> None:
         pass
 
     @abstractmethod
