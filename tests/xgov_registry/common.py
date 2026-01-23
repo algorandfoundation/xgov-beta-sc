@@ -12,7 +12,7 @@ from smart_contracts.xgov_registry.config import (
 
 LOW_ABSENCE_TOLERANCE: Final[int] = 1
 SHORT_GOVERNANCE_PERIOD: Final[int] = 1_000
-SHORT_COMMITTEE_GRACE_PERIOD: Final[int] = 10
+SHORT_COMMITTEE_GRACE_PERIOD: Final[int] = 20
 TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1
 
