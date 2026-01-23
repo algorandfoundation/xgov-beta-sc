@@ -147,6 +147,16 @@ class XgovRegistryMock(XGovRegistryInterface):
         self.absence_tolerance = GlobalState(
             UInt64(reg_cfg.ABSENCE_TOLERANCE), key=reg_cfg.GS_KEY_ABSENCE_TOLERANCE
         )
+        self.governance_period = GlobalState(
+            UInt64(reg_cfg.GOVERNANCE_PERIOD), key=reg_cfg.GS_KEY_GOVERNANCE_PERIOD
+        )
+        self.committee_grace_period = GlobalState(
+            UInt64(reg_cfg.COMMITTEE_GRACE_PERIOD),
+            key=reg_cfg.GS_KEY_COMMITTEE_GRACE_PERIOD,
+        )
+        self.committee_last_anchor = GlobalState(
+            UInt64(), key=reg_cfg.GS_KEY_COMMITTEE_LAST_ANCHOR
+        )
 
     @arc4.abimethod(create="require")
     def create(self) -> None:
@@ -478,6 +488,9 @@ class XgovRegistryMock(XGovRegistryInterface):
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
             absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
+            governance_period=arc4.UInt64(self.governance_period.value),
+            committee_grace_period=arc4.UInt64(self.committee_grace_period.value),
+            committee_last_anchor=arc4.UInt64(self.committee_last_anchor.value),
         )
 
     @arc4.abimethod(readonly=True)
