@@ -49,6 +49,9 @@ def test_config_xgov_registry_success(
         weighted_quorum_small=xgov_registry_config.weighted_quorum[0],
         weighted_quorum_medium=xgov_registry_config.weighted_quorum[1],
         weighted_quorum_large=xgov_registry_config.weighted_quorum[2],
+        absence_tolerance=xgov_registry_config.absence_tolerance,
+        governance_period=xgov_registry_config.governance_period,
+        committee_grace_period=xgov_registry_config.committee_grace_period,
     )
 
 
