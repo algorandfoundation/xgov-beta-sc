@@ -10,8 +10,9 @@ from smart_contracts.xgov_registry.config import (
     MIN_REQUESTED_AMOUNT,
 )
 
-SHORT_GOVERNANCE_PERIOD = 1_000
-SHORT_COMMITTEE_GRACE_PERIOD = 10
+LOW_ABSENCE_TOLERANCE: Final[int] = 1
+SHORT_GOVERNANCE_PERIOD: Final[int] = 1_000
+SHORT_COMMITTEE_GRACE_PERIOD: Final[int] = 10
 TREASURY_AMOUNT: Final[AlgoAmount] = AlgoAmount(micro_algo=MIN_REQUESTED_AMOUNT)
 UNLIMITED_KYC_EXPIRATION = 2**64 - 1
 
@@ -42,6 +43,9 @@ def assert_registry_config(
     weighted_quorum_small: int,
     weighted_quorum_medium: int,
     weighted_quorum_large: int,
+    absence_tolerance: int,
+    governance_period: int,
+    committee_grace_period: int,
 ) -> None:
     global_state = xgov_registry_client.state.global_state
     assert global_state.xgov_fee == xgov_fee
@@ -67,6 +71,9 @@ def assert_registry_config(
     assert global_state.weighted_quorum_small == weighted_quorum_small
     assert global_state.weighted_quorum_medium == weighted_quorum_medium
     assert global_state.weighted_quorum_large == weighted_quorum_large
+    assert global_state.absence_tolerance == absence_tolerance
+    assert global_state.governance_period == governance_period
+    assert global_state.committee_grace_period == committee_grace_period
 
 
 def assert_committee(
@@ -109,6 +116,9 @@ def assert_get_state(
     assert global_state.weighted_quorum_small == get_state.weighted_quorum[0]
     assert global_state.weighted_quorum_medium == get_state.weighted_quorum[1]
     assert global_state.weighted_quorum_large == get_state.weighted_quorum[2]
+    assert global_state.absence_tolerance == get_state.absence_tolerance
+    assert global_state.governance_period == get_state.governance_period
+    assert global_state.committee_grace_period == get_state.committee_grace_period
 
 
 def get_xgov_fee(xgov_registry_client: XGovRegistryClient) -> AlgoAmount:
