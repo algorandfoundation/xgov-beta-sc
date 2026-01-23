@@ -34,6 +34,3 @@ MAX_APP_TOTAL_ARG_LEN: Final[int] = 2048
 METHOD_SELECTOR_LENGTH: Final[int] = 4
 UINT64_LENGTH: Final[int] = 8
 DYNAMIC_BYTE_ARRAY_LENGTH_OVERHEAD: Final[int] = 2
-
-GOVERNANCE_PERIOD: Final[int] = 1_000_000  # blocks
-COMMITTEE_GRACE_PERIOD: Final[int] = 10_000  # blocks
