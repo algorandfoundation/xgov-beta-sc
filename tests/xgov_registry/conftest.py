@@ -72,6 +72,7 @@ from tests.proposal.common import (
     upload_metadata,
 )
 from tests.xgov_registry.common import (
+    LOW_ABSENCE_TOLERANCE,
     SHORT_COMMITTEE_GRACE_PERIOD,
     SHORT_GOVERNANCE_PERIOD,
     TREASURY_AMOUNT,
@@ -284,7 +285,9 @@ def xgov_registry_config_dict() -> dict:
             regcfg.WEIGHTED_QUORUM_MEDIUM,
             regcfg.WEIGHTED_QUORUM_LARGE,
         ),
-        "absence_tolerance": 1,
+        "absence_tolerance": LOW_ABSENCE_TOLERANCE,
+        "governance_period": SHORT_GOVERNANCE_PERIOD,
+        "committee_grace_period": SHORT_COMMITTEE_GRACE_PERIOD,
     }
 
 
@@ -316,11 +319,7 @@ def xgov_registry_client_committee_not_declared(
         typed_factory=XGovRegistryFactory,
         default_sender=deployer.address,
         compilation_params=AppClientCompilationParams(
-            deploy_time_params={
-                "entropy": b"",
-                "governance_period": SHORT_GOVERNANCE_PERIOD,
-                "committee_grace_period": SHORT_COMMITTEE_GRACE_PERIOD,
-            }
+            deploy_time_params={"entropy": b""}
         ),
     )
     client, _ = factory.send.create.create()
