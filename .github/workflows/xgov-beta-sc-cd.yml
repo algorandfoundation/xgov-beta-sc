@@ -171,6 +171,8 @@ jobs:
           XGOV_CFG_QUORUM: ${{ vars.QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps
           XGOV_CFG_WEIGHTED_QUORUM: ${{ vars.WEIGHTED_QUORUM || '500,0,2_000' }} # defaults: 5 (S), 0 (M), 20 (L) % in bps
           XGOV_CFG_ABSENCE_TOLERANCE: ${{ vars.ABSENCE_TOLERANCE || '3' }} # defaults: 3
+          XGOV_CFG_GOVERNANCE_PERIOD: ${{ vars.GOVERNANCE_PERIOD || '1_000_000' }} # defaults: 1M blocks
+          XGOV_CFG_COMMITTEE_GRACE_PERIOD: ${{ vars.COMMITTEE_GRACE_PERIOD || '10_000' }} # defaults: 10k blocks
 
   trigger-ts-client-canary:
     runs-on: ubuntu-latest
