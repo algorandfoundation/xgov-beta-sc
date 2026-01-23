@@ -1112,6 +1112,7 @@ class XGovRegistry(
             err.WRONG_COMMITTEE_VOTES: If the committee voting power is zero
             err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
+
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
         assert size.as_uint64() > 0, err.WRONG_COMMITTEE_MEMBERS

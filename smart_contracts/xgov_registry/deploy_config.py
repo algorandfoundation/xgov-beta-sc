@@ -1,7 +1,6 @@
 import logging
 import os
 import random
-from typing import TypeAlias
 
 from algokit_utils import (
     AlgoAmount,
@@ -26,8 +25,6 @@ from smart_contracts.xgov_registry.vault_tx_signer import (
     _create_vault_auth_from_env,
     create_vault_multisig_signer_from_env,
 )
-
-DeployTimeParams: TypeAlias = dict[str, int | bytes]
 
 logger = logging.getLogger(__name__)
 
@@ -174,15 +171,16 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    template_values: DeployTimeParams = {"entropy": b""}
+    template_values = {"entropy": b""}
 
     signer = vault_signer if vault_signer else gh_deployer.signer
 
     fresh_deploy = os.environ.get("XGOV_REG_FRESH_DEPLOY", "false").lower() == "true"
     if fresh_deploy:
         logger.info("Fresh deployment requested")
-        # trick to ensure a fresh deployment
-        template_values["entropy"] = random.randbytes(16)
+        template_values = {
+            "entropy": random.randbytes(16),  # trick to ensure a fresh deployment
+        }
         deployer_address = gh_deployer.address
         signer = gh_deployer.signer
 
