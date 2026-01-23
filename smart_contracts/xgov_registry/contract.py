@@ -158,12 +158,6 @@ class XGovRegistry(
         self.max_committee_size = GlobalState(
             UInt64(), key=cfg.GS_KEY_MAX_COMMITTEE_SIZE
         )
-        self.last_committee_anchor = GlobalState(
-            UInt64, key=cfg.GS_KEY_LAST_COMMITTEE_ANCHOR
-        )
-        self.last_committee_update = GlobalState(
-            UInt64, key=cfg.GS_KEY_LAST_COMMITTEE_UPDATE
-        )
 
         # Counters
         self.xgovs = GlobalState(UInt64(), key=cfg.GS_KEY_XGOVS)
@@ -203,6 +197,15 @@ class XGovRegistry(
 
         # New Variables (introduced after MainNet deployment)
         self.absence_tolerance = GlobalState(UInt64, key=cfg.GS_KEY_ABSENCE_TOLERANCE)
+        self.governance_period = GlobalState(UInt64, key=cfg.GS_KEY_GOVERNANCE_PERIOD)
+        self.committee_grace_period = GlobalState(
+            UInt64, key=cfg.GS_KEY_COMMITTEE_GRACE_PERIOD
+        )
+        self.committee_last_anchor = GlobalState(
+            UInt64, key=cfg.GS_KEY_COMMITTEE_LAST_ANCHOR
+        )
+        # ⚠️ No more Global UInt64 available in the State Schema, further additional
+        # integers must be encoded as Global Bytes.
 
     @subroutine
     def entropy(self) -> Bytes:
@@ -299,7 +302,7 @@ class XGovRegistry(
     @subroutine
     def get_committee_anchor(self) -> UInt64:
         r = Global.round
-        return r - (r % TemplateVar[UInt64]("governance_period"))
+        return r - (r % self.governance_period.value)
 
     @subroutine
     def set_max_committee_size(
@@ -721,6 +724,8 @@ class XGovRegistry(
         self.weighted_quorum_large.value = config.weighted_quorum[2].as_uint64()
 
         self.absence_tolerance.value = config.absence_tolerance.as_uint64()
+        self.governance_period.value = config.governance_period.as_uint64()
+        self.committee_grace_period.value = config.committee_grace_period.as_uint64()
 
     @arc4.abimethod(allow_actions=["UpdateApplication"])
     def update_xgov_registry(self) -> None:
@@ -1107,13 +1112,6 @@ class XGovRegistry(
             err.WRONG_COMMITTEE_VOTES: If the committee voting power is zero
             err.COMMITTEE_SIZE_TOO_LARGE: If the committee size exceeds the maximum allowed size
         """
-        # Initialize Committee rounds (these global vars are not initialized on App
-        # creation since have been introduced after xGov Registry creation on MainNet)
-        _value, exists = self.last_committee_anchor.maybe()
-        if not exists:
-            self.last_committee_anchor.value = UInt64(0)
-            self.last_committee_update.value = UInt64(0)
-
         assert self.is_xgov_committee_manager(), err.UNAUTHORIZED
         assert committee_id.length == pcts.COMMITTEE_ID_LENGTH, err.WRONG_CID_LENGTH
         assert size.as_uint64() > 0, err.WRONG_COMMITTEE_MEMBERS
@@ -1125,8 +1123,7 @@ class XGovRegistry(
         self.committee_id.value = committee_id.copy()
         self.committee_members.value = size.as_uint64()
         self.committee_votes.value = votes.as_uint64()
-        self.last_committee_anchor.value = self.get_committee_anchor()
-        self.last_committee_update.value = Global.round
+        self.committee_last_anchor.value = self.get_committee_anchor()
 
         arc4.emit(
             typ.NewCommittee(
@@ -1163,9 +1160,9 @@ class XGovRegistry(
         committee_anchor = self.get_committee_anchor()
         committee_delay = Global.round - committee_anchor
         assert (
-            committee_anchor == self.last_committee_anchor.value
-            or committee_delay <= TemplateVar[UInt64]("committee_grace_period")
-        ), (err.COMMITTEE_STALE)
+            committee_anchor == self.committee_last_anchor.value
+            or committee_delay <= self.committee_grace_period.value
+        ), err.COMMITTEE_STALE
 
         # Check if the caller is a registered proposer
         assert Txn.sender in self.proposer_box, err.UNAUTHORIZED
@@ -1649,6 +1646,9 @@ class XGovRegistry(
             committee_members=arc4.UInt64(self.committee_members.value),
             committee_votes=arc4.UInt64(self.committee_votes.value),
             absence_tolerance=arc4.UInt64(self.absence_tolerance.value),
+            governance_period=arc4.UInt64(self.governance_period.value),
+            committee_grace_period=arc4.UInt64(self.committee_grace_period.value),
+            committee_last_anchor=arc4.UInt64(self.committee_last_anchor.value),
         )
 
     @arc4.abimethod(readonly=True)
