@@ -330,7 +330,7 @@ main:
     // smart_contracts/xgov_registry_mock/contract.py:148
     // UInt64(reg_cfg.ABSENCE_TOLERANCE), key=reg_cfg.GS_KEY_ABSENCE_TOLERANCE
     bytec 29 // 0x616273656e63655f746f6c6572616e6365
-    pushint 3
+    pushint 5
     // smart_contracts/xgov_registry_mock/contract.py:146-149
     // # New Variables (introduced after MainNet deployment)
     // self.absence_tolerance = GlobalState(
