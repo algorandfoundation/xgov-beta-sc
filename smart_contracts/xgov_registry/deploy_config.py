@@ -661,10 +661,10 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
             "XGOV_CFG_ABSENCE_TOLERANCE", current_state.absence_tolerance
         ),
         governance_period=parse_int(
-            "GS_KEY_GOVERNANCE_PERIOD", current_state.governance_period
+            "XGOV_CFG_GOVERNANCE_PERIOD", current_state.governance_period
         ),
         committee_grace_period=parse_int(
-            "GS_KEY_COMMITTEE_GRACE_PERIOD", current_state.committee_grace_period
+            "XGOV_CFG_COMMITTEE_GRACE_PERIOD", current_state.committee_grace_period
         ),
     )
 
