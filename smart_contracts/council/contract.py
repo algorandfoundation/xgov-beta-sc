@@ -10,7 +10,6 @@ from algopy import (
     Txn,
     UInt64,
     arc4,
-    subroutine,
     urange,
 )
 from algopy.op import AppGlobal
@@ -63,7 +62,6 @@ class Council(
             UInt64, typ.CouncilVotingBox, key_prefix=council_cfg.VOTES_KEY_PREFIX
         )
 
-    @subroutine
     def get_bytes_from_registry_config(self, global_state_key: Bytes) -> Bytes:
         value, exists = AppGlobal.get_ex_bytes(
             self.registry_app_id.value, global_state_key
@@ -71,13 +69,11 @@ class Council(
         assert exists, err.MISSING_CONFIG
         return value
 
-    @subroutine
     def is_manager(self) -> bool:
         return Txn.sender == Account(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_XGOV_MANAGER))
         )
 
-    @subroutine
     def is_committee_manager(self) -> bool:
         return Txn.sender == Account(
             self.get_bytes_from_registry_config(Bytes(reg_cfg.GS_KEY_COMMITTEE_MANAGER))
@@ -185,8 +181,8 @@ class Council(
 
             self.votes[proposal_id] = arc4.DynamicArray(
                 typ.CouncilVote(
-                    address=arc4.Address(Txn.sender),
-                    block=arc4.Bool(block),
+                    address=Txn.sender,
+                    block=block,
                 )
             )
 
@@ -207,8 +203,8 @@ class Council(
 
             self.votes[proposal_id].append(
                 typ.CouncilVote(
-                    address=arc4.Address(Txn.sender),
-                    block=arc4.Bool(block),
+                    address=Txn.sender,
+                    block=block,
                 )
             )
 
