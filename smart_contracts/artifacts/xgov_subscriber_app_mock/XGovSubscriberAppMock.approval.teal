@@ -119,7 +119,7 @@ unsubscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:37-41
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
-    //     app_id=app.id,
+    //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
     itxn_begin
@@ -133,7 +133,7 @@ unsubscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:37-41
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
-    //     app_id=app.id,
+    //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
     pushbytes 0xdf39fdb9 // method "unsubscribe_xgov()void"
