@@ -1,124 +1,124 @@
-import typing
 import typing as t
 
-from algopy import arc4
+from algopy import Account, FixedArray, String, Struct, UInt64, arc4
 
 # corresponds to COMMITTEE_ID_LENGTH in ./constants.py. We cannot use a variable here because as it causes type errors
 # which fails compilation.
-Bytes32 = arc4.StaticArray[arc4.Byte, typing.Literal[32]]
+Bytes32 = arc4.StaticArray[arc4.Byte, t.Literal[32]]
+TimeStamp: t.TypeAlias = UInt64
+MicroAlgo: t.TypeAlias = UInt64
+Error: t.TypeAlias = String
 
-Error = arc4.String
 
-
-class ProposalTypedGlobalState(arc4.Struct):
-    proposer: arc4.Address
-    registry_app_id: arc4.UInt64
-    title: arc4.String
-    open_ts: arc4.UInt64
-    submission_ts: arc4.UInt64
-    vote_open_ts: arc4.UInt64
-    status: arc4.UInt64
-    finalized: arc4.Bool
-    funding_category: arc4.UInt64
+class ProposalTypedGlobalState(Struct, kw_only=True):
+    proposer: Account
+    registry_app_id: UInt64
+    title: String
+    open_ts: TimeStamp
+    submission_ts: TimeStamp
+    vote_open_ts: TimeStamp
+    status: UInt64
+    finalized: bool
+    funding_category: UInt64
     focus: arc4.UInt8
-    funding_type: arc4.UInt64
-    requested_amount: arc4.UInt64
-    locked_amount: arc4.UInt64
+    funding_type: UInt64
+    requested_amount: MicroAlgo
+    locked_amount: MicroAlgo
     committee_id: Bytes32
-    committee_members: arc4.UInt64
-    committee_votes: arc4.UInt64
-    voted_members: arc4.UInt64
-    boycotted_members: arc4.UInt64
-    approvals: arc4.UInt64
-    rejections: arc4.UInt64
-    nulls: arc4.UInt64
+    committee_members: UInt64
+    committee_votes: UInt64
+    voted_members: UInt64
+    boycotted_members: UInt64
+    approvals: UInt64
+    rejections: UInt64
+    nulls: UInt64
 
 
-class CommitteeMember(arc4.Struct):
-    address: arc4.Address
-    voting_power: arc4.UInt64
+class CommitteeMember(Struct, kw_only=True):
+    address: Account
+    voting_power: UInt64
 
 
-Empty = arc4.StaticArray[arc4.Byte, typing.Literal[0]]
+Empty = arc4.StaticArray[arc4.Byte, t.Literal[0]]
 
 
-class CouncilVote(arc4.Struct):
-    address: arc4.Address
-    block: arc4.Bool
+class CouncilVote(Struct, kw_only=True):
+    address: Account
+    block: bool
 
 
 CouncilVotingBox = arc4.DynamicArray[CouncilVote]
 
 
-class TypedGlobalState(arc4.Struct):
-    paused_registry: arc4.Bool
-    paused_proposals: arc4.Bool
-    xgov_manager: arc4.Address
-    xgov_payor: arc4.Address
-    xgov_council: arc4.Address
-    xgov_subscriber: arc4.Address
-    kyc_provider: arc4.Address
-    committee_manager: arc4.Address
-    xgov_daemon: arc4.Address
-    xgov_fee: arc4.UInt64
-    proposer_fee: arc4.UInt64
-    open_proposal_fee: arc4.UInt64
-    daemon_ops_funding_bps: arc4.UInt64
-    proposal_commitment_bps: arc4.UInt64
-    min_requested_amount: arc4.UInt64
-    max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    discussion_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    outstanding_funds: arc4.UInt64
-    pending_proposals: arc4.UInt64
+class TypedGlobalState(Struct, kw_only=True):
+    paused_registry: bool
+    paused_proposals: bool
+    xgov_manager: Account
+    xgov_payor: Account
+    xgov_council: Account
+    xgov_subscriber: Account
+    kyc_provider: Account
+    committee_manager: Account
+    xgov_daemon: Account
+    xgov_fee: MicroAlgo
+    proposer_fee: MicroAlgo
+    open_proposal_fee: MicroAlgo
+    daemon_ops_funding_bps: UInt64
+    proposal_commitment_bps: UInt64
+    min_requested_amount: MicroAlgo
+    max_requested_amount: FixedArray[MicroAlgo, t.Literal[3]]
+    discussion_duration: FixedArray[UInt64, t.Literal[4]]
+    voting_duration: FixedArray[UInt64, t.Literal[4]]
+    quorum: FixedArray[UInt64, t.Literal[3]]
+    weighted_quorum: FixedArray[UInt64, t.Literal[3]]
+    outstanding_funds: MicroAlgo
+    pending_proposals: UInt64
     committee_id: Bytes32
-    committee_members: arc4.UInt64
-    committee_votes: arc4.UInt64
-    absence_tolerance: arc4.UInt64
-    governance_period: arc4.UInt64
-    committee_grace_period: arc4.UInt64
-    committee_last_anchor: arc4.UInt64
+    committee_members: UInt64
+    committee_votes: UInt64
+    absence_tolerance: UInt64
+    governance_period: UInt64
+    committee_grace_period: UInt64
+    committee_last_anchor: UInt64
 
 
-class XGovRegistryConfig(arc4.Struct):
-    xgov_fee: arc4.UInt64
-    proposer_fee: arc4.UInt64
-    open_proposal_fee: arc4.UInt64
-    daemon_ops_funding_bps: arc4.UInt64
-    proposal_commitment_bps: arc4.UInt64
-    min_requested_amount: arc4.UInt64
-    max_requested_amount: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    discussion_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    voting_duration: arc4.StaticArray[arc4.UInt64, t.Literal[4]]
-    quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    weighted_quorum: arc4.StaticArray[arc4.UInt64, t.Literal[3]]
-    absence_tolerance: arc4.UInt64
-    governance_period: arc4.UInt64
-    committee_grace_period: arc4.UInt64
+class XGovRegistryConfig(Struct, kw_only=True):
+    xgov_fee: MicroAlgo
+    proposer_fee: MicroAlgo
+    open_proposal_fee: MicroAlgo
+    daemon_ops_funding_bps: UInt64
+    proposal_commitment_bps: UInt64
+    min_requested_amount: MicroAlgo
+    max_requested_amount: FixedArray[MicroAlgo, t.Literal[3]]
+    discussion_duration: FixedArray[UInt64, t.Literal[4]]
+    voting_duration: FixedArray[UInt64, t.Literal[4]]
+    quorum: FixedArray[UInt64, t.Literal[3]]
+    weighted_quorum: FixedArray[UInt64, t.Literal[3]]
+    absence_tolerance: UInt64
+    governance_period: UInt64
+    committee_grace_period: UInt64
 
 
-class XGovSubscribeRequestBoxValue(arc4.Struct):
-    xgov_addr: arc4.Address
-    owner_addr: arc4.Address
-    relation_type: arc4.UInt64
+class XGovSubscribeRequestBoxValue(Struct, kw_only=True):
+    xgov_addr: Account
+    owner_addr: Account
+    relation_type: UInt64
 
 
-class ProposerBoxValue(arc4.Struct):
-    active_proposal: arc4.Bool
-    kyc_status: arc4.Bool
-    kyc_expiring: arc4.UInt64
+class ProposerBoxValue(Struct, kw_only=True):
+    active_proposal: bool
+    kyc_status: bool
+    kyc_expiring: UInt64
 
 
-class XGovBoxValue(arc4.Struct):
-    voting_address: arc4.Address
-    tolerated_absences: arc4.UInt64
-    last_vote_timestamp: arc4.UInt64
-    subscription_round: arc4.UInt64
+class XGovBoxValue(Struct, kw_only=True):
+    voting_address: Account
+    tolerated_absences: UInt64
+    last_vote_timestamp: TimeStamp
+    subscription_round: UInt64
 
 
-class VotingState(arc4.Struct, kw_only=True):
+class VotingState(Struct, kw_only=True):
     """The voting state of the Proposal"""
 
     quorum_voters: arc4.UInt32
@@ -128,10 +128,10 @@ class VotingState(arc4.Struct, kw_only=True):
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32
-    quorum_reached: arc4.Bool
-    weighted_quorum_reached: arc4.Bool
-    majority_approved: arc4.Bool
-    plebiscite: arc4.Bool
+    quorum_reached: bool
+    weighted_quorum_reached: bool
+    majority_approved: bool
+    plebiscite: bool
 
 
 # ARC-28 xGov Registry Events
@@ -140,27 +140,27 @@ class VotingState(arc4.Struct, kw_only=True):
 class XGovSubscribed(arc4.Struct, kw_only=True):
     """An xGov subscribed (either through self-onboarding or managed onboarding)"""
 
-    xgov: arc4.Address
-    delegate: arc4.Address
+    xgov: Account
+    delegate: Account
 
 
 class XGovUnsubscribed(arc4.Struct, kw_only=True):
     """An xGov unsubscribed (either through self-onboarding or managed onboarding)"""
 
-    xgov: arc4.Address
+    xgov: Account
 
 
 class ProposerSubscribed(arc4.Struct, kw_only=True):
     """A Proposer subscribed"""
 
-    proposer: arc4.Address
+    proposer: Account
 
 
 class ProposerKYC(arc4.Struct, kw_only=True):
     """A Proposer KYC status update"""
 
-    proposer: arc4.Address
-    valid_kyc: arc4.Bool
+    proposer: Account
+    valid_kyc: bool
 
 
 class NewCommittee(arc4.Struct, kw_only=True):
@@ -174,8 +174,8 @@ class NewCommittee(arc4.Struct, kw_only=True):
 class NewProposal(arc4.Struct, kw_only=True):
     """A new Proposal has been opened"""
 
-    proposal_id: arc4.UInt64
-    proposer: arc4.Address
+    proposal_id: UInt64
+    proposer: Account
 
 
 # ARC-28 Proposal Events
@@ -185,15 +185,15 @@ class Opened(arc4.Struct, kw_only=True):
     """The Proposal has been opened"""
 
     funding_type: arc4.UInt8
-    requested_amount: arc4.UInt64
+    requested_amount: UInt64
     category: arc4.UInt8
 
 
 class Submitted(arc4.Struct, kw_only=True):
     """The Proposal has been submitted for voting"""
 
-    vote_opening: arc4.UInt64
-    vote_closing: arc4.UInt64
+    vote_opening: TimeStamp
+    vote_closing: TimeStamp
     quorum_voters: arc4.UInt32
     weighted_quorum_votes: arc4.UInt32
 
@@ -205,7 +205,7 @@ class Vote(arc4.Struct, kw_only=True):
     approvals: arc4.UInt32
     rejections: arc4.UInt32
     nulls: arc4.UInt32
-    boycotted: arc4.Bool
+    boycotted: bool
     total_voters: arc4.UInt32
     total_boycott: arc4.UInt32
     total_approvals: arc4.UInt32
@@ -216,11 +216,11 @@ class Vote(arc4.Struct, kw_only=True):
 class Scrutiny(arc4.Struct, kw_only=True):
     """The vote has been scrutinized"""
 
-    approved: arc4.Bool
-    plebiscite: arc4.Bool
+    approved: bool
+    plebiscite: bool
 
 
 class Review(arc4.Struct, kw_only=True):
     """The xGov Council has reviewed the Proposal"""
 
-    veto: arc4.Bool
+    veto: bool
