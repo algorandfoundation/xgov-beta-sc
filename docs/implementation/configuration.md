@@ -21,6 +21,11 @@
 | Quorum Max                      |      \\( 70 \\)       |           %            |        \\( 7{,}000 \\)        |    bps    |
 | Weighted Quorum Min             |      \\( 50 \\)       |           %            |        \\( 5{,}000 \\)        |    bps    |
 | Weighted Quorum Max             |      \\( 70 \\)       |           %            |        \\( 7{,}000 \\)        |    bps    |
-| Absence Tolerance               |       \\( 3 \\)       |                        |           \\( 3 \\)           |           |
+| Absence Tolerance               |       \\( 5 \\)       |                        |           \\( 5 \\)           |           |
 | Governance Period               | \\( 1{,}000{,}000 \\) |         Blocks         |     \\( 1{,}000{,}000 \\)     |  blocks   |
-| Committee Grace Period          |   \\( 10{,}000 \\)    |         Blocks         |       \\( 10{,}000 \\)        |  blocks   |
+| Committee Grace Period          |    \\( \infty \\)     |         Blocks         |        \\( \infty \\)         |  blocks   |
+
+> [!NOTE]
+> The Committee on-chain watchdog, which ensures Committee's freshness, is currently
+> disabled. The `Committee Grace Period` is set to an arbitrarily high value until
+> the off-chain watchdog component is implemented and deployed.

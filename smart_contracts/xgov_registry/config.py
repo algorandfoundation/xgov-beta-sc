@@ -103,7 +103,7 @@ WEIGHTED_QUORUM_MEDIUM: Final[int] = 0  # No longer used
 WEIGHTED_QUORUM_LARGE: Final[int] = 70 * PERC_TO_BPS  # 70%
 
 ## Absenteeism
-ABSENCE_TOLERANCE: Final[int] = 3
+ABSENCE_TOLERANCE: Final[int] = 5
 
 ## Committee
 GOVERNANCE_PERIOD: Final[int] = 1_000_000  # blocks
