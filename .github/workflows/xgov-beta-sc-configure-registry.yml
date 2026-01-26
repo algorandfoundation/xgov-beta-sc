@@ -23,9 +23,9 @@ on:
             "daemon_ops_funding_bps": "500",
             "proposal_commitment_bps": "300",
             "min_requested_amount": "1_000_000",
-            "absence_tolerance": "3"
+            "absence_tolerance": "5",
             "governance_period": "1_000_000",
-            "committee_grace_period": "10_000",
+            "committee_grace_period": "10_000"
           }
         required: true
         default: "{}"
