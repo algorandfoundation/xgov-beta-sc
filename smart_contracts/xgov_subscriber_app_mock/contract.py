@@ -29,7 +29,7 @@ class XGovSubscriberAppMock(ARC4Contract):
             registry_contract.XGovRegistry.subscribe_xgov,
             voting_address,
             payment,
-            app_id=app_id.id,
+            app_id=app_id,
         )
 
     @arc4.abimethod()
