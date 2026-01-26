@@ -227,24 +227,24 @@
       "op": "txna ApplicationArgs 2",
       "defined_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "61": {
       "op": "dup",
       "defined_out": [
         "app_id#0",
-        "voting_address#0",
-        "voting_address#0 (copy)"
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
-        "voting_address#0 (copy)"
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
       ]
     },
     "62": {
@@ -252,11 +252,11 @@
       "defined_out": [
         "app_id#0",
         "len%1#0",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "len%1#0"
       ]
     },
@@ -266,11 +266,11 @@
         "32",
         "app_id#0",
         "len%1#0",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "len%1#0",
         "32"
       ]
@@ -280,11 +280,11 @@
       "defined_out": [
         "app_id#0",
         "eq%1#0",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "eq%1#0"
       ]
     },
@@ -293,7 +293,7 @@
       "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
       "stack_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "67": {
@@ -301,11 +301,11 @@
       "defined_out": [
         "app_id#0",
         "app_id#0 (copy)",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "app_id#0 (copy)"
       ]
     },
@@ -315,11 +315,11 @@
         "0x78676f765f666565",
         "app_id#0",
         "app_id#0 (copy)",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "app_id#0 (copy)",
         "0x78676f765f666565"
       ]
@@ -329,12 +329,12 @@
       "defined_out": [
         "_xgov_min_balance_exists#0",
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "xgov_fee#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "xgov_fee#0",
         "_xgov_min_balance_exists#0"
       ]
@@ -343,7 +343,7 @@
       "op": "pop",
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "xgov_fee#0"
       ]
     },
@@ -352,7 +352,7 @@
       "stack_out": [
         "app_id#0",
         "xgov_fee#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "82": {
@@ -360,7 +360,7 @@
       "stack_out": [
         "app_id#0",
         "xgov_fee#0",
-        "voting_address#0",
+        "tmp%2#0",
         "app_id#0 (copy)"
       ]
     },
@@ -369,14 +369,14 @@
       "defined_out": [
         "app_id#0",
         "check%0#0",
+        "tmp%2#0",
         "value%0#0",
-        "voting_address#0",
         "xgov_fee#0"
       ],
       "stack_out": [
         "app_id#0",
         "xgov_fee#0",
-        "voting_address#0",
+        "tmp%2#0",
         "value%0#0",
         "check%0#0"
       ]
@@ -387,7 +387,7 @@
       "stack_out": [
         "app_id#0",
         "xgov_fee#0",
-        "voting_address#0",
+        "tmp%2#0",
         "value%0#0"
       ]
     },
@@ -398,7 +398,7 @@
       "op": "uncover 2",
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "value%0#0",
         "xgov_fee#0"
       ]
@@ -407,7 +407,7 @@
       "op": "itxn_field Amount",
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "value%0#0"
       ]
     },
@@ -415,7 +415,7 @@
       "op": "itxn_field Receiver",
       "stack_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "94": {
@@ -423,11 +423,11 @@
       "defined_out": [
         "app_id#0",
         "pay",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "pay"
       ]
     },
@@ -435,7 +435,7 @@
       "op": "itxn_field TypeEnum",
       "stack_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "97": {
@@ -443,11 +443,11 @@
       "defined_out": [
         "0",
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
         "app_id#0",
-        "voting_address#0",
+        "tmp%2#0",
         "0"
       ]
     },
@@ -455,7 +455,7 @@
       "op": "itxn_field Fee",
       "stack_out": [
         "app_id#0",
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "100": {
@@ -464,31 +464,31 @@
     "101": {
       "op": "swap",
       "stack_out": [
-        "voting_address#0",
+        "tmp%2#0",
         "app_id#0"
       ]
     },
     "102": {
       "op": "itxn_field ApplicationID",
       "stack_out": [
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "104": {
       "op": "pushbytes 0xa082cef8 // method \"subscribe_xgov(address,pay)void\"",
       "defined_out": [
         "Method(subscribe_xgov(address,pay)void)",
-        "voting_address#0"
+        "tmp%2#0"
       ],
       "stack_out": [
-        "voting_address#0",
+        "tmp%2#0",
         "Method(subscribe_xgov(address,pay)void)"
       ]
     },
     "110": {
       "op": "itxn_field ApplicationArgs",
       "stack_out": [
-        "voting_address#0"
+        "tmp%2#0"
       ]
     },
     "112": {
@@ -603,10 +603,10 @@
     "131": {
       "op": "btoi",
       "defined_out": [
-        "app_id#0"
+        "app#0"
       ],
       "stack_out": [
-        "app_id#0"
+        "app#0"
       ]
     },
     "132": {
@@ -615,11 +615,11 @@
     "133": {
       "op": "global MinTxnFee",
       "defined_out": [
-        "app_id#0",
+        "app#0",
         "tmp%0#1"
       ],
       "stack_out": [
-        "app_id#0",
+        "app#0",
         "tmp%0#1"
       ]
     },
@@ -627,11 +627,11 @@
       "op": "pushint 2",
       "defined_out": [
         "2",
-        "app_id#0",
+        "app#0",
         "tmp%0#1"
       ],
       "stack_out": [
-        "app_id#0",
+        "app#0",
         "tmp%0#1",
         "2"
       ]
@@ -639,11 +639,11 @@
     "137": {
       "op": "*",
       "defined_out": [
-        "app_id#0",
+        "app#0",
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ],
       "stack_out": [
-        "app_id#0",
+        "app#0",
         "inner_txn_params%0%%param_Fee_idx_0#0"
       ]
     },
@@ -651,7 +651,7 @@
       "op": "swap",
       "stack_out": [
         "inner_txn_params%0%%param_Fee_idx_0#0",
-        "app_id#0"
+        "app#0"
       ]
     },
     "139": {
