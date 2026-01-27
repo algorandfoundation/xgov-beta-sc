@@ -60,7 +60,7 @@ subscribe_xgov:
     pop
     swap
     // smart_contracts/xgov_subscriber_app_mock/contract.py:24
-    // receiver=Application(app_id).address,
+    // receiver=app_id.address,
     dig 2
     app_params_get AppAddress
     assert // application exists

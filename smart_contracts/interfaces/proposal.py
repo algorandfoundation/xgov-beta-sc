@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from algopy import ARC4Contract, arc4, gtxn
+from algopy import Account, ARC4Contract, Array, Bytes, String, UInt64, arc4, gtxn
 
 import smart_contracts.common.abi_types as typ
 
@@ -10,7 +10,7 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod(create="require")
-    def create(self, *, proposer: arc4.Address) -> None:
+    def create(self, *, proposer: Account) -> None:
         pass
 
     @abstractmethod
@@ -19,18 +19,16 @@ class ProposalInterface(ARC4Contract, ABC):
         self,
         *,
         payment: gtxn.PaymentTransaction,
-        title: arc4.String,
-        funding_type: arc4.UInt64,
-        requested_amount: arc4.UInt64,
+        title: String,
+        funding_type: UInt64,
+        requested_amount: UInt64,
         focus: arc4.UInt8,
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def upload_metadata(
-        self, *, payload: arc4.DynamicBytes, is_first_in_group: arc4.Bool
-    ) -> None:
+    def upload_metadata(self, *, payload: Bytes, is_first_in_group: bool) -> None:
         pass
 
     @abstractmethod
@@ -48,14 +46,14 @@ class ProposalInterface(ARC4Contract, ABC):
     def assign_voters(
         self,
         *,
-        voters: arc4.DynamicArray[typ.CommitteeMember],
+        voters: Array[typ.CommitteeMember],
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
     def vote(
-        self, *, voter: arc4.Address, approvals: arc4.UInt64, rejections: arc4.UInt64
+        self, *, voter: Account, approvals: UInt64, rejections: UInt64
     ) -> typ.Error:
         pass
 
@@ -66,9 +64,7 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def unassign_absentees(
-        self, *, absentees: arc4.DynamicArray[arc4.Address]
-    ) -> typ.Error:
+    def unassign_absentees(self, *, absentees: Array[Account]) -> typ.Error:
         pass
 
     @abstractmethod
@@ -83,7 +79,7 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def unassign_voters(self, *, voters: arc4.DynamicArray[arc4.Address]) -> None:
+    def unassign_voters(self, *, voters: Array[Account]) -> None:
         pass
 
     @abstractmethod
@@ -103,7 +99,7 @@ class ProposalInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
-    def get_voter_box(self, *, voter_address: arc4.Address) -> tuple[arc4.UInt64, bool]:
+    def get_voter_box(self, *, voter_address: Account) -> tuple[UInt64, bool]:
         pass
 
     @abstractmethod
