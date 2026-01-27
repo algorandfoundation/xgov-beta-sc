@@ -465,7 +465,7 @@ class XGovRegistry(
         self.paused_proposals.value = False
 
     @arc4.abimethod()
-    def set_xgov_manager(self, manager: Account) -> None:
+    def set_xgov_manager(self, *, manager: Account) -> None:
         """
         Sets the xGov Manager.
 
