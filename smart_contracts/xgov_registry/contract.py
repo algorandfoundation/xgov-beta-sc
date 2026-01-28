@@ -754,7 +754,8 @@ class XGovRegistry(
     @arc4.abimethod()
     def unsubscribe_absentee(self, *, xgov_address: Account) -> None:
         """
-        Unsubscribes an absentee xGov.
+        Unsubscribes an absentee xGov. This is a temporary method used only for the
+        first absentees removal at the inception of the absenteeism penalty.
 
         Args:
             xgov_address: (Account): The address of the absentee xGov to unsubscribe
@@ -1300,9 +1301,10 @@ class XGovRegistry(
         for absentee in absentees:
             exists = absentee in self.xgov_box  # the xgov might have unsubscribed
             if exists and self.xgov_box[absentee].tolerated_absences > 0:
-                self.xgov_box[absentee].tolerated_absences = (
-                    self.xgov_box[absentee].tolerated_absences - 1
-                )
+                self.xgov_box[absentee].tolerated_absences -= 1
+                if self.xgov_box[absentee].tolerated_absences == 0:
+                    del self.xgov_box[absentee]
+                    self.xgovs.value -= 1
 
         error, _tx = arc4.abi_call(
             proposal_contract.Proposal.unassign_absentees,
