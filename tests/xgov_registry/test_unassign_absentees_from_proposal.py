@@ -33,6 +33,13 @@ def test_unassign(
     assert after == {a: before[a] - 1 for a in absentees}
 
 
+def test_unassign_and_delete() -> None:
+    # This test requires an xGov Registry reconfigured with LOW_ABSENCE_TOLERANCE
+    # before the xGov subscription. In this way xGov will reach 0 tolerated absences
+    # missing just 1 proposal vote, triggering both unassignment and deletion.
+    pass  # TODO
+
+
 def test_unassign_with_unsubscribed_xgov(
     committee: list[CommitteeMember],
     xgov_registry_client: XGovRegistryClient,
