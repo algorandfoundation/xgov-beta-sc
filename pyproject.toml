@@ -1,9 +1,9 @@
 [tool.poetry]
-package-mode = false
 name = "xgov-beta-sc"
 version = "2.0.0"
 description = "Algorand xGov Beta Smart Contracts"
 authors = ["Algorand Foundation <contact@algorand.foundation>"]
+packages = [{ include = "smart_contracts" }]
 readme = "README.md"
 homepage = "https://xgov.algorand.co/"
 repository = "https://github.com/algorandfoundation/xgov-beta-sc"
@@ -14,7 +14,6 @@ python = "^3.12"
 algokit-utils = "^4.2.3"
 python-dotenv = "^1.2.1"
 algorand-python = "==3.3.0"
-poetry-core = "^2.3.0"
 types-hvac = "^2.4.0.20251115"
 hvac = "^2.4.0"
 urllib3 = "^2.6.3"
@@ -33,7 +32,7 @@ pre-commit = "^4.5.1"
 puyapy = "==5.6.0"
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.3.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
