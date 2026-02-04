@@ -119,7 +119,7 @@ class XGovRegistryInterface(ARC4Contract, ABC):
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
+    ) -> UInt64:
         pass
 
     @abstractmethod
@@ -141,7 +141,7 @@ class XGovRegistryInterface(ARC4Contract, ABC):
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
+    ) -> UInt64:
         pass
 
     @abstractmethod
