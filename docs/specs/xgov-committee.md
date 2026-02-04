@@ -76,8 +76,8 @@ $$
 w(\xGov, B_i, B_f) \in \N,
 $$
 
-defined as the number of blocks proposed by an eligible xGov \\( a \\) in the governance
-period \\( [B_i; B_f) \\)[^1].
+defined as the number of blocks proposed by an eligible xGov \\( \xGov \\) in the
+governance period \\( [B_i; B_f) \\)[^1].
 
 > If an _active_ xGov \(( a \\) has acknowledged the xGov Registry at some
 > \\( h \in [B_c; B_f) \\) and has proposed one or more blocks in
@@ -203,5 +203,5 @@ The xGov Daemon **SHALL** assign the current xGov Committee to Proposals upon cr
 
 ---
 
-[^1]: If \\( a \\) is not eligible as an xGov in \\( [B_c; B_f) \\), its voting power
+[^1]: If \\( \xGov \\) is not _eligible_ in \\( [B_c; B_f) \\), its voting power
 is implicitly taken to be zero, and it is not included in the xGov Committee.
