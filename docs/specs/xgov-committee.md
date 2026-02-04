@@ -6,6 +6,7 @@ $$
 \newcommand \Addr {\mathrm{Addr}}
 \newcommand \Members {\mathrm{Members}}
 \newcommand \Votes {\mathrm{Votes}}
+\newcommand \xGov {\mathbf{x}}
 $$
 
 # xGov Committee
@@ -46,39 +47,42 @@ And is intended as a range of blocks \\( [B_i; B_f) \\) (\\( B_i \\) included,
 ## xGovs and Voting Power
 
 An _xGov_ is an address \\( a \in \A \\) that has acknowledged the xGov Registry
-on block \\( h \\) and is therefore eligible to acquire voting power.
+on block \\( h \\) and is therefore associated with an _active_ xGov Status.
 
-The xGov acknowledgement is defined by the pair \\( (a, h) \\) (represented on the
-xGov Registry as an xGov Box).
+The xGov Status **MAY** be _deactivated_ on block \\( r \\) for address \\( a \\),
+either by themself (unsubscribing from the xGov Registry) or by the xGov Registry
+rules.
 
-> If xGovs unsubscribe, the xGov acknowledgement of their address \\( a \\) is lost
-> and the pair \\( (a, h) \\) is removed from the xGov Registry state.
+The xGov Status is defined by the triplet \\( \xGov = (a, h, k) \\) (represented
+on the xGov Registry as an xGov Box).
 
-For a governance period \\( (B_i, B_f) \\), an address \\( a \\) is an _eligible_
-xGov in \\( [B_c; B_f) \\) if and only if there exists a block height \\( k \\)
-with \\( B_c ≤ k < B_f \\) such that the xGov Registry state at height \\( k \\)
-contains \\( (a, h) \\) for some \\( h ≤ k \\).
+> Once the xGov Registry has recorded an acknowledgement with \\( h ≥ B_c \\), the
+> address \\( a \\) is considered an _active_ xGov for every governance period
+> \\( (B_i, B_f) \\) such that \\( h \in [B_c; B_f) \\) and \\( k \neq 0 \\); in
+> particular, it is not necessary to re-acknowledge the xGov Registry for subsequent
+> governance periods.
 
-> Once the xGov Registry has recorded an acknowledgement \\( (a, h) \\) with
-> \\( h ≥ B_c \\), the address \\( a \\) is considered an eligible xGov for every
-> governance period \\( (B_i, B_f) \\) such that \\( h \in [B_c; B_f) \\); in particular,
-> it is not necessary to re-acknowledge the xGov Registry for subsequent governance
-> periods.
+For a governance period \\( (B_i, B_f) \\), an xGov \\( \xGov \\) is _eligible_
+in \\( [B_c; B_f) \\) if and only if:
+
+- \\( a \\) has proposed at least one block in \\( [B_i; B_f) \\), and
+- \\( B_c ≤ h < B_f \\), and
+- \\( k = 0 \\) or \\( k \ge B_f \\).
 
 For a fixed governance period \\( (B_i, B_f) \\), the _voting power_ of an eligible
-xGov \\( (a, h) \\) in that governance period is the integer
+xGov \\( \xGov \\) in that governance period is the integer
 
 $$
-w((a, h); B_i, B_f) \in \N,
+w(\xGov, B_i, B_f) \in \N,
 $$
 
-defined as the number of blocks proposed by an eligible address \\( a \\) in the
-governance period \\( [B_i; B_f) \\)[^1].
+defined as the number of blocks proposed by an eligible xGov \\( a \\) in the governance
+period \\( [B_i; B_f) \\)[^1].
 
-> If an xGov a has acknowledged the xGov Registry at some \\( h \in [B_c; B_f) \\)
-> and has proposed one or more blocks in \\( [B_i; B_f) \\), then all such proposals
-> in \\( [B_i; B_f) \\) contributes to its voting power, including those that occurred
-> before \\( h \\).
+> If an _active_ xGov \(( a \\) has acknowledged the xGov Registry at some
+> \\( h \in [B_c; B_f) \\) and has proposed one or more blocks in
+> \\( [B_i; B_f) \\), then all such proposals in \\( [B_i; B_f) \\) contribute to
+> its voting power, including those that occurred before \\( h \\).
 
 ## Definition of xGov Committee
 
@@ -99,7 +103,7 @@ $$
   &\textbf{eligibility} &&
     \forall (a, v) \in C, a \text{ is an eligible xGov in } [B_c; B_f), \\\\
   &\textbf{voting power} &&
-    \forall (a, v) \in C, v = w(a; B_i, B_f), \\\\
+    \forall (a, v) \in C, v = w(\xGov B_i, B_f), \\\\
   &\textbf{uniqueness} &&
     (a_1, v_1), (a_2, v_2) \in C \text{ and } a_1 = a_2 \Rightarrow v_1 = v_2.
 \end{align}
@@ -183,10 +187,14 @@ Manager **SHALL** declare on the xGov Registry:
 
 - The xGov Committee Voting Power \\( \Votes(\Comm) \\).
 
-within the rounds interval \\( [B_i; B_i + 10^3) \\).
+within the Committee Grace Period after \\( B_f \\).
 
-If the xGov Committee Manager fails to declare the xGov Committee within the rounds
-interval, the xGov Committee is considered _stale_ and Proposals are suspended.
+If the xGov Committee Manager fails to declare the xGov Committee within the Committee
+Grace Period, the xGov Committee is considered _stale_ and Proposals are suspended.
+
+{{#include ../_include/styles.md:note}}
+> Refer to the [xGov Registry configuration](../implementation/configuration.md)
+> for the Committee Grace Period value.
 
 ## Assignment to Proposal
 

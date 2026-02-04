@@ -13,12 +13,14 @@ The xGov Address and the current Voting Address **MAY** update the Voting Addres
 The xGov Address **MUST** subscribe on (acknowledge) the xGov Registry, to acquire
 the xGov status.
 
-The xGov status is defined as the pair \\( (a, h) \\), where:
+The xGov status is defined as the triplet \\( (a, h, k) \\), where:
 
 - \\( a \\) is the xGov Address;
-- \\( h \\) is the block at which the xGov Address subscribed.
+- \\( h \\) is the block at which the xGov Address is subscribed;
+- \\( k \\) is the block at which the xGov Address is unsubscribed (if any).
 
-The xGov Address **MAY** unsubscribe from the xGov Registry, losing the xGov status.
+The xGov Address **MAY** be unsubscribed from the xGov Registry, losing the xGov
+status (\\( k \neq 0 \\)).
 
 {{#include ../_include/styles.md:note}}
 > xGov Address can be associated with any Account type. This ensures the compatibility
@@ -34,7 +36,7 @@ The xGov Registry provides two xGov (un)subscription procedures:
 off-chain, by the Algorand Foundation, according to a pre-defined trust model. The
 Managed-Onboarding/Offboarding is executed in two steps:
 
-  1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe,
+  1. Users issue a [(Un)Subscription Request](#xgov-managed-unsubscription) to (un)subscribe,
   declaring the xGov App Address, the Application Owner Address, and a [Relation
   Type](./xgov-relation-types.md) (enumerative that identifies a pre-defined trust
   model).
@@ -72,7 +74,7 @@ An xGov Box has the following ABI schema:
 {
     "voting_addr": "address",
     "tolerated_absences": "uint64",
-    "last_vote_timestamp": "uint64",
+    "unsubscribed_round": "uint64",
     "subscription_round": "uint64"
 }
 ```
@@ -85,9 +87,23 @@ The xGov Fee **MUST** be paid to the xGov Treasury upon xGov Box creation.
 
 The xGov Fee **MAY NOT** be paid by the xGov Address.
 
-The Voting Address declared on subscription **MUST BE** assigned to the xGov Box.
+An xGov Box **MUST** be created using the caller's Algorand Address.
 
-### xGov Managed-Subscription
+The Voting Address **MUST BE** set to the one declared upon subscription.
+
+The Tolerated Absences **MUST BE** set to the xGov Registry Absence Tolerance Value.
+
+The Unsubscribed Round **MUST BE** set to \\( 0 \\).
+
+The Subscription Round **MUST BE** set to the current round number.
+
+### xGov Self-Unsubscription
+
+The unsubscription **MUST** be performed by the xGov Address.
+
+The Unsubscribed Round **MUST BE** set to the current round number.
+
+### xGov Managed-(Un)Subscription
 
 An xGov (Un)Subscription Request is associated with a Box on the xGov Registry,
 called _xGov (Un)Subscription Request Box_.
@@ -116,32 +132,37 @@ The xGov (Un)Subscription Request **MUST** be performed by the Owner Address.
 
 The xGov Fee **MUST NOT** be lower than the xGov (Un)Subscribe Request Box MBR.
 
-If the Algorand Foundation approves the subscription request:
+If the Algorand Foundation approves the _subscription_ request:
 
 1. The xGov Subscription Request Box **MUST** be destroyed;
 
-1. An xGov Box **MUST** be created using the xGov Address declared on the subscription
+1. An xGov Box **MUST** be created using the xGov Address declared upon subscription
 request.
 
-1. The Owner Address declared on the subscription request **MUST** be assigned to
-the Voting Address in the created xGov Box.
+1. The Voting Address **MUST BE** set to the Owner Address declared upon subscription
+request.
 
-1. The subscription round **MUST** be set to the current round number in the created
-xGov Box.
+1. The Tolerated Absences **MUST BE** set to the xGov Registry Absence Tolerance
+Value.
 
-If the Algorand Foundation approves the unsubscription request:
+1. The Unsubscribed Round **MUST BE** set to \\( 0 \\).
+
+1. The Subscription Round **MUST** be set to the current round number.
+
+If the Algorand Foundation approves the _unsubscription_ request:
 
 1. The xGov Unsubscription Request Box **MUST** be destroyed;
 
-1. The xGov Box of the xGov address **MUST** be destroyed.
+1. The Unsubscribed Round **MUST BE** set to the current round number.
 
 ## Absenteeism
 
-The xGov Registry tolerates absenteeism of \\( n \\) consecutive votes.
+The xGov Registry tolerates absenteeism of \\( n \\) consecutive votes, called Absence
+Tolerance.
 
 If an xGov is absent for \\( n \\) consecutive votes, the xGov **MUST** be unsubscribed
-from the xGov Registry (losing the xGov status).
+from the xGov Registry (losing the _active_ xGov Status).
 
 {{#include ../_include/styles.md:note}}
-> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
-> for the absence tolerance value.
+> Refer to the [xGov Registry configuration](../implementation/configuration.md)
+> for the Absence Tolerance value.
