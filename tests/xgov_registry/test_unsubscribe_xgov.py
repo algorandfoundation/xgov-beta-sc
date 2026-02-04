@@ -1,6 +1,5 @@
 import pytest
 from algokit_utils import AlgoAmount, CommonAppCallParams, LogicError, SigningAccount
-from algosdk.error import AlgodHTTPError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     SetVotingAccountArgs,
@@ -27,11 +26,13 @@ def test_unsubscribe_xgov_success(
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-
     assert final_xgovs == initial_xgovs - 1
-
-    with pytest.raises(AlgodHTTPError, match="box not found"):
-        xgov_registry_client.state.box.xgov_box.get_value(xgov.address)
+    assert (
+        xgov_registry_client.state.box.xgov_box.get_value(
+            xgov.address
+        ).unsubscribed_round
+        > 0
+    )
 
 
 def test_app_unsubscribe_xgov_success(
@@ -50,8 +51,19 @@ def test_app_unsubscribe_xgov_success(
         ),
     )
 
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
+
     xgov_subscriber_app.send.unsubscribe_xgov(
         args=AppUnsubscribeXgovArgs(app_id=xgov_registry_client.app_id),
+    )
+
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
+    assert final_xgovs == initial_xgovs - 1
+    assert (
+        xgov_registry_client.state.box.xgov_box.get_value(
+            xgov_subscriber_app.app_address
+        ).unsubscribed_round
+        > 0
     )
 
 
@@ -59,9 +71,22 @@ def test_unsubscribe_xgov_not_an_xgov(
     no_role_account: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=err.NOT_XGOV):
         xgov_registry_client.send.unsubscribe_xgov(
             params=CommonAppCallParams(sender=no_role_account.address),
+        )
+
+
+def test_unsubscribe_xgov_unactive_xgov(
+    xgov: SigningAccount,
+    xgov_registry_client: XGovRegistryClient,
+) -> None:
+    xgov_registry_client.send.unsubscribe_xgov(
+        params=CommonAppCallParams(sender=xgov.address),
+    )
+    with pytest.raises(LogicError, match=err.NOT_XGOV):
+        xgov_registry_client.send.unsubscribe_xgov(
+            params=CommonAppCallParams(sender=xgov.address),
         )
 
 
@@ -78,7 +103,7 @@ def test_unsubscribe_xgov_voting_address(
         params=CommonAppCallParams(sender=xgov.address),
     )
 
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=err.NOT_XGOV):
         xgov_registry_client.send.unsubscribe_xgov(
             params=CommonAppCallParams(sender=no_role_account.address),
         )
@@ -98,13 +123,17 @@ def test_unsubscribe_xgov_paused_registry_error(
 
     xgov_registry_client.send.resume_registry()
 
+    initial_xgovs = xgov_registry_client.state.global_state.xgovs
+
     xgov_registry_client.send.unsubscribe_xgov(
         params=CommonAppCallParams(sender=xgov.address),
     )
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
-
     assert final_xgovs == initial_xgovs - 1
-
-    with pytest.raises(AlgodHTTPError, match="box not found"):
-        xgov_registry_client.state.box.xgov_box.get_value(xgov.address)
+    assert (
+        xgov_registry_client.state.box.xgov_box.get_value(
+            xgov.address
+        ).unsubscribed_round
+        > 0
+    )

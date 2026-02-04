@@ -31,11 +31,12 @@ def test_approve_unsubscribe_xgov_success(
 
     final_xgovs = xgov_registry_client.state.global_state.xgovs
     assert final_xgovs == initial_xgovs - 1
-
-    with pytest.raises(AlgodHTTPError, match="box not found"):
+    assert (
         xgov_registry_client.state.box.xgov_box.get_value(
             app_xgov_unsubscribe_requested.app_address
-        )
+        ).unsubscribed_round
+        > 0
+    )
 
     with pytest.raises(AlgodHTTPError, match="box not found"):
         xgov_registry_client.state.box.request_unsubscribe_box.get_value(request_id)

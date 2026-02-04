@@ -66,7 +66,7 @@ The _funding size_ defines the timing of the Proposal lifecycle.
 | Voting time (after discussion) |           \\( V_S \\)           |             \\( V_M \\)             |             \\( V_L \\)             |
 
 {{#include ../_include/styles.md:note}}
-> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> Refer to the [xGov Registry configuration](../implementation/configuration.md)
 > for the Proposal lifecycle timing values.
 
 ## Quorum Thresholds
@@ -115,7 +115,7 @@ Where:
 ![Proposal Quorum](../_images/proposal-quorum.svg "Proposal Democratic Quorum Example")
 
 {{#include ../_include/styles.md:note}}
-> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> Refer to the [xGov Registry configuration](../implementation/configuration.md)
 > for the minimum and maximum quorum values.
 
 ## Metadata

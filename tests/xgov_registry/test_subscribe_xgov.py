@@ -60,6 +60,12 @@ def test_subscribe_xgov_success(
     )
 
     assert no_role_account.address == xgov_box.voting_address  # type: ignore
+    assert (
+        xgov_box.tolerated_absences
+        == xgov_registry_client.state.global_state.absence_tolerance
+    )
+    assert xgov_box.unsubscribed_round == 0
+    assert xgov_box.subscription_round > 0
 
 
 def test_app_subscribe_xgov_success(
@@ -97,6 +103,12 @@ def test_app_subscribe_xgov_success(
     )
 
     assert no_role_account.address == xgov_box.voting_address  # type: ignore
+    assert (
+        xgov_box.tolerated_absences
+        == xgov_registry_client.state.global_state.absence_tolerance
+    )
+    assert xgov_box.unsubscribed_round == 0
+    assert xgov_box.subscription_round > 0
 
 
 def test_subscribe_xgov_already_xgov(

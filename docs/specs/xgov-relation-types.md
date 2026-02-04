@@ -33,7 +33,3 @@ To request a Managed Subscription for a Réti Staking Pool:
 - The `relation_type` **MUST** be set to `1`;
 - The `owner_addr` **MUST** be set to the Validator Owner Address;
 - The `xgov_addr` **MUST** be set to the Staking Pool Address.
-
-### Relation Type 2: Compx LST
-
-TBD
