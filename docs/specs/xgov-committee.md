@@ -58,9 +58,9 @@ on the xGov Registry as an xGov Box).
 
 > Once the xGov Registry has recorded an acknowledgement with \\( h ≥ B_c \\), the
 > address \\( a \\) is considered an _active_ xGov for every governance period
-> \\( (B_i, B_f) \\) such that \\( h \in [B_c; B_f) \\) and (\\( k = 0 \\) or \\( k \ge B_f \\)); in
-> particular, it is not necessary to re-acknowledge the xGov Registry for subsequent
-> governance periods.
+> \\( (B_i, B_f) \\) such that \\( h \in [B_c; B_f) \\) and (\\( k = 0 \\) or
+> \\( k \ge B_f \\)); in particular, it is not necessary to re-acknowledge the xGov
+> Registry for subsequent governance periods.
 
 For a governance period \\( (B_i, B_f) \\), an xGov \\( \xGov \\) is _eligible_
 in \\( [B_c; B_f) \\) if and only if:
@@ -79,7 +79,7 @@ $$
 defined as the number of blocks proposed by an eligible xGov \\( \xGov \\) in the
 governance period \\( [B_i; B_f) \\)[^1].
 
-> If an _active_ xGov \\( a \\) has acknowledged the xGov Registry at some
+> If an _active_ xGov \\( \xGov \\) has acknowledged the xGov Registry at some
 > \\( h \in [B_c; B_f) \\) and has proposed one or more blocks in
 > \\( [B_i; B_f) \\), then all such proposals in \\( [B_i; B_f) \\) contribute to
 > its voting power, including those that occurred before \\( h \\).
