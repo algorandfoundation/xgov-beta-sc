@@ -250,14 +250,6 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
-    def approve_subscribe_xgov(self, *, request_id: UInt64) -> None:
-        pass
-
-    @arc4.abimethod()
-    def reject_subscribe_xgov(self, *, request_id: UInt64) -> None:
-        pass
-
-    @arc4.abimethod()
     def request_subscribe_xgov(
         self,
         *,
@@ -265,7 +257,15 @@ class XgovRegistryMock(XGovRegistryInterface):
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
+    ) -> UInt64:
+        return UInt64(0)
+
+    @arc4.abimethod()
+    def approve_subscribe_xgov(self, *, request_id: UInt64) -> None:
+        pass
+
+    @arc4.abimethod()
+    def reject_subscribe_xgov(self, *, request_id: UInt64) -> None:
         pass
 
     @arc4.abimethod()
@@ -276,8 +276,8 @@ class XgovRegistryMock(XGovRegistryInterface):
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
-        pass
+    ) -> UInt64:
+        return UInt64(0)
 
     @arc4.abimethod()
     def approve_unsubscribe_xgov(self, *, request_id: UInt64) -> None:
@@ -504,7 +504,7 @@ class XgovRegistryMock(XGovRegistryInterface):
             typ.XGovBoxValue(
                 voting_address=Account(),
                 tolerated_absences=UInt64(0),
-                last_vote_timestamp=UInt64(0),
+                unsubscribed_round=UInt64(0),
                 subscription_round=UInt64(0),
             ),
             False,
