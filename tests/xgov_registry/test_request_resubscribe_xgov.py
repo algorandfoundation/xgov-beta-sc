@@ -6,6 +6,7 @@ from algokit_utils import (
 )
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    ApproveSubscribeXgovArgs,
     ApproveUnsubscribeXgovArgs,
     RequestSubscribeXgovArgs,
     XGovRegistryClient,
@@ -63,7 +64,7 @@ def test_request_resubscribe_xgov_success(
 
     # Approve resubscribe
     xgov_registry_client.send.approve_subscribe_xgov(
-        args=ApproveUnsubscribeXgovArgs(request_id=rid),
+        args=ApproveSubscribeXgovArgs(request_id=rid),
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
