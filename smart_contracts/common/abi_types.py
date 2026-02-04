@@ -114,7 +114,7 @@ class ProposerBoxValue(Struct, kw_only=True):
 class XGovBoxValue(Struct, kw_only=True):
     voting_address: Account
     tolerated_absences: UInt64
-    last_vote_timestamp: TimeStamp
+    unsubscribed_round: UInt64
     subscription_round: UInt64
 
 
