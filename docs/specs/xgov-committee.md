@@ -49,7 +49,7 @@ And is intended as a range of blocks \\( [B_i; B_f) \\) (\\( B_i \\) included,
 An _xGov_ is an address \\( a \in \A \\) that has acknowledged the xGov Registry
 on block \\( h \\) and is therefore associated with an _active_ xGov Status.
 
-The xGov Status **MAY** be _deactivated_ on block \\( r \\) for address \\( a \\),
+The xGov Status **MAY** be _deactivated_ on block \\( k \\) for address \\( a \\),
 either by themself (unsubscribing from the xGov Registry) or by the xGov Registry
 rules.
 
