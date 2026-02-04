@@ -1,11 +1,9 @@
-import pytest
 from algokit_utils import (
     AlgorandClient,
     CommonAppCallParams,
     PaymentParams,
     SigningAccount,
 )
-from algosdk.error import AlgodHTTPError
 
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     ApproveUnsubscribeXgovArgs,
@@ -34,17 +32,18 @@ def test_request_resubscribe_xgov_success(
         params=CommonAppCallParams(sender=xgov_subscriber.address),
     )
 
-    final_xgovs = xgov_registry_client.state.global_state.xgovs
-    assert final_xgovs == initial_xgovs - 1
-
-    with pytest.raises(AlgodHTTPError, match="box not found"):
+    xgovs = xgov_registry_client.state.global_state.xgovs
+    assert xgovs == initial_xgovs - 1
+    assert (
         xgov_registry_client.state.box.xgov_box.get_value(
             app_xgov_unsubscribe_requested.app_address
-        )
+        ).unsubscribed_round
+        > 0
+    )
 
     # Request new subscription
     initial_request_id = xgov_registry_client.state.global_state.request_id
-    xgov_registry_client.send.request_subscribe_xgov(
+    rid = xgov_registry_client.send.request_subscribe_xgov(
         args=RequestSubscribeXgovArgs(
             xgov_address=app_xgov_unsubscribe_requested.app_address,
             owner_address=deployer.address,
@@ -57,6 +56,22 @@ def test_request_resubscribe_xgov_success(
                 )
             ),
         )
-    )
+    ).abi_return
     final_request_id = xgov_registry_client.state.global_state.request_id
+    assert rid == initial_request_id
     assert final_request_id == initial_request_id + 1
+
+    # Approve resubscribe
+    xgov_registry_client.send.approve_subscribe_xgov(
+        args=ApproveUnsubscribeXgovArgs(request_id=rid),
+        params=CommonAppCallParams(sender=xgov_subscriber.address),
+    )
+
+    final_xgovs = xgov_registry_client.state.global_state.xgovs
+    assert final_xgovs == xgovs + 1
+    assert (
+        xgov_registry_client.state.box.xgov_box.get_value(
+            app_xgov_unsubscribe_requested.app_address
+        ).unsubscribed_round
+        == 0
+    )
