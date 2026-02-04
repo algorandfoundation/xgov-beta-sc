@@ -220,6 +220,18 @@ class XGovRegistry(
     def is_xgov_committee_manager(self) -> bool:
         return Txn.sender == self.committee_manager.value
 
+    def has_xgov_status(self, a: Account) -> bool:
+        return a in self.xgov_box
+
+    def is_active_xgov(self, a: Account) -> bool:
+        return self.has_xgov_status(a) and self.xgov_box[a].unsubscribed_round == 0
+
+    def caller_is_xgov_or_voting_address(self, xgov_address: Account) -> bool:
+        return (
+            Txn.sender == xgov_address
+            or Txn.sender == self.xgov_box[xgov_address].voting_address
+        )
+
     def _is_proposal(self, proposal: Application) -> bool:
         return proposal.creator == Global.current_application_address
 
@@ -339,9 +351,21 @@ class XGovRegistry(
         return typ.XGovBoxValue(
             voting_address=voting_address,
             tolerated_absences=self.absence_tolerance.value,
-            last_vote_timestamp=UInt64(0),
+            unsubscribed_round=UInt64(0),
             subscription_round=Global.round,
         )
+
+    def subscribe_xgov_and_emit(
+        self, *, xgov_address: Account, voting_address: Account
+    ) -> None:
+        self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
+        self.xgovs.value += 1
+        arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
+
+    def unsubscribe_xgov_and_emit(self, xgov_address: Account) -> None:
+        self.xgov_box[xgov_address].unsubscribed_round = Global.round
+        self.xgovs.value -= 1
+        arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address))
 
     def make_proposer_box(
         self,
@@ -715,21 +739,21 @@ class XGovRegistry(
             payment (gtxn.PaymentTransaction): The payment transaction covering the xGov fee
 
         Raises:
-            err.ALREADY_XGOV: If the sender is already an xGov
+            err.PAUSED_REGISTRY: If registry is paused
+            err.ALREADY_XGOV: If the sender is already an active xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
-
-        assert Txn.sender not in self.xgov_box, err.ALREADY_XGOV
-        # check payment
+        assert not self.is_active_xgov(Txn.sender), err.ALREADY_XGOV
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
-        # create box
-        self.xgov_box[Txn.sender] = self.make_xgov_box(voting_address)
-        self.xgovs.value += 1
+        if self.has_xgov_status(Txn.sender):
+            del self.xgov_box[Txn.sender]
 
-        arc4.emit(typ.XGovSubscribed(xgov=Txn.sender, delegate=voting_address))
+        self.subscribe_xgov_and_emit(
+            xgov_address=Txn.sender, voting_address=voting_address
+        )
 
     @arc4.abimethod()
     def unsubscribe_xgov(self) -> None:
@@ -737,19 +761,14 @@ class XGovRegistry(
         Unsubscribes the sender from being an xGov.
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not currently an xGov
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the sender is not an active xGov
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
+        assert self.is_active_xgov(Txn.sender), err.NOT_XGOV
 
-        # ensure the sender is an xGov
-        assert Txn.sender in self.xgov_box, err.UNAUTHORIZED
-
-        # delete box
-        del self.xgov_box[Txn.sender]
-        self.xgovs.value -= 1
-
-        arc4.emit(typ.XGovUnsubscribed(xgov=Txn.sender))
+        self.unsubscribe_xgov_and_emit(Txn.sender)
 
     @arc4.abimethod()
     def unsubscribe_absentee(self, *, xgov_address: Account) -> None:
@@ -763,17 +782,34 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the address is not an absentee xGov
             err.PAUSED_REGISTRY: If registry is paused
-            err.NOT_XGOV: If the address is not an xGov
+            err.NOT_XGOV: If the address is not an active xGov
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
-        assert xgov_address in self.xgov_box, err.NOT_XGOV
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
         assert self.xgov_box[xgov_address].tolerated_absences == 0, err.UNAUTHORIZED
 
-        del self.xgov_box[xgov_address]
-        self.xgovs.value -= 1
+        self.unsubscribe_xgov_and_emit(xgov_address)
 
-        arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address))
+    @arc4.abimethod()
+    def activate_xgov(self, xgov_address: Account) -> None:
+        """
+        Activate a revoked xGov status. This is a temporary method used only at the
+        inception of the xGov status revocation.
+
+        Args:
+            xgov_address: The xGov address to activate.
+
+        Raises:
+            err.UNAUTHORIZED: If the caller is not the xGov Subscriber
+            err.ALREADY_XGOV: If the address is already an active xGov
+        """
+
+        assert self.is_xgov_subscriber(), err.UNAUTHORIZED
+        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
+
+        if self.has_xgov_status(xgov_address):
+            self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
 
     @arc4.abimethod()
     def request_subscribe_xgov(
@@ -783,7 +819,7 @@ class XGovRegistry(
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
+    ) -> UInt64:
         """
         Requests to subscribe to the xGov.
 
@@ -793,19 +829,19 @@ class XGovRegistry(
             relation_type (UInt64): The type of relationship enum
             payment (gtxn.PaymentTransaction): The payment transaction covering the xGov fee
 
+        Returns:
+            Subscription request ID
+
         Raises:
             err.UNAUTHORIZED: If the sender is not the declared Application owner address
-            err.ALREADY_XGOV: If the sender is already an xGov
+            err.PAUSED_REGISTRY: If registry is paused
+            err.ALREADY_XGOV: If the sender is already an active xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
         assert Txn.sender == owner_address, err.UNAUTHORIZED
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
-
-        # ensure the xgov_address is not already an xGov
-        assert xgov_address not in self.xgov_box, err.ALREADY_XGOV
-
-        # check payment
+        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create request box
@@ -818,6 +854,8 @@ class XGovRegistry(
 
         # increment request id
         self.request_id.value += 1
+
+        return rid
 
     @arc4.abimethod()
     def approve_subscribe_xgov(self, *, request_id: UInt64) -> None:
@@ -833,20 +871,18 @@ class XGovRegistry(
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
-        # get the request
-        request = self.request_box[request_id].copy()
-        # create the xGov
-        self.xgov_box[request.xgov_addr] = self.make_xgov_box(request.owner_addr)
-        self.xgovs.value += 1
+        xgov_address = self.request_box[request_id].xgov_addr
+        voting_address = self.request_box[request_id].owner_addr
+
+        if self.has_xgov_status(xgov_address):
+            del self.xgov_box[xgov_address]
+
+        self.subscribe_xgov_and_emit(
+            xgov_address=xgov_address, voting_address=voting_address
+        )
+
         # delete the request
         del self.request_box[request_id]
-
-        arc4.emit(
-            typ.XGovSubscribed(
-                xgov=request.xgov_addr,
-                delegate=request.owner_addr,
-            )
-        )
 
     @arc4.abimethod()
     def reject_subscribe_xgov(self, *, request_id: UInt64) -> None:
@@ -873,7 +909,7 @@ class XGovRegistry(
         owner_address: Account,
         relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
-    ) -> None:
+    ) -> UInt64:
         """
         Requests to unsubscribe from the xGov.
 
@@ -883,20 +919,19 @@ class XGovRegistry(
             relation_type (UInt64): The type of relationship enum
             payment (gtxn.PaymentTransaction): The payment transaction covering the xGov (unsubscribe) fee
 
+        Returns:
+            Unsubscribe request ID
+
         Raises:
             err.UNAUTHORIZED: If the sender is not the declared Application owner address
             err.PAUSED_REGISTRY: If registry is paused
-            err.NOT_XGOV: If the requested xGov address is not an xGov
+            err.NOT_XGOV: If the requested xGov address is not an active xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
         assert Txn.sender == owner_address, err.UNAUTHORIZED
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
-
-        # ensure the xgov_address is already an xGov
-        assert xgov_address in self.xgov_box, err.NOT_XGOV
-
-        # check payment
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
         # create unsubscribe request box
@@ -909,6 +944,8 @@ class XGovRegistry(
 
         # increment request id
         self.request_id.value += 1
+
+        return ruid
 
     @arc4.abimethod()
     def approve_unsubscribe_xgov(self, *, request_id: UInt64) -> None:
@@ -924,17 +961,11 @@ class XGovRegistry(
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
-        # get the request
-        request = self.request_unsubscribe_box[request_id].copy()
-
-        # del the xGov
-        del self.xgov_box[request.xgov_addr]
-        self.xgovs.value -= 1
+        xgov_address = self.request_unsubscribe_box[request_id].xgov_addr
+        self.unsubscribe_xgov_and_emit(xgov_address)
 
         # delete the request
         del self.request_unsubscribe_box[request_id]
-
-        arc4.emit(typ.XGovUnsubscribed(xgov=request.xgov_addr))
 
     @arc4.abimethod()
     def reject_unsubscribe_xgov(self, *, request_id: UInt64) -> None:
@@ -965,21 +996,14 @@ class XGovRegistry(
             voting_address (Account): The voting account address to delegate voting power to
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not currently an xGov
-            err.VOTING_ADDRESS_MUST_BE_DIFFERENT: If the new voting account is the same as currently set
+            err.PAUSED_REGISTRY: If registry is paused
+            err.NOT_XGOV: If the xGov Address is not an active xGov
+            err.UNAUTHORIZED: If the sender is not the xGov or the Voting Address
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
-
-        # Check if the sender is an xGov member
-        exists = xgov_address in self.xgov_box
-        assert exists, err.UNAUTHORIZED
-        xgov_box = self.xgov_box[xgov_address].copy()
-
-        # Check that the sender is either the xGov or the voting address
-        assert (
-            Txn.sender == xgov_box.voting_address or Txn.sender == xgov_address
-        ), err.UNAUTHORIZED
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
+        assert self.caller_is_xgov_or_voting_address(xgov_address), err.UNAUTHORIZED
 
         # Update the voting account in the xGov box
         self.xgov_box[xgov_address].voting_address = voting_address
@@ -1220,8 +1244,7 @@ class XGovRegistry(
 
         Raises:
             err.INVALID_PROPOSAL: If the Proposal ID is not a Proposal contract
-            err.WRONG_PROPOSAL_STATUS: If the Proposal is not in a voting session
-            err.UNAUTHORIZED: If the xGov_address is not an xGov
+            err.NOT_XGOV: If the xGov Address is not an active xGov
             err.MUST_BE_XGOV_OR_VOTING_ADDRESS: If the sender is not the xgov_address or the voting_address
             err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
@@ -1235,19 +1258,13 @@ class XGovRegistry(
 
         # verify proposal_id id is genuine proposal
         assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
+        assert self.caller_is_xgov_or_voting_address(
+            xgov_address
+        ), err.MUST_BE_XGOV_OR_VOTING_ADDRESS
 
-        # make sure they're voting on behalf of an xGov
-        exists = xgov_address in self.xgov_box
-        assert exists, err.UNAUTHORIZED
-        xgov_box = self.xgov_box[xgov_address].copy()
         # Upon vote the absence tolerance is reset
         self.xgov_box[xgov_address].tolerated_absences = self.absence_tolerance.value
-        self.xgov_box[xgov_address].last_vote_timestamp = Global.latest_timestamp
-
-        # Verify the caller is either xgov address or its voting address
-        assert (
-            Txn.sender == xgov_address or Txn.sender == xgov_box.voting_address
-        ), err.MUST_BE_XGOV_OR_VOTING_ADDRESS
 
         # Call the Proposal App to register the vote
         error, _tx = arc4.abi_call(
@@ -1299,12 +1316,11 @@ class XGovRegistry(
         # The later ABI call to the Proposal panics if any absentee is duplicated,
         # multiple non-idempotent effects are rejected after.
         for absentee in absentees:
-            exists = absentee in self.xgov_box  # the xgov might have unsubscribed
-            if exists and self.xgov_box[absentee].tolerated_absences > 0:
+            # No check for xGov boxes' existence since they are no longer deleted
+            if self.xgov_box[absentee].tolerated_absences > 0:
                 self.xgov_box[absentee].tolerated_absences -= 1
                 if self.xgov_box[absentee].tolerated_absences == 0:
-                    del self.xgov_box[absentee]
-                    self.xgovs.value -= 1
+                    self.unsubscribe_xgov_and_emit(absentee)
 
         error, _tx = arc4.abi_call(
             proposal_contract.Proposal.unassign_absentees,
@@ -1607,14 +1623,14 @@ class XGovRegistry(
             typ.XGovBoxValue: The xGov box value
             bool: `True` if xGov box exists, else `False`
         """
-        exists = xgov_address in self.xgov_box
+        exists = self.has_xgov_status(xgov_address)
         if exists:
             val = self.xgov_box[xgov_address].copy()
         else:
             val = typ.XGovBoxValue(
                 voting_address=Account(),
                 tolerated_absences=UInt64(0),
-                last_vote_timestamp=UInt64(0),
+                unsubscribed_round=UInt64(0),
                 subscription_round=UInt64(0),
             )
 
