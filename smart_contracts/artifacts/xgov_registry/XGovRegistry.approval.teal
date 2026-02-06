@@ -2967,22 +2967,89 @@ unassign_absentee_from_proposal:
     ==
     assert // invalid number of bytes for string
     extract 6 0
+    dup
+    // smart_contracts/xgov_registry/contract.py:1296
+    // if error.startswith(err.ARC_65_PREFIX):
+    len
+    dup
+    pushint 4
+    <
+    bz unassign_absentee_from_proposal_ternary_false@4
     intc_0 // 0
 
-unassign_absentee_from_proposal_for_header@3:
-    // smart_contracts/xgov_registry/contract.py:1296-1300
+unassign_absentee_from_proposal_ternary_merge@5:
+    // smart_contracts/xgov_registry/contract.py:1296
+    // if error.startswith(err.ARC_65_PREFIX):
+    bz unassign_absentee_from_proposal_else_body@10
+    // smart_contracts/xgov_registry/contract.py:1297
+    // error_without_prefix = String.from_bytes(error.bytes[4:])
+    pushint 4
+    dig 1
+    dup
+    cover 2
+    >=
+    pushint 4
+    dig 2
+    uncover 2
+    select
+    dig 3
+    swap
+    uncover 2
+    substring3
+    // smart_contracts/xgov_registry/contract.py:1299
+    // case err.WRONG_PROPOSAL_STATUS:
+    bytec 12 // "Wrong Proposal Status or finalized"
+    // smart_contracts/xgov_registry/contract.py:1301
+    // case err.VOTER_NOT_FOUND:
+    bytec 54 // "Voter not found"
+    // smart_contracts/xgov_registry/contract.py:1298-1304
+    // match error_without_prefix:
+    //     case err.WRONG_PROPOSAL_STATUS:
+    //         op.err(err.WRONG_PROPOSAL_STATUS)
+    //     case err.VOTER_NOT_FOUND:
+    //         op.err(err.VOTER_NOT_FOUND)
+    //     case _:
+    //         op.err("Unknown error")
+    uncover 2
+    match unassign_absentee_from_proposal_switch_case_0@7 unassign_absentee_from_proposal_switch_case_1@8
+    // smart_contracts/xgov_registry/contract.py:1304
+    // op.err("Unknown error")
+    err // Unknown error
+
+unassign_absentee_from_proposal_switch_case_1@8:
+    // smart_contracts/xgov_registry/contract.py:1302
+    // op.err(err.VOTER_NOT_FOUND)
+    err // Voter not found
+
+unassign_absentee_from_proposal_switch_case_0@7:
+    // smart_contracts/xgov_registry/contract.py:1300
+    // op.err(err.WRONG_PROPOSAL_STATUS)
+    err // Wrong Proposal Status or finalized
+
+unassign_absentee_from_proposal_else_body@10:
+    // smart_contracts/xgov_registry/contract.py:1306
+    // assert error == "", "Unknown error"
+    dig 1
+    pushbytes ""
+    ==
+    assert // Unknown error
+    intc_0 // 0
+    bury 6
+
+unassign_absentee_from_proposal_for_header@12:
+    // smart_contracts/xgov_registry/contract.py:1308-1312
     // # ⚠️ WARNING: The absentees array:
     // # - MUST have only absentees really/still assigned to the Proposal
     // # - MUST NOT have duplicates
     // # which is guaranteed by the previous ABI call.
     // for absentee in absentees:
-    dup
+    dig 5
     dig 4
     <
-    bz unassign_absentee_from_proposal_after_for@11
+    bz unassign_absentee_from_proposal_after_for@20
     dig 4
     extract 2 0
-    dig 1
+    dig 6
     intc_2 // 32
     *
     intc_2 // 32
@@ -2998,22 +3065,22 @@ unassign_absentee_from_proposal_for_header@3:
     bury 8
     box_len
     bury 1
-    // smart_contracts/xgov_registry/contract.py:1303-1304
+    // smart_contracts/xgov_registry/contract.py:1315-1316
     // self.has_xgov_status(absentee)
     // and self.xgov_box[absentee].tolerated_absences > 0
-    bz unassign_absentee_from_proposal_after_if_else@9
-    // smart_contracts/xgov_registry/contract.py:1304
+    bz unassign_absentee_from_proposal_after_if_else@18
+    // smart_contracts/xgov_registry/contract.py:1316
     // and self.xgov_box[absentee].tolerated_absences > 0
     dig 6
     box_get
     assert // check self.xgov_box entry exists
     intc_2 // 32
     extract_uint64
-    // smart_contracts/xgov_registry/contract.py:1303-1304
+    // smart_contracts/xgov_registry/contract.py:1315-1316
     // self.has_xgov_status(absentee)
     // and self.xgov_box[absentee].tolerated_absences > 0
-    bz unassign_absentee_from_proposal_after_if_else@9
-    // smart_contracts/xgov_registry/contract.py:1306
+    bz unassign_absentee_from_proposal_after_if_else@18
+    // smart_contracts/xgov_registry/contract.py:1318
     // self.xgov_box[absentee].tolerated_absences -= 1
     dig 6
     dup
@@ -3028,106 +3095,39 @@ unassign_absentee_from_proposal_for_header@3:
     intc_2 // 32
     uncover 2
     box_replace
-    // smart_contracts/xgov_registry/contract.py:1307
+    // smart_contracts/xgov_registry/contract.py:1319
     // if self.xgov_box[absentee].tolerated_absences == 0:
     box_get
     pop
     intc_2 // 32
     extract_uint64
-    bnz unassign_absentee_from_proposal_after_if_else@9
-    // smart_contracts/xgov_registry/contract.py:1308
+    bnz unassign_absentee_from_proposal_after_if_else@18
+    // smart_contracts/xgov_registry/contract.py:1320
     // self.unsubscribe_xgov_and_emit(absentee)
     dig 7
     callsub unsubscribe_xgov_and_emit
 
-unassign_absentee_from_proposal_after_if_else@9:
-    dup
+unassign_absentee_from_proposal_after_if_else@18:
+    dig 5
     intc_1 // 1
     +
-    bury 1
-    b unassign_absentee_from_proposal_for_header@3
+    bury 6
+    b unassign_absentee_from_proposal_for_header@12
 
-unassign_absentee_from_proposal_after_for@11:
-    // smart_contracts/xgov_registry/contract.py:1310
-    // if error.startswith(err.ARC_65_PREFIX):
-    dig 1
-    len
-    dup
-    bury 7
-    pushint 4
-    <
-    bz unassign_absentee_from_proposal_ternary_false@13
-    intc_0 // 0
-
-unassign_absentee_from_proposal_ternary_merge@14:
-    // smart_contracts/xgov_registry/contract.py:1310
-    // if error.startswith(err.ARC_65_PREFIX):
-    bz unassign_absentee_from_proposal_else_body@19
-    // smart_contracts/xgov_registry/contract.py:1311
-    // error_without_prefix = String.from_bytes(error.bytes[4:])
-    pushint 4
-    dig 6
-    dup
-    cover 2
-    >=
-    pushint 4
-    dig 2
-    uncover 2
-    select
-    dig 3
-    swap
-    uncover 2
-    substring3
-    // smart_contracts/xgov_registry/contract.py:1313
-    // case err.WRONG_PROPOSAL_STATUS:
-    bytec 12 // "Wrong Proposal Status or finalized"
-    // smart_contracts/xgov_registry/contract.py:1315
-    // case err.VOTER_NOT_FOUND:
-    bytec 54 // "Voter not found"
-    // smart_contracts/xgov_registry/contract.py:1312-1318
-    // match error_without_prefix:
-    //     case err.WRONG_PROPOSAL_STATUS:
-    //         op.err(err.WRONG_PROPOSAL_STATUS)
-    //     case err.VOTER_NOT_FOUND:
-    //         op.err(err.VOTER_NOT_FOUND)
-    //     case _:
-    //         op.err("Unknown error")
-    uncover 2
-    match unassign_absentee_from_proposal_switch_case_0@16 unassign_absentee_from_proposal_switch_case_1@17
-    // smart_contracts/xgov_registry/contract.py:1318
-    // op.err("Unknown error")
-    err // Unknown error
-
-unassign_absentee_from_proposal_switch_case_1@17:
-    // smart_contracts/xgov_registry/contract.py:1316
-    // op.err(err.VOTER_NOT_FOUND)
-    err // Voter not found
-
-unassign_absentee_from_proposal_switch_case_0@16:
-    // smart_contracts/xgov_registry/contract.py:1314
-    // op.err(err.WRONG_PROPOSAL_STATUS)
-    err // Wrong Proposal Status or finalized
-
-unassign_absentee_from_proposal_else_body@19:
-    // smart_contracts/xgov_registry/contract.py:1320
-    // assert error == "", "Unknown error"
-    dig 1
-    pushbytes ""
-    ==
-    assert // Unknown error
+unassign_absentee_from_proposal_after_for@20:
     // smart_contracts/xgov_registry/contract.py:1265
     // @arc4.abimethod()
     intc_1 // 1
     return
 
-unassign_absentee_from_proposal_ternary_false@13:
-    // smart_contracts/xgov_registry/contract.py:1310
+unassign_absentee_from_proposal_ternary_false@4:
+    // smart_contracts/xgov_registry/contract.py:1296
     // if error.startswith(err.ARC_65_PREFIX):
     dig 2
     extract 6 4
     bytec 13 // "ERR:"
     ==
-    b unassign_absentee_from_proposal_ternary_merge@14
+    b unassign_absentee_from_proposal_ternary_merge@5
 
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.pay_grant_proposal[routing]() -> void:
@@ -4852,7 +4852,7 @@ subscribe_xgov_and_emit:
     box_len
     bury 1
     // smart_contracts/xgov_registry/contract.py:358-359
-    // # The following assertion may be redundant is some invocations.
+    // # The following assertion may be redundant in some invocations.
     // assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
     !
     assert // Already an xGov
@@ -4932,7 +4932,7 @@ unsubscribe_xgov_and_emit:
     box_len
     bury 1
     // smart_contracts/xgov_registry/contract.py:365-366
-    // # The following assertion may be redundant is some invocations.
+    // # The following assertion may be redundant in some invocations.
     // assert self.has_xgov_status(xgov_address), err.NOT_XGOV
     assert // Not an xGov
     // smart_contracts/xgov_registry/contract.py:367
