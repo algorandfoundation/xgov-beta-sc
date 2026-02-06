@@ -173,7 +173,7 @@ def test_vote_proposal_not_an_xgov(
     voting_proposal_client: ProposalClient,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.UNAUTHORIZED):
+    with pytest.raises(LogicError, match=err.NOT_XGOV):
         xgov_registry_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
