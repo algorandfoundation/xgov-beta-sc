@@ -1293,6 +1293,18 @@ class XGovRegistry(
             app_id=proposal_id,
         )
 
+        if error.startswith(err.ARC_65_PREFIX):
+            error_without_prefix = String.from_bytes(error.bytes[4:])
+            match error_without_prefix:
+                case err.WRONG_PROPOSAL_STATUS:
+                    op.err(err.WRONG_PROPOSAL_STATUS)
+                case err.VOTER_NOT_FOUND:
+                    op.err(err.VOTER_NOT_FOUND)
+                case _:
+                    op.err("Unknown error")
+        else:
+            assert error == "", "Unknown error"
+
         # ⚠️ WARNING: The absentees array:
         # - MUST have only absentees really/still assigned to the Proposal
         # - MUST NOT have duplicates
@@ -1306,18 +1318,6 @@ class XGovRegistry(
                 self.xgov_box[absentee].tolerated_absences -= 1
                 if self.xgov_box[absentee].tolerated_absences == 0:
                     self.unsubscribe_xgov_and_emit(absentee)
-
-        if error.startswith(err.ARC_65_PREFIX):
-            error_without_prefix = String.from_bytes(error.bytes[4:])
-            match error_without_prefix:
-                case err.WRONG_PROPOSAL_STATUS:
-                    op.err(err.WRONG_PROPOSAL_STATUS)
-                case err.VOTER_NOT_FOUND:
-                    op.err(err.VOTER_NOT_FOUND)
-                case _:
-                    op.err("Unknown error")
-        else:
-            assert error == "", "Unknown error"
 
     @arc4.abimethod()
     def pay_grant_proposal(self, *, proposal_id: Application) -> None:
