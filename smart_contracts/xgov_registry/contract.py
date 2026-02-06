@@ -810,7 +810,7 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not the declared Application owner address
             err.PAUSED_REGISTRY: If registry is paused
-            err.ALREADY_XGOV: If the sender is already an xGov
+            err.ALREADY_XGOV: If the requested address is already an xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
@@ -839,8 +839,8 @@ class XGovRegistry(
             request_id (UInt64): The ID of the request to approve
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xGov Manager
-            err.ALREADY_XGOV: If the sender is already an xGov
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+            err.ALREADY_XGOV: If the requested address is already an xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
