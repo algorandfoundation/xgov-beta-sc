@@ -307,6 +307,12 @@ class Proposal(
         assert voter not in self.voters, err.VOTER_ALREADY_ASSIGNED
         assert voting_power > 0, err.INVALID_VOTING_POWER
 
+    def unassign_voter_input_validation(
+        self, voter: Account, voting_power: UInt64
+    ) -> None:
+        assert voter in self.voters, err.VOTER_NOT_FOUND
+        assert voting_power > 0, err.INVALID_VOTING_POWER
+
     def get_discussion_duration(self, category: UInt64) -> UInt64:
         if category == enm.FUNDING_CATEGORY_SMALL:
             return self.get_uint_from_registry_config(
@@ -770,6 +776,8 @@ class Proposal(
         self.assigned_votes.value += voting_power
 
     def _unassign_voter(self, voter: Account, voting_power: UInt64) -> None:
+        self.unassign_voter_input_validation(voter, voting_power)
+
         self.assigned_members.value -= 1
         self.assigned_votes.value -= voting_power
         del self.voters[voter]
