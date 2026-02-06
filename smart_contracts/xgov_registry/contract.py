@@ -355,14 +355,14 @@ class XGovRegistry(
     def subscribe_xgov_and_emit(
         self, *, xgov_address: Account, voting_address: Account
     ) -> None:
-        # The following assertion may be redundant is some invocations.
+        # The following assertion may be redundant in some invocations.
         assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
         arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
 
     def unsubscribe_xgov_and_emit(self, xgov_address: Account) -> None:
-        # The following assertion may be redundant is some invocations.
+        # The following assertion may be redundant in some invocations.
         assert self.has_xgov_status(xgov_address), err.NOT_XGOV
         del self.xgov_box[xgov_address]
         self.xgovs.value -= 1
