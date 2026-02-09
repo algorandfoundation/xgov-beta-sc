@@ -360,7 +360,7 @@ class XGovRegistry(
     ) -> None:
         # The following assertion may be redundant in some invocations.
         assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
-        del self.xgov_box[Txn.sender]  # No effect if the xgov_box does not exist
+        del self.xgov_box[xgov_address]  # No effect if the xgov_box does not exist
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
         arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
