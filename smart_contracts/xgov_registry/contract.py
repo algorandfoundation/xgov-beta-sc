@@ -807,9 +807,8 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
-        assert (
-            self.has_xgov_status(xgov_address)
-            and not self.is_active_xgov(xgov_address)
+        assert self.has_xgov_status(xgov_address) and not self.is_active_xgov(
+            xgov_address
         ), err.ALREADY_XGOV
 
         self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
