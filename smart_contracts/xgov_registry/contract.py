@@ -784,6 +784,7 @@ class XGovRegistry(
         Raises:
             err.PAUSED_REGISTRY: If registry is paused
             err.NOT_XGOV: If the address is not an active xGov
+            err.UNAUTHORIZED: If the address is not an absentee xGov
         """
 
         assert not self.paused_registry.value, err.PAUSED_REGISTRY
