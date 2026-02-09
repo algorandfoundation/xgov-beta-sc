@@ -804,13 +804,13 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the caller is not the xGov Subscriber
+            err.NOT_XGOV: If the address has no xGov satus
             err.ALREADY_XGOV: If the address is already an active xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
-        assert self.has_xgov_status(xgov_address) and not self.is_active_xgov(
-            xgov_address
-        ), err.ALREADY_XGOV
+        assert self.has_xgov_status(xgov_address), err.NOT_XGOV
+        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
 
         self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
 
