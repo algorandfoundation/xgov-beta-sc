@@ -56,3 +56,7 @@ def test_approve_subscribe_xgov_not_subscriber(
             ),
             params=CommonAppCallParams(sender=no_role_account.address),
         )
+
+
+def test_approve_subscribe_xgov_not_xgov() -> None:
+    pass  # TODO
