@@ -360,6 +360,7 @@ class XGovRegistry(
     ) -> None:
         # The following assertion may be redundant in some invocations.
         assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
+        del self.xgov_box[Txn.sender]
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
         arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
@@ -752,9 +753,6 @@ class XGovRegistry(
         assert not self.is_active_xgov(Txn.sender), err.ALREADY_XGOV
         assert self.valid_xgov_payment(payment), err.INVALID_PAYMENT
 
-        if self.has_xgov_status(Txn.sender):
-            del self.xgov_box[Txn.sender]
-
         self.subscribe_xgov_and_emit(
             xgov_address=Txn.sender, voting_address=voting_address
         )
@@ -809,10 +807,12 @@ class XGovRegistry(
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
-        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
+        assert (
+            self.has_xgov_status(xgov_address)
+            and not self.is_active_xgov(xgov_address)
+        ), err.ALREADY_XGOV
 
-        if self.has_xgov_status(xgov_address):
-            self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
+        self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
 
     @arc4.abimethod()
     def request_subscribe_xgov(
@@ -878,9 +878,6 @@ class XGovRegistry(
         xgov_address = self.request_box[request_id].xgov_addr
         voting_address = self.request_box[request_id].owner_addr
         assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
-
-        if self.has_xgov_status(xgov_address):
-            del self.xgov_box[xgov_address]
 
         self.subscribe_xgov_and_emit(
             xgov_address=xgov_address, voting_address=voting_address
