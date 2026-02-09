@@ -73,7 +73,7 @@ For a fixed governance period \\( (B_i, B_f) \\), the _voting power_ of an eligi
 xGov \\( \xGov \\) in that governance period is the integer
 
 $$
-w(\xGov, B_i, B_f) \in \N,
+w(a, B_i, B_f) \in \N,
 $$
 
 defined as the number of blocks proposed by an eligible xGov \\( \xGov \\) in the
@@ -103,7 +103,7 @@ $$
   &\textbf{eligibility} &&
     \forall (a, v) \in C, a \text{ is an eligible xGov in } [B_c; B_f), \\\\
   &\textbf{voting power} &&
-    \forall (a, v) \in C, v = w(\xGov, B_i, B_f), \\\\
+    \forall (a, v) \in C, v = w(a, B_i, B_f), \\\\
   &\textbf{uniqueness} &&
     (a_1, v_1), (a_2, v_2) \in C \text{ and } a_1 = a_2 \Rightarrow v_1 = v_2.
 \end{align}
