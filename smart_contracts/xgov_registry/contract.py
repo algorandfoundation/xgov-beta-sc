@@ -360,7 +360,7 @@ class XGovRegistry(
     ) -> None:
         # The following assertion may be redundant in some invocations.
         assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
-        del self.xgov_box[Txn.sender]
+        del self.xgov_box[Txn.sender]  # No effect if the xgov_box does not exist
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
         arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
@@ -837,7 +837,7 @@ class XGovRegistry(
         Raises:
             err.UNAUTHORIZED: If the sender is not the declared Application owner address
             err.PAUSED_REGISTRY: If registry is paused
-            err.ALREADY_XGOV: If the sender is already an active xGov
+            err.ALREADY_XGOV: If the requested address is already an active xGov
             err.INVALID_PAYMENT: If payment has wrong amount (not equal to xgov_fee global state key) or wrong receiver
         """
 
