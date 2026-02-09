@@ -877,7 +877,7 @@ class XGovRegistry(
 
         xgov_address = self.request_box[request_id].xgov_addr
         voting_address = self.request_box[request_id].owner_addr
-        assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
+        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
 
         if self.has_xgov_status(xgov_address):
             del self.xgov_box[xgov_address]
