@@ -1538,55 +1538,43 @@ activate_xgov:
     // smart_contracts/xgov_registry/contract.py:796
     // @arc4.abimethod()
     txna ApplicationArgs 1
-    dupn 2
+    dup
     len
     intc_2 // 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
-    // smart_contracts/xgov_registry/contract.py:810
+    // smart_contracts/xgov_registry/contract.py:811
     // assert self.is_xgov_subscriber(), err.UNAUTHORIZED
     callsub is_xgov_subscriber
     assert // Unauthorized
     // smart_contracts/xgov_registry/contract.py:224
     // return a in self.xgov_box
     bytec_2 // 0x78
-    swap
+    dig 1
     concat
     dup
     box_len
     bury 1
-    // smart_contracts/xgov_registry/contract.py:811-813
-    // assert self.has_xgov_status(xgov_address) and not self.is_active_xgov(
-    //     xgov_address
-    // ), err.ALREADY_XGOV
-    bz activate_xgov_bool_false@4
-    dig 1
+    // smart_contracts/xgov_registry/contract.py:812
+    // assert self.has_xgov_status(xgov_address), err.NOT_XGOV
+    assert // Not an active xGov
+    // smart_contracts/xgov_registry/contract.py:813
+    // assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
+    swap
     callsub is_active_xgov
-    bnz activate_xgov_bool_false@4
-    intc_1 // 1
-
-activate_xgov_bool_merge@5:
-    // smart_contracts/xgov_registry/contract.py:811-813
-    // assert self.has_xgov_status(xgov_address) and not self.is_active_xgov(
-    //     xgov_address
-    // ), err.ALREADY_XGOV
+    !
     assert // Already an active xGov
     // smart_contracts/xgov_registry/contract.py:815
     // self.xgov_box[xgov_address].unsubscribed_round = UInt64(0)
     intc_0 // 0
     itob
-    dig 1
     pushint 40
-    uncover 2
+    swap
     box_replace
     // smart_contracts/xgov_registry/contract.py:796
     // @arc4.abimethod()
     intc_1 // 1
     return
-
-activate_xgov_bool_false@4:
-    intc_0 // 0
-    b activate_xgov_bool_merge@5
 
 
 // smart_contracts.xgov_registry.contract.XGovRegistry.request_subscribe_xgov[routing]() -> void:
