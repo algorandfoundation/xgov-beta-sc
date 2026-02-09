@@ -4896,10 +4896,11 @@ subscribe_xgov_and_emit:
     !
     assert // Already an active xGov
     // smart_contracts/xgov_registry/contract.py:363
-    // del self.xgov_box[Txn.sender]  # No effect if the xgov_box does not exist
+    // del self.xgov_box[xgov_address]  # No effect if the xgov_box does not exist
     bytec_2 // 0x78
-    txn Sender
+    frame_dig -2
     concat
+    dup
     box_del
     pop
     // smart_contracts/xgov_registry/contract.py:353
@@ -4940,10 +4941,6 @@ subscribe_xgov_and_emit:
     concat
     // smart_contracts/xgov_registry/contract.py:364
     // self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
-    bytec_2 // 0x78
-    frame_dig -2
-    concat
-    swap
     box_put
     // smart_contracts/xgov_registry/contract.py:365
     // self.xgovs.value += 1
