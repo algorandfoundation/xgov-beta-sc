@@ -1349,7 +1349,7 @@ class XGovRegistry(
         for absentee in absentees:
             # The absentee might have already self-unsubscribed
             if (
-                self.has_xgov_status(absentee)
+                self.is_active_xgov(absentee)
                 and self.xgov_box[absentee].tolerated_absences > 0
             ):
                 self.xgov_box[absentee].tolerated_absences -= 1
