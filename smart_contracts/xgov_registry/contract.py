@@ -870,7 +870,7 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Subscriber
-            err.ALREADY_XGOV: If the requested address is already an xGov
+            err.ALREADY_XGOV: If the requested address is already an active xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
@@ -959,7 +959,7 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Subscriber
-            err.NOT_XGOV: If the requested xGov address is not an xGov
+            err.NOT_XGOV: If the requested xGov address is not an active xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
