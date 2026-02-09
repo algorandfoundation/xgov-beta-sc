@@ -358,11 +358,15 @@ class XGovRegistry(
     def subscribe_xgov_and_emit(
         self, *, xgov_address: Account, voting_address: Account
     ) -> None:
+        # The following assertion may be redundant in some invocations.
+        assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
         arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
 
     def unsubscribe_xgov_and_emit(self, xgov_address: Account) -> None:
+        # The following assertion may be redundant in some invocations.
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
         self.xgov_box[xgov_address].unsubscribed_round = Global.round
         self.xgovs.value -= 1
         arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address))
@@ -780,7 +784,6 @@ class XGovRegistry(
             xgov_address: (Account): The address of the absentee xGov to unsubscribe
 
         Raises:
-            err.UNAUTHORIZED: If the address is not an absentee xGov
             err.PAUSED_REGISTRY: If registry is paused
             err.NOT_XGOV: If the address is not an active xGov
         """
@@ -866,13 +869,15 @@ class XGovRegistry(
             request_id (UInt64): The ID of the request to approve
 
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xGov Manager
+            err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+            err.ALREADY_XGOV: If the requested address is already an xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         xgov_address = self.request_box[request_id].xgov_addr
         voting_address = self.request_box[request_id].owner_addr
+        assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
 
         if self.has_xgov_status(xgov_address):
             del self.xgov_box[xgov_address]
@@ -957,11 +962,14 @@ class XGovRegistry(
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Subscriber
+            err.NOT_XGOV: If the requested xGov address is not an xGov
         """
 
         assert self.is_xgov_subscriber(), err.UNAUTHORIZED
 
         xgov_address = self.request_unsubscribe_box[request_id].xgov_addr
+        assert self.is_active_xgov(xgov_address), err.NOT_XGOV
+
         self.unsubscribe_xgov_and_emit(xgov_address)
 
         # delete the request
@@ -1243,10 +1251,10 @@ class XGovRegistry(
             rejection_votes: (UInt64): The number of rejections votes allocated
 
         Raises:
+            err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.INVALID_PROPOSAL: If the Proposal ID is not a Proposal contract
             err.NOT_XGOV: If the xGov Address is not an active xGov
             err.MUST_BE_XGOV_OR_VOTING_ADDRESS: If the sender is not the xgov_address or the voting_address
-            err.PAUSED_REGISTRY: If the xGov Registry is paused
             err.WRONG_PROPOSAL_STATUS: If the Proposal is not in the voting state
             err.VOTER_NOT_FOUND: If the xGov is not found in the Proposal's voting registry
             err.VOTER_ALREADY_VOTED: If the xGov has already voted on this Proposal
@@ -1313,15 +1321,9 @@ class XGovRegistry(
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
 
-        # The later ABI call to the Proposal panics if any absentee is duplicated,
-        # multiple non-idempotent effects are rejected after.
-        for absentee in absentees:
-            # No check for xGov boxes' existence since they are no longer deleted
-            if self.xgov_box[absentee].tolerated_absences > 0:
-                self.xgov_box[absentee].tolerated_absences -= 1
-                if self.xgov_box[absentee].tolerated_absences == 0:
-                    self.unsubscribe_xgov_and_emit(absentee)
-
+        # The `Proposal.unassign_absentees` call guarantees that:
+        # - Any absentee in the array is really assigned to the Proposal;
+        # - No absentee is duplicated in the array.
         error, _tx = arc4.abi_call(
             proposal_contract.Proposal.unassign_absentees,
             absentees,
@@ -1339,6 +1341,20 @@ class XGovRegistry(
                     op.err("Unknown error")
         else:
             assert error == "", "Unknown error"
+
+        # ⚠️ WARNING: The absentees array:
+        # - MUST have only absentees really/still assigned to the Proposal
+        # - MUST NOT have duplicates
+        # which is guaranteed by the previous ABI call.
+        for absentee in absentees:
+            # The absentee might have already self-unsubscribed
+            if (
+                self.has_xgov_status(absentee)
+                and self.xgov_box[absentee].tolerated_absences > 0
+            ):
+                self.xgov_box[absentee].tolerated_absences -= 1
+                if self.xgov_box[absentee].tolerated_absences == 0:
+                    self.unsubscribe_xgov_and_emit(absentee)
 
     @arc4.abimethod()
     def pay_grant_proposal(self, *, proposal_id: Application) -> None:
