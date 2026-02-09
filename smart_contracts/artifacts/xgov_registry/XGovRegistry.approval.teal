@@ -1743,6 +1743,12 @@ approve_subscribe_xgov:
     // voting_address = self.request_box[request_id].owner_addr
     extract 32 32
     swap
+    // smart_contracts/xgov_registry/contract.py:880
+    // assert not self.is_active_xgov(xgov_address), err.ALREADY_XGOV
+    dup
+    callsub is_active_xgov
+    !
+    assert // Already an active xGov
     // smart_contracts/xgov_registry/contract.py:224
     // return a in self.xgov_box
     bytec_1 // 0x78
@@ -1751,11 +1757,6 @@ approve_subscribe_xgov:
     dup
     box_len
     bury 1
-    // smart_contracts/xgov_registry/contract.py:880
-    // assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
-    dup
-    !
-    assert // Already an active xGov
     // smart_contracts/xgov_registry/contract.py:882
     // if self.has_xgov_status(xgov_address):
     bz approve_subscribe_xgov_after_if_else@3
@@ -3104,28 +3105,26 @@ unassign_absentee_from_proposal_for_header@12:
     extract3 // on error: index access is out of bounds
     dup
     bury 9
-    // smart_contracts/xgov_registry/contract.py:224
-    // return a in self.xgov_box
-    bytec_1 // 0x78
-    swap
-    concat
-    dup
-    bury 8
-    box_len
-    bury 1
+    // smart_contracts/xgov_registry/contract.py:1352
+    // self.is_active_xgov(absentee)
+    callsub is_active_xgov
     // smart_contracts/xgov_registry/contract.py:1352-1353
-    // self.has_xgov_status(absentee)
+    // self.is_active_xgov(absentee)
     // and self.xgov_box[absentee].tolerated_absences > 0
     bz unassign_absentee_from_proposal_after_if_else@18
     // smart_contracts/xgov_registry/contract.py:1353
     // and self.xgov_box[absentee].tolerated_absences > 0
-    dig 6
+    bytec_1 // 0x78
+    dig 8
+    concat
+    dup
+    bury 8
     box_get
     assert // check self.xgov_box entry exists
     intc_2 // 32
     extract_uint64
     // smart_contracts/xgov_registry/contract.py:1352-1353
-    // self.has_xgov_status(absentee)
+    // self.is_active_xgov(absentee)
     // and self.xgov_box[absentee].tolerated_absences > 0
     bz unassign_absentee_from_proposal_after_if_else@18
     // smart_contracts/xgov_registry/contract.py:1355
