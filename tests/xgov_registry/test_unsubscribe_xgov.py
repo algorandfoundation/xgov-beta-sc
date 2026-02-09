@@ -77,7 +77,7 @@ def test_unsubscribe_xgov_not_an_xgov(
         )
 
 
-def test_unsubscribe_xgov_unactive_xgov(
+def test_unsubscribe_xgov_inactive_xgov(
     xgov: SigningAccount,
     xgov_registry_client: XGovRegistryClient,
 ) -> None:
