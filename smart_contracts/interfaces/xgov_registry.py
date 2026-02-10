@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from algopy import ARC4Contract, Bytes, arc4, gtxn
+from algopy import Account, Application, ARC4Contract, Array, Bytes, UInt64, arc4, gtxn
 
 import smart_contracts.common.abi_types as typ
 
@@ -15,12 +15,12 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def init_proposal_contract(self, *, size: arc4.UInt64) -> None:
+    def init_proposal_contract(self, *, size: UInt64) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def load_proposal_contract(self, *, offset: arc4.UInt64, data: Bytes) -> None:
+    def load_proposal_contract(self, *, offset: UInt64, data: Bytes) -> None:
         pass
 
     @abstractmethod
@@ -50,37 +50,37 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def set_xgov_manager(self, *, manager: arc4.Address) -> None:
+    def set_xgov_manager(self, *, manager: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_payor(self, *, payor: arc4.Address) -> None:
+    def set_payor(self, *, payor: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_xgov_council(self, *, council: arc4.Address) -> None:
+    def set_xgov_council(self, *, council: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_xgov_subscriber(self, *, subscriber: arc4.Address) -> None:
+    def set_xgov_subscriber(self, *, subscriber: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_kyc_provider(self, *, provider: arc4.Address) -> None:
+    def set_kyc_provider(self, *, provider: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_committee_manager(self, *, manager: arc4.Address) -> None:
+    def set_committee_manager(self, *, manager: Account) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def set_xgov_daemon(self, *, xgov_daemon: arc4.Address) -> None:
+    def set_xgov_daemon(self, *, xgov_daemon: Account) -> None:
         pass
 
     @abstractmethod
@@ -96,7 +96,7 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     @abstractmethod
     @arc4.abimethod()
     def subscribe_xgov(
-        self, *, voting_address: arc4.Address, payment: gtxn.PaymentTransaction
+        self, *, voting_address: Account, payment: gtxn.PaymentTransaction
     ) -> None:
         pass
 
@@ -107,24 +107,29 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
+    def unsubscribe_absentee(self, *, xgov_address: Account) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
     def request_subscribe_xgov(
         self,
         *,
-        xgov_address: arc4.Address,
-        owner_address: arc4.Address,
-        relation_type: arc4.UInt64,
+        xgov_address: Account,
+        owner_address: Account,
+        relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def approve_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+    def approve_subscribe_xgov(self, *, request_id: UInt64) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def reject_subscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+    def reject_subscribe_xgov(self, *, request_id: UInt64) -> None:
         pass
 
     @abstractmethod
@@ -132,27 +137,27 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     def request_unsubscribe_xgov(
         self,
         *,
-        xgov_address: arc4.Address,
-        owner_address: arc4.Address,
-        relation_type: arc4.UInt64,
+        xgov_address: Account,
+        owner_address: Account,
+        relation_type: UInt64,
         payment: gtxn.PaymentTransaction,
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def approve_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+    def approve_unsubscribe_xgov(self, *, request_id: UInt64) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def reject_unsubscribe_xgov(self, *, request_id: arc4.UInt64) -> None:
+    def reject_unsubscribe_xgov(self, *, request_id: UInt64) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
     def set_voting_account(
-        self, *, xgov_address: arc4.Address, voting_address: arc4.Address
+        self, *, xgov_address: Account, voting_address: Account
     ) -> None:
         pass
 
@@ -166,22 +171,22 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     def set_proposer_kyc(
         self,
         *,
-        proposer: arc4.Address,
-        kyc_status: arc4.Bool,
-        kyc_expiring: arc4.UInt64,
+        proposer: Account,
+        kyc_status: bool,
+        kyc_expiring: UInt64,
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
     def declare_committee(
-        self, *, committee_id: typ.Bytes32, size: arc4.UInt64, votes: arc4.UInt64
+        self, *, committee_id: typ.Bytes32, size: UInt64, votes: UInt64
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod
-    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> arc4.UInt64:
+    def open_proposal(self, *, payment: gtxn.PaymentTransaction) -> UInt64:
         pass
 
     @abstractmethod
@@ -189,26 +194,33 @@ class XGovRegistryInterface(ARC4Contract, ABC):
     def vote_proposal(
         self,
         *,
-        proposal_id: arc4.UInt64,
-        xgov_address: arc4.Address,
-        approval_votes: arc4.UInt64,
-        rejection_votes: arc4.UInt64,
+        proposal_id: Application,
+        xgov_address: Account,
+        approval_votes: UInt64,
+        rejection_votes: UInt64,
     ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def pay_grant_proposal(self, *, proposal_id: arc4.UInt64) -> None:
+    def unassign_absentee_from_proposal(
+        self, *, proposal_id: Application, absentees: Array[Account]
+    ) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def finalize_proposal(self, *, proposal_id: arc4.UInt64) -> None:
+    def pay_grant_proposal(self, *, proposal_id: Application) -> None:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def drop_proposal(self, *, proposal_id: arc4.UInt64) -> None:
+    def finalize_proposal(self, *, proposal_id: Application) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
+    def drop_proposal(self, *, proposal_id: Application) -> None:
         pass
 
     @abstractmethod
@@ -218,7 +230,7 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def withdraw_funds(self, *, amount: arc4.UInt64) -> None:
+    def withdraw_funds(self, *, amount: UInt64) -> None:
         pass
 
     @abstractmethod
@@ -233,33 +245,36 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
-    def get_xgov_box(
-        self, *, xgov_address: arc4.Address
-    ) -> tuple[typ.XGovBoxValue, bool]:
+    def get_xgov_box(self, *, xgov_address: Account) -> tuple[typ.XGovBoxValue, bool]:
         pass
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
     def get_proposer_box(
-        self, *, proposer_address: arc4.Address
+        self, *, proposer_address: Account
     ) -> tuple[typ.ProposerBoxValue, bool]:
         pass
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
     def get_request_box(
-        self, *, request_id: arc4.UInt64
+        self, *, request_id: UInt64
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         pass
 
     @abstractmethod
     @arc4.abimethod(readonly=True)
     def get_request_unsubscribe_box(
-        self, *, request_id: arc4.UInt64
+        self, *, request_id: UInt64
     ) -> tuple[typ.XGovSubscribeRequestBoxValue, bool]:
         pass
 
     @abstractmethod
     @arc4.abimethod()
-    def is_proposal(self, *, proposal_id: arc4.UInt64) -> None:
+    def is_proposal(self, *, proposal_id: Application) -> None:
+        pass
+
+    @abstractmethod
+    @arc4.abimethod()
+    def op_up(self) -> None:
         pass

@@ -439,7 +439,7 @@ def test_vote_mixed_same_vote_call(
     assert not exists
 
 
-def test_vote_exceeded(
+def test_vote_invalid(
     algorand_client: AlgorandClient,
     min_fee_times_2: AlgoAmount,
     committee: list[CommitteeMember],
@@ -447,7 +447,7 @@ def test_vote_exceeded(
     xgov_registry_mock_client: XgovRegistryMockClient,
     voting_proposal_client: ProposalClient,
 ) -> None:
-    with pytest.raises(LogicError, match=err.VOTES_EXCEEDED):
+    with pytest.raises(LogicError, match=err.VOTES_INVALID):
         xgov_registry_mock_client.send.vote_proposal(
             args=VoteProposalArgs(
                 proposal_id=voting_proposal_client.app_id,
@@ -476,3 +476,38 @@ def test_vote_exceeded(
             )
         ],
     )
+
+
+def test_vote_boycotted(
+    algorand_client: AlgorandClient,
+    min_fee_times_2: AlgoAmount,
+    committee: list[CommitteeMember],
+    proposer: SigningAccount,
+    xgov_registry_mock_client: XgovRegistryMockClient,
+    voting_proposal_client: ProposalClient,
+) -> None:
+    xgov_registry_mock_client.send.vote_proposal(
+        args=VoteProposalArgs(
+            proposal_id=voting_proposal_client.app_id,
+            xgov_address=committee[0].account.address,
+            approval_votes=DEFAULT_MEMBER_VOTES,
+            rejection_votes=DEFAULT_MEMBER_VOTES,
+        ),
+        params=CommonAppCallParams(static_fee=min_fee_times_2),
+    )
+
+    assert_voting_proposal_global_state(
+        voting_proposal_client,
+        proposer_address=proposer.address,
+        registry_app_id=xgov_registry_mock_client.app_id,
+        voted_members=1,
+        boycotted_members=1,
+        assigned_members=len(committee) - 1,
+        assigned_votes=DEFAULT_MEMBER_VOTES * (len(committee) - 1),
+    )
+
+    _, exists = voting_proposal_client.send.get_voter_box(
+        args=GetVoterBoxArgs(voter_address=committee[0].account.address),
+        params=CommonAppCallParams(sender=proposer.address),
+    ).abi_return
+    assert not exists

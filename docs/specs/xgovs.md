@@ -30,9 +30,9 @@ The xGov Registry provides two xGov (un)subscription procedures:
 
 - **Self-Subscription**: the xGov Address **MUST** call the xGov Registry.
 
-- **Managed-Subscription**: the ownership of the xGov _App_ Address is verified off-chain,
-by the Algorand Foundation, according to a pre-defined trust model. The Managed-Onboarding/Offboarding
-is executed in two steps:
+- **Managed-Subscription**: the ownership of the xGov _App_ Address is verified
+off-chain, by the Algorand Foundation, according to a pre-defined trust model. The
+Managed-Onboarding/Offboarding is executed in two steps:
 
   1. Users issue a [(Un)Subscription Request](#xgov-managed-subscription) to (un)subscribe,
   declaring the xGov App Address, the Application Owner Address, and a [Relation
@@ -71,7 +71,7 @@ An xGov Box has the following ABI schema:
 ```json
 {
     "voting_addr": "address",
-    "voted_proposals": "uint64",
+    "tolerated_absences": "uint64",
     "last_vote_timestamp": "uint64",
     "subscription_round": "uint64"
 }
@@ -89,8 +89,8 @@ The Voting Address declared on subscription **MUST BE** assigned to the xGov Box
 
 ### xGov Managed-Subscription
 
-An xGov (Un)Subscription Request is associated with a Box on the xGov Registry, called
-_xGov (Un)Subscription Request Box_.
+An xGov (Un)Subscription Request is associated with a Box on the xGov Registry,
+called _xGov (Un)Subscription Request Box_.
 
 The xGov Fee **MUST** be paid to the xGov Treasury upon xGov (Un)Subscription Request
 Box creation.
@@ -134,3 +134,14 @@ If the Algorand Foundation approves the unsubscription request:
 1. The xGov Unsubscription Request Box **MUST** be destroyed;
 
 1. The xGov Box of the xGov address **MUST** be destroyed.
+
+## Absenteeism
+
+The xGov Registry tolerates absenteeism of \\( n \\) consecutive votes.
+
+If an xGov is absent for \\( n \\) consecutive votes, the xGov **MUST** be unsubscribed
+from the xGov Registry (losing the xGov status).
+
+{{#include ../_include/styles.md:note}}
+> Refer to the [Proposal implementation configuration](../implementation/configuration.md)
+> for the absence tolerance value.

@@ -1,16 +1,16 @@
 # xGov Beta Architecture
 
-Documentation: [https://algorandfoundation.github.io/xgov-beta-sc](https://algorandfoundation.github.io/xgov-beta-sc/)
+Documentation: [https://docs.xgov.algorand.co](https://docs.xgov.algorand.co)
 
 ## Deployments
 
 | Network  |                            xGov Registry                             |
-|:---------|:--------------------------------------------------------------------:|
+| :------- | :------------------------------------------------------------------: |
 | Main Net | [3147789458](https://lora.algokit.io/mainnet/application/3147789458) |
 | Test Net |  [742949200](https://lora.algokit.io/testnet/application/742949200)  |
 
 | App Spec      | Link                                                                                                                                    |
-|:--------------|:----------------------------------------------------------------------------------------------------------------------------------------|
+| :------------ | :-------------------------------------------------------------------------------------------------------------------------------------- |
 | xGov Registry | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/xgov_registry/XGovRegistry.arc56.json) |
 | Proposal      | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Proposal.arc56.json)          |
 | xGov Council  | [AppSpec](https://github.com/algorandfoundation/xgov-beta-sc/blob/main/smart_contracts/artifacts/proposal/Council.arc56.json)           |
@@ -22,7 +22,7 @@ Documentation: [https://algorandfoundation.github.io/xgov-beta-sc](https://algor
 
 ## Local Setup and Tests
 
-The xGov Architecture project is developed with [AlgoKit](https://algorand.co/algokit).
+The xGov Architecture project is developed with [AlgoKit](https://dev.algorand.co/algokit/algokit-intro/).
 
 - Install AlgoKit
 - Set up your virtual environment (managed with [Poetry](https://python-poetry.org/))

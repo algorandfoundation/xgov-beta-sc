@@ -35,6 +35,7 @@ from tests.proposal.common import (
     quorums_reached,
     scrutinize_proposal,
     submit_proposal,
+    unassign_absentees,
     unassign_voters,
 )
 
@@ -190,14 +191,15 @@ def approved_proposal_client(
 @pytest.fixture(scope="function")
 def cleaned_approved_proposal_client(
     no_role_account: SigningAccount,
-    committee: list[CommitteeMember],
+    xgov_registry_mock_client: XgovRegistryMockClient,
     approved_proposal_client: ProposalClient,
 ) -> ProposalClient:
-    composer = approved_proposal_client.new_group()
-    unassign_voters(
+    composer = xgov_registry_mock_client.new_group()
+    absentees = approved_proposal_client.state.box.voters.get_map()
+    unassign_absentees(
         composer,
-        committee,
-        no_role_account,
+        approved_proposal_client.app_id,
+        absentees,
     )
     composer.send()
     return approved_proposal_client

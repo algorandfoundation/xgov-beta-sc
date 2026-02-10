@@ -18,7 +18,7 @@ def test_update_xgov_registry_success(
     xgov_registry_client.send.update.update_xgov_registry(
         compilation_params=AppClientCompilationParams(
             deploy_time_params={"entropy": b""}
-        )
+        ),
     )
 
 

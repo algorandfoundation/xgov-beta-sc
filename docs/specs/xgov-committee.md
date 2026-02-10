@@ -55,9 +55,9 @@ xGov Registry as an xGov Box).
 > and the pair \\( (a, h) \\) is removed from the xGov Registry state.
 
 For a governance period \\( (B_i, B_f) \\), an address \\( a \\) is an _eligible_
-xGov in \\( [B_c; B_f) \\) if and only if there exists a block height \\( k \\) with
-\\( B_c ≤ k < B_f \\) such that the xGov Registry state at height \\( k \\) contains
-\\( (a, h) \\) for some \\( h ≤ k \\).
+xGov in \\( [B_c; B_f) \\) if and only if there exists a block height \\( k \\)
+with \\( B_c ≤ k < B_f \\) such that the xGov Registry state at height \\( k \\)
+contains \\( (a, h) \\) for some \\( h ≤ k \\).
 
 > Once the xGov Registry has recorded an acknowledgement \\( (a, h) \\) with
 > \\( h ≥ B_c \\), the address \\( a \\) is considered an eligible xGov for every
@@ -82,8 +82,8 @@ governance period \\( [B_i; B_f) \\)[^1].
 
 ## Definition of xGov Committee
 
-Fix an xGov Registry \\( (g, R, B_c) \\) and a governance period \\( (B_i, B_f) \\)
-as above.
+Fix an xGov Registry \\( (g, R, B_c) \\) and a governance period
+\\( (B_i, B_f) \\) as above.
 
 An _xGov Committee_ for \\( (g, R, B_c, B_i, B_f) \\) is a finite set
 
@@ -122,16 +122,16 @@ for the set of xGov Committee members (addresses) induced by \\( C \\).
 
 ### xGov Committee Members
 
-The _number of xGov Committee members_ (or _cardinality_ of the xGov Committee) is
-defined as
+The _number of xGov Committee members_ (or _cardinality_ of the xGov Committee)
+is defined as
 
 $$
 \Members(\Comm) := \abs{\Addr(C)} = \abs{C}.
 $$
 
 This value corresponds to the `totalMembers` field in the [ARC-86 canonical JSON
-representation](https://dev.algorand.co/arc-standards/arc-0086/#representation) of
-the xGov Committee.
+representation](https://dev.algorand.co/arc-standards/arc-0086/#representation)
+of the xGov Committee.
 
 ### xGov Committee Voting Power
 
@@ -161,23 +161,32 @@ whenever \\( \Votes(\Comm) > 0 \\).
 
 ## xGov Committee ID
 
-An xGov Committee is identified by the Committee ID, as defined in [ARC-86 canonical
+An xGov Committee is identified by the _Committee ID_, as defined in [ARC-86 canonical
 JSON representation](https://dev.algorand.co/arc-standards/arc-0086/#representation).
 
 ## Selection
 
-The xGov Committee selection and the assignment of their voting power is performed
-by the Algorand Foundation.
+The xGov Committee selection procedure and the assignment of their voting power
+is performed by the Algorand Foundation.
+
+> See the selected [Committees](https://github.com/algorandfoundation/xgov-committees)
+> published by the Algorand Foundation.
 
 ## Declaration
 
-The xGov Committee Manager **SHALL** declare on the xGov Registry:
+Given the xGov Committee for the governance period \\( [Bi; Bf) \\), the xGov Committee
+Manager **SHALL** declare on the xGov Registry:
 
-- The current Committee ID;
+- The Committee ID;
 
-- The current xGov Committee Members;
+- The xGov Committee Members \\( \Members(\Comm) \\);
 
-- The current xGov Committee Voting Power.
+- The xGov Committee Voting Power \\( \Votes(\Comm) \\).
+
+within the rounds interval \\( [B_i; B_i + 10^3) \\).
+
+If the xGov Committee Manager fails to declare the xGov Committee within the rounds
+interval, the xGov Committee is considered _stale_ and Proposals are suspended.
 
 ## Assignment to Proposal
 

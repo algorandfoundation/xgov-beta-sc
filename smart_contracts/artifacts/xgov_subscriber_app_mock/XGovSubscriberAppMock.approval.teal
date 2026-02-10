@@ -10,7 +10,7 @@ main:
     bz main___algopy_default_create@9
     txn OnCompletion
     !
-    assert // OnCompletion must be NoOp
+    assert
     txn ApplicationID
     assert
     pushbytess 0x42317b4f 0x5a2a3f16 // method "subscribe_xgov(uint64,address)void", method "unsubscribe_xgov(uint64)void"
@@ -24,8 +24,6 @@ main___algopy_default_create@9:
     txn ApplicationID
     !
     &&
-    assert // OnCompletion must be NoOp && can only call when creating
-    intc_0 // 1
     return
 
 
@@ -43,7 +41,7 @@ subscribe_xgov:
     txna ApplicationArgs 2
     dup
     len
-    pushint 32 // 32
+    pushint 32
     ==
     assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
     // smart_contracts/xgov_subscriber_app_mock/contract.py:19-21
@@ -62,7 +60,7 @@ subscribe_xgov:
     pop
     swap
     // smart_contracts/xgov_subscriber_app_mock/contract.py:24
-    // receiver=Application(app_id).address,
+    // receiver=app_id.address,
     dig 2
     app_params_get AppAddress
     assert // application exists
@@ -128,7 +126,7 @@ unsubscribe_xgov:
     // smart_contracts/xgov_subscriber_app_mock/contract.py:40
     // fee=(Global.min_txn_fee * 2),
     global MinTxnFee
-    pushint 2 // 2
+    pushint 2
     *
     swap
     itxn_field ApplicationID

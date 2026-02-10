@@ -1,8 +1,8 @@
 from algopy import (
+    Account,
     Application,
     ARC4Contract,
     Global,
-    UInt64,
     arc4,
     itxn,
     op,
@@ -14,14 +14,14 @@ from ..xgov_registry import contract as registry_contract
 
 class XGovSubscriberAppMock(ARC4Contract):
     @arc4.abimethod()
-    def subscribe_xgov(self, app_id: UInt64, voting_address: arc4.Address) -> None:
+    def subscribe_xgov(self, app_id: Application, voting_address: Account) -> None:
 
         xgov_fee, _xgov_min_balance_exists = op.AppGlobal.get_ex_uint64(
             app_id, rcfg.GS_KEY_XGOV_FEE
         )
 
         payment = itxn.Payment(
-            receiver=Application(app_id).address,
+            receiver=app_id.address,
             amount=xgov_fee,
         )
 
@@ -33,7 +33,7 @@ class XGovSubscriberAppMock(ARC4Contract):
         )
 
     @arc4.abimethod()
-    def unsubscribe_xgov(self, app_id: UInt64) -> None:
+    def unsubscribe_xgov(self, app_id: Application) -> None:
         arc4.abi_call(
             registry_contract.XGovRegistry.unsubscribe_xgov,
             app_id=app_id,

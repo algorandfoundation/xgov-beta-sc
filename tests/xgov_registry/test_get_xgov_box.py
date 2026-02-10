@@ -25,7 +25,7 @@ def test_get_xgov_box_exists_success(
     assert (
         XGovBoxValue(
             voting_address=get_xgov_box[0],
-            voted_proposals=get_xgov_box[1],
+            tolerated_absences=get_xgov_box[1],
             last_vote_timestamp=get_xgov_box[2],
             subscription_round=get_xgov_box[3],
         )
@@ -44,12 +44,12 @@ def test_get_xgov_box_not_exists_success(
     assert not exists
     assert XGovBoxValue(
         voting_address=get_xgov_box[0],
-        voted_proposals=get_xgov_box[1],
+        tolerated_absences=get_xgov_box[1],
         last_vote_timestamp=get_xgov_box[2],
         subscription_round=get_xgov_box[3],
     ) == XGovBoxValue(
         voting_address=ZERO_ADDRESS,
-        voted_proposals=0,
+        tolerated_absences=0,
         last_vote_timestamp=0,
         subscription_round=0,
     )

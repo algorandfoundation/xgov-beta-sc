@@ -1,13 +1,8 @@
 import pytest
 from algokit_utils import (
-    AlgoAmount,
     AlgorandClient,
     CommonAppCallParams,
-    CreateTransactionParameters,
-    EnsureBalanceParameters,
     SigningAccount,
-    TransactionParameters,
-    ensure_funded,
 )
 from algokit_utils.config import config
 
@@ -17,19 +12,18 @@ from smart_contracts.artifacts.council.council_client import (
     CouncilFactory,
     CreateArgs,
 )
-from smart_contracts.artifacts.proposal.proposal_client import ProposalClient
 from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
     SetXgovCouncilArgs,
     XGovRegistryClient,
 )
 from tests.common import INITIAL_FUNDS, CommitteeMember
-from tests.council.common import members_box_name
 from tests.xgov_registry.conftest import (
     approved_proposal_client,
     draft_proposal_client,
     proposal_client,
     proposer,
     proposer_no_kyc,
+    subscribed_committee,
     voting_proposal_client,
     xgov_registry_client,
     xgov_registry_client_committee_not_declared,

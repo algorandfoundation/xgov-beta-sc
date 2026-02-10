@@ -16,89 +16,33 @@ from tests.common import CommitteeMember
 from tests.proposal.common import (
     assert_account_balance,
     finalize_proposal,
-    unassign_voters,
+    unassign_absentees,
 )
 
 
-def test_delete_empty_proposal(
-    xgov_daemon: SigningAccount, proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_draft_proposal(
-    xgov_daemon: SigningAccount, draft_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        draft_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_final_proposal(
-    xgov_daemon: SigningAccount, submitted_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        submitted_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_voting_proposal(
-    xgov_daemon: SigningAccount, voting_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        voting_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_approved_proposal(
-    xgov_daemon: SigningAccount, approved_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        approved_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_reviewed_proposal(
-    xgov_daemon: SigningAccount, reviewed_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        reviewed_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_rejected_proposal(
-    xgov_daemon: SigningAccount, rejected_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        rejected_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_blocked_proposal(
-    xgov_daemon: SigningAccount, blocked_proposal_client: ProposalClient
-) -> None:
-    with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        blocked_proposal_client.send.delete.delete(
-            params=CommonAppCallParams(sender=xgov_daemon.address)
-        )
-
-
-def test_delete_funded_proposal(
+@pytest.mark.parametrize(
+    "proposal_client_fixture",
+    [
+        "proposal_client",
+        "draft_proposal_client",
+        "submitted_proposal_client",
+        "voting_proposal_client",
+        "approved_proposal_client",
+        "reviewed_proposal_client",
+        "rejected_proposal_client",
+        "blocked_proposal_client",
+        "funded_proposal_client",
+    ],
+)
+def test_delete_wrong_status(
+    proposal_client_fixture: str,
     min_fee_times_3: AlgoAmount,
     xgov_daemon: SigningAccount,
-    funded_proposal_client: ProposalClient,
+    request: pytest.FixtureRequest,
 ) -> None:
+    client: ProposalClient = request.getfixturevalue(proposal_client_fixture)
     with pytest.raises(LogicError, match=err.WRONG_PROPOSAL_STATUS):
-        funded_proposal_client.send.delete.delete(
+        client.send.delete.delete(
             params=CommonAppCallParams(
                 sender=xgov_daemon.address, static_fee=min_fee_times_3
             )
@@ -113,12 +57,8 @@ def test_delete_success(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee)
     composer.send()
 
     finalize_proposal(
@@ -146,12 +86,8 @@ def test_delete_not_xgov_daemon(
     xgov_registry_mock_client: XgovRegistryMockClient,
     rejected_proposal_client: ProposalClient,
 ) -> None:
-    composer = rejected_proposal_client.new_group()
-    unassign_voters(
-        composer,
-        committee,
-        xgov_daemon,
-    )
+    composer = xgov_registry_mock_client.new_group()
+    unassign_absentees(composer, rejected_proposal_client.app_id, committee)
     composer.send()
 
     finalize_proposal(

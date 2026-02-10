@@ -25,7 +25,8 @@ Réti Validators are created by an _immutable_ factory contract.
 
 A Validator is uniquely owned by an immutable _Owner Address_.
 
-Each Validator may control several Staking Pools, which participate in Algorand consensus.
+Each Validator may control several Staking Pools, which participate in Algorand
+consensus.
 
 To request a Managed Subscription for a Réti Staking Pool:
 

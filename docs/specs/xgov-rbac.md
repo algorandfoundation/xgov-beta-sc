@@ -47,14 +47,14 @@ Treasury](./xgov-treasury.md).
 The xGov Committee Manager is an Algorand Address controlled by the Algorand Foundation.
 
 The xGov Committee Manager **SHALL** declare the xGov Committee currently in charge
-on the xGov Registry.
+on the xGov Registry (see [xGov Committee section](./xgov-committee.md#declaration)).
 
 ## xGov Daemon
 
 The xGov Daemon is an Algorand Address controlled by the Algorand Foundation (back-end).
 
-The xGov Daemon **SHALL** assign the xGov Committee currently in charge (voters and
-their voting power) to open Proposals.
+The xGov Daemon **SHALL** assign the xGov Committee currently in charge (voters
+and their voting power) to open Proposals.
 
 The xGov Daemon **SHOULD** delete absentees (voters) after Proposals scrutiny.
 
