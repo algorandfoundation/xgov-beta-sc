@@ -221,10 +221,10 @@ def test_unassign_and_delete(
     assert after_xgovs == before_xgovs - len(absentees)
 
     for address in absentees:
-        _, exists = low_absence_xgov_registry_client.send.get_xgov_box(
-            args=GetXgovBoxArgs(xgov_address=address)
-        ).abi_return
-        assert not exists
+        absentee = low_absence_xgov_registry_client.state.box.xgov_box.get_value(
+            address
+        )
+        assert absentee.tolerated_absences == 0 and absentee.unsubscribed_round > 0
 
 
 def test_unassign_with_unsubscribed_xgov(
