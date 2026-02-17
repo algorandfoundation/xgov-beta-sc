@@ -1513,12 +1513,14 @@ class XGovRegistry(
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
 
         # Check the amount to withdraw
-        available_amount = (
-            Global.current_application_address.balance
-            - Global.current_application_address.min_balance
-            - self.outstanding_funds.value
-        )
+        balance = Global.current_application_address.balance
+        min_balance = Global.current_application_address.min_balance
+        spendable = balance - min_balance
 
+        # Ensure that spendable funds are sufficient to cover outstanding funds
+        assert spendable >= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
+
+        available_amount = spendable - self.outstanding_funds.value
         assert (
             available_amount > 0 and amount <= available_amount
         ), err.INSUFFICIENT_FUNDS
