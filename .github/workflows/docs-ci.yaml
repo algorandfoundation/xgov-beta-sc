@@ -34,25 +34,12 @@ jobs:
       url: ${{ steps.deploy.outputs.deployment-url || '' }}
 
     steps:
-      - name: Check if Dependabot PR
-        id: dependabot-check
-        if: github.event_name == 'pull_request'
-        run: |
-          if [ "${{ github.actor }}" = "dependabot[bot]" ]; then
-            echo "is_dependabot=true" >> $GITHUB_OUTPUT
-            echo "⚠️ Dependabot PR detected. Skipping docs validation (Dependabot doesn't modify docs)."
-          else
-            echo "is_dependabot=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Skip Dependabot PRs
-        if: steps.dependabot-check.outputs.is_dependabot == 'true'
-        run: |
-          echo "✅ Dependabot PR - no docs changes expected. Marking as passed."
-          exit 0
+      - name: Dependabot - Skip docs validation
+        if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]'
+        run: echo "✅ Dependabot PR - no docs changes expected. Skipping validation."
 
       - name: Checkout source code (PR)
-        if: github.event_name == 'pull_request' && steps.dependabot-check.outputs.is_dependabot != 'true'
+        if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
         uses: actions/checkout@v6
         with:
           submodules: recursive
@@ -72,7 +59,7 @@ jobs:
 
       - name: Detect docs changes
         id: changes
-        if: steps.dependabot-check.outputs.is_dependabot != 'true'
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         uses: dorny/paths-filter@v3
         with:
           filters: |
