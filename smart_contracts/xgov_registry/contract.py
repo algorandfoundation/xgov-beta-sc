@@ -214,6 +214,9 @@ class XGovRegistry(
     def is_xgov_manager(self) -> bool:
         return Txn.sender == self.xgov_manager.value
 
+    def is_xgov_payor(self) -> bool:
+        return Txn.sender == self.xgov_payor.value
+
     def is_xgov_subscriber(self) -> bool:
         return Txn.sender == self.xgov_subscriber.value
 
@@ -1338,7 +1341,7 @@ class XGovRegistry(
         """
 
         # Verify the caller is the xGov Payor
-        assert Txn.sender == self.xgov_payor.value, err.UNAUTHORIZED
+        assert self.is_xgov_payor(), err.UNAUTHORIZED
 
         # Verify proposal_id is a genuine proposal created by this registry
         assert self._is_proposal(proposal_id), err.INVALID_PROPOSAL
@@ -1492,30 +1495,35 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod()
-    def withdraw_balance(self) -> None:
+    def withdraw_balance(self, *, amount: UInt64) -> None:
         """
         Withdraw outstanding Algos, excluding MBR and outstanding funds, from the xGov Registry.
 
+        Args:
+            amount (UInt64): Amount to withdraw (in microALGO)
+
         Raises:
-            err.UNAUTHORIZED: If the sender is not the xGov Manager
-            err.INSUFFICIENT_FUNDS: If there are no funds to withdraw
+            err.UNAUTHORIZED: If the sender is not the xGov Payor
+            err.INSUFFICIENT_FUNDS: If there are no funds, or the requested amount is greater than the available funds
             err.INSUFFICIENT_FEE: If the fee is not enough to cover the inner transaction to send the funds back
 
         """
 
-        assert self.is_xgov_manager(), err.UNAUTHORIZED
+        assert self.is_xgov_payor(), err.UNAUTHORIZED
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
 
-        # Calculate the amount to withdraw
-        amount = (
+        # Check the amount to withdraw
+        available_amount = (
             Global.current_application_address.balance
             - Global.current_application_address.min_balance
             - self.outstanding_funds.value
         )
 
-        assert amount > 0, err.INSUFFICIENT_FUNDS
+        assert (
+            available_amount > 0 and amount <= available_amount
+        ), err.INSUFFICIENT_FUNDS
         itxn.Payment(
-            receiver=self.xgov_manager.value,
+            receiver=self.xgov_payor.value,
             amount=amount,
             fee=0,
         ).submit()
