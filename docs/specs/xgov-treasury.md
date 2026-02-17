@@ -23,7 +23,7 @@ The xGov Treasury is an Algorand Address controlled by the xGov Registry.
 | Open Proposal                | xGov Treasury | Proposal Escrow |                  Partial Proposal Fee                   | `open_proposal`      |                      |
 | Pay Proposal                 | xGov Treasury | Proposer        |                    Requested Amount                     | `pay_grant_proposal` | Proposal is approved |
 | Withdraw Governance Funds    | xGov Treasury | xGov Manager    |            Up to available Governance Funds             | `withdraw_funds`     |                      |
-| Withdraw Outstanding Balance | xGov Treasury | xGov Manager    | Outstanding balance, excluding MBR and Governance Funds | `withdraw_balance`   |                      |
+| Withdraw Outstanding Balance | xGov Treasury | xGov Payor      | Outstanding balance, excluding MBR and Governance Funds | `withdraw_balance`   |                      |
 
 {{#include ../_include/styles.md:note}}
 > Partial Open Proposal Fees are equal to the Open Proposal Fee discounted by the
