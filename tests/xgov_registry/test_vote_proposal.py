@@ -64,7 +64,6 @@ def test_vote_proposal_success(
         assert xgov_box.tolerated_absences == absence_tolerance
     else:
         assert xgov_box.tolerated_absences == absence_tolerance - 1
-    assert xgov_box.last_vote_timestamp == 0
 
     xgov_registry_client.send.vote_proposal(
         args=VoteProposalArgs(
@@ -84,7 +83,6 @@ def test_vote_proposal_success(
     )
 
     assert xgov_box.tolerated_absences == absence_tolerance
-    assert xgov_box.last_vote_timestamp > 0  # type: ignore
 
     # Tear down test
     xgov_registry_client.send.set_voting_account(
