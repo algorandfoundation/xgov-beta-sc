@@ -80,14 +80,7 @@ jobs:
             OVERALL_SUCCESS=false
           fi
 
-          # Check pages environment
-          PAGES_FOUND=false
-          if check_env "github-pages"; then
-            PAGES_FOUND=true
-          else
-            echo "❌ No successful pages deployment found"
-            OVERALL_SUCCESS=false
-          fi
+          # Skip: Check pages environment (now on Cloudflare)
 
           if [ "$OVERALL_SUCCESS" = true ]; then
             echo "✅ All deployment checks passed"
