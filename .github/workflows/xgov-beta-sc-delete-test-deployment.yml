@@ -1,0 +1,42 @@
+name: Delete xGov Registry Test Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: "Application ID of the xGov Registry test deployment to delete"
+        required: true
+        type: number
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  pause-resume:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Delete xGov Registry Test Deployment
+        run: algokit project deploy testnet xgov_registry
+        env:
+          # Deploy command to run
+          XGOV_REG_DEPLOY_COMMAND: delete_test_deployment
+          # Vault configuration for transaction signing
+          VAULT_URL: ${{ secrets.VAULT_URL }}
+          VAULT_OIDC_ROLE: ${{ secrets.VAULT_ROLE_TESTNET }}
+          VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_OIDC_MOUNT_PATH || 'oidc' }}
+          VAULT_KEY_NAME: ${{ secrets.VAULT_KEY_NAME_TESTNET }}
+          VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
+          # The deployer account
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          # The dispenser account is used to ensure the deployer account is funded
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+          # Delete inputs
+          TARGET_DEPLOYMENT_ID: ${{ github.event.inputs.app_id }}
