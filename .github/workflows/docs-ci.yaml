@@ -34,8 +34,19 @@ jobs:
       url: ${{ steps.deploy.outputs.deployment-url || '' }}
 
     steps:
-      - name: Checkout source code (PR)
+      - name: Check if Dependabot PR
+        id: dependabot-check
         if: github.event_name == 'pull_request'
+        run: |
+          if [ "${{ github.event.pull_request.user.login }}" = "dependabot[bot]" ]; then
+            echo "is_dependabot=true" >> $GITHUB_OUTPUT
+            echo "✅ Dependabot PR detected - marking as passed (Dependabot PRs don't modify docs)"
+          else
+            echo "is_dependabot=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout source code (PR)
+        if: github.event_name == 'pull_request' && steps.dependabot-check.outputs.is_dependabot != 'true'
         uses: actions/checkout@v6
         with:
           submodules: recursive
@@ -55,6 +66,7 @@ jobs:
 
       - name: Detect docs changes
         id: changes
+        if: steps.dependabot-check.outputs.is_dependabot != 'true'
         uses: dorny/paths-filter@v3
         with:
           filters: |
