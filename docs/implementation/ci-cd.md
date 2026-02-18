@@ -53,6 +53,8 @@ gitGraph
 The trunk is considered _stable_ and **MUST**:
 
 - Reject commits not included in a Pull Request
+- Reject commits from branches other than `release` that have a `diff` on the `pyproject.toml`
+version bump
 - Require Docs and TestNet deployments to be healthy to accept commits from `release`
 - Meet the quality criteria defined in the CI/CD pipeline
 
@@ -87,7 +89,7 @@ skip the CI.
 
 The CD makes use of the following deployment environments:
 
-- `github-pages`: to host the static documentation (mdBook)
+- `preview`: to host the static documentation (mdBook)
 
 - `contract-testnet`: to continuously deploy Smart Contracts to the Algorand TestNet
 
@@ -100,15 +102,15 @@ The CI/CD pipeline is implemented with the following _automated_ workflows:
 - Smart Contracts CI (tests, lint, output stability, mock deployment)
 - Smart Contracts CD (to TestNet)
 
-- Documentation CI (tests, lint)
-- Documentation CD (to <https://docs.xgov.algorand.co/>)
+- Documentation CI (tests, lint, preview)
 
 - Release CI (validate release tag, version, etc.)
 - Release (to MainNet)
 
 And the following _manually dispatchable_ workflows:
 
-- PR previews for external contributions
+- Documentation preview for external contributions
+- Documentation deployment (to <https://docs.xgov.algorand.co/>)
 - xGov Registry parameters configuration
 - xGov Registry RBAC management
 - Pause and Resume Proposals

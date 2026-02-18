@@ -235,7 +235,7 @@ class XGovRegistryInterface(ARC4Contract, ABC):
 
     @abstractmethod
     @arc4.abimethod()
-    def withdraw_balance(self) -> None:
+    def withdraw_balance(self, *, amount: UInt64) -> None:
         pass
 
     @abstractmethod
