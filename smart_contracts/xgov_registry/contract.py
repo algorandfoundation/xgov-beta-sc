@@ -1527,6 +1527,19 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod(readonly=True)
+    def get_available_funds(self) -> typ.MicroAlgo:
+        """
+        Get the available funds (excluding MBR and Proposals funds)
+
+        Returns:
+            The available funds in microALGO
+
+        Raises:
+            err.INSUFFICIENT_FUNDS: If no available funds
+        """
+        return self.compute_available_funds()
+
+    @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.TypedGlobalState:
         """
         Returns the xGov Registry state.
