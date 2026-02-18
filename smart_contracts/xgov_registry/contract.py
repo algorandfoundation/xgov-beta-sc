@@ -254,6 +254,15 @@ class XGovRegistry(
         assert requested_amount_exists, err.MISSING_KEY
         return requested_amount
 
+    def compute_available_funds(self) -> UInt64:
+        spendable_funds = (
+            Global.current_application_address.balance
+            - Global.current_application_address.min_balance
+        )
+        # Ensure that spendable funds exceed funds allocated to Proposals
+        assert spendable_funds > self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
+        return spendable_funds - self.outstanding_funds.value
+
     def disburse_funds(self, recipient: Account, amount: UInt64) -> None:
         # Transfer the funds to the receiver
         itxn.Payment(receiver=recipient, amount=amount, fee=0).submit()
@@ -1495,36 +1504,22 @@ class XGovRegistry(
         ).submit()
 
     @arc4.abimethod()
-    def withdraw_balance(self, *, amount: UInt64) -> None:
+    def withdraw_available_funds(self, *, amount: typ.MicroAlgo) -> None:
         """
-        Withdraw outstanding Algos, excluding MBR and outstanding funds, from the xGov Registry.
+        Withdraw the available balance (excluding MBR and Proposals funds) from the xGov Registry.
 
         Args:
             amount (UInt64): Amount to withdraw (in microALGO)
 
         Raises:
             err.UNAUTHORIZED: If the sender is not the xGov Payor
-            err.INSUFFICIENT_FUNDS: If there are no funds, or the requested amount is greater than the available funds
+            err.INSUFFICIENT_FUNDS: If no available funds, or the requested amount is greater than the available funds
             err.INSUFFICIENT_FEE: If the fee is not enough to cover the inner transaction to send the funds back
-
         """
 
         assert self.is_xgov_payor(), err.UNAUTHORIZED
         assert Txn.fee >= (Global.min_txn_fee * 2), err.INSUFFICIENT_FEE
-
-        # Check the spendable funds in the xGov Treasury
-        spendable = (
-            Global.current_application_address.balance
-            - Global.current_application_address.min_balance
-        )
-
-        # Ensure that spendable funds cover funds allocated to Proposals
-        assert spendable >= self.outstanding_funds.value, err.INSUFFICIENT_FUNDS
-
-        available_amount = spendable - self.outstanding_funds.value
-        assert (
-            available_amount > 0 and amount <= available_amount
-        ), err.INSUFFICIENT_FUNDS
+        assert amount <= self.compute_available_funds(), err.INSUFFICIENT_FUNDS
         itxn.Payment(
             receiver=self.xgov_payor.value,
             amount=amount,
