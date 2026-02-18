@@ -786,6 +786,62 @@ def _pause_or_resume(algorand_client: AlgorandClient) -> None:
         raise
 
 
+def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
+    import base64
+
+    from algokit_utils import AppDeleteParams, AppUpdateParams
+    from algosdk.transaction import OnComplete
+    from dotenv import load_dotenv
+
+    assert not algorand_client.client.is_mainnet()
+
+    if algorand_client.client.is_testnet():
+        load_dotenv(".env.testnet", override=True)
+
+    logger.info("Deleting test deployment")
+
+    # Try to create Vault signer first, fallback to environment if not available
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+    signer = vault_signer if vault_signer else gh_deployer.signer
+
+    logger.info(f"Deployer address: {deployer_address}")
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
+    )
+
+    stable_deployment_id = int(os.environ["XGOV_REGISTRY_APP_ID"])
+    target_deployment_id = int(os.environ["TARGET_DEPLOYMENT_ID"])
+    assert target_deployment_id != stable_deployment_id
+
+    logger.info(f"Target App ID: {target_deployment_id}")
+
+    unchecked_bytecode = base64.b64decode("CoEBQw==")
+    update_method_selector = base64.b64decode("SVbBqw==")
+
+    delete_group = algorand_client.new_group()
+    delete_group.add_app_update(
+        params=AppUpdateParams(
+            sender=deployer_address,
+            signer=signer,
+            app_id=target_deployment_id,
+            args=[update_method_selector],
+            approval_program=unchecked_bytecode,
+            clear_state_program=unchecked_bytecode,
+            on_complete=OnComplete.UpdateApplicationOC,
+        )
+    )
+    delete_group.add_app_delete(
+        params=AppDeleteParams(
+            sender=deployer_address,
+            signer=signer,
+            app_id=target_deployment_id,
+            on_complete=OnComplete.DeleteApplicationOC,
+        )
+    )
+    delete_group.send()
+
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
@@ -799,6 +855,8 @@ def deploy() -> None:
         _configure_xgov_registry(algorand_client)
     elif command == "pause_or_resume":
         _pause_or_resume(algorand_client)
+    elif command == "delete_test_deployment":
+        _delete_test_deployment(algorand_client)
     else:
         raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
