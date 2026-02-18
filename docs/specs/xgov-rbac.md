@@ -37,11 +37,6 @@ The xGov Manager **MAY** update the xGov Registry anytime.
 
 The xGov Manager **MAY** reconfigure the parameters of the xGov Registry.
 
-### Treasury Management
-
-The xGov Manager **MAY** execute withdrawals of outstanding funds from the [xGov
-Treasury](./xgov-treasury.md).
-
 ## xGov Committee Manager
 
 The xGov Committee Manager is an Algorand Address controlled by the Algorand Foundation.
@@ -78,6 +73,11 @@ The xGov Payor is an Algorand Address controlled by the Algorand Foundation.
 
 The xGov Payor **MAY** disburse the requested funds for approved and reviewed Proposals
 if there are enough funds in the xGov Treasury.
+
+### Treasury Management
+
+The xGov Payor **MAY** execute withdrawals of outstanding funds from the [xGov
+Treasury](./xgov-treasury.md).
 
 ## xGov Subscriber
 
