@@ -35,6 +35,7 @@ jobs:
           VAULT_OIDC_ROLE: ${{ secrets.VAULT_ROLE_TESTNET }}
           VAULT_OIDC_MOUNT_PATH: ${{ secrets.VAULT_OIDC_MOUNT_PATH || 'oidc' }}
           VAULT_KEY_NAME: ${{ secrets.VAULT_KEY_NAME_TESTNET }}
+          MULTISIG_ALGORAND_ADDRESS: ''
           VAULT_NAMESPACE: ${{ secrets.VAULT_NAMESPACE }}
           # The deployer account
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
