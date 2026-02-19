@@ -173,9 +173,7 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -413,9 +411,7 @@ def _set_roles(algorand_client: AlgorandClient) -> None:
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -509,9 +505,7 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -671,9 +665,7 @@ def _pause_or_resume(algorand_client: AlgorandClient) -> None:
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -763,12 +755,11 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
 
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = (
-        vault_signer if vault_signer else (gh_deployer.signer if gh_deployer else None)
-    )
+    signer = vault_signer if vault_signer else gh_deployer.signer
+    signer_address = vault_signer.address if vault_signer else gh_deployer.address
 
     logger.info(f"Deployer address: {deployer_address}")
-    logger.info(f"Signer address: {signer.address}")
+    logger.info(f"Signer address: {signer_address}")
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
