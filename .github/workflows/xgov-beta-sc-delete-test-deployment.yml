@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       app_id:
+        # WARNING: The app_id cannot refer to a MainNet app or the stable TestNet
+        # deployment. The deployment configuration enforces this.
         description: "Application ID of the xGov Registry test deployment to delete"
         required: true
         type: number
@@ -13,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  pause-resume:
+  delete-test-deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
