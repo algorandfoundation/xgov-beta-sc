@@ -26,6 +26,13 @@ from smart_contracts.xgov_registry.vault_tx_signer import (
     create_vault_multisig_signer_from_env,
 )
 
+# Minimal TEAL program used to update before test deployment deletion. This is the
+# compiled bytecode (base64-encoded) of a simple "always approve" program.
+TEAL_ALWAYS_APPROVE_B64 = "CoEBQw=="
+
+# ARC-4 selector (base64-encoded) for the method signature `update_xgov_registry()void`
+UPDATE_XGOV_REGISTRY_SELECTOR_B64 = "SVbBqw=="
+
 logger = logging.getLogger(__name__)
 
 deployer_min_spending = AlgoAmount.from_algo(3)
@@ -786,6 +793,88 @@ def _pause_or_resume(algorand_client: AlgorandClient) -> None:
         raise
 
 
+def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
+    import base64
+
+    from algokit_utils import AppDeleteParams, AppUpdateParams
+    from algosdk.transaction import OnComplete
+    from dotenv import load_dotenv
+
+    if algorand_client.client.is_mainnet():
+        raise ValueError("Cannot delete deployments on MainNet")
+
+    if algorand_client.client.is_testnet():
+        load_dotenv(".env.testnet", override=True)
+
+    if algorand_client.client.is_localnet():
+        load_dotenv(".env.localnet", override=True)
+
+    logger.info("Deleting test deployment")
+
+    # Try to create Vault signer first, fallback to environment if not available
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+    signer = vault_signer if vault_signer else gh_deployer.signer
+
+    logger.info(f"Deployer address: {deployer_address}")
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
+    )
+
+    try:
+        stable_deployment_id = int(os.environ["XGOV_REGISTRY_APP_ID"])
+    except KeyError:
+        logger.error(
+            "XGOV_REGISTRY_APP_ID environment variable is required to identify stable deployment"
+        )
+        raise
+
+    try:
+        target_deployment_id = int(os.environ["TARGET_DEPLOYMENT_ID"])
+    except KeyError:
+        logger.error(
+            "TARGET_DEPLOYMENT_ID environment variable is required to identify target deployment"
+        )
+        raise
+
+    if target_deployment_id == stable_deployment_id:
+        logger.error(f"Cannot target the stable deployment {stable_deployment_id}")
+        raise ValueError(f"Cannot target the stable deployment {stable_deployment_id}")
+
+    logger.info(f"Target App ID: {target_deployment_id}")
+
+    always_approve_bytecode = base64.b64decode(TEAL_ALWAYS_APPROVE_B64)
+    update_xgov_registry_selector = base64.b64decode(UPDATE_XGOV_REGISTRY_SELECTOR_B64)
+
+    delete_group = algorand_client.new_group()
+    delete_group.add_app_update(
+        params=AppUpdateParams(
+            sender=deployer_address,
+            signer=signer,
+            app_id=target_deployment_id,
+            args=[update_xgov_registry_selector],
+            approval_program=always_approve_bytecode,
+            clear_state_program=always_approve_bytecode,
+            on_complete=OnComplete.UpdateApplicationOC,
+        )
+    )
+    delete_group.add_app_delete(
+        params=AppDeleteParams(
+            sender=deployer_address,
+            signer=signer,
+            app_id=target_deployment_id,
+            on_complete=OnComplete.DeleteApplicationOC,
+        )
+    )
+    try:
+        delete_group.send()
+    except Exception as e:
+        logger.error(f"Failed to delete test deployment: {e}")
+        raise
+
+    logger.info(f"Test deployment App ID {target_deployment_id} deleted successfully")
+
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
@@ -799,6 +888,8 @@ def deploy() -> None:
         _configure_xgov_registry(algorand_client)
     elif command == "pause_or_resume":
         _pause_or_resume(algorand_client)
+    elif command == "delete_test_deployment":
+        _delete_test_deployment(algorand_client)
     else:
         raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
