@@ -838,6 +838,7 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
         raise
 
     if target_deployment_id == stable_deployment_id:
+        logger.error(f"Cannot target the stable deployment {stable_deployment_id}")
         raise ValueError(f"Cannot target the stable deployment {stable_deployment_id}")
 
     logger.info(f"Target App ID: {target_deployment_id}")
