@@ -753,16 +753,12 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
 
     logger.info("Deleting test deployment")
 
-    # Try to create Vault signer first, fallback to environment if not available
-    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = vault_signer if vault_signer else gh_deployer.signer
-    signer_address = vault_signer.address if vault_signer else gh_deployer.address
+    deployer = algorand_client.account.from_environment("DEPLOYER")
 
-    logger.info(f"Deployer address: {deployer_address}")
-    logger.info(f"Signer address: {signer_address}")
+    logger.info(f"Deployer address: {deployer.address}")
 
     algorand_client.account.ensure_funded_from_environment(
-        account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
+        account_to_fund=deployer, min_spending_balance=deployer_min_spending
     )
 
     try:
@@ -793,8 +789,8 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
     delete_group = algorand_client.new_group()
     delete_group.add_app_update(
         params=AppUpdateParams(
-            sender=deployer_address,
-            signer=signer,
+            sender=deployer.address,
+            signer=deployer.signer,
             app_id=target_deployment_id,
             args=[update_xgov_registry_selector],
             approval_program=always_approve_bytecode,
@@ -804,8 +800,8 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
     )
     delete_group.add_app_delete(
         params=AppDeleteParams(
-            sender=deployer_address,
-            signer=signer,
+            sender=deployer.address,
+            signer=deployer.signer,
             app_id=target_deployment_id,
             on_complete=OnComplete.DeleteApplicationOC,
         )
