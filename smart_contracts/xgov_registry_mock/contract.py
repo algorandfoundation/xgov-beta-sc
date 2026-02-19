@@ -429,8 +429,12 @@ class XgovRegistryMock(XGovRegistryInterface):
         pass
 
     @arc4.abimethod()
-    def withdraw_balance(self, *, amount: UInt64) -> None:
+    def withdraw_available_funds(self, *, amount: typ.MicroAlgo) -> None:
         pass
+
+    @arc4.abimethod(readonly=True)
+    def get_available_funds(self) -> typ.MicroAlgo:
+        return UInt64(0)
 
     @arc4.abimethod(readonly=True)
     def get_state(self) -> typ.TypedGlobalState:
