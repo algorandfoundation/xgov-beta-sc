@@ -1,4 +1,4 @@
-name: Pause or Resume xgov Registry Smart Contract
+name: Pause or Resume xGov Registry Smart Contract
 
 on:
   workflow_dispatch:
@@ -44,7 +44,7 @@ jobs:
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Pause or Resume xgov Registry Smart Contract
+      - name: Pause or Resume xGov Registry Smart Contract
         run: algokit project deploy ${{ github.event.inputs.network }} xgov_registry
         env:
           # Deploy command to run
