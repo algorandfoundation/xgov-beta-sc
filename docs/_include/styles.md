@@ -1,9 +1,9 @@
 // ANCHOR: example
-> 📎 **EXAMPLE**
+> [!TIP]
 >
 // ANCHOR_END: example
 
 // ANCHOR: note
-> 📝 **NOTE**
+> [!NOTE]
 >
 // ANCHOR_END: note

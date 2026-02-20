@@ -25,7 +25,7 @@
 | Governance Period               | \\( 1{,}000{,}000 \\) |         Blocks         |     \\( 1{,}000{,}000 \\)     |  blocks   |
 | Committee Grace Period          |    \\( \infty \\)     |         Blocks         |        \\( \infty \\)         |  blocks   |
 
-> [!NOTE]
+{{#include ../_include/styles.md:note}}
 > The Committee on-chain watchdog, which ensures Committee's freshness, is currently
 > disabled. The `Committee Grace Period` is set to an arbitrarily high value until
 > the off-chain watchdog component is implemented and deployed.
