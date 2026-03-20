@@ -197,3 +197,52 @@ The committee publication workflows require the following GitHub variables:
 - `ALGOD_API_BASE_TESTNET`
 - `XGOV_REGISTRY_ID_MAINNET`
 - `XGOV_REGISTRY_ID_TESTNET`
+
+## Local Testing Guide
+
+Deploy commands used in the dispatchable workflows (e.g., `set_roles`, `pause_or_resume`,
+etc.) can be tested locally against LocalNet.
+
+### Start LocalNet
+
+```bash
+algokit localnet reset
+```
+
+### Prepare a configured local Registry
+
+Use the default LocalNet account as both the temporary admin and daemon so the Registry
+is configured and ready to accept committee declarations:
+
+```bash
+export TEST_ADMIN="$(poetry run python -c 'from algokit_utils import AlgorandClient; print(AlgorandClient.default_localnet().account.dispenser_from_environment().address)')"
+export TEST_XGOV_DAEMON="$TEST_ADMIN"
+
+XGOV_REG_DEPLOY_COMMAND=deploy \
+XGOV_REG_SET_ROLES=true \
+XGOV_REG_CONFIGURE=true \
+algokit project deploy localnet xgov_registry \
+  -c "poetry run python -m smart_contracts deploy"
+```
+
+### Run `declare_committee` locally
+
+The following command uses mocked committee data and exercises the same deploy
+command used by the CI workflows:
+
+```bash
+XGOV_REG_DEPLOY_COMMAND=declare_committee \
+XGOV_REG_COMMITTEE_ID_B64='AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=' \
+XGOV_REG_COMMITTEE_TOTAL_MEMBERS='30' \
+XGOV_REG_COMMITTEE_TOTAL_VOTES='9000000' \
+XGOV_REG_EXPECTED_TARGET_ANCHOR='1' \
+algokit project deploy localnet xgov_registry \
+  -c "poetry run python -m smart_contracts deploy"
+```
+
+Expected result:
+
+- the command resolves the default LocalNet deployer
+- it looks up the `XGovRegistry` app by creator and name
+- it submits `declare_committee`
+- it logs `Committee successfully declared`
