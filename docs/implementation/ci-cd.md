@@ -101,6 +101,8 @@ The CI/CD pipeline is implemented with the following _automated_ workflows:
 
 - Smart Contracts CI (tests, lint, output stability, mock deployment)
 - Smart Contracts CD (to TestNet)
+- xGov Registry committee publisher (to MainNet)
+- xGov Registry committee watchdog (MainNet freshness checks)
 
 - Documentation CI (tests, lint, preview)
 
@@ -113,5 +115,85 @@ And the following _manually dispatchable_ workflows:
 - Documentation deployment (to <https://docs.xgov.algorand.co/>)
 - xGov Registry parameters configuration
 - xGov Registry RBAC management
-- Pause and Resume Proposals
+- xGov Registry/Proposals pause and resume
+- xGov Registry committee publisher
 - Release and Update xGov Council
+
+## Committee Publishing
+
+The xGov Registry committee publication flow is implemented as a dedicated CI/CD
+feature.
+
+### MainNet publisher
+
+The automated MainNet publisher workflow:
+
+- Fetches the xGov Registry global state.
+- Reads `committee_last_anchor` and `governance_period` from the global state.
+- Computes the target anchor as the latest round aligned to the current
+  `governance_period`.
+- Fetches the committee entry from `COMMITTEE_INDEX_URL`.
+- Publishes the next committee only when:
+  - the Registry is behind the target anchor
+  - the committee entry exists in the index
+  - `committeeId`, `totalMembers`, and `totalVotes` are valid
+
+The public pre-check is implemented by `.github/scripts/committee-precheck.sh` and
+uses only `curl` and `jq`. This allows the workflow to skip AlgoKit and Python dependency
+installation when the Registry is already up to date.
+
+When publication is required, the workflow invokes:
+
+```bash
+algokit project deploy mainnet xgov_registry
+```
+
+with:
+
+- `XGOV_REG_DEPLOY_COMMAND=declare_committee`
+- `XGOV_REG_COMMITTEE_ID_B64`
+- `XGOV_REG_COMMITTEE_TOTAL_MEMBERS`
+- `XGOV_REG_COMMITTEE_TOTAL_VOTES`
+- `XGOV_REG_EXPECTED_TARGET_ANCHOR`
+
+### MainNet watchdog
+
+The automated MainNet watchdog workflow uses the same public pre-check inputs but
+never installs AlgoKit and never sends transactions.
+
+It raises an alert when:
+
+- `target_anchor > committee_last_anchor`
+- `last_round >= target_anchor + 5000`
+
+The watchdog opens or updates a GitHub issue for the overdue anchor and closes it
+automatically after the Registry catches up.
+
+### TestNet integration
+
+The TestNet committee workflow is intentionally manual only. It is used as an integration
+test for the `declare_committee` deploy command.
+
+The TestNet run:
+
+- Reads rounds and Registry state from `ALGOD_API_BASE_TESTNET`
+- Resolves `committeeId` from `COMMITTEE_INDEX_URL`
+- Uses manual workflow inputs for `committee_members` and `committee_votes`, or
+  defaults them to `30` and `9000000`
+- Calls:
+
+```bash
+algokit project deploy testnet xgov_registry
+```
+
+with `XGOV_REG_DEPLOY_COMMAND=declare_committee`
+
+### GitHub Variables
+
+The committee publication workflows require the following GitHub variables:
+
+- `COMMITTEE_INDEX_URL`
+- `ALGOD_API_BASE_MAINNET`
+- `ALGOD_API_BASE_TESTNET`
+- `XGOV_REGISTRY_ID_MAINNET`
+- `XGOV_REGISTRY_ID_TESTNET`
