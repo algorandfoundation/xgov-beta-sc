@@ -1,0 +1,61 @@
+name: Publish xGov Committee (Mainnet)
+
+on:
+  schedule:
+    - cron: "13 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  COMMITTEE_INDEX_URL: ${{ vars.COMMITTEE_INDEX_URL }}
+  ALGOD_API_BASE: ${{ vars.ALGOD_API_BASE_MAINNET }}
+  XGOV_REGISTRY_ID: ${{ vars.XGOV_REGISTRY_ID_MAINNET }}
+
+jobs:
+  precheck:
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.precheck.outputs.should_publish }}
+      reason: ${{ steps.precheck.outputs.reason }}
+      target_anchor: ${{ steps.precheck.outputs.target_anchor }}
+      committee_id_b64: ${{ steps.precheck.outputs.committee_id_b64 }}
+      total_members: ${{ steps.precheck.outputs.effective_committee_members }}
+      total_votes: ${{ steps.precheck.outputs.effective_committee_votes }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Run public precheck
+        id: precheck
+        run: bash ./.github/scripts/committee-precheck.sh
+        env:
+          COMMITTEE_PRECHECK_MODE: publisher
+          COMMITTEE_NETWORK: mainnet
+          ALGOD_API_BASE: ${{ env.ALGOD_API_BASE }}
+          XGOV_REGISTRY_ID: ${{ env.XGOV_REGISTRY_ID }}
+          COMMITTEE_INDEX_URL: ${{ env.COMMITTEE_INDEX_URL }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: precheck
+    if: needs.precheck.outputs.should_publish == 'true'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Set up AlgoKit
+        uses: ./.github/actions/algokit-setup
+
+      - name: Publish committee to mainnet
+        run: algokit project deploy mainnet xgov_registry
+        env:
+          XGOV_REG_DEPLOY_COMMAND: declare_committee
+          XGOV_REGISTRY_APP_ID: ${{ env.XGOV_REGISTRY_ID }}
+          XGOV_REG_COMMITTEE_ID_B64: ${{ needs.precheck.outputs.committee_id_b64 }}
+          XGOV_REG_COMMITTEE_TOTAL_MEMBERS: ${{ needs.precheck.outputs.total_members }}
+          XGOV_REG_COMMITTEE_TOTAL_VOTES: ${{ needs.precheck.outputs.total_votes }}
+          XGOV_REG_EXPECTED_TARGET_ANCHOR: ${{ needs.precheck.outputs.target_anchor }}
+          DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
