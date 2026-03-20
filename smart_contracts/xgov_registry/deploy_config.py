@@ -2,6 +2,7 @@ import base64
 import logging
 import os
 import random
+from pathlib import Path
 
 from algokit_utils import (
     AlgoAmount,
@@ -16,6 +17,7 @@ from algokit_utils import (
 from algosdk import encoding
 from algosdk.atomic_transaction_composer import AccountTransactionSigner
 from algosdk.transaction import Multisig
+from dotenv import load_dotenv
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
 from smart_contracts.xgov_registry.committee_publish import (
@@ -41,8 +43,18 @@ UPDATE_XGOV_REGISTRY_SELECTOR_B64 = "SVbBqw=="
 
 logger = logging.getLogger(__name__)
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 deployer_min_spending = AlgoAmount.from_algo(3)
 registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box storage
+
+
+def _get_environment_or_localnet_deployer(
+    algorand_client: AlgorandClient,
+) -> SigningAccount:
+    if algorand_client.client.is_localnet():
+        return algorand_client.account.dispenser_from_environment()
+    return algorand_client.account.from_environment("DEPLOYER")
 
 
 def _create_vault_signer_from_env() -> (
@@ -76,7 +88,7 @@ def _create_vault_signer_from_env() -> (
     - deployer_account is the AlgoKit account object or None if using vault
     """
     algorand_client = AlgorandClient.from_environment()
-    gh_deployer = algorand_client.account.from_environment("DEPLOYER")
+    gh_deployer = _get_environment_or_localnet_deployer(algorand_client)
 
     try:
         # Get the Algorand address for the multisig with proper validation
@@ -163,7 +175,7 @@ def _create_vault_signer_from_env() -> (
 def _create_deployer_signer_from_env(
     algorand_client: AlgorandClient,
 ) -> tuple[str, SigningAccount]:
-    deployer = algorand_client.account.from_environment("DEPLOYER")
+    deployer = _get_environment_or_localnet_deployer(algorand_client)
     return deployer.address, deployer
 
 
@@ -209,7 +221,7 @@ def _declare_committee(algorand_client: AlgorandClient) -> None:
     committee_total_members = os.environ["XGOV_REG_COMMITTEE_TOTAL_MEMBERS"]
     committee_total_votes = os.environ["XGOV_REG_COMMITTEE_TOTAL_VOTES"]
 
-    if algorand_client.client.is_testnet():
+    if algorand_client.client.is_testnet() or algorand_client.client.is_localnet():
         committee_id, total_members, total_votes = resolve_testnet_committee_values(
             committee_id_b64=committee_id_b64,
             committee_members=committee_total_members,
@@ -230,10 +242,13 @@ def _declare_committee(algorand_client: AlgorandClient) -> None:
     )
 
     current_state = app_client.state.global_state
-    if current_state.committee_last_anchor >= expected_target_anchor:
+    current_committee_last_anchor = current_state.committee_last_anchor or 0
+    if current_committee_last_anchor >= expected_target_anchor:
         raise ValueError(
             "Registry committee_last_anchor is already at or beyond the expected target anchor"
         )
+    if current_state.max_committee_size is None:
+        raise ValueError("Registry max_committee_size is not configured")
     if total_members > current_state.max_committee_size:
         raise ValueError(
             f"Committee members {total_members} exceed max_committee_size {current_state.max_committee_size}"
@@ -825,16 +840,11 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
 
     from algokit_utils import AppDeleteParams, AppUpdateParams
     from algosdk.transaction import OnComplete
-    from dotenv import load_dotenv
 
     if algorand_client.client.is_mainnet():
         raise ValueError("Cannot delete deployments on MainNet")
 
-    if algorand_client.client.is_testnet():
-        load_dotenv(".env.testnet", override=True)
-
-    if algorand_client.client.is_localnet():
-        load_dotenv(".env.localnet", override=True)
+    _load_network_env(algorand_client)
 
     logger.info("Deleting test deployment")
 
@@ -900,10 +910,16 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
     logger.info(f"Test deployment App ID {target_deployment_id} deleted successfully")
 
 
+def _load_network_env(algorand_client: AlgorandClient) -> None:
+    if algorand_client.client.is_localnet():
+        load_dotenv(REPO_ROOT / ".env.localnet", override=False)
+
+
 def deploy() -> None:
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
     algorand_client = AlgorandClient.from_environment()
+    _load_network_env(algorand_client)
     algorand_client.set_default_validity_window(100)
     if command == "deploy":
         _deploy_xgov_registry(algorand_client)
