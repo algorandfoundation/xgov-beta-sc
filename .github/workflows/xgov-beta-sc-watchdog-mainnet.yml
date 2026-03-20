@@ -1,0 +1,60 @@
+name: Committee Watchdog (Mainnet)
+
+on:
+  schedule:
+    - cron: "42 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  COMMITTEE_INDEX_URL: ${{ vars.COMMITTEE_INDEX_URL }}
+  ALGOD_API_BASE: ${{ vars.ALGOD_API_BASE_MAINNET }}
+  XGOV_REGISTRY_ID: ${{ vars.XGOV_REGISTRY_ID_MAINNET }}
+  COMMITTEE_TOLERANCE_ROUNDS: "5000"
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Run watchdog precheck
+        id: precheck
+        run: bash ./.github/scripts/committee-precheck.sh
+        env:
+          COMMITTEE_PRECHECK_MODE: watchdog
+          COMMITTEE_NETWORK: mainnet
+          ALGOD_API_BASE: ${{ env.ALGOD_API_BASE }}
+          XGOV_REGISTRY_ID: ${{ env.XGOV_REGISTRY_ID }}
+          COMMITTEE_INDEX_URL: ${{ env.COMMITTEE_INDEX_URL }}
+          COMMITTEE_TOLERANCE_ROUNDS: ${{ env.COMMITTEE_TOLERANCE_ROUNDS }}
+
+      - name: Open or update overdue issue
+        if: steps.precheck.outputs.alert_required == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_TITLE: ${{ steps.precheck.outputs.issue_title }}
+          ISSUE_BODY: ${{ steps.precheck.outputs.issue_body }}
+        run: |
+          ISSUE_NUMBER="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" --json number,title --jq '.[] | select(.title == env.ISSUE_TITLE) | .number' | head -n 1)"
+          if [[ -n "${ISSUE_NUMBER}" ]]; then
+            gh issue edit "${ISSUE_NUMBER}" --body "${ISSUE_BODY}"
+          else
+            gh issue create --title "${ISSUE_TITLE}" --body "${ISSUE_BODY}"
+          fi
+
+      - name: Close resolved overdue issue
+        if: steps.precheck.outputs.close_issue == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_TITLE: ${{ steps.precheck.outputs.issue_title }}
+          TARGET_ANCHOR: ${{ steps.precheck.outputs.target_anchor }}
+        run: |
+          ISSUE_NUMBER="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" --json number,title --jq '.[] | select(.title == env.ISSUE_TITLE) | .number' | head -n 1)"
+          if [[ -n "${ISSUE_NUMBER}" ]]; then
+            gh issue close "${ISSUE_NUMBER}" --comment "Committee anchor ${TARGET_ANCHOR} is now up to date on-chain."
+          fi
