@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import base64
 import binascii
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping
 
 DEFAULT_TESTNET_COMMITTEE_MEMBERS = 30
 DEFAULT_TESTNET_COMMITTEE_VOTES = 9_000_000
@@ -43,9 +43,7 @@ def parse_positive_int(raw_value: object, field_name: str) -> int:
     return value
 
 
-def parse_optional_positive_int(
-    raw_value: object, field_name: str
-) -> int | None:
+def parse_optional_positive_int(raw_value: object, field_name: str) -> int | None:
     if raw_value is None:
         return None
     if isinstance(raw_value, str) and not raw_value.strip():
@@ -75,9 +73,7 @@ def resolve_testnet_committee_values(
 ) -> tuple[bytes, int, int]:
     return (
         decode_committee_id_b64(committee_id_b64),
-        parse_optional_positive_int(
-            committee_members, "committee_members"
-        )
+        parse_optional_positive_int(committee_members, "committee_members")
         or DEFAULT_TESTNET_COMMITTEE_MEMBERS,
         parse_optional_positive_int(committee_votes, "committee_votes")
         or DEFAULT_TESTNET_COMMITTEE_VOTES,
@@ -97,7 +93,7 @@ def resolve_mainnet_committee_values(
 
 
 def get_committee_entry(
-    index_document: Mapping[str, Any], target_anchor: int
+    index_document: Mapping[str, object], target_anchor: int
 ) -> CommitteeIndexEntry:
     committees = index_document.get("committees")
     if not isinstance(committees, Mapping):
@@ -105,7 +101,9 @@ def get_committee_entry(
 
     entry = committees.get(str(target_anchor))
     if not isinstance(entry, Mapping):
-        raise LookupError(f"committee entry not found for target anchor {target_anchor}")
+        raise LookupError(
+            f"committee entry not found for target anchor {target_anchor}"
+        )
 
     committee_id_b64 = entry.get("committeeId")
     if not isinstance(committee_id_b64, str) or not committee_id_b64.strip():

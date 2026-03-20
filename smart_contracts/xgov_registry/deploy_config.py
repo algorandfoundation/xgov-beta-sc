@@ -20,6 +20,9 @@ from algosdk.transaction import Multisig
 from dotenv import load_dotenv
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
 from smart_contracts.xgov_registry.committee_publish import (
     resolve_mainnet_committee_values,
     resolve_testnet_committee_values,
@@ -185,7 +188,7 @@ def _get_registry_app_client_by_creator_and_name(
     deployer_address: str,
     signer: AccountTransactionSigner | HashicorpVaultMultisigTransactionSigner,
     creator_address: str,
-):
+) -> XGovRegistryClient:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
         APP_SPEC,
         XGovRegistryFactory,

@@ -11,7 +11,6 @@ from smart_contracts.xgov_registry.committee_publish import (
     resolve_testnet_committee_values,
 )
 
-
 VALID_COMMITTEE_ID_B64 = "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE="
 
 
