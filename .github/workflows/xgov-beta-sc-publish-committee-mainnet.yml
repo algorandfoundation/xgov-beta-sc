@@ -23,6 +23,8 @@ jobs:
       committee_id_b64: ${{ steps.precheck.outputs.committee_id_b64 }}
       total_members: ${{ steps.precheck.outputs.effective_committee_members }}
       total_votes: ${{ steps.precheck.outputs.effective_committee_votes }}
+      last_round: ${{ steps.precheck.outputs.last_round }}
+      committee_last_anchor: ${{ steps.precheck.outputs.committee_last_anchor }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -59,3 +61,18 @@ jobs:
           XGOV_REG_EXPECTED_TARGET_ANCHOR: ${{ needs.precheck.outputs.target_anchor }}
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
+
+      - name: Summarize mainnet publish
+        run: |
+          {
+            echo "## Mainnet committee publish"
+            echo
+            echo "- Last round: ${{ needs.precheck.outputs.last_round }}"
+            echo "- committee_last_anchor: ${{ needs.precheck.outputs.committee_last_anchor }}"
+            echo "- Target anchor: ${{ needs.precheck.outputs.target_anchor }}"
+            echo "- committeeId: ${{ needs.precheck.outputs.committee_id_b64 }}"
+            echo "- Effective committee_members: ${{ needs.precheck.outputs.total_members }}"
+            echo "- Effective committee_votes: ${{ needs.precheck.outputs.total_votes }}"
+            echo "- Publish result: submitted"
+          } >> "$GITHUB_STEP_SUMMARY"
+
