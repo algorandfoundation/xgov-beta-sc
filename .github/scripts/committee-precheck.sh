@@ -9,6 +9,7 @@ app_id="${XGOV_REGISTRY_ID:?XGOV_REGISTRY_ID is required}"
 index_url="${COMMITTEE_INDEX_URL:?COMMITTEE_INDEX_URL is required}"
 tolerance_rounds="${COMMITTEE_TOLERANCE_ROUNDS:-5000}"
 force_publish="${COMMITTEE_FORCE_PUBLISH:-false}"
+force_alert="${COMMITTEE_FORCE_ALERT:-false}"
 
 normalize_positive_int() {
   local raw_value="$1"
@@ -124,7 +125,21 @@ if [[ "${mode}" == "publisher" ]]; then
     fi
   fi
 elif [[ "${mode}" == "watchdog" ]]; then
-  if [[ "${target_anchor}" -gt "${committee_last_anchor}" ]]; then
+  if [[ "${force_alert}" == "true" ]]; then
+    alert_required="true"
+    reason="forced"
+    issue_body=$(
+      cat <<EOF
+Committee update alert was forced manually (for testing).
+
+- Network: ${network}
+- Last round: ${last_round}
+- Target anchor: ${target_anchor}
+- Current committee_last_anchor: ${committee_last_anchor}
+- Lag rounds since target anchor: ${lag_rounds}
+EOF
+    )
+  elif [[ "${target_anchor}" -gt "${committee_last_anchor}" ]]; then
     if [[ "${last_round}" -ge $((target_anchor + tolerance_rounds)) ]]; then
       alert_required="true"
       reason="overdue"
@@ -187,6 +202,7 @@ if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
     echo "- Mode: ${mode}"
     echo "- Network: ${network}"
     echo "- Force publish: ${force_publish}"
+    echo "- Force alert: ${force_alert}"
     echo "- Last round: ${last_round}"
     echo "- committee_last_anchor: ${committee_last_anchor}"
     echo "- governance_period: ${governance_period}"

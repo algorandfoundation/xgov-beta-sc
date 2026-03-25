@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "42 * * * *"
   workflow_dispatch:
+    inputs:
+      force_alert:
+        description: "Force the alert flow regardless of on-chain state (for testing)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -32,6 +37,7 @@ jobs:
           XGOV_REGISTRY_ID: ${{ env.XGOV_REGISTRY_ID }}
           COMMITTEE_INDEX_URL: ${{ env.COMMITTEE_INDEX_URL }}
           COMMITTEE_TOLERANCE_ROUNDS: ${{ env.COMMITTEE_TOLERANCE_ROUNDS }}
+          COMMITTEE_FORCE_ALERT: ${{ inputs.force_alert }}
 
       - name: Open or update overdue issue
         if: steps.precheck.outputs.alert_required == 'true'
