@@ -73,7 +73,7 @@ if [[ -n "${entry_json}" ]]; then
 fi
 
 if [[ "${mode}" == "publisher" ]]; then
-  if [[ "${target_anchor}" -le "${committee_last_anchor}" ]]; then
+  if [[ "${target_anchor}" -eq "${committee_last_anchor}" ]]; then
     reason="registry_up_to_date"
   elif [[ -z "${entry_json}" ]]; then
     reason="committee_entry_not_ready"
