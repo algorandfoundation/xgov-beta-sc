@@ -237,12 +237,21 @@ def _declare_committee(algorand_client: AlgorandClient) -> None:
             total_votes=committee_total_votes,
         )
 
-    app_client = _get_registry_app_client_by_creator_and_name(
-        algorand_client,
-        deployer_address=deployer_address,
-        signer=signer,
-        creator_address=deployer.address,
-    )
+    app_id_env = os.environ.get("XGOV_REGISTRY_APP_ID")
+    if app_id_env is not None:
+        app_client = _get_registry_app_client_by_id(
+            algorand_client,
+            deployer_address=deployer_address,
+            signer=signer,
+            app_id=int(app_id_env),
+        )
+    else:
+        app_client = _get_registry_app_client_by_creator_and_name(
+            algorand_client,
+            deployer_address=deployer_address,
+            signer=signer,
+            creator_address=deployer.address,
+        )
 
     current_state = app_client.state.global_state
     current_committee_last_anchor = current_state.committee_last_anchor or 0
