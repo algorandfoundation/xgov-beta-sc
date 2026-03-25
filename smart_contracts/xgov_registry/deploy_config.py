@@ -916,6 +916,8 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
 def _load_network_env(algorand_client: AlgorandClient) -> None:
     if algorand_client.client.is_localnet():
         load_dotenv(REPO_ROOT / ".env.localnet", override=False)
+    elif algorand_client.client.is_testnet():
+        load_dotenv(REPO_ROOT / ".env.testnet", override=True)
 
 
 def deploy() -> None:
