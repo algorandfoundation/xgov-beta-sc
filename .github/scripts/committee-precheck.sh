@@ -8,6 +8,7 @@ api_base="${ALGOD_API_BASE:?ALGOD_API_BASE is required}"
 app_id="${XGOV_REGISTRY_ID:?XGOV_REGISTRY_ID is required}"
 index_url="${COMMITTEE_INDEX_URL:?COMMITTEE_INDEX_URL is required}"
 tolerance_rounds="${COMMITTEE_TOLERANCE_ROUNDS:-5000}"
+force_publish="${COMMITTEE_FORCE_PUBLISH:-false}"
 
 normalize_positive_int() {
   local raw_value="$1"
@@ -73,7 +74,7 @@ if [[ -n "${entry_json}" ]]; then
 fi
 
 if [[ "${mode}" == "publisher" ]]; then
-  if [[ "${target_anchor}" -eq "${committee_last_anchor}" ]]; then
+  if [[ "${target_anchor}" -eq "${committee_last_anchor}" && "${force_publish}" != "true" ]]; then
     reason="registry_up_to_date"
   elif [[ -z "${entry_json}" ]]; then
     reason="committee_entry_not_ready"
@@ -185,6 +186,7 @@ if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
     echo
     echo "- Mode: ${mode}"
     echo "- Network: ${network}"
+    echo "- Force publish: ${force_publish}"
     echo "- Last round: ${last_round}"
     echo "- committee_last_anchor: ${committee_last_anchor}"
     echo "- governance_period: ${governance_period}"

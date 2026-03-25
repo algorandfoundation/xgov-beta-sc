@@ -13,6 +13,11 @@ on:
         required: false
         default: ""
         type: string
+      force_publish:
+        description: "Bypass the should_publish gate (forces publish even when registry is already up-to-date)"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -53,6 +58,7 @@ jobs:
           COMMITTEE_INDEX_URL: ${{ env.COMMITTEE_INDEX_URL }}
           COMMITTEE_INPUT_MEMBERS: ${{ github.event.inputs.committee_members }}
           COMMITTEE_INPUT_VOTES: ${{ github.event.inputs.committee_votes }}
+          COMMITTEE_FORCE_PUBLISH: ${{ inputs.force_publish }}
 
   publish:
     runs-on: ubuntu-latest
