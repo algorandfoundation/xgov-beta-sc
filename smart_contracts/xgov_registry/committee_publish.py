@@ -25,6 +25,8 @@ def compute_target_anchor(last_round: int, governance_period: int) -> int:
 
 
 def parse_positive_int(raw_value: object, field_name: str) -> int:
+    if isinstance(raw_value, bool):
+        raise ValueError(f"{field_name} must be an integer")
     if isinstance(raw_value, int):
         value = raw_value
     elif isinstance(raw_value, str):
