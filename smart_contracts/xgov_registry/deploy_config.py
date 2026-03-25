@@ -1,6 +1,8 @@
+import base64
 import logging
 import os
 import random
+from pathlib import Path
 
 from algokit_utils import (
     AlgoAmount,
@@ -13,9 +15,18 @@ from algokit_utils import (
     SigningAccount,
 )
 from algosdk import encoding
+from algosdk.atomic_transaction_composer import AccountTransactionSigner
 from algosdk.transaction import Multisig
+from dotenv import load_dotenv
 
 from smart_contracts.artifacts.proposal.proposal_client import ProposalFactory
+from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+    XGovRegistryClient,
+)
+from smart_contracts.xgov_registry.committee_publish import (
+    resolve_mainnet_committee_values,
+    resolve_testnet_committee_values,
+)
 from smart_contracts.xgov_registry.helpers import (
     load_proposal_contract_data_size_per_transaction,
 )
@@ -35,8 +46,18 @@ UPDATE_XGOV_REGISTRY_SELECTOR_B64 = "SVbBqw=="
 
 logger = logging.getLogger(__name__)
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 deployer_min_spending = AlgoAmount.from_algo(3)
 registry_min_spending = AlgoAmount.from_algo(4)  # min balance for proposal box storage
+
+
+def _get_environment_or_localnet_deployer(
+    algorand_client: AlgorandClient,
+) -> SigningAccount:
+    if algorand_client.client.is_localnet():
+        return algorand_client.account.dispenser_from_environment()
+    return algorand_client.account.from_environment("DEPLOYER")
 
 
 def _create_vault_signer_from_env() -> (
@@ -70,7 +91,7 @@ def _create_vault_signer_from_env() -> (
     - deployer_account is the AlgoKit account object or None if using vault
     """
     algorand_client = AlgorandClient.from_environment()
-    gh_deployer = algorand_client.account.from_environment("DEPLOYER")
+    gh_deployer = _get_environment_or_localnet_deployer(algorand_client)
 
     try:
         # Get the Algorand address for the multisig with proper validation
@@ -152,6 +173,109 @@ def _create_vault_signer_from_env() -> (
         )
 
         return None, gh_deployer.address, gh_deployer
+
+
+def _create_deployer_signer_from_env(
+    algorand_client: AlgorandClient,
+) -> tuple[str, SigningAccount]:
+    deployer = _get_environment_or_localnet_deployer(algorand_client)
+    return deployer.address, deployer
+
+
+def _get_registry_app_client_by_creator_and_name(
+    algorand_client: AlgorandClient,
+    *,
+    deployer_address: str,
+    signer: AccountTransactionSigner | HashicorpVaultMultisigTransactionSigner,
+    creator_address: str,
+) -> XGovRegistryClient:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        APP_SPEC,
+        XGovRegistryFactory,
+    )
+
+    factory = algorand_client.client.get_typed_app_factory(
+        typed_factory=XGovRegistryFactory,
+        default_sender=deployer_address,
+        default_signer=signer,
+    )
+
+    return factory.get_app_client_by_creator_and_name(
+        creator_address=creator_address,
+        app_name=APP_SPEC.name,
+    )
+
+
+def _declare_committee(algorand_client: AlgorandClient) -> None:
+    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
+        DeclareCommitteeArgs,
+    )
+
+    deployer_address, deployer = _create_deployer_signer_from_env(algorand_client)
+    signer = deployer.signer
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address,
+        min_spending_balance=deployer_min_spending,
+    )
+
+    expected_target_anchor = int(os.environ["XGOV_REG_EXPECTED_TARGET_ANCHOR"])
+    committee_id_b64 = os.environ["XGOV_REG_COMMITTEE_ID_B64"]
+    committee_total_members = os.environ["XGOV_REG_COMMITTEE_TOTAL_MEMBERS"]
+    committee_total_votes = os.environ["XGOV_REG_COMMITTEE_TOTAL_VOTES"]
+
+    if algorand_client.client.is_testnet() or algorand_client.client.is_localnet():
+        committee_id, total_members, total_votes = resolve_testnet_committee_values(
+            committee_id_b64=committee_id_b64,
+            committee_members=committee_total_members,
+            committee_votes=committee_total_votes,
+        )
+    else:
+        committee_id, total_members, total_votes = resolve_mainnet_committee_values(
+            committee_id_b64=committee_id_b64,
+            total_members=committee_total_members,
+            total_votes=committee_total_votes,
+        )
+
+    app_client = _get_registry_app_client_by_creator_and_name(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
+        creator_address=deployer.address,
+    )
+
+    current_state = app_client.state.global_state
+    current_committee_last_anchor = current_state.committee_last_anchor or 0
+    if current_committee_last_anchor >= expected_target_anchor:
+        raise ValueError(
+            "Registry committee_last_anchor is already at or beyond the expected target anchor"
+        )
+    if current_state.max_committee_size is None:
+        raise ValueError("Registry max_committee_size is not configured")
+    if total_members > current_state.max_committee_size:
+        raise ValueError(
+            f"Committee members {total_members} exceed max_committee_size {current_state.max_committee_size}"
+        )
+
+    logger.info(
+        "Declaring committee from index for anchor %s with id=%s members=%s votes=%s",
+        expected_target_anchor,
+        base64.b64encode(committee_id).decode(),
+        total_members,
+        total_votes,
+    )
+    app_client.send.declare_committee(
+        args=DeclareCommitteeArgs(
+            committee_id=committee_id,
+            size=total_members,
+            votes=total_votes,
+        ),
+        params=CommonAppCallParams(
+            sender=deployer_address,
+            signer=signer,
+        ),
+    )
+    logger.info("Committee successfully declared")
 
 
 def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
@@ -398,7 +522,6 @@ def _deploy_xgov_registry(algorand_client: AlgorandClient) -> None:
 
 def _set_roles(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-        APP_SPEC,
         SetCommitteeManagerArgs,
         SetKycProviderArgs,
         SetPayorArgs,
@@ -406,7 +529,6 @@ def _set_roles(algorand_client: AlgorandClient) -> None:
         SetXgovDaemonArgs,
         SetXgovManagerArgs,
         SetXgovSubscriberArgs,
-        XGovRegistryFactory,
     )
 
     # Try to create Vault signer first, fallback to environment if not available
@@ -417,15 +539,11 @@ def _set_roles(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    factory = algorand_client.client.get_typed_app_factory(
-        typed_factory=XGovRegistryFactory,
-        default_sender=deployer_address,
-        default_signer=signer,
-    )
-
-    app_client = factory.get_app_client_by_creator_and_name(
+    app_client = _get_registry_app_client_by_creator_and_name(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
         creator_address=gh_deployer.address,
-        app_name=APP_SPEC.name,
     )
 
     roles_group = app_client.new_group()
@@ -497,10 +615,8 @@ def _set_roles(algorand_client: AlgorandClient) -> None:
 
 def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
     from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-        APP_SPEC,
         ConfigXgovRegistryArgs,
         XGovRegistryConfig,
-        XGovRegistryFactory,
     )
 
     # Try to create Vault signer first, fallback to environment if not available
@@ -511,15 +627,11 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    factory = algorand_client.client.get_typed_app_factory(
-        typed_factory=XGovRegistryFactory,
-        default_sender=deployer_address,
-        default_signer=signer,
-    )
-
-    app_client = factory.get_app_client_by_creator_and_name(
+    app_client = _get_registry_app_client_by_creator_and_name(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
         creator_address=gh_deployer.address,
-        app_name=APP_SPEC.name,
     )
 
     current_state = app_client.state.global_state
@@ -658,11 +770,6 @@ def _configure_xgov_registry(algorand_client: AlgorandClient) -> None:
 
 
 def _pause_or_resume(algorand_client: AlgorandClient) -> None:
-    from smart_contracts.artifacts.xgov_registry.x_gov_registry_client import (
-        APP_SPEC,
-        XGovRegistryFactory,
-    )
-
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
     signer = vault_signer if vault_signer else gh_deployer.signer
@@ -671,15 +778,11 @@ def _pause_or_resume(algorand_client: AlgorandClient) -> None:
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
     )
 
-    factory = algorand_client.client.get_typed_app_factory(
-        typed_factory=XGovRegistryFactory,
-        default_sender=deployer_address,
-        default_signer=signer,
-    )
-
-    app_client = factory.get_app_client_by_creator_and_name(
+    app_client = _get_registry_app_client_by_creator_and_name(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
         creator_address=gh_deployer.address,
-        app_name=APP_SPEC.name,
     )
 
     pause_proposals = (
@@ -740,16 +843,11 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
 
     from algokit_utils import AppDeleteParams, AppUpdateParams
     from algosdk.transaction import OnComplete
-    from dotenv import load_dotenv
 
     if algorand_client.client.is_mainnet():
         raise ValueError("Cannot delete deployments on MainNet")
 
-    if algorand_client.client.is_testnet():
-        load_dotenv(".env.testnet", override=True)
-
-    if algorand_client.client.is_localnet():
-        load_dotenv(".env.localnet", override=True)
+    _load_network_env(algorand_client)
 
     logger.info("Deleting test deployment")
 
@@ -815,10 +913,18 @@ def _delete_test_deployment(algorand_client: AlgorandClient) -> None:
     logger.info(f"Test deployment App ID {target_deployment_id} deleted successfully")
 
 
+def _load_network_env(algorand_client: AlgorandClient) -> None:
+    if algorand_client.client.is_localnet():
+        load_dotenv(REPO_ROOT / ".env.localnet", override=False)
+    elif algorand_client.client.is_testnet():
+        load_dotenv(REPO_ROOT / ".env.testnet", override=True)
+
+
 def deploy() -> None:
+    algorand_client = AlgorandClient.from_environment()
+    _load_network_env(algorand_client)
     command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
     logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
-    algorand_client = AlgorandClient.from_environment()
     algorand_client.set_default_validity_window(100)
     if command == "deploy":
         _deploy_xgov_registry(algorand_client)
@@ -828,10 +934,12 @@ def deploy() -> None:
         _configure_xgov_registry(algorand_client)
     elif command == "pause_or_resume":
         _pause_or_resume(algorand_client)
+    elif command == "declare_committee":
+        _declare_committee(algorand_client)
     elif command == "delete_test_deployment":
         _delete_test_deployment(algorand_client)
     else:
         raise ValueError(
             f"Unknown command: {command}. Valid commands are: deploy, set_roles, configure_xgov_registry, "
-            f"pause_or_resume"
+            f"pause_or_resume, declare_committee, delete_test_deployment"
         )

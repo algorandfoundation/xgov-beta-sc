@@ -101,6 +101,8 @@ The CI/CD pipeline is implemented with the following _automated_ workflows:
 
 - Smart Contracts CI (tests, lint, output stability, mock deployment)
 - Smart Contracts CD (to TestNet)
+- xGov Registry committee publisher (to MainNet)
+- xGov Registry committee watchdog (MainNet freshness checks)
 
 - Documentation CI (tests, lint, preview)
 
@@ -113,5 +115,134 @@ And the following _manually dispatchable_ workflows:
 - Documentation deployment (to <https://docs.xgov.algorand.co/>)
 - xGov Registry parameters configuration
 - xGov Registry RBAC management
-- Pause and Resume Proposals
+- xGov Registry/Proposals pause and resume
+- xGov Registry committee publisher
 - Release and Update xGov Council
+
+## Committee Publishing
+
+The xGov Registry committee publication flow is implemented as a dedicated CI/CD
+feature.
+
+### MainNet publisher
+
+The automated MainNet publisher workflow:
+
+- Fetches the xGov Registry global state.
+- Reads `committee_last_anchor` and `governance_period` from the global state.
+- Computes the target anchor as the latest round aligned to the current
+  `governance_period`.
+- Fetches the committee entry from `COMMITTEE_INDEX_URL`.
+- Publishes the next committee only when:
+  - the Registry is behind the target anchor
+  - the committee entry exists in the index
+  - `committeeId`, `totalMembers`, and `totalVotes` are valid
+
+The public pre-check is implemented by `.github/scripts/committee-precheck.sh` and
+uses only `curl` and `jq`. This allows the workflow to skip AlgoKit and Python dependency
+installation when the Registry is already up to date.
+
+When publication is required, the workflow invokes:
+
+```bash
+algokit project deploy mainnet xgov_registry
+```
+
+with:
+
+- `XGOV_REG_DEPLOY_COMMAND=declare_committee`
+- `XGOV_REG_COMMITTEE_ID_B64`
+- `XGOV_REG_COMMITTEE_TOTAL_MEMBERS`
+- `XGOV_REG_COMMITTEE_TOTAL_VOTES`
+- `XGOV_REG_EXPECTED_TARGET_ANCHOR`
+
+### MainNet watchdog
+
+The automated MainNet watchdog workflow uses the same public pre-check inputs but
+never installs AlgoKit and never sends transactions.
+
+It raises an alert when:
+
+- `target_anchor > committee_last_anchor`
+- `last_round >= target_anchor + 5000`
+
+The watchdog opens or updates a GitHub issue for the overdue anchor and closes it
+automatically after the Registry catches up.
+
+### TestNet integration
+
+The TestNet committee workflow is intentionally manual only. It is used as an integration
+test for the `declare_committee` deploy command.
+
+The TestNet run:
+
+- Reads rounds and Registry state from `ALGOD_API_BASE_TESTNET`
+- Resolves `committeeId` from `COMMITTEE_INDEX_URL`
+- Uses manual workflow inputs for `committee_members` and `committee_votes`, or
+  defaults them to `30` and `9000000`
+- Calls:
+
+```bash
+algokit project deploy testnet xgov_registry
+```
+
+with `XGOV_REG_DEPLOY_COMMAND=declare_committee`
+
+### GitHub Variables
+
+The committee publication workflows require the following GitHub variables:
+
+- `COMMITTEE_INDEX_URL`
+- `ALGOD_API_BASE_MAINNET`
+- `ALGOD_API_BASE_TESTNET`
+- `XGOV_REGISTRY_ID_MAINNET`
+- `XGOV_REGISTRY_ID_TESTNET`
+
+## Local Testing Guide
+
+Deploy commands used in the dispatchable workflows (e.g., `set_roles`, `pause_or_resume`,
+etc.) can be tested locally against LocalNet.
+
+### Start LocalNet
+
+```bash
+algokit localnet reset
+```
+
+### Prepare a configured local Registry
+
+Use the default LocalNet account as both the temporary admin and daemon so the Registry
+is configured and ready to accept committee declarations:
+
+```bash
+export TEST_ADMIN="$(poetry run python -c 'from algokit_utils import AlgorandClient; print(AlgorandClient.default_localnet().account.dispenser_from_environment().address)')"
+export TEST_XGOV_DAEMON="$TEST_ADMIN"
+
+XGOV_REG_DEPLOY_COMMAND=deploy \
+XGOV_REG_SET_ROLES=true \
+XGOV_REG_CONFIGURE=true \
+algokit project deploy localnet xgov_registry \
+  -c "poetry run python -m smart_contracts deploy"
+```
+
+### Run `declare_committee` locally
+
+The following command uses mocked committee data and exercises the same deploy
+command used by the CI workflows:
+
+```bash
+XGOV_REG_DEPLOY_COMMAND=declare_committee \
+XGOV_REG_COMMITTEE_ID_B64='AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=' \
+XGOV_REG_COMMITTEE_TOTAL_MEMBERS='30' \
+XGOV_REG_COMMITTEE_TOTAL_VOTES='9000000' \
+XGOV_REG_EXPECTED_TARGET_ANCHOR='1' \
+algokit project deploy localnet xgov_registry \
+  -c "poetry run python -m smart_contracts deploy"
+```
+
+Expected result:
+
+- the command resolves the default LocalNet deployer
+- it looks up the `XGovRegistry` app by creator and name
+- it submits `declare_committee`
+- it logs `Committee successfully declared`
