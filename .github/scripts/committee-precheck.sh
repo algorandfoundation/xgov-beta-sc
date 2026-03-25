@@ -80,6 +80,7 @@ if [[ "${mode}" == "publisher" ]]; then
   elif [[ -z "${committee_id_b64}" ]]; then
     reason="invalid_committee_id"
   elif [[ "${network}" == "mainnet" ]]; then
+    # This condition could be relaxed to allow empty committees (no members, no votes)
     if ! effective_committee_members="$(normalize_positive_int "${index_total_members}" "totalMembers")"; then
       reason="invalid_total_members"
     elif ! effective_committee_votes="$(normalize_positive_int "${index_total_votes}" "totalVotes")"; then
