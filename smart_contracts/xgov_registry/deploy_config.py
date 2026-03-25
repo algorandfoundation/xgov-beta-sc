@@ -921,10 +921,10 @@ def _load_network_env(algorand_client: AlgorandClient) -> None:
 
 
 def deploy() -> None:
-    command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
-    logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
     algorand_client = AlgorandClient.from_environment()
     _load_network_env(algorand_client)
+    command = os.environ.get("XGOV_REG_DEPLOY_COMMAND")
+    logger.info(f"XGOV_REG_DEPLOY_COMMAND: {command}")
     algorand_client.set_default_validity_window(100)
     if command == "deploy":
         _deploy_xgov_registry(algorand_client)
