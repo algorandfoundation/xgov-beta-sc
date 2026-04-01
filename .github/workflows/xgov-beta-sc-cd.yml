@@ -43,7 +43,7 @@ jobs:
       version: ${{ steps.extract-version.outputs.version }}
       should-deploy: ${{ steps.check-changes.outputs.should-deploy }}
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}
@@ -179,7 +179,7 @@ jobs:
     needs: [create-canary-release]
     if: needs.create-canary-release.result == 'success' && needs.create-canary-release.outputs.should-deploy == 'true'
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}

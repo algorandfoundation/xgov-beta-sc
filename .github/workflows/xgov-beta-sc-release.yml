@@ -18,7 +18,7 @@ jobs:
       tag: ${{ steps.extract-version.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}
@@ -127,7 +127,7 @@ jobs:
     needs: [create-stable-release]
     if: needs.create-stable-release.result == 'success'
     steps:
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ secrets.BOT_ID }}
