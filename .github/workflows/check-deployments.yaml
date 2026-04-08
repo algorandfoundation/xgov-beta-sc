@@ -18,7 +18,7 @@ jobs:
           echo "Current PR is from '${{ github.head_ref }}' branch - skipping deployment checks."
           echo "✅ No deployment validation needed for this PR."
 
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         if: github.head_ref == 'release'
         id: app-token
         with:
