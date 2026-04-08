@@ -67,7 +67,7 @@ jobs:
       - name: Detect docs changes
         id: changes
         if: steps.dependabot-check.outputs.is_dependabot != 'true'
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         with:
           filters: |
             docs:
