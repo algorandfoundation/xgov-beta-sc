@@ -13,7 +13,7 @@ documentation = "https://algorandfoundation.github.io/xgov-beta-sc/"
 python = "^3.13"
 algokit-utils = "^4.2.3"
 python-dotenv = "^1.2.2"
-algorand-python = "3.4.0"
+algorand-python = "3.5.0"
 types-hvac = "2.4.0.20251115"
 hvac = "^2.4.0"
 urllib3 = "^2.6.3"
@@ -22,14 +22,14 @@ pip = "^26.0"
 [tool.poetry.group.dev.dependencies]
 algokit-client-generator = "^2.2.0"
 black = {extras = ["d"], version = "^26.3.1"}
-ruff = "^0.15.9"
+ruff = "^0.15.11"
 mypy = "^1.19.1"
 pytest = "^9.0.3"
 pytest-cov = "^7.1.0"
 pytest-sugar = "^1.1.1"
 pip-audit = "^2.10.0"
 pre-commit = "^4.5.1"
-puyapy = "5.7.1"
+puyapy = "5.8.1"
 
 [build-system]
 requires = ["poetry-core>=2.3.0,<3.0.0"]
