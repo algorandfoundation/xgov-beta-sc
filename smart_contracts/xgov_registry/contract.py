@@ -371,14 +371,18 @@ class XGovRegistry(
         assert not self.has_xgov_status(xgov_address), err.ALREADY_XGOV
         self.xgov_box[xgov_address] = self.make_xgov_box(voting_address)
         self.xgovs.value += 1
-        arc4.emit(typ.XGovSubscribed(xgov=xgov_address, delegate=voting_address))
+        arc4.emit(
+            typ.XGovSubscribed(
+                xgov=xgov_address, delegate=voting_address, round=Global.round
+            )
+        )
 
     def unsubscribe_xgov_and_emit(self, xgov_address: Account) -> None:
         # The following assertion may be redundant in some invocations.
         assert self.has_xgov_status(xgov_address), err.NOT_XGOV
         del self.xgov_box[xgov_address]
         self.xgovs.value -= 1
-        arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address))
+        arc4.emit(typ.XGovUnsubscribed(xgov=xgov_address, round=Global.round))
 
     def make_proposer_box(
         self,
@@ -1017,7 +1021,7 @@ class XGovRegistry(
             active_proposal=False, kyc_status=False, kyc_expiring=UInt64(0)
         )
 
-        arc4.emit(typ.ProposerSubscribed(proposer=Txn.sender))
+        arc4.emit(typ.ProposerSubscribed(proposer=Txn.sender, round=Global.round))
 
     @arc4.abimethod()
     def set_proposer_kyc(
@@ -1056,6 +1060,7 @@ class XGovRegistry(
             typ.ProposerKYC(
                 proposer=proposer,
                 valid_kyc=bool(self.valid_kyc(proposer)),
+                round=Global.round,
             )
         )
 
@@ -1095,6 +1100,7 @@ class XGovRegistry(
                 committee_id=committee_id,
                 size=arc4.UInt32(size),
                 votes=arc4.UInt32(votes),
+                round=Global.round,
             )
         )
 
@@ -1201,6 +1207,7 @@ class XGovRegistry(
             typ.NewProposal(
                 proposal_id=tx.created_app.id,
                 proposer=Txn.sender,
+                round=Global.round,
             )
         )
 

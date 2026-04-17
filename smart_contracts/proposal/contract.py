@@ -681,6 +681,7 @@ class Proposal(
                 funding_type=arc4.UInt8(self.funding_type.value),
                 requested_amount=self.requested_amount.value,
                 category=arc4.UInt8(self.funding_category.value),
+                round=Global.round,
             )
         )
 
@@ -833,6 +834,7 @@ class Proposal(
                     weighted_quorum_votes=arc4.UInt32(
                         self.weighted_quorum_threshold.value
                     ),
+                    round=Global.round,
                 )
             )
 
@@ -899,6 +901,7 @@ class Proposal(
                 total_approvals=arc4.UInt32(self.approvals.value),
                 total_rejections=arc4.UInt32(self.rejections.value),
                 total_nulls=arc4.UInt32(self.nulls.value),
+                round=Global.round,
             )
         )
 
@@ -933,6 +936,7 @@ class Proposal(
             typ.Scrutiny(
                 approved=is_approved,
                 plebiscite=self.is_plebiscite(),
+                round=Global.round,
             )
         )
 
@@ -998,7 +1002,7 @@ class Proposal(
                 receiver=self.proposer.value,
             )
 
-        arc4.emit(typ.Review(veto=block))
+        arc4.emit(typ.Review(veto=block, round=Global.round))
 
     @arc4.abimethod()
     def fund(self) -> typ.Error:

@@ -142,18 +142,21 @@ class XGovSubscribed(Struct, kw_only=True):
 
     xgov: Account
     delegate: Account
+    round: UInt64
 
 
 class XGovUnsubscribed(Struct, kw_only=True):
     """An xGov unsubscribed (either through self-onboarding or managed onboarding)"""
 
     xgov: Account
+    round: UInt64
 
 
 class ProposerSubscribed(Struct, kw_only=True):
     """A Proposer subscribed"""
 
     proposer: Account
+    round: UInt64
 
 
 class ProposerKYC(Struct, kw_only=True):
@@ -161,6 +164,7 @@ class ProposerKYC(Struct, kw_only=True):
 
     proposer: Account
     valid_kyc: bool
+    round: UInt64
 
 
 class NewCommittee(Struct, kw_only=True):
@@ -169,6 +173,7 @@ class NewCommittee(Struct, kw_only=True):
     committee_id: Bytes32
     size: arc4.UInt32
     votes: arc4.UInt32
+    round: UInt64
 
 
 class NewProposal(Struct, kw_only=True):
@@ -176,6 +181,7 @@ class NewProposal(Struct, kw_only=True):
 
     proposal_id: UInt64
     proposer: Account
+    round: UInt64
 
 
 # ARC-28 Proposal Events
@@ -187,6 +193,7 @@ class Opened(Struct, kw_only=True):
     funding_type: arc4.UInt8
     requested_amount: UInt64
     category: arc4.UInt8
+    round: UInt64
 
 
 class Submitted(Struct, kw_only=True):
@@ -196,6 +203,7 @@ class Submitted(Struct, kw_only=True):
     vote_closing: TimeStamp
     quorum_voters: arc4.UInt32
     weighted_quorum_votes: arc4.UInt32
+    round: UInt64
 
 
 class Vote(Struct, kw_only=True):
@@ -211,6 +219,7 @@ class Vote(Struct, kw_only=True):
     total_approvals: arc4.UInt32
     total_rejections: arc4.UInt32
     total_nulls: arc4.UInt32
+    round: UInt64
 
 
 class Scrutiny(Struct, kw_only=True):
@@ -218,9 +227,11 @@ class Scrutiny(Struct, kw_only=True):
 
     approved: bool
     plebiscite: bool
+    round: UInt64
 
 
 class Review(Struct, kw_only=True):
     """The xGov Council has reviewed the Proposal"""
 
     veto: bool
+    round: UInt64
