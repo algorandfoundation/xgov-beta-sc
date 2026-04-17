@@ -336,6 +336,12 @@ vote:
     app_global_get_ex
     assert // check self.registry_app_id exists
     itxn_field ApplicationID
+    // smart_contracts/council/contract.py:170
+    // registry_contract.XGovRegistry.is_proposal,
+    pushbytes 0x26983200 // method "is_proposal(uint64)void"
+    itxn_field ApplicationArgs
+    dig 3
+    itxn_field ApplicationArgs
     // smart_contracts/council/contract.py:167-173
     // # we dont need any error handling here
     // # if its invalid the transaction will fail
@@ -344,10 +350,6 @@ vote:
     //     arc4.UInt64(proposal_id),
     //     app_id=self.registry_app_id.value,
     // )
-    pushbytes 0x26983200 // method "is_proposal(uint64)void"
-    itxn_field ApplicationArgs
-    dig 3
-    itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
@@ -461,7 +463,7 @@ vote_for_header@5:
     dig 2
     swap
     pushint 33
-    box_extract
+    box_extract // on error: index out of bounds
     dup
     extract 0 32
     uncover 2
@@ -502,11 +504,6 @@ vote_else_body@8:
     b vote_after_if_else@9
 
 vote_after_for@11:
-    // smart_contracts/council/contract.py:204
-    // self.votes[proposal_id].append(
-    dupn 2
-    box_get
-    assert // check self.votes entry exists
     // smart_contracts/council/contract.py:206
     // address=Txn.sender,
     txn Sender
@@ -517,9 +514,11 @@ vote_after_for@11:
     // )
     bytec_3 // 0x00
     intc_0 // 0
-    dig 6
+    dig 4
     setbit
     concat
+    dig 1
+    dup
     // smart_contracts/council/contract.py:204-209
     // self.votes[proposal_id].append(
     //     typ.CouncilVote(
@@ -527,21 +526,62 @@ vote_after_for@11:
     //         block=block,
     //     )
     // )
-    dig 1
-    swap
-    concat // on error: max array length exceeded
-    swap
     intc_0 // 0
-    extract_uint16
+    intc_2 // 2
+    box_extract
+    btoi
+    dig 1
+    box_len
+    pop
+    // smart_contracts/council/contract.py:204-209
+    // self.votes[proposal_id].append(
+    //     typ.CouncilVote(
+    //         address=Txn.sender,
+    //         block=block,
+    //     )
+    // )
+    pushint 33
+    +
+    dig 2
+    swap
+    box_resize
+    dup
+    // smart_contracts/council/contract.py:204-209
+    // self.votes[proposal_id].append(
+    //     typ.CouncilVote(
+    //         address=Txn.sender,
+    //         block=block,
+    //     )
+    // )
     intc_1 // 1
     +
     itob
     extract 6 2
-    replace2 0
-    dig 1
-    box_del
-    pop
-    box_put
+    dig 2
+    // smart_contracts/council/contract.py:204-209
+    // self.votes[proposal_id].append(
+    //     typ.CouncilVote(
+    //         address=Txn.sender,
+    //         block=block,
+    //     )
+    // )
+    intc_0 // 0
+    uncover 2
+    box_replace
+    // smart_contracts/council/contract.py:204-209
+    // self.votes[proposal_id].append(
+    //     typ.CouncilVote(
+    //         address=Txn.sender,
+    //         block=block,
+    //     )
+    // )
+    pushint 33
+    *
+    intc_2 // 2
+    +
+    intc_0 // 0
+    uncover 3
+    box_splice
     // smart_contracts/council/contract.py:211
     // if approvals >= half_plus_one or rejections >= half_plus_one:
     dig 8
@@ -573,13 +613,13 @@ vote_if_body@13:
     setbit
     dig 3
     itxn_field ApplicationID
+    pushbytes 0x212d9f07 // method "review(bool)void"
+    itxn_field ApplicationArgs
+    itxn_field ApplicationArgs
     // smart_contracts/council/contract.py:215-217
     // arc4.abi_call(
     //     proposal_contract.Proposal.review, block, app_id=proposal_id
     // )
-    pushbytes 0x212d9f07 // method "review(bool)void"
-    itxn_field ApplicationArgs
-    itxn_field ApplicationArgs
     pushint 6 // appl
     itxn_field TypeEnum
     intc_0 // 0
