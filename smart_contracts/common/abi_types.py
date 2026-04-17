@@ -137,33 +137,33 @@ class VotingState(Struct, kw_only=True):
 # ARC-28 xGov Registry Events
 
 
-class XGovSubscribed(arc4.Struct, kw_only=True):
+class XGovSubscribed(Struct, kw_only=True):
     """An xGov subscribed (either through self-onboarding or managed onboarding)"""
 
     xgov: Account
     delegate: Account
 
 
-class XGovUnsubscribed(arc4.Struct, kw_only=True):
+class XGovUnsubscribed(Struct, kw_only=True):
     """An xGov unsubscribed (either through self-onboarding or managed onboarding)"""
 
     xgov: Account
 
 
-class ProposerSubscribed(arc4.Struct, kw_only=True):
+class ProposerSubscribed(Struct, kw_only=True):
     """A Proposer subscribed"""
 
     proposer: Account
 
 
-class ProposerKYC(arc4.Struct, kw_only=True):
+class ProposerKYC(Struct, kw_only=True):
     """A Proposer KYC status update"""
 
     proposer: Account
     valid_kyc: bool
 
 
-class NewCommittee(arc4.Struct, kw_only=True):
+class NewCommittee(Struct, kw_only=True):
     """A new xGov Committee has been elected"""
 
     committee_id: Bytes32
@@ -171,7 +171,7 @@ class NewCommittee(arc4.Struct, kw_only=True):
     votes: arc4.UInt32
 
 
-class NewProposal(arc4.Struct, kw_only=True):
+class NewProposal(Struct, kw_only=True):
     """A new Proposal has been opened"""
 
     proposal_id: UInt64
@@ -181,7 +181,7 @@ class NewProposal(arc4.Struct, kw_only=True):
 # ARC-28 Proposal Events
 
 
-class Opened(arc4.Struct, kw_only=True):
+class Opened(Struct, kw_only=True):
     """The Proposal has been opened"""
 
     funding_type: arc4.UInt8
@@ -189,7 +189,7 @@ class Opened(arc4.Struct, kw_only=True):
     category: arc4.UInt8
 
 
-class Submitted(arc4.Struct, kw_only=True):
+class Submitted(Struct, kw_only=True):
     """The Proposal has been submitted for voting"""
 
     vote_opening: TimeStamp
@@ -198,7 +198,7 @@ class Submitted(arc4.Struct, kw_only=True):
     weighted_quorum_votes: arc4.UInt32
 
 
-class Vote(arc4.Struct, kw_only=True):
+class Vote(Struct, kw_only=True):
     """A vote has been cast on the Proposal"""
 
     xgov: arc4.Address
@@ -213,14 +213,14 @@ class Vote(arc4.Struct, kw_only=True):
     total_nulls: arc4.UInt32
 
 
-class Scrutiny(arc4.Struct, kw_only=True):
+class Scrutiny(Struct, kw_only=True):
     """The vote has been scrutinized"""
 
     approved: bool
     plebiscite: bool
 
 
-class Review(arc4.Struct, kw_only=True):
+class Review(Struct, kw_only=True):
     """The xGov Council has reviewed the Proposal"""
 
     veto: bool
