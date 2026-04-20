@@ -59,10 +59,10 @@ def isolate_error_transformers(algorand_client: AlgorandClient):
     contains only session-scoped transformers) and restores it
     afterwards, so function-scoped transformers never leak across tests.
     """
-    baseline = algorand_client._error_transformers.copy()  # noqa: SLF001
+    baseline = algorand_client._error_transformers.copy()
     yield
-    algorand_client._error_transformers.clear()  # noqa: SLF001
-    algorand_client._error_transformers.update(baseline)  # noqa: SLF001
+    algorand_client._error_transformers.clear()
+    algorand_client._error_transformers.update(baseline)
 
 
 @pytest.fixture(scope="session")
