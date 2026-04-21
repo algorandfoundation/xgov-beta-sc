@@ -19,22 +19,25 @@ An xGov subscribed (either through self-onboarding or managed onboarding).
 |:---------|:---------:|:-----------------------------------|
 | xGov     | `address` | The address of the subscribed xGov |
 | Delegate | `address` | The address of the delegated voter |
+| Round    | `uint64`  | The round of the event             |
 
 ### `XGovUnsubscribed`
 
 An xGov unsubscribed (either through self-onboarding, managed onboarding, or abseenteism).
 
-| ARGUMENT  |   TYPE    | DESCRIPTION                          |
-|:----------|:---------:|:-------------------------------------|
-| xGov      | `address` | The address of the unsubscribed xGov |
+| ARGUMENT |   TYPE    | DESCRIPTION                          |
+|:---------|:---------:|:-------------------------------------|
+| xGov     | `address` | The address of the unsubscribed xGov |
+| Round    | `uint64`  | The round of the event               |
 
 ### `ProposerSubscribed`
 
 A Proposer subscribed.
 
-| ARGUMENT  |   TYPE    | DESCRIPTION                            |
-|:----------|:---------:|:---------------------------------------|
-| Proposer  | `address` | The address of the subscribed Proposer |
+| ARGUMENT |   TYPE    | DESCRIPTION                            |
+|:---------|:---------:|:---------------------------------------|
+| Proposer | `address` | The address of the subscribed Proposer |
+| Round    | `uint64`  | The round of the event                 |
 
 ### `ProposerKYC`
 
@@ -44,16 +47,18 @@ A Proposer KYC status update.
 |:----------|:---------:|:-----------------------------------------|
 | Proposer  | `address` | The address of the unsubscribed Proposer |
 | Valid KYC |  `bool`   | The Proposer KYC is valid                |
+| Round     | `uint64`  | The round of the event                   |
 
 ### `NewCommittee`
 
 A new xGov Committee has been elected.
 
-| ARGUMENT     |    TYPE    | DESCRIPTION         |
-|:-------------|:----------:|:--------------------|
-| Committee ID | `byte[32]` | ARC-86 Committee ID |
-| Size         |  `uint32`  | Committee members   |
-| Votes        |  `uint32`  | Committee votes     |
+| ARGUMENT     |    TYPE    | DESCRIPTION            |
+|:-------------|:----------:|:-----------------------|
+| Committee ID | `byte[32]` | ARC-86 Committee ID    |
+| Size         |  `uint32`  | Committee members      |
+| Votes        |  `uint32`  | Committee votes        |
+| Round        |  `uint64`  | The round of the event |
 
 ### `NewProposal`
 
@@ -63,6 +68,7 @@ A new Proposal has been opened.
 |:------------|:---------:|:------------------------|
 | Proposal ID | `uint64`  | Proposal Application ID |
 | Proposer    | `address` | Proposer address        |
+| Round       | `uint64`  | The round of the event  |
 
 ## Proposal Events
 
@@ -75,6 +81,7 @@ The Proposal has been opened.
 | Funding Type     | `uint8`  | Enum: Retroactive (`10`), Proactive (`20`) |
 | Requested Amount | `uint64` | Requested Amount (microALGO)               |
 | Category         | `uint8`  | Small (`10`), Medium (`20`), Large (`30`)  |
+| Round            | `uint64` | The round of the event                     |
 
 ### `Submitted`
 
@@ -86,6 +93,7 @@ The Proposal has been submitted for voting.
 | Vote Closing          | `uint64` | Vote Closing UNIX timestamp                 |
 | Quorum Voters         | `uint32` | Democratic Quorum (voters) required to pass |
 | Weighted Quorum Votes | `uint32` | Weighted Quorum (votes) required to pass    |
+| Round                 | `uint64` | The round of the event                      |
 
 ### `Vote`
 
@@ -103,20 +111,23 @@ A vote has been cast on the Proposal.
 | Total Approvals  | `uint32`  | Approval votes so far                |
 | Total Rejections | `uint32`  | Rejections votes so far              |
 | Total Nulls      | `uint32`  | Null votes so far                    |
+| Round            | `uint64`  | The round of the event               |
 
 ### `Scrutiny`
 
 The vote has been scrutinized.
 
-| ARGUMENT   |  TYPE  | DESCRIPTION                                                                 |
-|:-----------|:------:|:----------------------------------------------------------------------------|
-| Approved   | `bool` | The Proposal has been approved (both quorums reached and majority approved) |
-| Plebiscite | `bool` | All Committee members voted                                                 |
+| ARGUMENT   |   TYPE   | DESCRIPTION                                                                 |
+|:-----------|:--------:|:----------------------------------------------------------------------------|
+| Approved   |  `bool`  | The Proposal has been approved (both quorums reached and majority approved) |
+| Plebiscite |  `bool`  | All Committee members voted                                                 |
+| Round      | `uint64` | The round of the event                                                      |
 
 ### `Review`
 
 The xGov Council has reviewed the Proposal.
 
-| ARGUMENT |  TYPE  | DESCRIPTION                               |
-|:---------|:------:|:------------------------------------------|
-| Veto     | `bool` | The proposal has been blocked with a veto |
+| ARGUMENT |   TYPE   | DESCRIPTION                               |
+|:---------|:--------:|:------------------------------------------|
+| Veto     |  `bool`  | The proposal has been blocked with a veto |
+| Round    | `uint64` | The round of the event                    |

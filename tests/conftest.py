@@ -38,6 +38,33 @@ def reset_blockchain_timestamp(algorand_client: AlgorandClient):
     algorand_client.client.algod.set_timestamp_offset(0)
 
 
+@pytest.fixture(autouse=True, scope="function")
+def isolate_error_transformers(algorand_client: AlgorandClient):
+    """Prevent error-transformer leakage between tests.
+
+    Every ``AppClient`` created during test setup registers an error
+    transformer on the shared session-scoped ``algorand_client``.
+    Function-scoped clients are recreated each test, but their stale
+    transformers accumulate and are never removed.
+
+    The SDK identifies the owning app via a *substring* check
+    (``f"app={app_id}" in str(error)``), so a stale transformer for
+    e.g. app 1142 can incorrectly match an error for app 11423 because
+    ``"app=1142"`` is a prefix of ``"app=11423"``.  When this happens
+    the error is transformed using the wrong (stale) source map,
+    stripping the human-readable error text and causing ``match=``
+    assertions in ``pytest.raises`` to fail.
+
+    This fixture snapshots the transformer set before each test (which
+    contains only session-scoped transformers) and restores it
+    afterwards, so function-scoped transformers never leak across tests.
+    """
+    baseline = algorand_client._error_transformers.copy()
+    yield
+    algorand_client._error_transformers.clear()
+    algorand_client._error_transformers.update(baseline)
+
+
 @pytest.fixture(scope="session")
 def min_fee() -> AlgoAmount:
     return AlgoAmount(micro_algo=MIN_TXN_FEE)

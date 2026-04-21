@@ -91,9 +91,18 @@ subscribe_xgov:
     itxn_next
     swap
     itxn_field ApplicationID
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:29
+    // registry_contract.XGovRegistry.subscribe_xgov,
     pushbytes 0xa082cef8 // method "subscribe_xgov(address,pay)void"
     itxn_field ApplicationArgs
     itxn_field ApplicationArgs
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:28-33
+    // arc4.abi_call(
+    //     registry_contract.XGovRegistry.subscribe_xgov,
+    //     voting_address,
+    //     payment,
+    //     app_id=app_id,
+    // )
     intc_3 // appl
     itxn_field TypeEnum
     intc_2 // 0
@@ -130,14 +139,16 @@ unsubscribe_xgov:
     *
     swap
     itxn_field ApplicationID
+    // smart_contracts/xgov_subscriber_app_mock/contract.py:38
+    // registry_contract.XGovRegistry.unsubscribe_xgov,
+    pushbytes 0xdf39fdb9 // method "unsubscribe_xgov()void"
+    itxn_field ApplicationArgs
     // smart_contracts/xgov_subscriber_app_mock/contract.py:37-41
     // arc4.abi_call(
     //     registry_contract.XGovRegistry.unsubscribe_xgov,
     //     app_id=app_id,
     //     fee=(Global.min_txn_fee * 2),
     // )
-    pushbytes 0xdf39fdb9 // method "unsubscribe_xgov()void"
-    itxn_field ApplicationArgs
     intc_3 // appl
     itxn_field TypeEnum
     itxn_field Fee
