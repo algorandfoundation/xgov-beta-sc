@@ -2630,14 +2630,14 @@ files = [
 
 [[package]]
 name = "types-hvac"
-version = "2.4.0.20251115"
+version = "2.4.0.20260408"
 description = "Typing stubs for hvac"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "types_hvac-2.4.0.20251115-py3-none-any.whl", hash = "sha256:f92bcbb2eced81ce77cdbc865bff911e20341afaa6f2126e925cb8c062003f82"},
-    {file = "types_hvac-2.4.0.20251115.tar.gz", hash = "sha256:a7b5d0e86961e4d7f07e51b60b2eedcac5f8db8b98b031d4a4b716215c21df3a"},
+    {file = "types_hvac-2.4.0.20260408-py3-none-any.whl", hash = "sha256:ee8d3528eaa6a2b480dbdde04fec06bcd26d13c9dfd97837b62cca98f175d70a"},
+    {file = "types_hvac-2.4.0.20260408.tar.gz", hash = "sha256:291eeeaa0af0bc5d02960fc8aaa6365ad53a05715d5b055b3c64023e74d738c1"},
 ]
 
 [package.dependencies]
@@ -2864,4 +2864,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "d54dbfe6e213613c329c02f76195facf5ffd0c045e6dc56d9e638a1ea7f76ae5"
+content-hash = "a3bab2f5452a83f404f3366364923dfb73a6035f9a171deed51e07576dd89ac2"
