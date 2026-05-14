@@ -172,13 +172,13 @@ def build(output_dir: Path, contract_path: Path) -> Path:
                 text=True,
             )
 
-            if puyapy_result.stdout:
-                print(puyapy_result.stdout)
-
             if puyapy_result.returncode:
                 raise Exception(
                     f"Could not generate client with puyapy-clientgen:\n{puyapy_result.stdout}"
                 )
+
+            if puyapy_result.stdout:
+                print(puyapy_result.stdout)
 
             # Apply naming convention: {contract_name}_avm_client.py
             contract_name = file_name.removesuffix(".arc56.json")
