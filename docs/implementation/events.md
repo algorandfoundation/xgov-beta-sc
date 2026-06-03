@@ -7,7 +7,7 @@ events:
 
 - **Proposal Events**, emitted by the [Proposal applications](../specs/proposal.md).
 
-Clients can subscribe to these ARC-28 events using the [AlgoKit Subscriber Library](https://dev.algorand.co/algokit/subscribers/typescript/overview/#arc-28-event-subscription-and-reads).
+Clients can subscribe to these ARC-28 events using the [AlgoKit Subscriber Library](https://dev.algorand.co/algokit/subscriber/typescript/overview/#arc-28-event-subscription-and-reads).
 
 ## xGov Registry Events
 
