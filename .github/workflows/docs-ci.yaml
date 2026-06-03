@@ -101,7 +101,7 @@ jobs:
         if: >
           (steps.changes.outputs.docs == 'true' && github.event_name == 'pull_request' && steps.fork-check.outputs.is_fork != 'true') ||
           (github.event_name == 'workflow_dispatch' && inputs.pr_number)
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
