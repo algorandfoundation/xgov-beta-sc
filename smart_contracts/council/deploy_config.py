@@ -4,13 +4,23 @@ import os
 from algokit_utils import (
     AlgoAmount,
     AlgorandClient,
+    CommonAppCallParams,
     OnSchemaBreak,
     OnUpdate,
 )
+from algosdk import encoding
+from algosdk.atomic_transaction_composer import TransactionSigner
 
 from smart_contracts.artifacts.council.council_client import (
+    AddMemberArgs,
+    CouncilClient,
+    CouncilFactory,
     CouncilMethodCallCreateParams,
     CreateArgs,
+    RemoveMemberArgs,
+)
+from smart_contracts.xgov_registry.vault_tx_signer import (
+    HashicorpVaultMultisigTransactionSigner,
 )
 
 from ..xgov_registry.deploy_config import _create_vault_signer_from_env
@@ -23,15 +33,62 @@ deployer_min_spending = AlgoAmount.from_algo(3)
 council_min_spending = AlgoAmount.from_algo(2)
 
 
-def deploy() -> None:
-    from smart_contracts.artifacts.council.council_client import (
-        CouncilFactory,
+def _get_council_factory(
+    algorand_client: AlgorandClient,
+    *,
+    deployer_address: str,
+    signer: TransactionSigner | HashicorpVaultMultisigTransactionSigner,
+    version: str | None = None,
+) -> CouncilFactory:
+    return algorand_client.client.get_typed_app_factory(
+        typed_factory=CouncilFactory,
+        default_sender=deployer_address,
+        default_signer=signer,
+        version=version,
     )
 
-    algorand_client = AlgorandClient.from_environment()
 
+def _get_council_app_client(
+    algorand_client: AlgorandClient,
+    *,
+    deployer_address: str,
+    signer: TransactionSigner | HashicorpVaultMultisigTransactionSigner,
+    creator_address: str,
+) -> CouncilClient:
+    from smart_contracts.artifacts.council.council_client import APP_SPEC
+
+    factory = _get_council_factory(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
+    )
+
+    if council_app_id := os.environ.get("COUNCIL_APP_ID"):
+        return factory.get_app_client_by_id(app_id=int(council_app_id))
+
+    return factory.get_app_client_by_creator_and_name(
+        creator_address=creator_address,
+        app_name=APP_SPEC.name,
+    )
+
+
+def _get_member_address() -> str:
+    member_address = os.environ.get("COUNCIL_MEMBER_ADDRESS", "").strip()
+    if not member_address:
+        raise ValueError("COUNCIL_MEMBER_ADDRESS must be set")
+
+    try:
+        encoding.decode_address(member_address)  # type: ignore[no-untyped-call]
+    except Exception as e:
+        raise ValueError("COUNCIL_MEMBER_ADDRESS must be a valid Algorand address") from e
+
+    return member_address
+
+
+def _deploy_council(algorand_client: AlgorandClient) -> None:
     # Try to create Vault signer first, fallback to environment if not available
     vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+    signer = vault_signer if vault_signer else gh_deployer.signer
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -53,14 +110,10 @@ def deploy() -> None:
 
     version = os.environ.get("COUNCIL_VERSION", None)
 
-    factory = algorand_client.client.get_typed_app_factory(
-        typed_factory=CouncilFactory,
-        default_sender=deployer_address,
-        default_signer=(
-            vault_signer
-            if vault_signer
-            else (gh_deployer.signer if gh_deployer else None)
-        ),
+    factory = _get_council_factory(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
         version=version,
     )
 
@@ -81,3 +134,50 @@ def deploy() -> None:
         account_to_fund=client.app_address,
         min_spending_balance=council_min_spending,
     )
+
+
+def _update_member(command: str, algorand_client: AlgorandClient) -> None:
+    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
+    signer = vault_signer if vault_signer else gh_deployer.signer
+    member_address = _get_member_address()
+
+    algorand_client.account.ensure_funded_from_environment(
+        account_to_fund=deployer_address,
+        min_spending_balance=deployer_min_spending,
+    )
+
+    client = _get_council_app_client(
+        algorand_client,
+        deployer_address=deployer_address,
+        signer=signer,
+        creator_address=gh_deployer.address,
+    )
+
+    params = CommonAppCallParams(sender=deployer_address, signer=signer)
+    if command == "add_member":
+        client.send.add_member(args=AddMemberArgs(address=member_address), params=params)
+        logger.info(f"Added council member: {member_address}")
+    elif command == "remove_member":
+        client.send.remove_member(
+            args=RemoveMemberArgs(address=member_address),
+            params=params,
+        )
+        logger.info(f"Removed council member: {member_address}")
+    else:
+        raise ValueError(f"Unknown member command: {command}")
+
+
+def deploy() -> None:
+    algorand_client = AlgorandClient.from_environment()
+    command = os.environ.get("COUNCIL_DEPLOY_COMMAND", "deploy")
+    logger.info(f"COUNCIL_DEPLOY_COMMAND: {command}")
+
+    if command == "deploy":
+        _deploy_council(algorand_client)
+    elif command in ("add_member", "remove_member"):
+        _update_member(command, algorand_client)
+    else:
+        raise ValueError(
+            "Unknown command: "
+            f"{command}. Valid commands are: deploy, add_member, remove_member"
+        )
