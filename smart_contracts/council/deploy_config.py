@@ -12,6 +12,7 @@ from algosdk import encoding
 from algosdk.atomic_transaction_composer import TransactionSigner
 
 from smart_contracts.artifacts.council.council_client import (
+    APP_SPEC,
     AddMemberArgs,
     CouncilClient,
     CouncilFactory,
@@ -55,8 +56,6 @@ def _get_council_app_client(
     signer: TransactionSigner | HashicorpVaultMultisigTransactionSigner,
     creator_address: str,
 ) -> CouncilClient:
-    from smart_contracts.artifacts.council.council_client import APP_SPEC
-
     factory = _get_council_factory(
         algorand_client,
         deployer_address=deployer_address,
