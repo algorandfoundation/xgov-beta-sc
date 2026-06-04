@@ -10,8 +10,8 @@ index_url="${COMMITTEE_INDEX_URL:?COMMITTEE_INDEX_URL is required}"
 tolerance_rounds="${COMMITTEE_TOLERANCE_ROUNDS:-5000}"
 force_publish="${COMMITTEE_FORCE_PUBLISH:-false}"
 force_alert="${COMMITTEE_FORCE_ALERT:-false}"
-seconds_per_block_average="2.8"
 seconds_per_block_tenths="28"
+seconds_per_block_average="$(printf '%d.%d' "$((seconds_per_block_tenths / 10))" "$((seconds_per_block_tenths % 10))")"
 
 normalize_positive_int() {
   local raw_value="$1"

@@ -99,7 +99,7 @@ jobs:
             echo "- Next anchor: ${{ needs.precheck.outputs.next_anchor }}"
             echo "- Remaining rounds to next anchor: ${{ needs.precheck.outputs.remaining_rounds_to_next_anchor }}"
             echo "- Completion toward next anchor: ${{ needs.precheck.outputs.completion_to_next_anchor_percent }}"
-            echo "- Estimated time left to next anchor: ${{ needs.precheck.outputs.estimated_time_to_next_anchor }} (at 2.8s/block)"
+            echo "- Estimated time left to next anchor: ${{ needs.precheck.outputs.estimated_time_to_next_anchor }}"
             echo "- committeeId: ${{ needs.precheck.outputs.committee_id_b64 }}"
             echo "- Index totalMembers: ${{ needs.precheck.outputs.index_total_members }}"
             echo "- Index totalVotes: ${{ needs.precheck.outputs.index_total_votes }}"
