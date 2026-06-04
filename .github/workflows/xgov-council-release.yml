@@ -17,8 +17,25 @@ on:
         required: true
         type: boolean
         default: false
+      command:
+        description: 'Council command to run'
+        required: true
+        type: choice
+        options:
+          - deploy
+          - add_member
+          - remove_member
+        default: deploy
       registry_app_id:
         description: 'Registry app ID (optional, will use environment variable if not provided)'
+        required: false
+        type: string
+      council_app_id:
+        description: 'Council app ID for add/remove member commands (optional, will use deployment lookup if not provided)'
+        required: false
+        type: string
+      member_address:
+        description: 'Council member address for add/remove member commands'
         required: false
         type: string
 
@@ -29,7 +46,7 @@ permissions:
 jobs:
   create-council-release:
     runs-on: ubuntu-latest
-    if: inputs.create_release
+    if: inputs.create_release && inputs.command == 'deploy'
     outputs:
       tag: ${{ steps.extract-version.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
@@ -115,6 +132,7 @@ jobs:
   deploy-council:
     runs-on: "ubuntu-latest"
     needs: [create-council-release]
+    if: always() && (needs.create-council-release.result == 'success' || needs.create-council-release.result == 'skipped')
     environment: contract-${{ inputs.environment }}
     steps:
       - name: Checkout source code
@@ -123,9 +141,13 @@ jobs:
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
 
-      - name: Deploy council to ${{ inputs.environment }}
+      - name: Run council ${{ inputs.command }} on ${{ inputs.environment }}
         run: algokit project deploy ${{ inputs.environment }} council
         env:
+          # Council command to run
+          COUNCIL_DEPLOY_COMMAND: ${{ inputs.command }}
+          COUNCIL_APP_ID: ${{ inputs.council_app_id }}
+          COUNCIL_MEMBER_ADDRESS: ${{ inputs.member_address }}
           # Registry app ID - use input if provided, otherwise fall back to environment variable
           XGOV_REGISTRY_APP_ID: ${{ inputs.registry_app_id || (inputs.environment == 'mainnet' && vars.XGOV_REGISTRY_APP_ID_MAINNET) || (inputs.environment == 'testnet' && vars.XGOV_REGISTRY_APP_ID_TESTNET) || (inputs.environment == 'localnet' && vars.XGOV_REGISTRY_APP_ID_LOCALNET) || '' }}
           # Mainnet Vault configuration for transaction signing
@@ -142,16 +164,16 @@ jobs:
   notify-deployment:
     runs-on: ubuntu-latest
     needs: [create-council-release, deploy-council]
-    if: always() && needs.create-council-release.result == 'success'
+    if: always() && (needs.create-council-release.result == 'success' || needs.create-council-release.result == 'skipped')
     steps:
       - name: Notify successful deployment
         if: needs.deploy-council.result == 'success'
         run: |
           VERSION="${{ needs.create-council-release.outputs.version || 'latest' }}"
-          echo "✅ Successfully deployed Council contract ${VERSION} to ${{ inputs.environment }}"
+          echo "✅ Successfully ran council command '${{ inputs.command }}' (${VERSION}) on ${{ inputs.environment }}"
 
       - name: Notify failed deployment
         if: needs.deploy-council.result == 'failure'
         run: |
-          echo "❌ Failed to deploy Council contract ${VERSION} to ${{ inputs.environment }}"
+          echo "❌ Failed to run council command '${{ inputs.command }}' on ${{ inputs.environment }}"
           exit 1
