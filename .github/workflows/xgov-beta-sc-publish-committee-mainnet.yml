@@ -25,6 +25,10 @@ jobs:
       total_votes: ${{ steps.precheck.outputs.effective_committee_votes }}
       last_round: ${{ steps.precheck.outputs.last_round }}
       committee_last_anchor: ${{ steps.precheck.outputs.committee_last_anchor }}
+      next_anchor: ${{ steps.precheck.outputs.next_anchor }}
+      remaining_rounds_to_next_anchor: ${{ steps.precheck.outputs.remaining_rounds_to_next_anchor }}
+      completion_to_next_anchor_percent: ${{ steps.precheck.outputs.completion_to_next_anchor_percent }}
+      estimated_time_to_next_anchor: ${{ steps.precheck.outputs.estimated_time_to_next_anchor }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v6
@@ -70,6 +74,10 @@ jobs:
             echo "- Last round: ${{ needs.precheck.outputs.last_round }}"
             echo "- committee_last_anchor: ${{ needs.precheck.outputs.committee_last_anchor }}"
             echo "- Target anchor: ${{ needs.precheck.outputs.target_anchor }}"
+            echo "- Next anchor: ${{ needs.precheck.outputs.next_anchor }}"
+            echo "- Remaining rounds to next anchor: ${{ needs.precheck.outputs.remaining_rounds_to_next_anchor }}"
+            echo "- Completion toward next anchor: ${{ needs.precheck.outputs.completion_to_next_anchor_percent }}"
+            echo "- Estimated time left to next anchor: ${{ needs.precheck.outputs.estimated_time_to_next_anchor }} (at 2.8s/block)"
             echo "- committeeId: ${{ needs.precheck.outputs.committee_id_b64 }}"
             echo "- Effective committee_members: ${{ needs.precheck.outputs.total_members }}"
             echo "- Effective committee_votes: ${{ needs.precheck.outputs.total_votes }}"

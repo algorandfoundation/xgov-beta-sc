@@ -10,6 +10,8 @@ index_url="${COMMITTEE_INDEX_URL:?COMMITTEE_INDEX_URL is required}"
 tolerance_rounds="${COMMITTEE_TOLERANCE_ROUNDS:-5000}"
 force_publish="${COMMITTEE_FORCE_PUBLISH:-false}"
 force_alert="${COMMITTEE_FORCE_ALERT:-false}"
+seconds_per_block_average="2.8"
+seconds_per_block_tenths="28"
 
 normalize_positive_int() {
   local raw_value="$1"
@@ -32,6 +34,30 @@ normalize_positive_int() {
   printf '%s\n' "${normalized}"
 }
 
+format_percent_bps() {
+  local bps="$1"
+
+  printf '%d.%02d%%\n' "$((bps / 100))" "$((bps % 100))"
+}
+
+format_duration_seconds() {
+  local total_seconds="$1"
+  local days=$((total_seconds / 86400))
+  local hours=$(((total_seconds % 86400) / 3600))
+  local minutes=$(((total_seconds % 3600) / 60))
+  local seconds=$((total_seconds % 60))
+
+  if [[ "${days}" -gt 0 ]]; then
+    printf '%dd %02dh %02dm %02ds\n' "${days}" "${hours}" "${minutes}" "${seconds}"
+  elif [[ "${hours}" -gt 0 ]]; then
+    printf '%dh %02dm %02ds\n' "${hours}" "${minutes}" "${seconds}"
+  elif [[ "${minutes}" -gt 0 ]]; then
+    printf '%dm %02ds\n' "${minutes}" "${seconds}"
+  else
+    printf '%ds\n' "${seconds}"
+  fi
+}
+
 status_json="$(curl -fsS "${api_base}/v2/status")"
 app_json="$(curl -fsS "${api_base}/v2/applications/${app_id}")"
 index_json="$(curl -fsS "${index_url}")"
@@ -52,6 +78,12 @@ governance_period="$(normalize_positive_int "${governance_period}" "governance_p
 
 target_anchor=$((last_round - (last_round % governance_period)))
 lag_rounds=$((last_round - target_anchor))
+next_anchor=$((target_anchor + governance_period))
+remaining_rounds_to_next_anchor=$((next_anchor - last_round))
+completion_to_next_anchor_bps=$((lag_rounds * 10000 / governance_period))
+completion_to_next_anchor_percent="$(format_percent_bps "${completion_to_next_anchor_bps}")"
+estimated_seconds_to_next_anchor=$(((remaining_rounds_to_next_anchor * seconds_per_block_tenths + 5) / 10))
+estimated_time_to_next_anchor="$(format_duration_seconds "${estimated_seconds_to_next_anchor}")"
 
 should_publish="false"
 alert_required="false"
@@ -136,7 +168,10 @@ Committee update alert was forced manually (for testing).
 - Last round: ${last_round}
 - Target anchor: ${target_anchor}
 - Current committee_last_anchor: ${committee_last_anchor}
-- Lag rounds since target anchor: ${lag_rounds}
+- Next anchor: ${next_anchor}
+- Remaining rounds to next anchor: ${remaining_rounds_to_next_anchor}
+- Completion toward next anchor: ${completion_to_next_anchor_percent}
+- Estimated time left to next anchor: ${estimated_time_to_next_anchor} (at ${seconds_per_block_average}s/block)
 EOF
     )
   elif [[ "${target_anchor}" -gt "${committee_last_anchor}" ]]; then
@@ -151,7 +186,10 @@ Committee update is overdue.
 - Last round: ${last_round}
 - Target anchor: ${target_anchor}
 - Current committee_last_anchor: ${committee_last_anchor}
-- Lag rounds since target anchor: ${lag_rounds}
+- Next anchor: ${next_anchor}
+- Remaining rounds to next anchor: ${remaining_rounds_to_next_anchor}
+- Completion toward next anchor: ${completion_to_next_anchor_percent}
+- Estimated time left to next anchor: ${estimated_time_to_next_anchor} (at ${seconds_per_block_average}s/block)
 - Tolerance rounds: ${tolerance_rounds}
 EOF
       )
@@ -177,6 +215,11 @@ if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
     echo "governance_period=${governance_period}"
     echo "target_anchor=${target_anchor}"
     echo "lag_rounds=${lag_rounds}"
+    echo "next_anchor=${next_anchor}"
+    echo "remaining_rounds_to_next_anchor=${remaining_rounds_to_next_anchor}"
+    echo "completion_to_next_anchor_percent=${completion_to_next_anchor_percent}"
+    echo "estimated_seconds_to_next_anchor=${estimated_seconds_to_next_anchor}"
+    echo "estimated_time_to_next_anchor=${estimated_time_to_next_anchor}"
     echo "should_publish=${should_publish}"
     echo "alert_required=${alert_required}"
     echo "close_issue=${close_issue}"
@@ -207,7 +250,10 @@ if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
     echo "- committee_last_anchor: ${committee_last_anchor}"
     echo "- governance_period: ${governance_period}"
     echo "- Target anchor: ${target_anchor}"
-    echo "- Lag rounds from target anchor: ${lag_rounds}"
+    echo "- Next anchor: ${next_anchor}"
+    echo "- Remaining rounds to next anchor: ${remaining_rounds_to_next_anchor}"
+    echo "- Completion toward next anchor: ${completion_to_next_anchor_percent}"
+    echo "- Estimated time left to next anchor: ${estimated_time_to_next_anchor} (at ${seconds_per_block_average}s/block)"
     echo "- Result: ${reason}"
     if [[ -n "${committee_id_b64}" ]]; then
       echo "- committeeId: ${committee_id_b64}"
