@@ -20,9 +20,6 @@ from smart_contracts.artifacts.council.council_client import (
     CreateArgs,
     RemoveMemberArgs,
 )
-from smart_contracts.xgov_registry.vault_tx_signer import (
-    HashicorpVaultMultisigTransactionSigner,
-)
 
 from ..xgov_registry.deploy_config import _create_vault_signer_from_env
 
@@ -38,7 +35,7 @@ def _get_council_factory(
     algorand_client: AlgorandClient,
     *,
     deployer_address: str,
-    signer: TransactionSigner | HashicorpVaultMultisigTransactionSigner,
+    signer: TransactionSigner,
     version: str | None = None,
 ) -> CouncilFactory:
     return algorand_client.client.get_typed_app_factory(
@@ -53,7 +50,7 @@ def _get_council_app_client(
     algorand_client: AlgorandClient,
     *,
     deployer_address: str,
-    signer: TransactionSigner | HashicorpVaultMultisigTransactionSigner,
+    signer: TransactionSigner,
     creator_address: str,
 ) -> CouncilClient:
     factory = _get_council_factory(
