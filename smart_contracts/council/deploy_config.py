@@ -76,7 +76,9 @@ def _get_member_address() -> str:
     try:
         encoding.decode_address(member_address)  # type: ignore[no-untyped-call]
     except Exception as e:
-        raise ValueError("COUNCIL_MEMBER_ADDRESS must be a valid Algorand address") from e
+        raise ValueError(
+            "COUNCIL_MEMBER_ADDRESS must be a valid Algorand address"
+        ) from e
 
     return member_address
 
@@ -151,7 +153,9 @@ def _update_member(command: str, algorand_client: AlgorandClient) -> None:
 
     params = CommonAppCallParams(sender=deployer_address, signer=signer)
     if command == "add_member":
-        client.send.add_member(args=AddMemberArgs(address=member_address), params=params)
+        client.send.add_member(
+            args=AddMemberArgs(address=member_address), params=params
+        )
         logger.info(f"Added council member: {member_address}")
     elif command == "remove_member":
         client.send.remove_member(
