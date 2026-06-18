@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     if: inputs.create_release && inputs.command == 'deploy'
     outputs:
-      tag: ${{ steps.extract-version.outputs.tag }}
+      tag: ${{ steps.set-tag.outputs.tag }}
       version: ${{ steps.extract-version.outputs.version }}
     steps:
       - uses: actions/create-github-app-token@v3

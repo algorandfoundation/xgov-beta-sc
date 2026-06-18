@@ -59,8 +59,14 @@ def _get_council_app_client(
         signer=signer,
     )
 
-    if council_app_id := os.environ.get("COUNCIL_APP_ID"):
-        return factory.get_app_client_by_id(app_id=int(council_app_id))
+    council_app_id = os.environ.get("COUNCIL_APP_ID", "").strip()
+    if council_app_id:
+        try:
+            app_id = int(council_app_id)
+        except ValueError as e:
+            raise ValueError("COUNCIL_APP_ID must be an integer") from e
+
+        return factory.get_app_client_by_id(app_id=app_id)
 
     return factory.get_app_client_by_creator_and_name(
         creator_address=creator_address,
@@ -159,7 +165,7 @@ def _update_member(command: str, algorand_client: AlgorandClient) -> None:
         algorand_client,
         deployer_address=deployer_address,
         signer=signer,
-        creator_address=gh_deployer.address,
+        creator_address=deployer_address,
     )
 
     params = CommonAppCallParams(
