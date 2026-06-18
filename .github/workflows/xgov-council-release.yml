@@ -159,6 +159,7 @@ jobs:
           VAULT_NAMESPACE: ${{ inputs.environment == 'mainnet' && secrets.VAULT_NAMESPACE || '' }}
           # Testnet/Localnet direct deployer and dispenser accounts
           DEPLOYER_MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+          COMMITTEE_MANAGER_MNEMONIC: ${{ secrets.COMMITTEE_MANAGER_MNEMONIC }}
           DISPENSER_MNEMONIC: ${{ secrets.DISPENSER_MNEMONIC }}
 
   notify-deployment:
