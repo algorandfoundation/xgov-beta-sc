@@ -21,8 +21,6 @@ from smart_contracts.artifacts.council.council_client import (
     RemoveMemberArgs,
 )
 
-from ..xgov_registry.deploy_config import _create_vault_signer_from_env
-
 logger = logging.getLogger(__name__)
 
 deployer_min_spending = AlgoAmount.from_algo(3)
@@ -82,17 +80,19 @@ def _get_member_address() -> str:
     try:
         encoding.decode_address(member_address)  # type: ignore[no-untyped-call]
     except Exception as e:
-        raise ValueError(
-            "COUNCIL_MEMBER_ADDRESS must be a valid Algorand address"
-        ) from e
+        raise ValueError("COUNCIL_MEMBER_ADDRESS must be a valid Algorand address") from e
 
     return member_address
 
 
+def _get_deployer_sender(algorand_client: AlgorandClient) -> tuple[str, TransactionSigner]:
+    deployer = algorand_client.account.from_environment("DEPLOYER")
+    logger.info(f"Using deployer address: {deployer.address}")
+    return deployer.address, deployer.signer
+
+
 def _deploy_council(algorand_client: AlgorandClient) -> None:
-    # Try to create Vault signer first, fallback to environment if not available
-    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = vault_signer if vault_signer else gh_deployer.signer
+    deployer_address, signer = _get_deployer_sender(algorand_client)
 
     algorand_client.account.ensure_funded_from_environment(
         account_to_fund=deployer_address, min_spending_balance=deployer_min_spending
@@ -141,8 +141,7 @@ def _deploy_council(algorand_client: AlgorandClient) -> None:
 
 
 def _update_member(command: str, algorand_client: AlgorandClient) -> None:
-    vault_signer, deployer_address, gh_deployer = _create_vault_signer_from_env()
-    signer = vault_signer if vault_signer else gh_deployer.signer
+    deployer_address, signer = _get_deployer_sender(algorand_client)
     member_address = _get_member_address()
 
     algorand_client.account.ensure_funded_from_environment(
@@ -162,9 +161,7 @@ def _update_member(command: str, algorand_client: AlgorandClient) -> None:
         signer=signer,
     )
     if command == "add_member":
-        client.send.add_member(
-            args=AddMemberArgs(address=member_address), params=params
-        )
+        client.send.add_member(args=AddMemberArgs(address=member_address), params=params)
         logger.info(f"Added council member: {member_address}")
     elif command == "remove_member":
         client.send.remove_member(
@@ -186,6 +183,4 @@ def deploy() -> None:
     elif command in ("add_member", "remove_member"):
         _update_member(command, algorand_client)
     else:
-        raise ValueError(
-            f"Unknown command: {command}. Valid commands are: deploy, add_member, remove_member"
-        )
+        raise ValueError(f"Unknown command: {command}. Valid commands are: deploy, add_member, remove_member")
