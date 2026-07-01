@@ -47,20 +47,20 @@ jobs:
 
       - name: Checkout source code (PR)
         if: github.event_name == 'pull_request' && steps.dependabot-check.outputs.is_dependabot != 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
       - name: Checkout source code (manual trigger for fork PR)
         if: github.event_name == 'workflow_dispatch' && inputs.pr_number
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: refs/pull/${{ inputs.pr_number }}/merge
           submodules: recursive
 
       - name: Checkout source code (workflow_call)
         if: github.event_name == 'workflow_call'
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 

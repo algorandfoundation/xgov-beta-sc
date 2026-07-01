@@ -31,7 +31,7 @@ jobs:
       estimated_time_to_next_anchor: ${{ steps.precheck.outputs.estimated_time_to_next_anchor }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Run public precheck
         id: precheck
@@ -49,7 +49,7 @@ jobs:
     if: needs.precheck.outputs.should_publish == 'true'
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
