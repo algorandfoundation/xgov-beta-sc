@@ -58,7 +58,7 @@ jobs:
           private-key: ${{ secrets.BOT_SK }}
 
       - name: Checkout source code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
@@ -136,7 +136,7 @@ jobs:
     environment: contract-${{ inputs.environment }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up AlgoKit
         uses: ./.github/actions/algokit-setup
