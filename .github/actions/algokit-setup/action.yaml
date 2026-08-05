@@ -11,6 +11,7 @@ runs:
       uses: actions/setup-python@v6
       with:
         python-version: "3.13"
+        cache: "poetry"
 
     - name: Install algokit
       shell: bash
