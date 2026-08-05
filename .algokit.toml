@@ -14,6 +14,9 @@ type = 'contract'
 name = 'xgov-beta-sc'
 artifacts = 'smart_contracts/artifacts'
 
+[project.bootstrap]
+command = "poetry install --with dev"
+
 [project.deploy]
 command = "poetry run python -m smart_contracts deploy"
 
