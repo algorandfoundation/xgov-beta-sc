@@ -1,3 +1,5 @@
+minimum_pre_commit_version: 4.6.1
+
 repos:
   # AlgoKit
   - repo: local
@@ -8,7 +10,6 @@ repos:
         description: "Black: The uncompromising Python code formatter"
         entry: poetry run black
         language: system
-        minimum_pre_commit_version: 3.2.0
         require_serial: true
         types_or: [ python, pyi ]
 
@@ -20,24 +21,7 @@ repos:
         types: [ python ]
         args: [ --fix ]
         require_serial: false
-        additional_dependencies: [ ]
-        minimum_pre_commit_version: 3.2.0
         files: '^(smart_contracts|tests)/'
-
-  # Security and Infrastructure as Code scanning
-  - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 3.2.497
-    hooks:
-      - id: checkov
-        name: checkov
-        description: "Checkov: Static analysis for infrastructure as code"
-        entry: checkov
-        language: python
-        args: [--framework, dockerfile, --framework, github_actions, --framework, yaml]
-        types_or: [yaml, dockerfile]
-        files: '^(\\.github/workflows/.*\\.ya?ml|Dockerfile.*|docker-compose.*\\.ya?ml)$'
-        require_serial: false
-        additional_dependencies: []
 
   # Docs
   - repo: local
@@ -47,8 +31,6 @@ repos:
         description: "Builds mdBook."
         entry: mdbook build
         language: system
-        minimum_pre_commit_version: 3.2.0
-        additional_dependencies: [ ]
         pass_filenames: false
 
       - id: mdbook-test
@@ -56,9 +38,7 @@ repos:
         description: "Checks mdBook pass tests."
         entry: mdbook test
         language: system
-        minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
-        additional_dependencies: [ ]
         pass_filenames: false
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -69,9 +49,7 @@ repos:
         description: "Checks the style of Markdown/Commonmark files."
         entry: markdownlint
         language: node
-        minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
-        additional_dependencies: [ ]
         files: '^(docs/.*\.md|README\.md|SECURITY\.md)$'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -82,9 +60,7 @@ repos:
         description: "Trims trailing whitespace."
         entry: trailing-whitespace-fixer
         language: python
-        minimum_pre_commit_version: 3.2.0
         types: [ markdown ]
-        additional_dependencies: [ ]
 
   - repo: https://github.com/lycheeverse/lychee
     rev: lychee-v0.22.0

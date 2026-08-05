@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-FROM rust:1.96-slim-bookworm
+FROM rust:1.97-slim-trixie
 
-ARG MDBOOK_VERSION=0.5.1
+ARG MDBOOK_VERSION=0.5.4
 ARG MERMAID_VERSION=0.17.0
 
 # Create an unprivileged user that will own the working tree.
