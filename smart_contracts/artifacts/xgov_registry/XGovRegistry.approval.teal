@@ -2543,7 +2543,7 @@ open_proposal_bool_merge@5:
     pushint 27
     itxn_field GlobalNumUint
     // smart_contracts/xgov_registry/contract.py:1159-1163
-    // # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
+    // # clear_state_program is a tuple of 4 Bytes elements where each is max 4096 bytes
     // # we only use the first element here as we assume the clear state program is small enough
     // compiled_clear_state_1, _ccs_2, _ccs_3, _ccs_4 = compile_contract(
     //     proposal_contract.Proposal
