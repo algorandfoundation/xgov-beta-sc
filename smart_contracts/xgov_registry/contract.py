@@ -1156,9 +1156,9 @@ class XGovRegistry(
 
         assert self.proposal_approval_program, err.MISSING_PROPOSAL_APPROVAL_PROGRAM
 
-        # clear_state_program is a tuple of 2 Bytes elements where each is max 4096 bytes
+        # clear_state_program is a tuple of 4 Bytes elements where each is max 4096 bytes
         # we only use the first element here as we assume the clear state program is small enough
-        compiled_clear_state_1, _compiled_clear_state_2 = compile_contract(
+        compiled_clear_state_1, _ccs_2, _ccs_3, _ccs_4 = compile_contract(
             proposal_contract.Proposal
         ).clear_state_program
 

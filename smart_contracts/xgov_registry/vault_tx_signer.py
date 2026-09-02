@@ -12,6 +12,7 @@ from algosdk.transaction import (
     LogicSigTransaction,
     Multisig,
     MultisigTransaction,
+    PQSignedTransaction,
     SignedTransaction,
     Transaction,
 )
@@ -337,7 +338,12 @@ class HashicorpVaultTransactionSigner(TransactionSigner):
 
     def sign_transactions(
         self, txn_group: list[Transaction], indexes: list[int]
-    ) -> list[SignedTransaction | LogicSigTransaction | MultisigTransaction]:
+    ) -> list[
+        SignedTransaction
+        | LogicSigTransaction
+        | MultisigTransaction
+        | PQSignedTransaction
+    ]:
         """
         Sign transactions using the configured secret engine
 
@@ -349,7 +355,12 @@ class HashicorpVaultTransactionSigner(TransactionSigner):
             list of signed transaction bytes
         """
         try:
-            signed_txns: list[SignedTransaction] = []
+            signed_txns: list[
+                SignedTransaction
+                | LogicSigTransaction
+                | MultisigTransaction
+                | PQSignedTransaction
+            ] = []
 
             for i in indexes:
                 if i >= len(txn_group):
@@ -378,7 +389,7 @@ class HashicorpVaultTransactionSigner(TransactionSigner):
 
                 signed_txns.append(signed_txn)
 
-            return signed_txns  # type: ignore
+            return signed_txns
 
         except Exception as exc:
             raise RuntimeError(
