@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM rust:1.97-slim-trixie
+FROM rust:1.98-slim-trixie
 
 ARG MDBOOK_VERSION=0.5.4
 ARG MERMAID_VERSION=0.17.0
