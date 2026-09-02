@@ -282,7 +282,7 @@ remove_member:
 // smart_contracts.council.contract.Council.vote[routing]() -> void:
 vote:
     pushbytes ""
-    dupn 4
+    dup
     // smart_contracts/council/contract.py:148
     // @arc4.abimethod()
     txna ApplicationArgs 1
@@ -293,6 +293,7 @@ vote:
     assert // invalid number of bytes for arc4.uint64
     btoi
     dup
+    cover 2
     txna ApplicationArgs 2
     dup
     len
@@ -317,6 +318,7 @@ vote:
     swap
     concat
     dup
+    cover 3
     box_len
     bury 1
     bnz vote_else_body@4
@@ -340,7 +342,7 @@ vote:
     // registry_contract.XGovRegistry.is_proposal,
     pushbytes 0x26983200 // method "is_proposal(uint64)void"
     itxn_field ApplicationArgs
-    dig 3
+    swap
     itxn_field ApplicationArgs
     // smart_contracts/council/contract.py:167-173
     // # we dont need any error handling here
@@ -386,7 +388,7 @@ vote:
     // )
     bytec_3 // 0x00
     intc_0 // 0
-    dig 4
+    uncover 3
     setbit
     concat
     // smart_contracts/council/contract.py:182-187
@@ -413,6 +415,7 @@ vote_after_if_else@16:
     return
 
 vote_else_body@4:
+    bury 1
     // smart_contracts/council/contract.py:190
     // half_plus_one = (self.member_count.value // 2) + 1
     intc_0 // 0
@@ -423,44 +426,43 @@ vote_else_body@4:
     /
     intc_1 // 1
     +
-    bury 7
+    bury 5
     // smart_contracts/council/contract.py:191
     // approvals = UInt64(0) if block else UInt64(1)
-    dig 1
+    dup
     !
     dup
-    bury 10
+    cover 2
     // smart_contracts/council/contract.py:192
     // rejections = UInt64(0) if not block else UInt64(1)
     !
     bury 5
     // smart_contracts/council/contract.py:194
     // for i in urange(self.votes[proposal_id].length):
-    dup
+    dig 2
     intc_0 // 0
     intc_2 // 2
     box_extract
     btoi
-    bury 8
+    swap
     intc_0 // 0
-    bury 6
 
 vote_for_header@5:
     // smart_contracts/council/contract.py:194
     // for i in urange(self.votes[proposal_id].length):
-    dig 5
-    dig 8
+    dup
+    dig 3
     <
     bz vote_after_for@11
     // smart_contracts/council/contract.py:196
     // Txn.sender != self.votes[proposal_id][i].address
     txn Sender
-    dig 6
+    dig 1
     pushint 33
     *
     intc_2 // 2
     +
-    dig 2
+    dig 6
     swap
     pushint 33
     box_extract // on error: index out of bounds
@@ -480,30 +482,30 @@ vote_for_header@5:
     bz vote_else_body@8
     // smart_contracts/council/contract.py:200
     // rejections += 1
-    dig 4
+    dig 6
     intc_1 // 1
     +
-    bury 5
+    bury 7
 
 vote_after_if_else@9:
     // smart_contracts/council/contract.py:194
     // for i in urange(self.votes[proposal_id].length):
-    dig 5
     intc_1 // 1
     +
-    bury 6
     b vote_for_header@5
 
 vote_else_body@8:
     // smart_contracts/council/contract.py:202
     // approvals += 1
-    dig 8
+    uncover 3
     intc_1 // 1
     +
-    bury 9
+    cover 3
     b vote_after_if_else@9
 
 vote_after_for@11:
+    pop
+    bury 1
     // smart_contracts/council/contract.py:206
     // address=Txn.sender,
     txn Sender
@@ -514,10 +516,10 @@ vote_after_for@11:
     // )
     bytec_3 // 0x00
     intc_0 // 0
-    dig 4
+    uncover 3
     setbit
     concat
-    dig 1
+    dig 2
     dup
     // smart_contracts/council/contract.py:204-209
     // self.votes[proposal_id].append(
@@ -584,12 +586,11 @@ vote_after_for@11:
     box_splice
     // smart_contracts/council/contract.py:211
     // if approvals >= half_plus_one or rejections >= half_plus_one:
-    dig 8
-    dig 7
+    dig 4
     >=
     bnz vote_if_body@13
+    dig 2
     dig 4
-    dig 7
     >=
     bz vote_after_if_else@16
 
@@ -597,8 +598,8 @@ vote_if_body@13:
     // smart_contracts/council/contract.py:212-213
     // # this will allow the proposal to be reviewed
     // block = rejections >= half_plus_one
+    dig 2
     dig 4
-    dig 7
     >=
     // smart_contracts/council/contract.py:215-217
     // arc4.abi_call(
@@ -611,7 +612,7 @@ vote_if_body@13:
     intc_0 // 0
     uncover 2
     setbit
-    dig 3
+    dig 2
     itxn_field ApplicationID
     pushbytes 0x212d9f07 // method "review(bool)void"
     itxn_field ApplicationArgs

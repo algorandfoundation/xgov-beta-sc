@@ -1010,6 +1010,8 @@ vote_proposal:
     pushint 4
     <
     bz vote_proposal_ternary_false@4
+    uncover 2
+    pop
     intc_1 // 0
 
 vote_proposal_ternary_merge@5:
@@ -1020,16 +1022,12 @@ vote_proposal_ternary_merge@5:
     // error_without_prefix = String.from_bytes(error.bytes[4:])
     pushint 4
     dig 1
-    dup
-    cover 2
     >=
     pushint 4
     dig 2
     uncover 2
     select
-    dig 3
     swap
-    uncover 2
     substring3
     // smart_contracts/xgov_registry_mock/contract.py:342
     // case err.UNAUTHORIZED:
@@ -1117,7 +1115,7 @@ vote_proposal_after_if_else@15:
 vote_proposal_ternary_false@4:
     // smart_contracts/xgov_registry_mock/contract.py:339
     // if error.startswith(err.ARC_65_PREFIX):
-    dig 2
+    uncover 2
     extract 6 4
     bytec_2 // "ERR:"
     ==
@@ -1198,6 +1196,8 @@ unassign_absentee_from_proposal:
     pushint 4
     <
     bz unassign_absentee_from_proposal_ternary_false@4
+    uncover 2
+    pop
     intc_1 // 0
 
 unassign_absentee_from_proposal_ternary_merge@5:
@@ -1208,16 +1208,12 @@ unassign_absentee_from_proposal_ternary_merge@5:
     // error_without_prefix = String.from_bytes(error.bytes[4:])
     pushint 4
     dig 1
-    dup
-    cover 2
     >=
     pushint 4
     dig 2
     uncover 2
     select
-    dig 3
     swap
-    uncover 2
     substring3
     // smart_contracts/xgov_registry_mock/contract.py:372
     // case err.WRONG_PROPOSAL_STATUS:
@@ -1250,9 +1246,9 @@ unassign_absentee_from_proposal_switch_case_0@7:
     err // Wrong Proposal Status or finalized
 
 unassign_absentee_from_proposal_else_body@10:
+    pop
     // smart_contracts/xgov_registry_mock/contract.py:379
     // assert error == "", "Unknown error"
-    dig 1
     pushbytes ""
     ==
     assert // Unknown error
@@ -1264,7 +1260,7 @@ unassign_absentee_from_proposal_else_body@10:
 unassign_absentee_from_proposal_ternary_false@4:
     // smart_contracts/xgov_registry_mock/contract.py:369
     // if error.startswith(err.ARC_65_PREFIX):
-    dig 2
+    uncover 2
     extract 6 4
     bytec_2 // "ERR:"
     ==
@@ -1319,6 +1315,8 @@ pay_grant_proposal:
     pushint 4
     <
     bz pay_grant_proposal_ternary_false@4
+    uncover 2
+    pop
     intc_1 // 0
 
 pay_grant_proposal_ternary_merge@5:
@@ -1329,16 +1327,12 @@ pay_grant_proposal_ternary_merge@5:
     // error_without_prefix = String.from_bytes(error.bytes[4:])
     pushint 4
     dig 1
-    dup
-    cover 2
     >=
     pushint 4
     dig 2
     uncover 2
     select
-    dig 3
     swap
-    uncover 2
     substring3
     // smart_contracts/xgov_registry_mock/contract.py:388
     // case err.UNAUTHORIZED:
@@ -1379,7 +1373,7 @@ pay_grant_proposal_after_if_else@10:
 pay_grant_proposal_ternary_false@4:
     // smart_contracts/xgov_registry_mock/contract.py:385
     // if error.startswith(err.ARC_65_PREFIX):
-    dig 2
+    uncover 2
     extract 6 4
     bytec_2 // "ERR:"
     ==
@@ -1434,6 +1428,8 @@ finalize_proposal:
     pushint 4
     <
     bz finalize_proposal_ternary_false@4
+    uncover 2
+    pop
     intc_1 // 0
 
 finalize_proposal_ternary_merge@5:
@@ -1444,16 +1440,12 @@ finalize_proposal_ternary_merge@5:
     // error_without_prefix = String.from_bytes(error.bytes[4:])
     pushint 4
     dig 1
-    dup
-    cover 2
     >=
     pushint 4
     dig 2
     uncover 2
     select
-    dig 3
     swap
-    uncover 2
     substring3
     // smart_contracts/xgov_registry_mock/contract.py:402
     // case err.WRONG_PROPOSAL_STATUS:
@@ -1504,7 +1496,7 @@ finalize_proposal_after_if_else@11:
 finalize_proposal_ternary_false@4:
     // smart_contracts/xgov_registry_mock/contract.py:399
     // if error.startswith(err.ARC_65_PREFIX):
-    dig 2
+    uncover 2
     extract 6 4
     bytec_2 // "ERR:"
     ==
@@ -1559,6 +1551,8 @@ drop_proposal:
     pushint 4
     <
     bz drop_proposal_ternary_false@4
+    uncover 2
+    pop
     intc_1 // 0
 
 drop_proposal_ternary_merge@5:
@@ -1569,16 +1563,12 @@ drop_proposal_ternary_merge@5:
     // error_without_prefix = String.from_bytes(error.bytes[4:])
     pushint 4
     dig 1
-    dup
-    cover 2
     >=
     pushint 4
     dig 2
     uncover 2
     select
-    dig 3
     swap
-    uncover 2
     substring3
     // smart_contracts/xgov_registry_mock/contract.py:418
     // case err.WRONG_PROPOSAL_STATUS:
@@ -1609,7 +1599,7 @@ drop_proposal_after_if_else@9:
 drop_proposal_ternary_false@4:
     // smart_contracts/xgov_registry_mock/contract.py:415
     // if error.startswith(err.ARC_65_PREFIX):
-    dig 2
+    uncover 2
     extract 6 4
     bytec_2 // "ERR:"
     ==
@@ -2268,9 +2258,9 @@ create_empty_proposal:
     itxn_field ExtraProgramPages
     pushbytes base64(CoEBQw==)
     itxn_field ClearStateProgramPages
-    pushbytes base64(CiAFAAEgCpBOJikGc3RhdHVzAAlmaW5hbGl6ZWQIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkEGFzc2lnbmVkX21lbWJlcnMNdm90ZWRfbWVtYmVycwlhcHByb3ZhbHMKcmVqZWN0aW9ucwFNBBUffHURY29tbWl0dGVlX21lbWJlcnMQcmVxdWVzdGVkX2Ftb3VudBFib3ljb3R0ZWRfbWVtYmVycwVudWxscw9jb21taXR0ZWVfdm90ZXMQZnVuZGluZ19jYXRlZ29yeQ5hc3NpZ25lZF92b3RlcwFWAQANbG9ja2VkX2Ftb3VudBBxdW9ydW1fdGhyZXNob2xkGXdlaWdodGVkX3F1b3J1bV90aHJlc2hvbGQmRVJSOldyb25nIFByb3Bvc2FsIFN0YXR1cyBvciBmaW5hbGl6ZWQMY29tbWl0dGVlX2lkEW9wZW5fcHJvcG9zYWxfZmVlHGRhZW1vbl9vcGVyYXRpb25fZnVuZGluZ19icHMOb3Blbl90aW1lc3RhbXAWdm90ZV9vcGVuaW5nX3RpbWVzdGFtcAxmdW5kaW5nX3R5cGUPdm90aW5nX2R1cmF0aW9uD3BhdXNlZF9yZWdpc3RyeRRzdWJtaXNzaW9uX3RpbWVzdGFtcBFtZXRhZGF0YV91cGxvYWRlZAV0aXRsZQVmb2N1cxNkaXNjdXNzaW9uX2R1cmF0aW9uFG1pbl9yZXF1ZXN0ZWRfYW1vdW50Gm1heF9yZXF1ZXN0ZWRfYW1vdW50X2xhcmdlC3hnb3ZfZGFlbW9uE0VSUjpWb3RlciBub3QgZm91bmQxGEAAijE1gQMSRDE0gRsSRDE3FEQxNhREKzIDZycEImcnGClnJwsiZycPImcnGSJnJxoiZycbImcnICJnJxwiZygiZyoiZychImcnIilnJxAiZycjImcnHSJnJwwiZycUImcnJCJnJx4iZycVImcnFiJnJwUiZycRImcnBiJnJw0iZycHImcnCCJnJw4iZ4AEJDeNPDYaAI4BAJExGRREMRhBAHqCEATtrrnKBHFDmU8Ec3EyGgQ05hPKBA2asNcEGEGg0gRzTb7MBHb/THAEIS2fBwSKXkyABCrBmwUEgCBptAS2Seh0BCRhX5AENpxCugTb2D3ZNhoAjhAAXwOOA+QEKwRwBXAHUwfDCF4IyAj/CYcKaAtBC24AAQAj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)
+    pushbytes base64(CiAFAAEgCpBOJikGc3RhdHVzAAlmaW5hbGl6ZWQIcHJvcG9zZXIPcmVnaXN0cnlfYXBwX2lkEGFzc2lnbmVkX21lbWJlcnMNdm90ZWRfbWVtYmVycwlhcHByb3ZhbHMKcmVqZWN0aW9ucwFNBBUffHURY29tbWl0dGVlX21lbWJlcnMQcmVxdWVzdGVkX2Ftb3VudBFib3ljb3R0ZWRfbWVtYmVycwVudWxscw9jb21taXR0ZWVfdm90ZXMQZnVuZGluZ19jYXRlZ29yeQ5hc3NpZ25lZF92b3RlcwFWAQANbG9ja2VkX2Ftb3VudBBxdW9ydW1fdGhyZXNob2xkGXdlaWdodGVkX3F1b3J1bV90aHJlc2hvbGQmRVJSOldyb25nIFByb3Bvc2FsIFN0YXR1cyBvciBmaW5hbGl6ZWQMY29tbWl0dGVlX2lkEW9wZW5fcHJvcG9zYWxfZmVlHGRhZW1vbl9vcGVyYXRpb25fZnVuZGluZ19icHMOb3Blbl90aW1lc3RhbXAWdm90ZV9vcGVuaW5nX3RpbWVzdGFtcAxmdW5kaW5nX3R5cGUPdm90aW5nX2R1cmF0aW9uD3BhdXNlZF9yZWdpc3RyeRRzdWJtaXNzaW9uX3RpbWVzdGFtcBFtZXRhZGF0YV91cGxvYWRlZAV0aXRsZQVmb2N1cxNkaXNjdXNzaW9uX2R1cmF0aW9uFG1pbl9yZXF1ZXN0ZWRfYW1vdW50Gm1heF9yZXF1ZXN0ZWRfYW1vdW50X2xhcmdlC3hnb3ZfZGFlbW9uE0VSUjpWb3RlciBub3QgZm91bmQxGEAAijE1gQMSRDE0gRsSRDE3FEQxNhREKzIDZycEImcnGClnJwsiZycPImcnGSJnJxoiZycbImcnICJnJxwiZygiZyoiZychImcnIilnJxAiZycjImcnHSJnJwwiZycUImcnJCJnJx4iZycVImcnFiJnJwUiZycRImcnBiJnJw0iZycHImcnCCJnJw4iZ4AEJDeNPDYaAI4BAJExGRREMRhBAHqCEATtrrnKBHFDmU8Ec3EyGgQ05hPKBA2asNcEGEGg0gRzTb7MBHb/THAEIS2fBwSKXkyABCrBmwUEgCBptAS2Seh0BCRhX5AENpxCugTb2D3ZNhoAjhAAXwN+A9UEFwRcBVwHPQeoCDEImwjNCU0KKQsCCzAAAQAj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)
     itxn_field ApprovalProgramPages
-    pushbytes base64(J4j/l0kVJBJEEokyDSInBGVEEomKAgCxi/+yCIv+sgcjshAisgGziYoBACInFGVEi/9MiP/eJxQiZ4mKAQCL/zgYMggSRIv/ORoANhoAEkSJIicVZUQiJwZlRCInDWVECUsBDxCJIicWZUQiJwdlRCInCGVECCInDmVECEsBDxCJIicHZUQiJwhlRA2JigIAJxKL/lBJvUUBRIv/RCInBWVEIwknBUxnIicRZUSL/wknEUxnvEiJ)
+    pushbytes base64(i/84GDIIEkSL/zkaADYaABJEiSInFWVEIicGZUQiJw1lRAlLAQ8QiSInFmVEIicHZUQiJwhlRAgiJw5lRAhLAQ8QiSInB2VEIicIZUQNiYoCACcSi/5QSb1FAUSL/0QiJwVlRCMJJwVMZyInEWVEi/8JJxFMZ7xIiQ==)
     itxn_field ApprovalProgramPages
     // smart_contracts/xgov_registry_mock/contract.py:572
     // Proposal,
