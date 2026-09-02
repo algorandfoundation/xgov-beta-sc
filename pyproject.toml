@@ -14,7 +14,7 @@ python = "^3.13"
 algokit-utils = "^4.2.3"
 python-dotenv = "^1.2.2"
 algorand-python = "3.5.1"
-types-hvac = "2.4.0.20251115"
+types-hvac = "2.4.0.20260731"
 hvac = "^2.4.0"
 
 [tool.poetry.group.dev.dependencies]
