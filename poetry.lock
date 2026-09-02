@@ -2436,14 +2436,14 @@ files = [
 
 [[package]]
 name = "requests"
-version = "2.33.0"
+version = "2.34.2"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "requests-2.33.0-py3-none-any.whl", hash = "sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b"},
-    {file = "requests-2.33.0.tar.gz", hash = "sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652"},
+    {file = "requests-2.34.2-py3-none-any.whl", hash = "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"},
+    {file = "requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed"},
 ]
 
 [package.dependencies]
@@ -2454,7 +2454,6 @@ urllib3 = ">=1.26,<3"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-test = ["PySocks (>=1.5.6,!=1.5.7)", "pytest (>=3)", "pytest-cov", "pytest-httpbin (==2.1.0)", "pytest-mock", "pytest-xdist"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<8)"]
 
 [[package]]
@@ -2633,33 +2632,18 @@ files = [
 
 [[package]]
 name = "types-hvac"
-version = "2.4.0.20251115"
+version = "2.4.0.20260731"
 description = "Typing stubs for hvac"
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "types_hvac-2.4.0.20251115-py3-none-any.whl", hash = "sha256:f92bcbb2eced81ce77cdbc865bff911e20341afaa6f2126e925cb8c062003f82"},
-    {file = "types_hvac-2.4.0.20251115.tar.gz", hash = "sha256:a7b5d0e86961e4d7f07e51b60b2eedcac5f8db8b98b031d4a4b716215c21df3a"},
-]
-
-[package.dependencies]
-types-requests = "*"
-
-[[package]]
-name = "types-requests"
-version = "2.32.4.20260324"
-description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "types_requests-2.32.4.20260324-py3-none-any.whl", hash = "sha256:f83ef2deb284fe99a249b8b0b0a3e4b9809e01ff456063c4df0aac7670c07ab9"},
-    {file = "types_requests-2.32.4.20260324.tar.gz", hash = "sha256:33a2a9ccb1de7d4e4da36e347622c35418f6761269014cc32857acabd5df739e"},
+    {file = "types_hvac-2.4.0.20260731-py3-none-any.whl", hash = "sha256:e45270eacbdbdb64756e62b1faa0ea3b48d2ff151b42020d76699d35229eb647"},
+    {file = "types_hvac-2.4.0.20260731.tar.gz", hash = "sha256:ffabb32cdfdcb37ce5f6133bf4fdfc16b4013723df88a35da5a443f2b13e5f11"},
 ]
 
 [package.dependencies]
-urllib3 = ">=2"
+requests = ">=2.34.0"
 
 [[package]]
 name = "typing-extensions"
@@ -2867,4 +2851,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "5ba6ada79e144fa392cd4a9eb7dbb611c7445d609b2848486df8a032fb172ff2"
+content-hash = "cdafa270295f70e3b8df22cb2851fbde8b7730664bc02d5090203f05fdc88f92"
